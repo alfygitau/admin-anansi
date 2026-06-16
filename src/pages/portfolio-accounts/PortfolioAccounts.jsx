@@ -1,9 +1,6 @@
 import React, { useState, useMemo } from "react";
 import {
-  Landmark,
   Wallet,
-  PieChart,
-  Coins,
   Calendar,
   ChevronLeft,
   ArrowRight,
@@ -14,12 +11,6 @@ import {
   PlusCircle,
   Copy,
   Check,
-  Percent,
-  ArrowUpRight,
-  ShieldAlert,
-  Scale,
-  Clock,
-  Award,
   Baby,
   BookOpen,
   Sun,
@@ -953,9 +944,6 @@ export default function AccountsPage() {
   );
 }
 
-{
-  /* REUSABLE DRAWER TEXT ROW METADATA INTERFACE */
-}
 const DrawerMetaBlock = ({
   label,
   value,

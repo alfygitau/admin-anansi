@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Search, User } from "lucide-react";
+import {
+  Search,
+  User,
+  Users,
+  ShieldCheck,
+  AlertTriangle,
+  Activity,
+} from "lucide-react";
 
 export default function Guarantors() {
   const [guarantors] = useState([
@@ -136,14 +143,20 @@ export default function Guarantors() {
       _guarantor: { id: "d0216b27-12", publicId: "SJS012" },
     },
   ]);
+
+  const metrics = {
+    totalGuarantors: 12,
+    totalCommitted: 2262330.22,
+    totalExposure: 1610330.22,
+    totalActiveLoans: 49,
+    totalPendingLoans: 54,
+  };
   return (
     <div className="w-full space-y-6 font-sans">
       {/* 1. REGISTRY HEADER */}
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">
-            Loan Guarantors
-          </h2>
+          <h2 className="text-lg font-bold text-slate-900">Loan Guarantors</h2>
           <p className="text-xs text-slate-500">
             Monitor exposure and commitment levels across all guarantors.
           </p>
@@ -157,6 +170,89 @@ export default function Guarantors() {
             className="h-9 w-64 pl-9 pr-4 bg-white border border-slate-200/60 rounded-xl text-xs outline-none focus:border-primary shadow-sm"
             placeholder="Search guarantor..."
           />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 select-none">
+        {/* Metric 1: Total Guarantors */}
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-start gap-4">
+          <div className="p-3 bg-blue-50 text-blue-600 rounded-xl border border-blue-100/40 shrink-0">
+            <Users size={18} />
+          </div>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+              Active Guarantors
+            </p>
+            <p className="text-2xl font-black text-slate-900 tracking-tight">
+              {metrics.totalGuarantors}
+            </p>
+            <p className="text-[11px] text-slate-400 font-medium truncate">
+              Unique underwriting identities
+            </p>
+          </div>
+        </div>
+
+        {/* Metric 2: Total Amount Committed */}
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-start gap-4">
+          <div className="p-3 bg-purple-50 text-purple-600 rounded-xl border border-purple-100/40 shrink-0">
+            <ShieldCheck size={18} />
+          </div>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+              Total Capital Backed
+            </p>
+            <p className="text-2xl font-black text-slate-900 tracking-tight">
+              KES{" "}
+              {metrics.totalCommitted.toLocaleString(undefined, {
+                maximumFractionDigits: 0,
+              })}
+            </p>
+            <p className="text-[11px] text-slate-400 font-medium truncate">
+              Aggregated lifetime value signed
+            </p>
+          </div>
+        </div>
+
+        {/* Metric 3: Active Exposure Risk */}
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-start gap-4">
+          <div className="p-3 bg-orange-50 text-orange-600 rounded-xl border border-orange-100/40 shrink-0">
+            <AlertTriangle size={18} />
+          </div>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+              Live Risk Exposure
+            </p>
+            <p className="text-2xl font-black text-orange-600 tracking-tight">
+              KES{" "}
+              {metrics.totalExposure.toLocaleString(undefined, {
+                maximumFractionDigits: 0,
+              })}
+            </p>
+            <p className="text-[11px] text-slate-400 font-medium truncate">
+              Unreleased liabilities active on loop
+            </p>
+          </div>
+        </div>
+
+        {/* Metric 4: Total Structured Operations Loop */}
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-start gap-4">
+          <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100/40 shrink-0">
+            <Activity size={18} />
+          </div>
+          <div className="space-y-0.5 min-w-0">
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
+              Underwriting Loops
+            </p>
+            <p className="text-2xl font-black text-slate-900 tracking-tight">
+              {metrics.totalActiveLoans + metrics.totalPendingLoans}
+            </p>
+            <p className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5 truncate">
+              <span className="text-emerald-600 font-bold">
+                {metrics.totalActiveLoans} Live
+              </span>{" "}
+              • <span>{metrics.totalPendingLoans} Pipeline</span>
+            </p>
+          </div>
         </div>
       </div>
 

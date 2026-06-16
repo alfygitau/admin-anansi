@@ -86,9 +86,9 @@ export default function Homelayer() {
       ],
     },
     {
-      id: "products",
-      label: "Products",
-      path: "/admin/products",
+      id: "accounts",
+      label: "Portfolio Accounts",
+      path: "/admin/accounts",
       icon: <Wallet size={18} />,
     },
   ];

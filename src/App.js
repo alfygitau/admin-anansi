@@ -20,6 +20,7 @@ import Guarantors from "./pages/loans/guarantors/Guarantors";
 import AllMembers from "./pages/members/AllMembers";
 import MemberDetails from "./pages/members/Member";
 import AccountDetails from "./pages/members/AccountDetails";
+import Accounts from "./pages/portfolio-accounts/PortfolioAccounts";
 
 function App() {
   return (
@@ -49,6 +50,8 @@ function App() {
         <Route path="all-members" element={<AllMembers />} />
         <Route path="all-members/:id" element={<MemberDetails />} />
         <Route path="all-members/account/:id" element={<AccountDetails />} />
+
+        <Route path="accounts" element={<Accounts />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />

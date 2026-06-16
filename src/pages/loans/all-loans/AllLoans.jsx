@@ -8,10 +8,17 @@ import {
   AlertTriangle,
   Smartphone,
 } from "lucide-react";
+import Pagination from "../../../components/pagination/Pagination";
 
 export default function AllLoans() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+
+  // 1. Process standard slice boundaries
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
   const loanRecords = [
     {
@@ -226,6 +233,11 @@ export default function AllLoans() {
     },
   ];
 
+  const currentMembersPage = loanRecords.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
+
   const filteredLoans = loanRecords.filter((loan) => {
     const matchesSearch =
       loan.loan_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -244,7 +256,7 @@ export default function AllLoans() {
       <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-6">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-            Loans Ledger Registry
+            Loans Registry
           </h2>
           <p className="text-xs text-slate-400 font-medium mt-1">
             Track active portfolio amortization lines, analyze repayment
@@ -464,6 +476,16 @@ export default function AllLoans() {
             ))}
           </tbody>
         </table>
+
+        <div className="w-full">
+          <Pagination
+            currentPage={currentPage}
+            totalItems={loanRecords.length}
+            itemsPerPage={itemsPerPage}
+            onPageChange={setCurrentPage}
+            onItemsPerPageChange={setItemsPerPage}
+          />
+        </div>
       </div>
     </div>
   );

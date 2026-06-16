@@ -519,7 +519,7 @@ export default function AllMembers() {
   return (
     <div className="w-full space-y-6 antialiased text-slate-800">
       {/* HEADER CONTROLS BANNER */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
+      <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-slate-900">
             Members Registry

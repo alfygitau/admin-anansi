@@ -416,7 +416,7 @@ export default function AccountsPage() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-slate-50/50 antialiased text-slate-800">
+    <div className="w-full bg-slate-50/50 antialiased text-slate-800">
       {/* 1. MANAGEMENT NAV BREADCRUMB HEADER */}
       <div className="mb-8 border-b border-slate-200/60 pb-6 select-none">
         <div className="flex items-center gap-2 text-xs font-bold text-slate-400">

@@ -238,7 +238,7 @@ export default function LoanApplications() {
       {/* 1. UPPER EXECUTIVE COMMAND BAR */}
       <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-6">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-2xl font-bold tracking-tight text-primary">
             Loan Applications
           </h2>
           <p className="text-xs text-slate-400 font-medium mt-1">
@@ -290,7 +290,7 @@ export default function LoanApplications() {
           <TabToggle
             active={activeTab === "approved"}
             onClick={() => setActiveTab("approved")}
-            label="Approved Pipeline"
+            label="Approved"
           />
         </div>
 

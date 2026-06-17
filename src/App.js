@@ -21,6 +21,9 @@ import AllMembers from "./pages/members/AllMembers";
 import MemberDetails from "./pages/members/Member";
 import AccountDetails from "./pages/members/AccountDetails";
 import Accounts from "./pages/portfolio-accounts/PortfolioAccounts";
+import AdminLogin from "./pages/auth/Login";
+import VerifyLogin from "./pages/auth/VerifyLogin";
+import MemberAccounts from "./pages/portfolio-accounts/MemberAccounts";
 
 function App() {
   return (
@@ -52,9 +55,13 @@ function App() {
         <Route path="all-members/account/:id" element={<AccountDetails />} />
 
         <Route path="accounts" element={<Accounts />} />
+        <Route path="accounts/:id" element={<MemberAccounts />} />
       </Route>
 
-      <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+      <Route path="/" element={<AdminLogin />} />
+      <Route path="auth/verify-login" element={<VerifyLogin />} />
+
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

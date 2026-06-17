@@ -16,7 +16,6 @@ import {
   Settings,
   HelpCircle,
   User,
-  ShieldCheck,
 } from "lucide-react";
 import { FourCircles } from "../shared/Circles";
 
@@ -428,7 +427,7 @@ export default function Homelayer() {
                   {/* Functional Dropdown Direct Options */}
                   <DropdownLinkRow
                     icon={<User size={14} />}
-                    title="My Profile Account"
+                    title="My Profile"
                     onClick={() => {
                       navigate("/admin/profile");
                       setIsProfileOpen(false);
@@ -436,17 +435,9 @@ export default function Homelayer() {
                   />
                   <DropdownLinkRow
                     icon={<Settings size={14} />}
-                    title="Console Configs"
+                    title="Settings"
                     onClick={() => {
                       navigate("/admin/settings");
-                      setIsProfileOpen(false);
-                    }}
-                  />
-                  <DropdownLinkRow
-                    icon={<ShieldCheck size={14} />}
-                    title="Audit Log Parameters"
-                    onClick={() => {
-                      navigate("/admin/compliance");
                       setIsProfileOpen(false);
                     }}
                   />
@@ -462,7 +453,7 @@ export default function Homelayer() {
                     className="w-full h-9 flex items-center gap-2.5 px-3 rounded-lg text-left text-xs font-bold text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
                   >
                     <LogOut size={14} />
-                    <span>Terminate Session</span>
+                    <span>Logout</span>
                   </button>
                 </div>
               )}

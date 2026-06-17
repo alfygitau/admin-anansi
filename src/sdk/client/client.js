@@ -11,7 +11,7 @@ client.interceptors.request.use(
   (request) => {
     const authData = localStorage.getItem("auth");
     const parsed = authData ? JSON.parse(authData) : null;
-    const accessToken = parsed?.tokens?.access_token;
+    const accessToken = parsed?.tokens?.accessToken;
     if (accessToken) {
       request.headers.Authorization = `Bearer ${accessToken}`;
     }

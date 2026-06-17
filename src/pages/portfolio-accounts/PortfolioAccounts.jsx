@@ -416,14 +416,14 @@ export default function AccountsPage() {
               setSelectedProduct(null);
               setSelectedAccount(null);
             }}
-            className="hover:text-slate-900 transition-colors cursor-pointer"
+            className="hover:text-primary transition-colors cursor-pointer"
           >
             Product Catalog
           </button>
           {selectedProduct && (
             <>
               <ChevronLeft size={12} className="text-slate-300" />
-              <span className="text-slate-900 font-semibold">
+              <span className="text-primary font-semibold">
                 {selectedProduct.name} Active Registry
               </span>
             </>
@@ -431,7 +431,7 @@ export default function AccountsPage() {
         </div>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-2xl font-black text-primary tracking-tight">
               {selectedProduct
                 ? `${selectedProduct.name} Account Registry`
                 : "SACCO Financial Products"}
@@ -443,7 +443,7 @@ export default function AccountsPage() {
             </p>
           </div>
           {selectedProduct && (
-            <button className="flex items-center gap-2 h-10 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-3xs cursor-pointer">
+            <button className="flex items-center gap-2 h-10 px-4 bg-primary hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition-all shadow-3xs cursor-pointer">
               <PlusCircle size={14} /> Provision New Account
             </button>
           )}
@@ -467,7 +467,7 @@ export default function AccountsPage() {
                   >
                     {prod.icon}
                   </div>
-                  <h3 className="font-extrabold text-slate-900 text-lg group-hover:text-primary transition-colors">
+                  <h3 className="font-extrabold text-primary text-lg group-hover:text-primary transition-colors">
                     {prod.name}
                   </h3>
                 </div>
@@ -499,7 +499,7 @@ export default function AccountsPage() {
               {/* Action trigger deck base link */}
               <button
                 onClick={() => setSelectedProduct(prod)}
-                className="w-full mt-6 h-11 border border-slate-200 text-slate-700 bg-white group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-3xs"
+                className="w-full mt-6 h-11 border border-slate-200 text-slate-700 bg-white group-hover:bg-primary group-hover:text-white group-hover:border-primary rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer shadow-3xs"
               >
                 <span>Access Member Accounts</span>
                 <ArrowRight
@@ -566,7 +566,7 @@ export default function AccountsPage() {
                     >
                       {/* Col A: Identity */}
                       <td className="py-4 px-6">
-                        <span className="font-mono text-slate-900 font-bold tracking-tight text-sm">
+                        <span className="font-mono text-primary font-bold tracking-tight text-sm">
                           {acc.account_identity.account_number.replace(
                             /(\d{4})(\d{5})(\d{4})/,
                             "$1-$2-$3",
@@ -588,7 +588,7 @@ export default function AccountsPage() {
 
                       {/* Col C: Total Balances */}
                       <td className="py-4 px-6 text-right">
-                        <span className="font-mono text-slate-900 font-black text-sm">
+                        <span className="font-mono text-primary font-black text-sm">
                           {acc.account_identity.currency_code}{" "}
                           {Number(
                             acc.core_financial_ledger.current_balance,
@@ -679,7 +679,7 @@ export default function AccountsPage() {
                       <td className="py-4 px-6 text-right pr-8">
                         <button
                           onClick={() => setSelectedAccount(acc)}
-                          className="size-8 rounded-xl border border-slate-200 inline-flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
+                          className="size-8 rounded-xl border border-slate-200 inline-flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
                         >
                           <Eye size={13} />
                         </button>
@@ -707,7 +707,7 @@ export default function AccountsPage() {
       {selectedAccount && (
         <div className="fixed inset-0 z-50 flex justify-end select-none">
           <div
-            className="absolute inset-0 bg-slate-900/10 backdrop-blur-xs transition-opacity duration-200"
+            className="absolute inset-0 bg-primary/10 backdrop-blur-xs transition-opacity duration-200"
             onClick={() => setSelectedAccount(null)}
           />
           <div className="fixed top-0 right-0 h-screen w-full max-w-lg bg-white shadow-2xl border-l border-slate-200 p-8 overflow-y-auto flex flex-col justify-between animate-in slide-in-from-right duration-200 z-50">
@@ -718,7 +718,7 @@ export default function AccountsPage() {
                   <span className="text-[9px] font-extrabold text-purple-700 uppercase tracking-widest bg-purple-50 border border-purple-100 px-2 py-0.5 rounded-md">
                     Account Integrity Audit
                   </span>
-                  <h3 className="text-lg font-black text-slate-900 tracking-tight pt-1">
+                  <h3 className="text-lg font-black text-primary tracking-tight pt-1">
                     {selectedAccount.account_identity.customer_name}
                   </h3>
                   <div className="flex items-center gap-1 text-xs font-mono text-slate-400 bg-slate-50 p-2 rounded-xl border border-slate-100 mt-1">
@@ -933,7 +933,7 @@ export default function AccountsPage() {
               <button className="flex-1 h-11 bg-slate-50 border border-slate-200 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-xl transition-all cursor-pointer">
                 Modify Restrictions
               </button>
-              <button className="flex-1 h-11 bg-slate-900 text-white hover:bg-slate-800 text-xs font-bold rounded-xl transition-all cursor-pointer">
+              <button className="flex-1 h-11 bg-primary text-white hover:bg-slate-800 text-xs font-bold rounded-xl transition-all cursor-pointer">
                 Adjust Balance Node
               </button>
             </div>
@@ -958,7 +958,7 @@ const DrawerMetaBlock = ({
     <span
       className={`block font-mono text-xs mt-0.5 ${
         isBold
-          ? "font-bold text-slate-900"
+          ? "font-bold text-primary"
           : isEmerald
             ? "font-bold text-emerald-600"
             : isRose

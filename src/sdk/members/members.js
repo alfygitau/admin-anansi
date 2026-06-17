@@ -38,3 +38,12 @@ export const getMembers = async (
     throw error?.response?.data || error;
   }
 };
+
+export const getMember = async (id) => {
+  try {
+    const response = await client.get(`/customer/${id}`);
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

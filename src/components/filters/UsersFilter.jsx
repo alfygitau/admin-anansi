@@ -21,9 +21,6 @@ const UsersFilter = ({ isOpen, onClose, filters, setFilters, roles }) => {
   const statusOptions = [
     { value: "", label: "Select status..." },
     { value: "Active", label: "Active" },
-    { value: "Incomplete", label: "Incomplete" },
-    { value: "Pending Payment", label: "Pending Payment" },
-    { value: "Pending Verification", label: "Pending Verification" },
     { value: "Cancelled", label: "Cancelled" },
     { value: "Suspended", label: "Suspended" },
   ];
@@ -177,8 +174,8 @@ const UsersFilter = ({ isOpen, onClose, filters, setFilters, roles }) => {
                           : "text-slate-400 font-medium"
                       }
                     >
-                      {roles.find((opt) => opt.name === filters.role)
-                        ?.name || "Select role..."}
+                      {roles.find((opt) => opt.name === filters.role)?.name ||
+                        "Select role..."}
                     </span>
                     <ChevronDown
                       size={16}

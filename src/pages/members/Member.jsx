@@ -16,87 +16,20 @@ import {
   Building,
   Maximize2,
   Edit,
+  EyeOff,
+  Eye,
 } from "lucide-react";
+import { useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import { getMember } from "../../sdk/members/members";
+import { useToast } from "../../contexts/ToastProvider";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function MemberDetails({ onBack }) {
-  // Complete synchronized production data instance
-  const [member, setMember] = useState({
-    id: "cdac864c-35fe-bcf4-6cc6-cbfb64ede83d",
-    firstname: "MARCEL",
-    middlename: "AUJA",
-    lastname: "OGWENO",
-    identification: "25973919",
-    identification_type: "National ID",
-    mobileno: "+254780228024",
-    country_of_residence: "Kenya",
-    dob: "1988-03-24",
-    kraPin: "A123456789P",
-    ssn: null,
-    occupation: "CTO",
-    employment_type: "Employed",
-    income_range: "50000",
-    email: "a.marcel77+@gmail.com",
-    username: "marcello2",
-    phoneVerified: true,
-    emailVerified: true,
-    suspended: false,
-    temporary_password: false,
-    failedLoginAttempts: 0,
-    citizenship: "Kenya",
-    application_id: null,
-    gender: "MALE",
-    id_front_image:
-      "https://anansi-dev.s3.eu-west-1.amazonaws.com/9bbadf2b-8997-498c-9558-5b80a46cc5a7-088819f8-9a5c-489b-ab2e-66849e5893453209560105267277758.jpg",
-    id_back_image:
-      "https://anansi-dev.s3.eu-west-1.amazonaws.com/6a38195d-ed4c-4c3e-b666-145194302f5d-101ff49b-02a6-4ef5-a1c7-f50af070af3e1010572844791680.jpg",
-    passport_image: null,
-    selfie_image:
-      "https://anansi-dev.s3.eu-west-1.amazonaws.com/083d299d-f4dc-4bf2-b556-42334136c8a5-74ff88d0-08cd-465b-a31f-73e65bac915f3843724028756212444.jpg",
-    profile_photo: null,
-    driving_license_image: null,
-    member: true,
-    createdAt: "2026-05-19T12:18:10.072Z",
-    updatedAt: "2026-05-19T20:40:04.172Z",
-    deleteAt: null,
-    lastLoginAt: "2026-05-19T20:40:04.155Z",
-    onboarding_stage: "completed",
-    status: "Active",
-    product_id: null,
-    public_id: "SJS394",
-    nextOfKins: [
-      {
-        id: 1318,
-        name: "Dom",
-        relationship: "cousin",
-        phoneNumber: "+254722223735",
-        location: "Kawangware",
-      },
-    ],
-    addresses: [
-      {
-        id: "e6d05fc9",
-        physical_address: "kiambaa pcea",
-        county: "Kiambu",
-        subcounty: "Kiambaa",
-      },
-    ],
-    accounts: [
-      {
-        id: "4090b303",
-        name: "Savings",
-        account_number: "0100100002985",
-        balance: "1.00",
-        status: "active",
-      },
-      {
-        id: "ca6752fc",
-        name: "Shares",
-        account_number: "0100900002986",
-        balance: "2000.00",
-        status: "active",
-      },
-    ],
-  });
+  const { id } = useParams();
+  const [member, setMember] = useState({});
+  const { showToast } = useToast();
+  const [showImages, setShowImages] = useState(false);
 
   const toggleSuspension = () => {
     setMember((prev) => ({
@@ -105,6 +38,25 @@ export default function MemberDetails({ onBack }) {
       status: prev.suspended ? "Active" : "Suspended",
     }));
   };
+
+  useQuery({
+    queryKey: ["get member", id],
+    queryFn: async () => {
+      const response = await getMember(id);
+      return response?.data?.data;
+    },
+    onSuccess: (data) => {
+      setMember(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Member processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
   return (
     <div className="w-full space-y-6 font-sans antialiased text-slate-800 p-1">
@@ -151,7 +103,7 @@ export default function MemberDetails({ onBack }) {
         </div>
       </div>
 
-      {/* 2. THE HIGHER LEVEL SECTION - METRICS TILES GRID (ROW HEIGHT BALANCED) */}
+      {/* 2. FIRST ROW: IDENTITY, ADDRESS, AND FINANCIAL PROFILE GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
         {/* CARD A: CORE IDENTITY PARAMETERS */}
         <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 flex flex-col justify-between h-full">
@@ -163,6 +115,9 @@ export default function MemberDetails({ onBack }) {
               <Edit size={14} className="text-slate-400" />
             </div>
             <div className="grid grid-cols-2 gap-4 text-xs font-medium border-t border-slate-100 pt-3">
+              <ProfileMetaBlock label="First Name" value={member.firstname} />
+              <ProfileMetaBlock label="Middle Name" value={member.middlename} />
+              <ProfileMetaBlock label="Last Name" value={member.lastname} />
               <ProfileMetaBlock
                 label="Identification"
                 value={`${member.identification_type} — ${member.identification}`}
@@ -170,19 +125,13 @@ export default function MemberDetails({ onBack }) {
               <ProfileMetaBlock label="KRA PIN" value={member.kraPin} />
               <ProfileMetaBlock label="Date of Birth" value={member.dob} />
               <ProfileMetaBlock label="Gender" value={member.gender} />
-              <ProfileMetaBlock
-                label="Citizenship"
-                value={member.citizenship}
-              />
-              <ProfileMetaBlock
-                label="Residence Frame"
-                value={member.country_of_residence}
-              />
+              <ProfileMetaBlock label="Mobile Number" value={member.mobileno} />
+              <ProfileMetaBlock label="Email Address" value={member.email} />
             </div>
           </div>
         </div>
 
-        {/* CARD B: NEW DEDICATED HIGH-DETAIL ADDRESS REGISTRY */}
+        {/* CARD B: ADDRESS REGISTRY */}
         <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 flex flex-col justify-between h-full">
           <div className="space-y-4">
             <div className="w-full flex items-center justify-between">
@@ -191,11 +140,15 @@ export default function MemberDetails({ onBack }) {
               </h3>
               <Edit size={14} className="text-slate-400" />
             </div>
-            {member.addresses.map((addr) => (
+            {member?.addresses?.map((addr) => (
               <div
                 key={addr.id}
                 className="space-y-3.5 border-t border-slate-100 pt-3"
               >
+                <ProfileMetaBlock
+                  label="Citizenship"
+                  value={member.citizenship}
+                />
                 <div className="p-3.5 bg-slate-50/70 border border-slate-200/40 rounded-xl">
                   <p className="text-[9px] text-slate-400 font-bold uppercase tracking-wide">
                     Primary Physical Address
@@ -231,7 +184,114 @@ export default function MemberDetails({ onBack }) {
           </div>
         </div>
 
-        {/* CARD C: SECURITY, ACCESS & ACCESS SYSTEM CONTROL */}
+        {/* CARD C: FINANCIAL PROFILE (MOVED FROM MIDDLE LAYER SIDE PANEL) */}
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4 h-full">
+          <div className="w-full flex items-center justify-between">
+            <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
+              <Briefcase size={14} /> Financial Profile
+            </h3>
+            <Edit size={14} className="text-slate-400" />
+          </div>
+          <div className="space-y-4 pt-1 text-xs font-medium">
+            <div className="flex items-start gap-2.5">
+              <Briefcase size={14} className="text-slate-400 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                  Employed Type
+                </p>
+                <p className="text-slate-900 font-bold mt-0.5">
+                  {member.employment_type}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2.5">
+              <Briefcase size={14} className="text-slate-400 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                  Employment
+                </p>
+                <p className="text-slate-900 font-bold mt-0.5">
+                  {member.occupation}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2.5 border-t border-slate-50 pt-3">
+              <Mail size={14} className="text-slate-400 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                  Contact
+                </p>
+                <p className="text-slate-400 text-[11px] font-normal mt-0.5">
+                  {member.email}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-2.5 border-t border-slate-50 pt-3">
+              <Building size={14} className="text-slate-400 mt-0.5 shrink-0" />
+              <div>
+                <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                  Income
+                </p>
+                <p className="text-slate-900 font-mono font-bold mt-0.5">
+                  KES {Number(member.income_range).toFixed(2)}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 3. SECOND ROW: ACCOUNTS AND SECURITY OVERLAY MATRIX */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        {/* FINANCIAL LEDGER ACCOUNTS CARD (SPANS 2 COLS) */}
+        <div className="lg:col-span-2 flex">
+          <div className="w-full bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4 flex flex-col justify-between h-full">
+            <div className="space-y-4 flex-1 flex flex-col">
+              <div className="w-full flex items-center justify-between">
+                <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
+                  <CreditCard size={14} /> Accounts
+                </h3>
+              </div>
+              <div className="border border-slate-100 rounded-xl overflow-hidden flex-1 bg-white">
+                <table className="w-full text-left border-collapse table-auto text-xs font-medium">
+                  <thead>
+                    <tr className="bg-slate-50/70 border-b border-slate-100 text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+                      <th className="p-3.5 px-4">Account Portfolio Product</th>
+                      <th className="p-3.5">Account Number</th>
+                      <th className="p-3.5 text-right">Account Balance</th>
+                      <th className="p-3.5 text-center">State</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {member?.accounts?.map((acc) => (
+                      <tr
+                        key={acc.id}
+                        className="hover:bg-slate-50/50 transition-colors"
+                      >
+                        <td className="p-3.5 px-4 font-bold text-slate-900">
+                          {acc.name}
+                        </td>
+                        <td className="p-3.5 cursor-pointer font-mono text-blue-500">
+                          {acc.account_number}
+                        </td>
+                        <td className="p-3.5 text-right font-bold text-slate-900">
+                          KES {Number(acc.balance).toFixed(2)}
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100">
+                            {acc.status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* SECURITY SCREENING HUB SIDE PANEL */}
         <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 h-full flex flex-col justify-between">
           <div className="space-y-4">
             <div className="w-full flex items-center justify-between">
@@ -294,181 +354,210 @@ export default function MemberDetails({ onBack }) {
         </div>
       </div>
 
-      {/* 3. MIDDLE LAYER ROW PLATFORM - LEDGERS & CAPACITY METRICS */}
+      {/* 4. THIRD ROW: NEXT OF KIN & LOAN GUARANTEES PROFILE BLOCK */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        {/* FINANCIAL LEDGER ACCOUNTS CARD (SPANS 2 COLS ON LARGE DESKTOP) */}
-        <div className="lg:col-span-2 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4">
-            <div className="w-full flex items-center justify-between">
-              <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
-                <CreditCard size={14} /> Accounts
-              </h3>
-            </div>
-            <div className="border border-slate-100 rounded-xl overflow-hidden">
-              <table className="w-full text-left border-collapse table-auto text-xs font-medium">
-                <thead>
-                  <tr className="bg-slate-50/70 border-b border-slate-100 text-[10px] text-slate-400 uppercase font-bold tracking-wider">
-                    <th className="p-3.5 px-4">Account Portfolio Product</th>
-                    <th className="p-3.5">Account Number</th>
-                    <th className="p-3.5 text-right">Account Balance</th>
-                    <th className="p-3.5 text-center">State</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
-                  {member.accounts.map((acc) => (
-                    <tr
-                      key={acc.id}
-                      className="hover:bg-slate-50/50 transition-colors"
-                    >
-                      <td className="p-3.5 px-4 font-bold text-slate-900">
-                        {acc.name}
-                      </td>
-                      <td className="p-3.5 cursor-pointer font-mono text-blue-500">
-                        {acc.account_number}
-                      </td>
-                      <td className="p-3.5 text-right font-bold text-slate-900">
-                        KES {Number(acc.balance).toFixed(2)}
-                      </td>
-                      <td className="p-3.5 text-center">
-                        <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100">
-                          {acc.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+        {/* NEXT OF KIN PANEL (SPANS 2 COLUMNS) */}
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4">
+          <div className="w-full flex items-center justify-between">
+            <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
+              <Users size={14} /> Next of Kin
+            </h3>
+            <Edit size={14} className="text-slate-400 cursor-pointer" />
           </div>
-
-          {/* EMERGENCY CONTINGENCY SYSTEM HANDLERS CONTAINER */}
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4">
-            <div className="w-full flex items-center justify-between">
-              <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
-                <Users size={14} /> Next of Kin
-              </h3>
-              <Edit size={14} className="text-slate-400" />
-            </div>
-            {member.nextOfKins.map((kin) => (
+          <div className="space-y-3">
+            {member?.nextOfKins?.map((kin) => (
               <div
                 key={kin.id}
-                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-slate-100 bg-slate-50/40 rounded-xl text-xs font-medium"
+                className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 border border-slate-100 bg-slate-50/40 rounded-xl text-xs font-medium"
               >
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase">
-                    Legal Fullname
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                    Full Name
                   </p>
-                  <p className="text-slate-900 font-bold mt-0.5">{kin.name}</p>
+                  <p className="text-slate-900 font-bold mt-0.5">
+                    {kin.name || "—"}
+                  </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase">
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wide">
                     Relationship
                   </p>
                   <p className="text-slate-600 capitalize mt-0.5">
-                    {kin.relationship}
+                    {kin.relationship || "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase">
-                    Contact
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                    Phone Number
                   </p>
                   <p className="text-slate-700 font-mono mt-0.5">
-                    {kin.phoneNumber}
+                    {kin.phoneNumber || "—"}
                   </p>
                 </div>
                 <div>
-                  <p className="text-[10px] text-slate-400 uppercase">
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wide">
                     Location
                   </p>
-                  <p className="text-slate-500 mt-0.5">{kin.location}</p>
+                  <p className="text-slate-500 mt-0.5">{kin.location || "—"}</p>
                 </div>
               </div>
             ))}
+            {(!member?.nextOfKins || member?.nextOfKins.length === 0) && (
+              <p className="text-xs text-slate-400 italic py-2">
+                No next of kin records registered.
+              </p>
+            )}
           </div>
         </div>
 
-        {/* ECONOMIC TIERS AND CAPACITY PROFILE SPEC (1 COL SIDE PANEL) */}
+        {/* NEW CARD: LOAN GUARANTEES INFRASTRUCTURE PANEL (1 COLUMN) */}
         <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4 h-full">
           <div className="w-full flex items-center justify-between">
             <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
-              <Briefcase size={14} /> Financial Profile
+              <ShieldCheck size={14} className="text-emerald-600" /> Guarantee
+              Status
             </h3>
-            <Edit size={14} className="text-slate-400" />
           </div>
+
           <div className="space-y-4 pt-1 text-xs font-medium">
-            <div className="flex items-start gap-2.5">
-              <Briefcase size={14} className="text-slate-400 mt-0.5 shrink-0" />
+            {/* 1. Total Money Pledged as Guarantees */}
+            <div className="flex items-start justify-between border-b border-slate-50 pb-3">
               <div>
                 <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                  Employment
+                  Total Guaranteed
                 </p>
-                <p className="text-slate-900 font-bold mt-0.5">
-                  {member.occupation} • {member.employment_type}
+                <p className="text-slate-400 text-[10px] font-normal mt-0.5">
+                  Total money pledged to back other members
                 </p>
               </div>
+              <span className="font-mono font-bold text-slate-900 text-right shrink-0">
+                KES{" "}
+                {Number(member?.totalGuaranteed || 0).toLocaleString(
+                  undefined,
+                  { minimumFractionDigits: 2 },
+                )}
+              </span>
             </div>
-            <div className="flex items-start gap-2.5 border-t border-slate-50 pt-3">
-              <Mail size={14} className="text-slate-400 mt-0.5 shrink-0" />
+
+            {/* 2. Outstanding Active Risk Exposure */}
+            <div className="flex items-start justify-between border-b border-slate-50 pb-3">
               <div>
                 <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                  Contact
+                  Active Risk Exposure
                 </p>
-                <p className="text-slate-800 font-semibold mt-0.5">
-                  {member.mobileno}
-                </p>
-                <p className="text-slate-400 text-[11px] font-normal mt-0.5">
-                  {member.email}
+                <p className="text-slate-400 text-[10px] font-normal mt-0.5">
+                  Remaining balance on loans currently backed
                 </p>
               </div>
+              <span className="font-mono font-bold text-rose-600 text-right shrink-0">
+                KES{" "}
+                {Number(member?.totalOutstandingExposure || 0).toLocaleString(
+                  undefined,
+                  { minimumFractionDigits: 2 },
+                )}
+              </span>
             </div>
-            <div className="flex items-start gap-2.5 border-t border-slate-50 pt-3">
-              <Building size={14} className="text-slate-400 mt-0.5 shrink-0" />
+
+            {/* 3. Available Leftover Guarantee Power */}
+            <div className="flex items-start justify-between pt-1">
               <div>
                 <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                  Income
+                  Available Guarantee Limit
                 </p>
-                <p className="text-slate-900 font-mono font-bold mt-0.5">
-                  KES {Number(member.income_range).toFixed(2)}
+                <p className="text-slate-400 text-[10px] font-normal mt-0.5">
+                  Remaining capacity to guarantee new loans
                 </p>
               </div>
+              <span className="font-mono font-bold text-emerald-600 text-right shrink-0">
+                KES{" "}
+                {Number(
+                  member?.availableGuaranteePotential || 0,
+                ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+              </span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* 4. LARGE KYC IMAGE GALLERY SYSTEM (EXPANDED TO FULL SCREEN ROW WIDTH) */}
-      <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4">
-        <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
-          <FileText size={14} /> ID Images
-        </h3>
+      {/* 5. FOURTH ROW: LARGE KYC IMAGE GALLERY SYSTEM */}
+      {/* 5. FOURTH ROW: EXPANDABLE KYC IMAGE GALLERY SYSTEM */}
+      <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6">
+        {/* Action Header / Trigger */}
+        <div
+          className="w-full flex items-center justify-between cursor-pointer group select-none"
+          onClick={() => setShowImages(!showImages)}
+        >
+          <div className="space-y-1">
+            <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
+              <FileText size={14} /> ID Images & KYC Documents
+            </h3>
+            {!showImages && (
+              <p className="text-[11px] text-slate-400 font-medium pl-5">
+                Identity documents are hidden by default for privacy. Click to
+                reveal.
+              </p>
+            )}
+          </div>
 
-        {/* Large Format Layout Block mapping out Front, Back and Verification media records */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-2">
-          <KYCDocLarge
-            label="National Identity Card (Front View Asset)"
-            url={member.id_front_image}
-          />
-          <KYCDocLarge
-            label="National Identity Card (Reverse View Asset)"
-            url={member.id_back_image}
-          />
-          <KYCDocLarge
-            label="System Onboarding Selfie Biometric"
-            url={member.selfie_image}
-          />
+          <button
+            className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all ${
+              showImages
+                ? "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                : "bg-blue-50 text-[#074073] hover:bg-blue-100"
+            }`}
+          >
+            {showImages ? (
+              <>
+                <EyeOff size={14} /> Hide Documents
+              </>
+            ) : (
+              <>
+                <Eye size={14} /> View Documents
+              </>
+            )}
+          </button>
         </div>
 
-        {/* Dynamic Fallback lists checking out tertiary records */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 pt-4 mt-2">
-          <KYCLabelOnlyFallback
-            label="International Passport Secure Book"
-            checked={member.passport_image}
-          />
-          <KYCLabelOnlyFallback
-            label="National Regulatory Driving License Document"
-            checked={member.driving_license_image}
-          />
-        </div>
+        {/* Expandable Animated Content */}
+        <AnimatePresence>
+          {showImages && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3, ease: "easeInOut" }}
+              className="overflow-hidden"
+            >
+              <div className="pt-6 mt-2 border-t border-slate-100">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <KYCDocLarge
+                    label="National Identity Card (Front View Asset)"
+                    url={member.id_front_image}
+                  />
+                  <KYCDocLarge
+                    label="National Identity Card (Reverse View Asset)"
+                    url={member.id_back_image}
+                  />
+                  <KYCDocLarge
+                    label="System Onboarding Selfie Biometric"
+                    url={member.selfie_image}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 pt-5 mt-6">
+                  <KYCLabelOnlyFallback
+                    label="International Passport Secure Book"
+                    checked={member.passport_image}
+                  />
+                  <KYCLabelOnlyFallback
+                    label="National Regulatory Driving License Document"
+                    checked={member.driving_license_image}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

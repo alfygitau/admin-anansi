@@ -136,6 +136,18 @@ export default function AllUsers() {
     },
   });
 
+  const handleResetFilters = () => {
+    setFilters({
+      page: 1,
+      limit: 10,
+      q: "",
+      status: "",
+      role: "",
+      fromDate: "",
+      toDate: "",
+    });
+  };
+
   return (
     <>
       <UsersFilter
@@ -239,146 +251,186 @@ export default function AllUsers() {
             </thead>
 
             <tbody className="divide-y divide-slate-100 text-xs tracking-tight">
-              {adminUsers?.map((user) => (
-                <tr
-                  key={user.id}
-                  className="group transition-colors hover:bg-slate-50/60"
-                >
-                  {/* Col 1: Identity Profile Snapshot */}
-                  <td className="py-4 px-6">
-                    <div className="flex flex-col space-y-1.5">
-                      <div className="flex items-center gap-2">
-                        <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
-                          {user.public_id}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-medium tracking-wide">
-                          @{user.username}
+              {adminUsers?.length > 0 ? (
+                adminUsers?.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="group transition-colors hover:bg-slate-50/60"
+                  >
+                    {/* Col 1: Identity Profile Snapshot */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col space-y-1.5">
+                        <div className="flex items-center gap-2">
+                          <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
+                            {user.public_id}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-medium tracking-wide">
+                            @{user.username}
+                          </span>
+                        </div>
+                        <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
+                          {user.firstname} {user.lastname}
                         </span>
                       </div>
-                      <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
-                        {user.firstname} {user.lastname}
-                      </span>
-                    </div>
-                  </td>
+                    </td>
 
-                  {/* Col 2: Communications Matrix */}
-                  <td className="py-4 px-6">
-                    <div className="flex flex-col space-y-1">
-                      <span className="font-medium text-slate-700 flex items-center gap-1.5">
-                        <Mail size={12} className="text-slate-400" />{" "}
-                        {user.email}
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-normal flex items-center gap-1.5">
-                        <Smartphone size={12} className="text-slate-400" />{" "}
-                        {user.phone}
-                      </span>
-                    </div>
-                  </td>
-
-                  {/* Col 3: Department Corporate Structure */}
-                  <td className="py-4 px-6">
-                    <div className="flex flex-col space-y-1">
-                      <span className="font-semibold text-slate-800 flex items-center gap-1.5">
-                        <Building2 size={12} className="text-slate-400" />{" "}
-                        {user.department}
-                      </span>
-                      <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
-                        <MapPin size={12} className="text-slate-400" />{" "}
-                        {user.address || "Main Branch"}
-                      </span>
-                    </div>
-                  </td>
-
-                  {/* Col 4: RBAC Assigned Framework */}
-                  <td className="py-4 px-6">
-                    <div className="flex flex-col space-y-1">
-                      <span className="font-bold text-primary flex items-center gap-1.5 text-xs tracking-tight">
-                        <Key size={12} className="text-primary/70" />{" "}
-                        {user.role.name}
-                      </span>
-                      <p
-                        className="text-[10px] text-slate-400 max-w-[180px] truncate italic"
-                        title={user.role.description}
-                      >
-                        {user.role.description}
-                      </p>
-                    </div>
-                  </td>
-
-                  {/* Col 5: Security Clearance & Telemetry */}
-                  <td className="py-4 px-6">
-                    <div className="flex flex-col space-y-1.5">
-                      <span
-                        className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${
-                          user.status === "Active"
-                            ? "bg-success/5 border-success/10 text-success"
-                            : "bg-error/5 border-error/10 text-error"
-                        }`}
-                      >
-                        <span
-                          className={`size-1 rounded-full ${user.status === "Active" ? "bg-success" : "bg-error"}`}
-                        />
-                        {user.status}
-                      </span>
-                      <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
-                        <span className="font-bold text-slate-700">
-                          {user.createdAt}
+                    {/* Col 2: Communications Matrix */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col space-y-1">
+                        <span className="font-medium text-slate-700 flex items-center gap-1.5">
+                          <Mail size={12} className="text-slate-400" />{" "}
+                          {user.email}
                         </span>
-                      </span>
-                    </div>
-                  </td>
+                        <span className="text-[11px] text-slate-400 font-normal flex items-center gap-1.5">
+                          <Smartphone size={12} className="text-slate-400" />{" "}
+                          {user.phone}
+                        </span>
+                      </div>
+                    </td>
 
-                  {/* Col 6: Contextual Row Access Panel */}
-                  <td className="py-4 px-6 text-right pr-8 relative">
-                    <div className="flex items-center justify-end">
-                      <button
-                        onClick={() =>
-                          setActiveMenuId(
-                            activeMenuId === user.id ? null : user.id,
-                          )
-                        }
-                        className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all bg-white cursor-pointer"
-                      >
-                        <MoreVertical size={14} />
-                      </button>
+                    {/* Col 3: Department Corporate Structure */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col space-y-1">
+                        <span className="font-semibold text-slate-800 flex items-center gap-1.5">
+                          <Building2 size={12} className="text-slate-400" />{" "}
+                          {user.department}
+                        </span>
+                        <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5">
+                          <MapPin size={12} className="text-slate-400" />{" "}
+                          {user.address || "Main Branch"}
+                        </span>
+                      </div>
+                    </td>
 
-                      {/* Inline Row Menu Deck Popover */}
-                      {activeMenuId === user.id && (
-                        <div
-                          ref={(el) => {
-                            actionMenuRef.current = el;
-                          }}
-                          className="absolute right-14 mt-2 w-48 bg-white border border-slate-200/80 rounded-xl shadow-xl p-1.5 z-50 text-left animate-in fade-in slide-in-from-top-1 duration-100"
+                    {/* Col 4: RBAC Assigned Framework */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col space-y-1">
+                        <span className="font-bold text-primary flex items-center gap-1.5 text-xs tracking-tight">
+                          <Key size={12} className="text-primary/70" />{" "}
+                          {user.role.name}
+                        </span>
+                        <p
+                          className="text-[10px] text-slate-400 max-w-[180px] truncate italic"
+                          title={user.role.description}
                         >
-                          <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer">
-                            <History size={12} />
-                            <span>View Access Logs</span>
-                          </button>
-                          <button
-                            onClick={() => handleToggleSuspend(user.id)}
-                            className={`w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-semibold transition-colors cursor-pointer ${
-                              user.status === "Active"
-                                ? "text-error hover:bg-rose-50/60"
-                                : "text-success hover:bg-emerald-50/60"
-                            }`}
+                          {user.role.description}
+                        </p>
+                      </div>
+                    </td>
+
+                    {/* Col 5: Security Clearance & Telemetry */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col space-y-1.5">
+                        <span
+                          className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${
+                            user.status === "Active"
+                              ? "bg-success/5 border-success/10 text-success"
+                              : "bg-error/5 border-error/10 text-error"
+                          }`}
+                        >
+                          <span
+                            className={`size-1 rounded-full ${user.status === "Active" ? "bg-success" : "bg-error"}`}
+                          />
+                          {user.status}
+                        </span>
+                        <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                          <span className="font-bold text-slate-700">
+                            {user.createdAt}
+                          </span>
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Col 6: Contextual Row Access Panel */}
+                    <td className="py-4 px-6 text-right pr-8 relative">
+                      <div className="flex items-center justify-end">
+                        <button
+                          onClick={() =>
+                            setActiveMenuId(
+                              activeMenuId === user.id ? null : user.id,
+                            )
+                          }
+                          className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all bg-white cursor-pointer"
+                        >
+                          <MoreVertical size={14} />
+                        </button>
+
+                        {/* Inline Row Menu Deck Popover */}
+                        {activeMenuId === user.id && (
+                          <div
+                            ref={(el) => {
+                              actionMenuRef.current = el;
+                            }}
+                            className="absolute right-14 mt-2 w-48 bg-white border border-slate-200/80 rounded-xl shadow-xl p-1.5 z-50 text-left animate-in fade-in slide-in-from-top-1 duration-100"
                           >
-                            {user.status === "Active" ? (
-                              <UserMinus size={12} />
-                            ) : (
-                              <UserCheck size={12} />
-                            )}
-                            <span>
-                              {user.status === "Active"
-                                ? "Suspend Operator"
-                                : "Restore Access"}
-                            </span>
-                          </button>
-                        </div>
-                      )}
+                            <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer">
+                              <History size={12} />
+                              <span>View Access Logs</span>
+                            </button>
+                            <button
+                              onClick={() => handleToggleSuspend(user.id)}
+                              className={`w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-semibold transition-colors cursor-pointer ${
+                                user.status === "Active"
+                                  ? "text-error hover:bg-rose-50/60"
+                                  : "text-success hover:bg-emerald-50/60"
+                              }`}
+                            >
+                              {user.status === "Active" ? (
+                                <UserMinus size={12} />
+                              ) : (
+                                <UserCheck size={12} />
+                              )}
+                              <span>
+                                {user.status === "Active"
+                                  ? "Suspend Operator"
+                                  : "Restore Access"}
+                              </span>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td
+                    colSpan={6}
+                    className="py-36 px-6 text-center select-none"
+                  >
+                    <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-4">
+                      <div className="w-14 h-14 bg-slate-50 border border-slate-200/60 rounded-2xl flex items-center justify-center text-slate-400 shadow-3xs">
+                        <Search
+                          size={22}
+                          strokeWidth={1.75}
+                          className="text-slate-300"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+                          No users found
+                        </h3>
+                        <p className="text-xs text-slate-400 font-medium leading-relaxed">
+                          We couldn't find any user records matching your
+                          current search terms or advanced drawer filter
+                          parameters.
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          if (typeof handleResetFilters === "function") {
+                            handleResetFilters();
+                          }
+                        }}
+                        className="h-9 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                      >
+                        Clear Active Filters
+                      </button>
                     </div>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
           <Pagination

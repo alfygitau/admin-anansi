@@ -19,12 +19,14 @@ import { useQuery } from "react-query";
 import { useToast } from "../../contexts/ToastProvider";
 import { getMembers } from "../../sdk/members/members";
 import Pagination from "../../components/pagination/Pagination";
+import { useNavigate } from "react-router-dom";
 
 export default function AllMembers() {
   const [members, setMembers] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
   const [selectedMember, setSelectedMember] = useState(null);
   const { showToast } = useToast();
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
@@ -314,7 +316,9 @@ export default function AllMembers() {
                       {/* Col 6: Actions Node */}
                       <td className="py-4 px-6 text-right pr-8">
                         <button
-                          onClick={() => setSelectedMember(member)}
+                          onClick={() =>
+                            navigate(`/admin/all-members/${member?.id}`)
+                          }
                           className="size-8 rounded-xl border border-slate-200/60 inline-flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
                           title="Inspect Profile Dossier"
                         >

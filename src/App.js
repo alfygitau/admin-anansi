@@ -52,7 +52,10 @@ function App() {
 
         <Route path="all-members" element={<AllMembers />} />
         <Route path="all-members/:id" element={<MemberDetails />} />
-        <Route path="all-members/account/:id" element={<AccountDetails />} />
+        <Route
+          path="all-members/account/:id/:accountNumber"
+          element={<AccountDetails />}
+        />
 
         <Route path="accounts" element={<Accounts />} />
         <Route path="accounts/:id" element={<MemberAccounts />} />

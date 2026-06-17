@@ -40,7 +40,7 @@ export default function RolesTable() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  useQuery({
+  const { isFetching } = useQuery({
     queryKey: ["roles"],
     queryFn: async () => {
       const response = await getRoles();
@@ -112,7 +112,52 @@ export default function RolesTable() {
             </thead>
 
             <tbody className="divide-y divide-slate-100 text-xs tracking-tight font-medium">
-              {roles?.length > 0 ? (
+              {isFetching ? (
+                Array.from({ length: 10 }).map((_, i) => (
+                  <tr
+                    key={`skeleton-${i}`}
+                    className="animate-pulse border-b border-slate-100"
+                  >
+                    {/* Col 1: UUID */}
+                    <td className="py-4 px-6">
+                      <div className="h-3 w-20 bg-slate-200 rounded" />
+                    </td>
+
+                    {/* Col 2: Name */}
+                    <td className="py-4 px-6">
+                      <div className="flex items-center gap-2">
+                        <div className="size-5 rounded-md bg-slate-200" />
+                        <div className="h-4 w-28 bg-slate-200 rounded" />
+                      </div>
+                    </td>
+
+                    {/* Col 3: Description */}
+                    <td className="py-4 px-6">
+                      <div className="h-3 w-48 bg-slate-200 rounded" />
+                    </td>
+
+                    {/* Col 4: Claims Button */}
+                    <td className="py-4 px-6">
+                      <div className="h-7 w-28 bg-slate-200 rounded-lg" />
+                    </td>
+
+                    {/* Col 5: Operators Button */}
+                    <td className="py-4 px-6">
+                      <div className="h-7 w-28 bg-slate-200 rounded-lg" />
+                    </td>
+
+                    {/* Col 6: Date */}
+                    <td className="py-4 px-6">
+                      <div className="h-3 w-24 bg-slate-200 rounded" />
+                    </td>
+
+                    {/* Col 7: Action */}
+                    <td className="py-4 px-6 text-right pr-8">
+                      <div className="size-8 rounded-xl bg-slate-200 ml-auto" />
+                    </td>
+                  </tr>
+                ))
+              ) : roles?.length > 0 ? (
                 roles.map((role) => (
                   <tr
                     key={role.id}

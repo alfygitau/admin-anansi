@@ -9,6 +9,8 @@ import {
   Smartphone,
   Check,
   X,
+  Filter,
+  Download,
 } from "lucide-react";
 
 export default function LoanApplications() {
@@ -275,25 +277,6 @@ export default function LoanApplications() {
 
       {/* 3. INTERACTIVE CONTROL STRIP */}
       <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        {/* Toggle Controls */}
-        <div className="flex bg-slate-100 p-1 rounded-xl h-10 w-fit select-none">
-          <TabToggle
-            active={activeTab === "all"}
-            onClick={() => setActiveTab("all")}
-            label="All Enflight"
-          />
-          <TabToggle
-            active={activeTab === "pending"}
-            onClick={() => setActiveTab("pending")}
-            label={`Pending Committee (${metrics.pending})`}
-          />
-          <TabToggle
-            active={activeTab === "approved"}
-            onClick={() => setActiveTab("approved")}
-            label="Approved"
-          />
-        </div>
-
         {/* Dynamic Context Search Bar */}
         <div className="relative w-full md:w-72">
           <Search
@@ -307,6 +290,14 @@ export default function LoanApplications() {
             placeholder="Search by app number or applicant name..."
             className="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-medium outline-none transition-all focus:bg-white focus:border-secondary placeholder:text-slate-400 font-sans"
           />
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+            <Filter size={13} /> Filter
+          </button>
+          <button className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+            <Download size={13} /> Export
+          </button>
         </div>
       </div>
 

@@ -24,6 +24,7 @@ import { getUsers } from "../../sdk/users/users";
 import { useToast } from "../../contexts/ToastProvider";
 import Pagination from "../../components/pagination/Pagination";
 import { getRoles } from "../../sdk/roles/roles";
+import { useFormattedDateTime } from "../../hooks/useFormatDateTime";
 
 export default function AllUsers() {
   const [activeMenuId, setActiveMenuId] = useState(null);
@@ -33,6 +34,7 @@ export default function AllUsers() {
   const [totalItems, setTotalItems] = useState(0);
   const [roles, setRoles] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
+  const formatDateTime = useFormattedDateTime();
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
@@ -61,7 +63,7 @@ export default function AllUsers() {
     setActiveMenuId(null);
   };
 
-  useQuery({
+  const { isFetching } = useQuery({
     queryKey: [
       "get users",
       filters?.page,
@@ -251,7 +253,56 @@ export default function AllUsers() {
             </thead>
 
             <tbody className="divide-y divide-slate-100 text-xs tracking-tight">
-              {adminUsers?.length > 0 ? (
+              {isFetching ? (
+                Array.from({ length: 10 }).map((_, i) => (
+                  <tr
+                    key={`skeleton-${i}`}
+                    className="animate-pulse border-b border-slate-100"
+                  >
+                    {/* Col 1: Identity Profile Snapshot */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col space-y-2">
+                        <div className="h-3 w-20 bg-slate-200 rounded" />
+                        <div className="h-4 w-32 bg-slate-200 rounded" />
+                      </div>
+                    </td>
+
+                    {/* Col 2: Communications Matrix */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col space-y-2">
+                        <div className="h-3 w-36 bg-slate-200 rounded" />
+                        <div className="h-3 w-28 bg-slate-200 rounded" />
+                      </div>
+                    </td>
+
+                    {/* Col 3: Department Corporate Structure */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col space-y-2">
+                        <div className="h-3 w-28 bg-slate-200 rounded" />
+                        <div className="h-3 w-24 bg-slate-200 rounded" />
+                      </div>
+                    </td>
+
+                    {/* Col 4: RBAC Assigned Framework */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col space-y-2">
+                        <div className="h-3 w-24 bg-slate-200 rounded" />
+                        <div className="h-3 w-36 bg-slate-200 rounded" />
+                      </div>
+                    </td>
+
+                    {/* Col 5: Security Clearance */}
+                    <td className="py-4 px-6">
+                      <div className="h-5 w-20 bg-slate-200 rounded-md" />
+                    </td>
+
+                    {/* Col 6: Actions */}
+                    <td className="py-4 px-6 text-right pr-8">
+                      <div className="size-8 rounded-xl bg-slate-200 ml-auto" />
+                    </td>
+                  </tr>
+                ))
+              ) : adminUsers?.length > 0 ? (
                 adminUsers?.map((user) => (
                   <tr
                     key={user.id}
@@ -335,7 +386,7 @@ export default function AllUsers() {
                         </span>
                         <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
                           <span className="font-bold text-slate-700">
-                            {user.createdAt}
+                            {formatDateTime(user.createdAt)}
                           </span>
                         </span>
                       </div>

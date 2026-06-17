@@ -21,19 +21,19 @@ client.interceptors.request.use(
   (error) => Promise.reject(error),
 );
 
-client.interceptors.response.use(
-  (response) => response, // Pass through successful responses
-  (error) => {
-    // Check if the error is a 401 (Unauthorized)
-    if (error.response && error.response.status === 401) {
-      // 1. Clear the expired data from local storage
-      localStorage.removeItem("auth");
+// client.interceptors.response.use(
+//   (response) => response, // Pass through successful responses
+//   (error) => {
+//     // Check if the error is a 401 (Unauthorized)
+//     if (error.response && error.response.status === 401) {
+//       // 1. Clear the expired data from local storage
+//       localStorage.removeItem("auth");
 
-      // 2. Redirect the user to the login page
-      // Using window.location.href is the most reliable way outside of a React component
-      window.location.href = "/auth/login";
-    }
+//       // 2. Redirect the user to the login page
+//       // Using window.location.href is the most reliable way outside of a React component
+//       window.location.href = "/auth/login";
+//     }
 
-    return Promise.reject(error);
-  },
-);
+//     return Promise.reject(error);
+//   },
+// );

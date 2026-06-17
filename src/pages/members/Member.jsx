@@ -19,7 +19,7 @@ import {
   EyeOff,
   Eye,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getMember } from "../../sdk/members/members";
 import { useToast } from "../../contexts/ToastProvider";
@@ -30,6 +30,7 @@ export default function MemberDetails({ onBack }) {
   const [member, setMember] = useState({});
   const { showToast } = useToast();
   const [showImages, setShowImages] = useState(false);
+  const navigate = useNavigate();
 
   const toggleSuspension = () => {
     setMember((prev) => ({
@@ -74,12 +75,9 @@ export default function MemberDetails({ onBack }) {
               <h2 className="text-xl font-bold text-slate-900">
                 {member.firstname} {member.middlename} {member.lastname}
               </h2>
-              <span className="font-mono text-[10px] font-bold px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
-                {member.public_id}
-              </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5">
-              System Registration:{" "}
+              Registration Date:{" "}
               {new Date(member.createdAt).toLocaleDateString("en-KE", {
                 dateStyle: "long",
               })}
@@ -115,6 +113,7 @@ export default function MemberDetails({ onBack }) {
               <Edit size={14} className="text-slate-400" />
             </div>
             <div className="grid grid-cols-2 gap-4 text-xs font-medium border-t border-slate-100 pt-3">
+              <ProfileMetaBlock label="Member ID" value={member.public_id} />
               <ProfileMetaBlock label="First Name" value={member.firstname} />
               <ProfileMetaBlock label="Middle Name" value={member.middlename} />
               <ProfileMetaBlock label="Last Name" value={member.lastname} />
@@ -257,6 +256,7 @@ export default function MemberDetails({ onBack }) {
                   <thead>
                     <tr className="bg-slate-50/70 border-b border-slate-100 text-[10px] text-slate-400 uppercase font-bold tracking-wider">
                       <th className="p-3.5 px-4">Account Portfolio Product</th>
+                      <th className="p-3.5 px-4">Product Name</th>
                       <th className="p-3.5">Account Number</th>
                       <th className="p-3.5 text-right">Account Balance</th>
                       <th className="p-3.5 text-center">State</th>
@@ -266,10 +266,18 @@ export default function MemberDetails({ onBack }) {
                     {member?.accounts?.map((acc) => (
                       <tr
                         key={acc.id}
-                        className="hover:bg-slate-50/50 transition-colors"
+                        onClick={() =>
+                          navigate(
+                            `/admin/all-members/account/${acc?.id}/${acc?.account_number}`,
+                          )
+                        }
+                        className="hover:bg-slate-50/50 transition-colors cursor-pointer"
                       >
                         <td className="p-3.5 px-4 font-bold text-slate-900">
                           {acc.name}
+                        </td>
+                        <td className="p-3.5 px-4 font-bold text-slate-900">
+                          {acc.product?.name}
                         </td>
                         <td className="p-3.5 cursor-pointer font-mono text-blue-500">
                           {acc.account_number}

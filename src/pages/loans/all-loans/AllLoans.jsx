@@ -7,6 +7,8 @@ import {
   CheckCircle2,
   AlertTriangle,
   Smartphone,
+  Filter,
+  Download,
 } from "lucide-react";
 import Pagination from "../../../components/pagination/Pagination";
 
@@ -292,24 +294,6 @@ export default function AllLoans() {
 
       {/* 3. INTERACTIVE SEARCH & STATE FILTERS */}
       <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div className="flex bg-slate-100 p-1 rounded-xl h-10 w-fit select-none">
-          <TabToggle
-            active={activeTab === "all"}
-            onClick={() => setActiveTab("all")}
-            label="All Accounts"
-          />
-          <TabToggle
-            active={activeTab === "active"}
-            onClick={() => setActiveTab("active")}
-            label="Active Books"
-          />
-          <TabToggle
-            active={activeTab === "cleared"}
-            onClick={() => setActiveTab("cleared")}
-            label="Cleared Accounts"
-          />
-        </div>
-
         <div className="relative w-full md:w-72">
           <Search
             size={14}
@@ -322,6 +306,14 @@ export default function AllLoans() {
             placeholder="Search accounts by code or debtor..."
             className="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-medium outline-none transition-all focus:bg-white focus:border-secondary placeholder:text-slate-400 font-sans"
           />
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+            <Filter size={13} /> Filter
+          </button>
+          <button className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+            <Download size={13} /> Export
+          </button>
         </div>
       </div>
 

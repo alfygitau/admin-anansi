@@ -159,7 +159,7 @@ export default function AllUsers() {
         filters={filters}
         setFilters={setFilters}
       />
-      <div className="w-full space-y-5 font-sans antialiased text-slate-800">
+      <div className="w-full space-y-5 antialiased text-slate-800">
         {/* 1. EXECUTIVE COMMAND BAR */}
         <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6">
           <div>

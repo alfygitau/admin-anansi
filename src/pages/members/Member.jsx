@@ -248,7 +248,7 @@ export default function MemberDetails({ onBack }) {
             <div className="space-y-4 flex-1 flex flex-col">
               <div className="w-full flex items-center justify-between">
                 <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
-                  <CreditCard size={14} /> Accounts
+                  <CreditCard size={14} /> Financial Accounts
                 </h3>
               </div>
               <div className="border border-slate-100 rounded-xl overflow-hidden flex-1 bg-white">

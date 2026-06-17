@@ -297,7 +297,6 @@ export default function AccountTransactions() {
                     <td className="py-4 px-6">
                       <div className="flex flex-col space-y-1">
                         <div className="text-[11px] text-slate-500 font-medium">
-                          Delta:{" "}
                           <span
                             className={`font-bold text-sm ${tx.category === "credit" ? "text-success" : "text-slate-900"}`}
                           >
@@ -441,7 +440,7 @@ export default function AccountTransactions() {
           />
 
           {/* Drawer Container Panel Body */}
-          <div className="fixed top-0 right-0 h-full w-full max-w-[480px] bg-white shadow-2xl border-l border-slate-100 p-8 py-5 overflow-y-auto flex flex-col justify-between animate-in slide-in-from-right duration-200 z-50">
+          <div className="fixed top-0 right-0 h-full w-full max-w-[480px] bg-white shadow-md p-8 py-5 overflow-y-auto flex flex-col justify-between animate-in slide-in-from-right duration-200 z-50">
             <div className="space-y-6">
               {/* HEADER SECTION */}
               <div className="flex justify-between items-start gap-4">
@@ -488,9 +487,9 @@ export default function AccountTransactions() {
 
                   <div className="bg-slate-50/60 border border-slate-200/40 p-3.5 rounded-xl space-y-1">
                     <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1">
-                      <DollarSign size={10} /> Amount
+                      <DollarSign size={10} /> Transaction Amount
                     </p>
-                    <p className="text-xs font-bold text-slate-900">
+                    <p className="text-xl font-bold text-slate-900">
                       {formatAmount(selectedTxContext.amount)}
                     </p>
                   </div>

@@ -223,7 +223,7 @@ export default function Homelayer() {
                 toggleMenu(item.id, e, hasSubItems, item.path);
                 if (isMobile && !hasSubItems) setIsMobileSidebarOpen(false);
               }}
-              className={`w-full h-11 flex items-center justify-between px-3.5 rounded-md transition-all duration-150 font-semibold text-xs uppercase tracking-wider relative group ${
+              className={`w-full h-11 flex items-center justify-between px-3.5 transition-all duration-150 font-semibold text-xs uppercase tracking-wider relative group ${
                 isCurrentActive
                   ? "bg-slate-100 text-[#074073]"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-50/80"
@@ -258,7 +258,7 @@ export default function Homelayer() {
 
             {/* Submenu Expansion List Chassis */}
             {hasSubItems && isExpanded && (
-              <div className="pl-6 pr-2 ml-1 space-y-1 animate-in fade-in slide-in-from-top-1 duration-150">
+              <div className="pl-6 ml-1 space-y-1 animate-in fade-in slide-in-from-top-1 duration-150">
                 {item.subItems.map((sub, sIdx) => {
                   const isSubActive = location.pathname === sub.path;
                   return (
@@ -266,7 +266,7 @@ export default function Homelayer() {
                       key={sIdx}
                       to={sub.path}
                       onClick={() => isMobile && setIsMobileSidebarOpen(false)}
-                      className={`h-7 flex items-center px-3 rounded-lg text-[12px] font-medium tracking-wide transition-all ${
+                      className={`h-7 flex items-center pl-3 text-[12px] font-medium tracking-wide transition-all ${
                         isSubActive
                           ? "bg-slate-100 text-[#074073] font-bold"
                           : "text-slate-400 hover:text-slate-800 hover:bg-slate-50/50"

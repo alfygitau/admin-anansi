@@ -28,60 +28,7 @@ export default function AccountDetails({ onBack }) {
   const { id, accountNumber } = useParams();
   const { showToast } = useToast();
 
-  const [account, setAccount] = useState({
-    id: "e8f191f3-0b35-34fb-c442-c6b62c6a0fd1",
-    account_number: "0100100002752",
-    account_code: "2752",
-    account_type_id: "1",
-    product_id: "eab1ba28-4867-4762-a3aa-ab5d6e557482",
-    user_id: "a8426991-3061-d0e7-7fd6-019456264e89",
-    branch_id: "71cbca39-4872-48fa-9129-c4ef3b20fb21",
-    customer_id: "a8426991-3061-d0e7-7fd6-019456264e89",
-    last_access: "2026-03-19T02:48:48.000Z",
-    overdraft: "0",
-    balance: "250201.00",
-    interest: "0",
-    branch_code: 1,
-    isSwerv: false,
-    version: 7,
-    createdAt: "2026-03-19T08:48:49.395Z",
-    updatedAt: "2026-05-27T08:18:43.746Z",
-    status: "active",
-    mobile_web_access: true,
-    can_transact: true,
-    customer: {
-      id: "a8426991-3061-d0e7-7fd6-019456264e89",
-      firstname: "ALMASI",
-      middlename: "ACHIENG",
-      lastname: "ALUOCH",
-      identification: "30959390",
-      identification_type: "National Id",
-      mobileno: "+254765350350",
-      country_of_residence: "KENYA",
-      dob: "1992-06-06",
-      kraPin: "A123456789P",
-      email: "joram@gmail.com",
-      username: "JORAM",
-      phoneVerified: true,
-      emailVerified: true,
-      suspended: false,
-      onboarding_stage: "completed",
-      status: "Active",
-      public_id: "SJS224",
-      loanEligibilityNotified: true,
-    },
-    product: {
-      id: "eab1ba28-4867-4762-a3aa-ab5d6e557482",
-      name: "Savings",
-      description:
-        "Savings account Save, earn interest, and access your money anytime.",
-      code: "1",
-      is_savings: true,
-      share_price: "1.00",
-      image_url:
-        "https://anansi-dev.s3.eu-west-1.amazonaws.com/ca9d205c-7c11-4ffa-8f0a-a31ef1a019c1-savings.png",
-    },
-  });
+  const [account, setAccount] = useState({});
 
   const [transactions, setTransactions] = useState([]);
 
@@ -142,7 +89,7 @@ export default function AccountDetails({ onBack }) {
           </button>
           <div>
             <h2 className="text-xl font-bold text-slate-900">
-              Savings Account
+              {account?.product?.name}
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
               Review transaction state routing, internal configurations, and
@@ -215,7 +162,7 @@ export default function AccountDetails({ onBack }) {
                   Account Type
                 </h4>
                 <p className="text-sm font-bold text-slate-900 tracking-tight mt-0.5">
-                  {account.product.name} Account
+                  {account?.product?.name}
                 </p>
               </div>
             </div>
@@ -226,14 +173,14 @@ export default function AccountDetails({ onBack }) {
               </p>
               <div className="flex items-center justify-between mt-1">
                 <span className="font-mono text-sm font-bold tracking-tight text-slate-800">
-                  {account.account_number.replace(
+                  {account?.account_number?.replace(
                     /(\d{4})(\d{5})(\d{4})/,
                     "$1-$2-$3",
                   )}
                 </span>
                 <button
                   type="button"
-                  onClick={() => handleCopyText(account.account_number)}
+                  onClick={() => handleCopyText(account?.account_number)}
                   className="size-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-white hover:border-slate-300 transition-all cursor-pointer"
                   title="Copy Account Number"
                 >
@@ -452,7 +399,6 @@ export default function AccountDetails({ onBack }) {
                   <td className="py-4 px-6">
                     <div className="flex flex-col space-y-1">
                       <div className="text-[11px] text-slate-500 font-medium">
-                        Delta:{" "}
                         <span
                           className={`font-bold text-sm ${tx.category === "credit" ? "text-success" : "text-slate-900"}`}
                         >

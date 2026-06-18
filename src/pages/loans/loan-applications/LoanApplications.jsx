@@ -13,11 +13,12 @@ import {
   Download,
   Plus,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoanApplications() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-
+  const navigate = useNavigate();
   const loanApplications = [
     {
       id: "b0d1b573-e491-403b-b2e8-4daa7633ecc3",
@@ -237,7 +238,7 @@ export default function LoanApplications() {
   };
 
   return (
-    <div className="w-full space-y-6 font-sans antialiased text-slate-800">
+    <div className="w-full space-y-6 antialiased text-slate-800">
       {/* 1. UPPER EXECUTIVE COMMAND BAR */}
       <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-6">
         <div>
@@ -249,7 +250,10 @@ export default function LoanApplications() {
             and process board committee vetting updates.
           </p>
         </div>
-        <button className="flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer">
+        <button
+          onClick={() => navigate("/admin/apply-loan/products")}
+          className="flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
+        >
           <Plus size={15} />
           <span>Add Loan Application</span>
         </button>

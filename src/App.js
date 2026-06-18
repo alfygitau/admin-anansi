@@ -29,6 +29,9 @@ import VerifyMemberLogin from "./pages/auth-member/VerifyMemberLogin";
 import MemberCreateAccess from "./pages/auth-member/CreateAccess";
 import MemberAcceptTerms from "./pages/auth-member/AcceptTerms";
 import ApproveApplication from "./pages/loans/loan-applications/ApproveApplication";
+import ApplyProducts from "./pages/loans/apply-loan/ApplyProducts";
+import LoanEligibility from "./pages/loans/apply-loan/Eligibility";
+import LoanApplicationDetails from "./pages/loans/apply-loan/LoanApplicationDetails";
 
 function App() {
   return (
@@ -68,6 +71,13 @@ function App() {
         <Route
           path="loan-applications/:id/approve"
           element={<ApproveApplication />}
+        />
+
+        <Route path="apply-loan/products" element={<ApplyProducts />} />
+        <Route path="apply-loan/eligibility" element={<LoanEligibility />} />
+        <Route
+          path="apply-loan/loan-application-details"
+          element={<LoanApplicationDetails />}
         />
       </Route>
 

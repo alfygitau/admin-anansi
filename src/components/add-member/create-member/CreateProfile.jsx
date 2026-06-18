@@ -2,7 +2,13 @@ import React, { useState } from "react";
 import { X, User, Mail, Smartphone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const CreateProfile = ({ isOpen, onClose, formData, setFormData }) => {
+const CreateProfile = ({
+  isOpen,
+  onClose,
+  formData,
+  setFormData,
+  onContinue,
+}) => {
   const FilterField = ({ label, icon: Icon, children }) => (
     <div className="space-y-2 w-full">
       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
@@ -103,7 +109,7 @@ const CreateProfile = ({ isOpen, onClose, formData, setFormData }) => {
                 Cancel
               </button>
               <button
-                onClick={() => console.log("Proceed to Step 2")}
+                onClick={onContinue}
                 className="flex-[2] h-14 font-bold text-xs bg-[#074073] text-white rounded-2xl hover:bg-[#052d52] transition-all shadow-lg cursor-pointer"
               >
                 Continue

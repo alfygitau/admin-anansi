@@ -2,7 +2,13 @@ import React from "react";
 import { X, FileUp, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const VerifyIdentity = ({ isOpen, onClose, formData, setFormData }) => {
+const VerifyIdentity = ({
+  isOpen,
+  onClose,
+  formData,
+  setFormData,
+  onContinue,
+}) => {
   return (
     <AnimatePresence>
       {isOpen && (
@@ -29,9 +35,7 @@ const VerifyIdentity = ({ isOpen, onClose, formData, setFormData }) => {
             </button>
 
             <div className="px-8 pt-5 pb-2">
-              <h2 className="text-2xl font-bold text-[#074073]">
-                Identity
-              </h2>
+              <h2 className="text-2xl font-bold text-[#074073]">Identity</h2>
               <p className="text-sm text-slate-500 font-medium">
                 Upload Identification Documents
               </p>
@@ -76,7 +80,7 @@ const VerifyIdentity = ({ isOpen, onClose, formData, setFormData }) => {
                 Back
               </button>
               <button
-                onClick={() => console.log("Proceed to Step 3")}
+                onClick={onContinue}
                 className="flex-[2] h-14 font-bold text-xs bg-[#074073] text-white rounded-2xl hover:bg-[#052d52] transition-all shadow-lg cursor-pointer"
               >
                 Scan Documents

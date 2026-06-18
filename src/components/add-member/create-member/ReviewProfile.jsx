@@ -23,47 +23,6 @@ const ReviewProfile = ({
   isSubmitting,
   onSubmit,
 }) => {
-  // Safe handler to extract local preview URLs for the file metrics
-  const getFilePreview = (file) => {
-    if (!file) return null;
-    try {
-      return URL.createObjectURL(file);
-    } catch (e) {
-      return null;
-    }
-  };
-
-  // Structural field mirroring your FilterField design for static content
-  const ReviewField = ({ label, icon: Icon, value, isMono = false }) => (
-    <div className="space-y-2 w-full">
-      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
-        {label}
-      </label>
-      <div className="relative">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
-          <Icon size={18} className="text-slate-400" />
-          <div className="w-[1.5px] h-5 bg-slate-200 ml-4" />
-        </div>
-        <div
-          className={`w-full pl-[74px] pr-6 py-4 min-h-14 bg-slate-50 border border-slate-100 rounded-2xl text-xs flex items-center text-slate-800 ${
-            isMono
-              ? "font-mono font-bold tracking-wider uppercase"
-              : "font-bold"
-          }`}
-        >
-          {value || (
-            <span className="text-slate-300 italic font-medium">
-              Not Provided
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-
-  const frontPreview = getFilePreview(formData.id_front);
-  const backPreview = getFilePreview(formData.id_back);
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -164,5 +123,30 @@ const ReviewProfile = ({
     </AnimatePresence>
   );
 };
+
+const ReviewField = ({ label, icon: Icon, value, isMono = false }) => (
+  <div className="space-y-2 w-full">
+    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+      {label}
+    </label>
+    <div className="relative">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
+        <Icon size={18} className="text-slate-400" />
+        <div className="w-[1.5px] h-5 bg-slate-200 ml-4" />
+      </div>
+      <div
+        className={`w-full pl-[74px] pr-6 py-4 min-h-14 bg-slate-50 border border-slate-100 rounded-2xl text-xs flex items-center text-slate-800 ${
+          isMono ? "font-mono font-bold tracking-wider uppercase" : "font-bold"
+        }`}
+      >
+        {value || (
+          <span className="text-slate-300 italic font-medium">
+            Not Provided
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+);
 
 export default ReviewProfile;

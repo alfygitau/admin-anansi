@@ -47,3 +47,27 @@ export const getMember = async (id) => {
     throw error?.response?.data || error;
   }
 };
+
+export const addAdminMember = async (
+  email,
+  mobileno,
+  username,
+  onboarding_stage,
+  status,
+) => {
+  try {
+    const response = await client.post(
+      `/customer/register-customer-email-mobile`,
+      {
+        email,
+        mobileno,
+        username,
+        onboarding_stage,
+        status,
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

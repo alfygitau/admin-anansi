@@ -32,6 +32,7 @@ import ReviewIncomeDetails from "../../components/add-member/create-member/Revie
 import NextOfKin from "../../components/add-member/create-member/NextOfKin";
 import ReviewNextOfKin from "../../components/add-member/create-member/ReviewNextOfKin";
 import CreateMemberSuccess from "../../components/add-member/create-member/CreateMemberSuccess";
+import UploadSelfie from "../../components/add-member/create-member/UploadSelfie";
 
 export default function AllMembers() {
   const [members, setMembers] = useState([]);
@@ -62,6 +63,7 @@ export default function AllMembers() {
   const [showCreateKin, setShowCreateKin] = useState(false);
   const [showReviewKin, setShowReviewKin] = useState(false);
   const [showIncomeDetails, setShowIncomeDetails] = useState(false);
+  const [showUploadSelfie, setShowUploadSelfie] = useState(false);
   const [formData, setFormData] = useState({
     username: "Alfred",
     email: "alfy@gmail.com",
@@ -180,12 +182,20 @@ export default function AllMembers() {
         onClose={() => setShowCreateProfile(false)}
         formData={formData}
         setFormData={setFormData}
+        onContinue={() => {
+          setShowCreateProfile(false);
+          setShowReviewProfile(true);
+        }}
       />
 
       <ReviewProfile
         isOpen={showReviewProfile}
         onClose={() => setShowReviewProfile(false)}
         formData={formData}
+        onSubmit={() => {
+          setShowReviewProfile(false);
+          setShowVerifyIdentity(true);
+        }}
       />
 
       <VerifyIdentity
@@ -193,6 +203,10 @@ export default function AllMembers() {
         onClose={() => setShowVerifyIdentity(false)}
         formData={formData}
         setFormData={setFormData}
+        onContinue={() => {
+          setShowVerifyIdentity(false);
+          setShowReviewScanDetails(true);
+        }}
       />
 
       <ReviewScannedDetails
@@ -206,6 +220,10 @@ export default function AllMembers() {
           identification: "32145678",
           gender: "Male",
           dob: "1994-04-24",
+        }}
+        onAccept={() => {
+          setShowReviewScanDetails(false);
+          setShowUploadSelfie(true);
         }}
       />
 
@@ -223,17 +241,36 @@ export default function AllMembers() {
         }}
       />
 
+      <UploadSelfie
+        isOpen={showUploadSelfie}
+        onClose={() => setShowUploadSelfie(false)}
+        formData={formData}
+        setFormData={setFormData}
+        onContinue={() => {
+          setShowUploadSelfie(false);
+          setShowCreateAddress(true);
+        }}
+      />
+
       <AddressProfile
         isOpen={showCreateAddress}
         onClose={() => setShowCreateAddress(false)}
         formData={formData}
         setFormData={setFormData}
+        onSubmit={() => {
+          setShowCreateAddress(false);
+          setShowReviewAddress(true);
+        }}
       />
 
       <ReviewAddressProfile
         isOpen={showReviewAddress}
         onClose={() => setShowReviewAddress(false)}
         formData={formData}
+        onSubmit={() => {
+          setShowReviewAddress(false);
+          setShowIncomeDetails(true);
+        }}
       />
 
       <IncomeDetails
@@ -241,12 +278,20 @@ export default function AllMembers() {
         onClose={() => setShowIncomeDetails(false)}
         formData={formData}
         setFormData={setFormData}
+        onSubmit={() => {
+          setShowIncomeDetails(false);
+          setShowReviewIncome(true);
+        }}
       />
 
       <ReviewIncomeDetails
         isOpen={showReviewIncome}
         onClose={() => setShowReviewIncome(false)}
         formData={formData}
+        onSubmit={() => {
+          setShowReviewIncome(false);
+          setShowCreateKin(true);
+        }}
       />
 
       <NextOfKin
@@ -254,6 +299,10 @@ export default function AllMembers() {
         onClose={() => setShowCreateKin(false)}
         formData={formData}
         setFormData={setFormData}
+        onSave={() => {
+          setShowCreateKin(false);
+          setShowReviewKin(true);
+        }}
       />
 
       <ReviewNextOfKin

@@ -52,7 +52,7 @@ export default function Pagination({
     <div className="w-full flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-t border-slate-100 bg-white px-6 py-4 select-none">
       
       {/* LEFT: METADATA & DATA DENSITY CONTROLS */}
-      <div className="flex flex-wrap items-center gap-4 text-xs font-medium text-slate-500">
+      <div className="flex sm:hidden flex-wrap items-center gap-4 text-xs font-medium text-slate-500">
         {/* Rows Per Page Selector */}
         {onItemsPerPageChange && (
           <div className="flex items-center gap-2">

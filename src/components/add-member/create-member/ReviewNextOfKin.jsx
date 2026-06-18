@@ -145,7 +145,7 @@ const ReviewNextOfKin = ({
                     onClick={() => setIsSuccess(true)}
                     className="flex-[2] h-14 font-bold text-xs bg-[#074073] hover:bg-[#052d52] text-white rounded-2xl transition-all shadow-lg cursor-pointer"
                   >
-                    Confirm
+                    Finalize
                   </button>
                 </div>
               </>

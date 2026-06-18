@@ -283,7 +283,7 @@ const AddressProfile = ({
                 onClick={onSubmit}
                 className="flex-[2] h-14 font-bold text-xs bg-[#074073] text-white rounded-2xl hover:bg-[#052d52] transition-all shadow-lg cursor-pointer"
               >
-                Submit Registry Entry
+                Submit Entry
               </button>
             </div>
           </motion.div>

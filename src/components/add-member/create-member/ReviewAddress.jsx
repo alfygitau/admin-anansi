@@ -138,7 +138,7 @@ const ReviewAddressProfile = ({
                 ) : (
                   <>
                     <CheckCircle2 size={14} />
-                    <span>Submit Registry Entry</span>
+                    <span>Submit Entry</span>
                   </>
                 )}
               </button>

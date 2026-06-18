@@ -20,6 +20,7 @@ import { useQuery } from "react-query";
 import { getAccount } from "../../sdk/account/account";
 import { useToast } from "../../contexts/ToastProvider";
 import { getAccountTransactions } from "../../sdk/transactions/transactions";
+import AccountDetailsLoader from "../../skeletons/AccountDetailsLoader";
 
 export default function AccountDetails({ onBack }) {
   const [copied, setCopied] = useState(false);
@@ -38,7 +39,7 @@ export default function AccountDetails({ onBack }) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  useQuery({
+  const { isFetching: fetchingAccount } = useQuery({
     queryKey: ["get account", id],
     queryFn: async () => {
       const response = await getAccount(id);
@@ -79,202 +80,210 @@ export default function AccountDetails({ onBack }) {
   return (
     <div className="w-full space-y-5 font-sans antialiased text-slate-800">
       {/* HEADER CONTROL BAR */}
-      <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onBack}
-            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-all cursor-pointer"
-          >
-            <ArrowLeft size={16} />
-          </button>
-          <div>
-            <h2 className="text-xl font-bold text-slate-900">
-              {account?.product?.name}
-            </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
-              Review transaction state routing, internal configurations, and
-              linked asset tiers.
-            </p>
-          </div>
-        </div>
-        <div className="relative">
-          {/* Dropdown Menu Trigger Button */}
-          <button
-            onClick={() => setIsActionMenuOpen(!isActionMenuOpen)}
-            className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 bg-white text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 active:bg-slate-100/80 transition-all cursor-pointer shadow-2xs outline-none focus:border-slate-300"
-          >
-            <span>Account Actions</span>
-            <ChevronDown
-              size={14}
-              className={`text-slate-400 transition-transform duration-200 ${isActionMenuOpen ? "rotate-180" : ""}`}
-            />
-          </button>
-
-          {/* Dropdown Menu Overlay & Overlay Container Panel */}
-          {isActionMenuOpen && (
-            <>
-              {/* Invisible overlay background to close menu when clicking outside */}
-              <div
-                className="fixed inset-0 z-30"
-                onClick={() => setIsActionMenuOpen(false)}
-              />
-
-              {/* Menu Options Panel Grid */}
-              <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200/80 rounded-xl shadow-lg py-1.5 z-40 origin-top-right animate-in fade-in slide-in-from-top-1 duration-150">
-                <button
-                  onClick={() => {
-                    setIsActionMenuOpen(false);
-                    alert("Generating statements...");
-                  }}
-                  className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 text-left transition-colors cursor-pointer"
-                >
-                  <FileText size={14} className="text-slate-400" />
-                  <span>Account Statements</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    setIsActionMenuOpen(false);
-                    alert("Opening manual payment drawer...");
-                  }}
-                  className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-emerald-50/40 text-left transition-colors cursor-pointer"
-                >
-                  <PlusCircle size={14} className="text-slate-700" />
-                  <span>Add Manual Payment</span>
-                </button>
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* TWO COLUMN INTERACTION LAYER */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-stretch select-none">
-        {/* CARD 1: ACCOUNT DETAILS */}
-        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-6 flex flex-col justify-between group transition-all hover:border-slate-300">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-400 group-hover:bg-[#074073]/5 group-hover:text-[#074073] group-hover:border-[#074073]/10 transition-colors">
-                <Wallet size={16} />
-              </div>
-              <div>
-                <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-                  Account Type
-                </h4>
-                <p className="text-sm font-bold text-slate-900 tracking-tight mt-0.5">
-                  {account?.product?.name}
-                </p>
-              </div>
-            </div>
-
-            <div className="border-t border-slate-100 pt-3.5">
-              <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400">
-                Account Number
-              </p>
-              <div className="flex items-center justify-between mt-1">
-                <span className="font-mono text-sm font-bold tracking-tight text-slate-800">
-                  {account?.account_number?.replace(
-                    /(\d{4})(\d{5})(\d{4})/,
-                    "$1-$2-$3",
-                  )}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => handleCopyText(account?.account_number)}
-                  className="size-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-white hover:border-slate-300 transition-all cursor-pointer"
-                  title="Copy Account Number"
-                >
-                  {copied ? (
-                    <Check size={12} className="text-emerald-500" />
-                  ) : (
-                    <Copy size={12} />
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* CARD 2: AVAILABLE BALANCE */}
-        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-6 flex flex-col justify-between transition-all hover:border-slate-300">
-          <div className="space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2.5 bg-emerald-50 border border-emerald-100/60 rounded-xl text-emerald-600">
-                <span className="text-xs font-black tracking-tight">KES</span>
-              </div>
-              <div>
-                <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-                  Available Balance
-                </h4>
-                <p className="text-[10px] text-slate-400 font-medium">
-                  Ready for withdrawal or use
-                </p>
-              </div>
-            </div>
-
-            <div className="border-t border-slate-100 pt-3.5">
-              <p className="text-2xl font-black tracking-tight text-slate-900 font-mono">
-                <span className="text-sm font-bold text-slate-400 mr-0.5">
-                  KES
-                </span>
-                {Number(account.balance).toLocaleString(undefined, {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* CARD 3: ACCOUNT STATUS */}
-        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-6 flex flex-col justify-between transition-all hover:border-slate-300">
-          <div className="space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-400">
-                {account.status === "active" ? (
-                  <span className="size-2 rounded-full bg-emerald-500 animate-pulse block" />
-                ) : (
-                  <span className="size-2 rounded-full bg-rose-500 block" />
-                )}
-              </div>
-              <div>
-                <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-                  Current Status
-                </h4>
-                <p className="text-[10px] text-slate-400 font-medium">
-                  The account is currently {account.status}
-                </p>
-              </div>
-            </div>
-
-            <div className="border-t border-slate-100 pt-3.5">
-              <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400 mb-1.5">
-                Access Level
-              </p>
-              <span
-                className={`inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md border w-fit ${
-                  account.status === "active"
-                    ? "bg-emerald-50 text-emerald-700 border-emerald-200/50"
-                    : account.status === "dormant"
-                      ? "bg-amber-50 text-amber-700 border-amber-200/50"
-                      : "bg-rose-50 text-rose-700 border-rose-200/50"
-                }`}
+      {fetchingAccount ? (
+        <AccountDetailsLoader />
+      ) : (
+        <div>
+          <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between pb-6 select-none">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={onBack}
+                className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-all cursor-pointer"
               >
-                <span
-                  className={`size-1.5 rounded-full ${
-                    account.status === "active"
-                      ? "bg-emerald-500"
-                      : account.status === "dormant"
-                        ? "bg-amber-500"
-                        : "bg-rose-500"
-                  }`}
+                <ArrowLeft size={16} />
+              </button>
+              <div>
+                <h2 className="text-xl font-bold text-slate-900">
+                  {account?.product?.name}
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Review transaction state routing, internal configurations, and
+                  linked asset tiers.
+                </p>
+              </div>
+            </div>
+            <div className="relative">
+              {/* Dropdown Menu Trigger Button */}
+              <button
+                onClick={() => setIsActionMenuOpen(!isActionMenuOpen)}
+                className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 bg-white text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 active:bg-slate-100/80 transition-all cursor-pointer shadow-2xs outline-none focus:border-slate-300"
+              >
+                <span>Account Actions</span>
+                <ChevronDown
+                  size={14}
+                  className={`text-slate-400 transition-transform duration-200 ${isActionMenuOpen ? "rotate-180" : ""}`}
                 />
-                {account.status}
-              </span>
+              </button>
+
+              {/* Dropdown Menu Overlay & Overlay Container Panel */}
+              {isActionMenuOpen && (
+                <>
+                  {/* Invisible overlay background to close menu when clicking outside */}
+                  <div
+                    className="fixed inset-0 z-30"
+                    onClick={() => setIsActionMenuOpen(false)}
+                  />
+
+                  {/* Menu Options Panel Grid */}
+                  <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200/80 rounded-xl shadow-lg py-1.5 z-40 origin-top-right animate-in fade-in slide-in-from-top-1 duration-150">
+                    <button
+                      onClick={() => {
+                        setIsActionMenuOpen(false);
+                        alert("Generating statements...");
+                      }}
+                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 text-left transition-colors cursor-pointer"
+                    >
+                      <FileText size={14} className="text-slate-400" />
+                      <span>Account Statements</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setIsActionMenuOpen(false);
+                        alert("Opening manual payment drawer...");
+                      }}
+                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-emerald-50/40 text-left transition-colors cursor-pointer"
+                    >
+                      <PlusCircle size={14} className="text-slate-700" />
+                      <span>Add Manual Payment</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* TWO COLUMN INTERACTION LAYER */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-stretch select-none">
+            {/* CARD 1: ACCOUNT DETAILS */}
+            <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-6 flex flex-col justify-between group transition-all hover:border-slate-300">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-400 group-hover:bg-[#074073]/5 group-hover:text-[#074073] group-hover:border-[#074073]/10 transition-colors">
+                    <Wallet size={16} />
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                      Account Type
+                    </h4>
+                    <p className="text-sm font-bold text-slate-900 tracking-tight mt-0.5">
+                      {account?.product?.name}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-100 pt-3.5">
+                  <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400">
+                    Account Number
+                  </p>
+                  <div className="flex items-center justify-between mt-1">
+                    <span className="font-mono text-sm font-bold tracking-tight text-slate-800">
+                      {account?.account_number?.replace(
+                        /(\d{4})(\d{5})(\d{4})/,
+                        "$1-$2-$3",
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => handleCopyText(account?.account_number)}
+                      className="size-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-white hover:border-slate-300 transition-all cursor-pointer"
+                      title="Copy Account Number"
+                    >
+                      {copied ? (
+                        <Check size={12} className="text-emerald-500" />
+                      ) : (
+                        <Copy size={12} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* CARD 2: AVAILABLE BALANCE */}
+            <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-6 flex flex-col justify-between transition-all hover:border-slate-300">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2.5 bg-emerald-50 border border-emerald-100/60 rounded-xl text-emerald-600">
+                    <span className="text-xs font-black tracking-tight">
+                      KES
+                    </span>
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                      Available Balance
+                    </h4>
+                    <p className="text-[10px] text-slate-400 font-medium">
+                      Ready for withdrawal or use
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-100 pt-3.5">
+                  <p className="text-2xl font-black tracking-tight text-slate-900 font-mono">
+                    <span className="text-sm font-bold text-slate-400 mr-0.5">
+                      KES
+                    </span>
+                    {Number(account.balance).toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* CARD 3: ACCOUNT STATUS */}
+            <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-6 flex flex-col justify-between transition-all hover:border-slate-300">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-400">
+                    {account.status === "active" ? (
+                      <span className="size-2 rounded-full bg-emerald-500 animate-pulse block" />
+                    ) : (
+                      <span className="size-2 rounded-full bg-rose-500 block" />
+                    )}
+                  </div>
+                  <div>
+                    <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
+                      Current Status
+                    </h4>
+                    <p className="text-[10px] text-slate-400 font-medium">
+                      The account is currently {account.status}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t border-slate-100 pt-3.5">
+                  <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400 mb-1.5">
+                    Access Level
+                  </p>
+                  <span
+                    className={`inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md border w-fit ${
+                      account.status === "active"
+                        ? "bg-emerald-50 text-emerald-700 border-emerald-200/50"
+                        : account.status === "dormant"
+                          ? "bg-amber-50 text-amber-700 border-amber-200/50"
+                          : "bg-rose-50 text-rose-700 border-rose-200/50"
+                    }`}
+                  >
+                    <span
+                      className={`size-1.5 rounded-full ${
+                        account.status === "active"
+                          ? "bg-emerald-500"
+                          : account.status === "dormant"
+                            ? "bg-amber-500"
+                            : "bg-rose-500"
+                      }`}
+                    />
+                    {account.status}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       <h2 className="text-2xl font-bold tracking-tight text-slate-900">
         Account Transactions
@@ -467,17 +476,6 @@ export default function AccountDetails({ onBack }) {
                       >
                         <Eye size={14} />
                       </button>
-                      {tx.document_url && tx.document_url !== "..." && (
-                        <a
-                          href={tx.document_url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
-                          title="Download Ingestion Document Receipt"
-                        >
-                          <Download size={14} />
-                        </a>
-                      )}
                     </div>
                   </td>
                 </tr>

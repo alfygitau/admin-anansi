@@ -159,7 +159,7 @@ const ReviewIncomeDetails = ({
                 ) : (
                   <>
                     <CheckCircle2 size={14} />
-                    <span>Save & Finalize Record</span>
+                    <span>Save & Continue</span>
                   </>
                 )}
               </button>

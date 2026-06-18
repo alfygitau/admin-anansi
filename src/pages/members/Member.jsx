@@ -18,6 +18,9 @@ import {
   Edit,
   EyeOff,
   Eye,
+  Coins,
+  ChevronDown,
+  UserCog,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -32,6 +35,7 @@ export default function MemberDetails({ onBack }) {
   const { showToast } = useToast();
   const [showImages, setShowImages] = useState(false);
   const navigate = useNavigate();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleSuspension = () => {
     setMember((prev) => ({
@@ -65,7 +69,7 @@ export default function MemberDetails({ onBack }) {
       {isFetching ? (
         <MemberLoader />
       ) : (
-        <div className="w-full space-y-6 font-sans antialiased text-slate-800 p-1">
+        <div className="w-full space-y-6 font-sans antialiased text-slate-800">
           {/* 1. ACTION HEADER BAR CONTAINER */}
           <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
             <div className="flex items-center gap-3">
@@ -89,20 +93,79 @@ export default function MemberDetails({ onBack }) {
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="relative">
+              {/* Dropdown Menu Trigger Button */}
               <button
-                onClick={toggleSuspension}
-                className={`flex items-center gap-1.5 h-10 px-4 rounded-xl text-xs font-bold text-white transition-all cursor-pointer ${
-                  member.suspended
-                    ? "bg-emerald-600 hover:bg-emerald-700"
-                    : "bg-rose-600 hover:bg-rose-700"
-                }`}
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="flex items-center gap-2 h-10 px-4 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 active:bg-slate-100/80 transition-all cursor-pointer shadow-2xs outline-none focus:border-slate-300 select-none"
               >
-                {member.suspended ? <Unlock size={13} /> : <Lock size={13} />}
-                <span>
-                  {member.suspended ? "Lift Suspension" : "Suspend Member"}
-                </span>
+                {/* Prefix Icon */}
+                <UserCog
+                  size={14}
+                  className="text-slate-400 group-hover:text-slate-500"
+                />
+
+                <span>Member Actions</span>
+
+                <ChevronDown
+                  size={14}
+                  className={`text-slate-400 transition-transform duration-200 ml-0.5 ${isMenuOpen ? "rotate-180" : ""}`}
+                />
               </button>
+
+              {/* Dropdown Menu Overlay Panel */}
+              {isMenuOpen && (
+                <>
+                  {/* Invisible background layout layer to close menu when clicking outside */}
+                  <div
+                    className="fixed inset-0 z-30"
+                    onClick={() => setIsMenuOpen(false)}
+                  />
+
+                  {/* Menu Dropdown Actions List */}
+                  <div className="absolute right-0 mt-2 w-52 bg-white border border-slate-200/80 rounded-xl shadow-lg py-1.5 z-40 origin-top-right animate-in fade-in slide-in-from-top-1 duration-150">
+                    {/* ACTION 1: APPLY A LOAN */}
+                    <button
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        alert("Redirecting to loan application form...");
+                      }}
+                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 text-left transition-colors cursor-pointer"
+                    >
+                      <Coins size={14} className="text-[#074073]" />
+                      <span>Apply for a Loan</span>
+                    </button>
+
+                    {/* Decorative Divider Line */}
+                    <div className="border-t border-slate-100 my-1 mx-2" />
+
+                    {/* ACTION 2: DYNAMIC SUSPENSION STATE CORES */}
+                    <button
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                        toggleSuspension();
+                      }}
+                      className={`flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-left transition-colors cursor-pointer ${
+                        member.suspended
+                          ? "text-emerald-600 hover:bg-emerald-50/40"
+                          : "text-rose-600 hover:bg-rose-50/40"
+                      }`}
+                    >
+                      {member.suspended ? (
+                        <>
+                          <Unlock size={14} className="text-emerald-500" />
+                          <span>Lift Suspension</span>
+                        </>
+                      ) : (
+                        <>
+                          <Lock size={14} className="text-rose-500" />
+                          <span>Suspend Member</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 

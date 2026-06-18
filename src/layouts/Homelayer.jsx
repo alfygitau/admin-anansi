@@ -18,12 +18,14 @@ import {
   User,
 } from "lucide-react";
 import { FourCircles } from "../shared/Circles";
+import useAuth from "../hooks/useAuth";
 
 export default function Homelayer() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
+  const { auth } = useAuth();
 
   const navigationItems = [
     {
@@ -202,6 +204,12 @@ export default function Homelayer() {
     } else if (path) {
       navigate(path);
     }
+  };
+
+  const getInitials = (firstname, lastname) => {
+    const firstInitial = firstname?.charAt(0) || "";
+    const lastInitial = lastname?.charAt(0) || "";
+    return `${firstInitial}${lastInitial}`.toUpperCase() || "GU"; // Defaults to 'GU' for Guest User
   };
 
   // Shared structural generator for rendering consistent item matrices across viewport drawers
@@ -392,16 +400,17 @@ export default function Homelayer() {
               >
                 {/* Operator Avatar Circle Frame */}
                 <div className="size-9 rounded-xl bg-gradient-to-tr from-[#074073] to-blue-600 text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm group-hover:scale-[1.02] transition-transform">
-                  AM
+                  {getInitials(auth?.user?.firstname, auth?.user?.lastname)}
                 </div>
 
                 {/* Identity Ledger Casing Details */}
                 <div className="hidden md:flex flex-col">
                   <span className="text-[12px] font-bold text-slate-800 leading-none group-hover:text-slate-950 transition-colors">
-                    Alex Mwangi
+                    {auth?.user?.firstname ?? "Guest"}{" "}
+                    {auth?.user?.lastname ?? "User"}
                   </span>
                   <span className="text-[9px] font-semibold text-slate-400 uppercase tracking-wider mt-1">
-                    System Admin
+                    {auth?.user?.role?.name ?? "Standard Account"}
                   </span>
                 </div>
 

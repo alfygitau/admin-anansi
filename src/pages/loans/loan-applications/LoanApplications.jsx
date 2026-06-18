@@ -11,6 +11,7 @@ import {
   X,
   Filter,
   Download,
+  Plus,
 } from "lucide-react";
 
 export default function LoanApplications() {
@@ -236,7 +237,7 @@ export default function LoanApplications() {
   };
 
   return (
-    <div className="w-full space-y-8 font-sans antialiased text-slate-800">
+    <div className="w-full space-y-6 font-sans antialiased text-slate-800">
       {/* 1. UPPER EXECUTIVE COMMAND BAR */}
       <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-6">
         <div>
@@ -248,6 +249,10 @@ export default function LoanApplications() {
             and process board committee vetting updates.
           </p>
         </div>
+        <button className="flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer">
+          <Plus size={15} />
+          <span>Add Loan Application</span>
+        </button>
       </div>
 
       {/* 2. CORE FINANCIAL METRIC deck */}

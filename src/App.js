@@ -28,6 +28,7 @@ import MemberLogin from "./pages/auth-member/MemberLogin";
 import VerifyMemberLogin from "./pages/auth-member/VerifyMemberLogin";
 import MemberCreateAccess from "./pages/auth-member/CreateAccess";
 import MemberAcceptTerms from "./pages/auth-member/AcceptTerms";
+import ApproveApplication from "./pages/loans/loan-applications/ApproveApplication";
 
 function App() {
   return (
@@ -63,6 +64,11 @@ function App() {
 
         <Route path="accounts" element={<Accounts />} />
         <Route path="accounts/:id" element={<MemberAccounts />} />
+
+        <Route
+          path="loan-applications/:id/approve"
+          element={<ApproveApplication />}
+        />
       </Route>
 
       <Route path="/auth/member-login" element={<MemberLogin />} />

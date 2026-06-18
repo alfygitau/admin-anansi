@@ -24,6 +24,10 @@ import Accounts from "./pages/portfolio-accounts/PortfolioAccounts";
 import AdminLogin from "./pages/auth/Login";
 import VerifyLogin from "./pages/auth/VerifyLogin";
 import MemberAccounts from "./pages/portfolio-accounts/MemberAccounts";
+import MemberLogin from "./pages/auth-member/MemberLogin";
+import VerifyMemberLogin from "./pages/auth-member/VerifyMemberLogin";
+import MemberCreateAccess from "./pages/auth-member/CreateAccess";
+import MemberAcceptTerms from "./pages/auth-member/AcceptTerms";
 
 function App() {
   return (
@@ -60,6 +64,17 @@ function App() {
         <Route path="accounts" element={<Accounts />} />
         <Route path="accounts/:id" element={<MemberAccounts />} />
       </Route>
+
+      <Route path="/auth/member-login" element={<MemberLogin />} />
+      <Route path="/auth/member-verify-login" element={<VerifyMemberLogin />} />
+      <Route
+        path="/auth/member-accept-terms-conditions"
+        element={<MemberAcceptTerms />}
+      />
+      <Route
+        path="/auth/member-create-access"
+        element={<MemberCreateAccess />}
+      />
 
       <Route path="/" element={<AdminLogin />} />
       <Route path="auth/verify-login" element={<VerifyLogin />} />

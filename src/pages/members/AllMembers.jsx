@@ -20,6 +20,18 @@ import { useToast } from "../../contexts/ToastProvider";
 import { getMembers } from "../../sdk/members/members";
 import Pagination from "../../components/pagination/Pagination";
 import { useNavigate } from "react-router-dom";
+import CreateProfile from "../../components/add-member/create-member/CreateProfile";
+import VerifyIdentity from "../../components/add-member/create-member/VerifyIdentity";
+import AddressProfile from "../../components/add-member/create-member/AddressProfile";
+import IncomeDetails from "../../components/add-member/create-member/IncomeDetails";
+import ReviewProfile from "../../components/add-member/create-member/ReviewProfile";
+import ReviewScannedDetails from "../../components/add-member/create-member/ReviewScanDetails";
+import EditScannedDetails from "../../components/add-member/create-member/EditScannedDetails";
+import ReviewAddressProfile from "../../components/add-member/create-member/ReviewAddress";
+import ReviewIncomeDetails from "../../components/add-member/create-member/ReviewIncomeDetails";
+import NextOfKin from "../../components/add-member/create-member/NextOfKin";
+import ReviewNextOfKin from "../../components/add-member/create-member/ReviewNextOfKin";
+import CreateMemberSuccess from "../../components/add-member/create-member/CreateMemberSuccess";
 
 export default function AllMembers() {
   const [members, setMembers] = useState([]);
@@ -39,6 +51,46 @@ export default function AllMembers() {
     toDate: "",
   });
   const [showFilters, setShowFilters] = useState(false);
+  const [showCreateProfile, setShowCreateProfile] = useState(false);
+  const [showReviewProfile, setShowReviewProfile] = useState(false);
+  const [showReviewIncome, setShowReviewIncome] = useState(false);
+  const [showReviewAddress, setShowReviewAddress] = useState(false);
+  const [showReviewScanDetails, setShowReviewScanDetails] = useState(false);
+  const [showEditScanDetails, setShowEditScanDetails] = useState(false);
+  const [showVerifyIdentity, setShowVerifyIdentity] = useState(false);
+  const [showCreateAddress, setShowCreateAddress] = useState(false);
+  const [showCreateKin, setShowCreateKin] = useState(false);
+  const [showReviewKin, setShowReviewKin] = useState(false);
+  const [showIncomeDetails, setShowIncomeDetails] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "Alfred",
+    email: "alfy@gmail.com",
+    mobileno: "0754360450",
+
+    firstname: "Alfred",
+    middlename: "Kariuki",
+    lastname: "Gitau",
+    identification_type: "National ID",
+    identification: "3006780",
+    gender: "Male",
+    dob: "29/12/1992",
+
+    country: "Kenya",
+    county: "Nakuru",
+    subcounty: "Bahati",
+    physical_address: "Subukia",
+
+    employment_type: "IT",
+    occupation: "Software Engineer",
+    income: "200000",
+    kra_pin: "A123456789G",
+
+    fullname: "Margret Maina",
+    relationship: "Wife",
+    location: "Bahati",
+    phone: "0780400400",
+    date_of_birth: "29/12/1990",
+  });
 
   const { isFetching } = useQuery({
     queryKey: [
@@ -122,6 +174,94 @@ export default function AllMembers() {
         filters={filters}
         setFilters={setFilters}
       />
+
+      <CreateProfile
+        isOpen={showCreateProfile}
+        onClose={() => setShowCreateProfile(false)}
+        formData={formData}
+        setFormData={setFormData}
+      />
+
+      <ReviewProfile
+        isOpen={showReviewProfile}
+        onClose={() => setShowReviewProfile(false)}
+        formData={formData}
+      />
+
+      <VerifyIdentity
+        isOpen={showVerifyIdentity}
+        onClose={() => setShowVerifyIdentity(false)}
+        formData={formData}
+        setFormData={setFormData}
+      />
+
+      <ReviewScannedDetails
+        isOpen={showReviewScanDetails}
+        onClose={() => setShowReviewScanDetails(false)}
+        scannedData={{
+          firstname: "John",
+          middlename: "Kipkorir",
+          lastname: "Doe",
+          identification_type: "National ID",
+          identification: "32145678",
+          gender: "Male",
+          dob: "1994-04-24",
+        }}
+      />
+
+      <EditScannedDetails
+        isOpen={showEditScanDetails}
+        onClose={() => setShowEditScanDetails(false)}
+        scannedData={{
+          firstname: "John",
+          middlename: "Kipkorir",
+          lastname: "Doe",
+          identification_type: "National ID",
+          identification: "32145678",
+          gender: "Male",
+          dob: "1994-04-24",
+        }}
+      />
+
+      <AddressProfile
+        isOpen={showCreateAddress}
+        onClose={() => setShowCreateAddress(false)}
+        formData={formData}
+        setFormData={setFormData}
+      />
+
+      <ReviewAddressProfile
+        isOpen={showReviewAddress}
+        onClose={() => setShowReviewAddress(false)}
+        formData={formData}
+      />
+
+      <IncomeDetails
+        isOpen={showIncomeDetails}
+        onClose={() => setShowIncomeDetails(false)}
+        formData={formData}
+        setFormData={setFormData}
+      />
+
+      <ReviewIncomeDetails
+        isOpen={showReviewIncome}
+        onClose={() => setShowReviewIncome(false)}
+        formData={formData}
+      />
+
+      <NextOfKin
+        isOpen={showCreateKin}
+        onClose={() => setShowCreateKin(false)}
+        formData={formData}
+        setFormData={setFormData}
+      />
+
+      <ReviewNextOfKin
+        isOpen={showReviewKin}
+        onClose={() => setShowReviewKin(false)}
+        formData={formData}
+      />
+
       <div className="w-full space-y-6 antialiased text-slate-800">
         {/* HEADER CONTROLS BANNER */}
         <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
@@ -134,7 +274,10 @@ export default function AllMembers() {
               dynamic ledger account exposures.
             </p>
           </div>
-          <button className="flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer">
+          <button
+            onClick={() => setShowCreateProfile(true)}
+            className="flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
+          >
             <UserPlus size={15} />
             <span>Add Member</span>
           </button>

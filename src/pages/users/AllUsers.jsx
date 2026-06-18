@@ -184,21 +184,21 @@ export default function AllUsers() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <SummaryMetricCard
             title="Total Provisioned Users"
-            value={`${adminUsers.length} Profiles`}
+            value={`${adminUsers.length} Users`}
             desc="Registered security ledger entities"
             icon={<User size={18} />}
             color="text-primary bg-primary/5"
           />
           <SummaryMetricCard
-            title="Active Session Clearances"
-            value={`${adminUsers.filter((u) => u.status === "Active").length} Online`}
+            title="Active Users"
+            value={`${adminUsers.filter((u) => u.status === "Active").length} Users`}
             desc="Cleared for core structural modifications"
             icon={<ShieldCheck size={18} />}
             color="text-success bg-success/5"
           />
           <SummaryMetricCard
-            title="Revoked Security Anchors"
-            value={`${adminUsers.filter((u) => u.status === "Suspended").length} Accounts`}
+            title="Revoked Users"
+            value={`${adminUsers.filter((u) => u.status === "Suspended").length} Users`}
             desc="Suspended profile clearance parameters"
             icon={<ShieldAlert size={18} />}
             color="text-error bg-error/5"

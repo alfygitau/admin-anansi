@@ -16,6 +16,7 @@ import {
   Plus,
   Filter,
   Download,
+  Edit,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsersFilter from "../../components/filters/UsersFilter";
@@ -358,13 +359,13 @@ export default function AllUsers() {
                       <div className="flex flex-col space-y-1">
                         <span className="font-bold text-primary flex items-center gap-1.5 text-xs tracking-tight">
                           <Key size={12} className="text-primary/70" />{" "}
-                          {user.role.name}
+                          {user?.role?.name ?? "Not Registered"}
                         </span>
                         <p
                           className="text-[10px] text-slate-400 max-w-[180px] truncate italic"
-                          title={user.role.description}
+                          title={user?.role?.description ?? "Not Registered"}
                         >
-                          {user.role.description}
+                          {user?.role?.description ?? "Not Registered"}
                         </p>
                       </div>
                     </td>
@@ -417,6 +418,10 @@ export default function AllUsers() {
                             <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer">
                               <History size={12} />
                               <span>View Access Logs</span>
+                            </button>
+                            <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer">
+                              <Edit size={12} />
+                              <span>Edit User</span>
                             </button>
                             <button
                               onClick={() => handleToggleSuspend(user.id)}

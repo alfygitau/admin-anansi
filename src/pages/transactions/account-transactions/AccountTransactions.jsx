@@ -27,7 +27,6 @@ import Pagination from "../../../components/pagination/Pagination";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
 
 export default function AccountTransactions() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [selectedTxContext, setSelectedTxContext] = useState(null);
   const [activeMenuId, setActiveMenuId] = useState(null);
   const actionMenuRef = useRef(null);

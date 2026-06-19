@@ -5,17 +5,22 @@ import {
   Download,
   AlertCircle,
   CheckCircle2,
+  Receipt,
+  SlidersHorizontal,
 } from "lucide-react";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
 import { useQuery } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
 import { getLoanTransactions } from "../../../sdk/loan-transactions/loan-transactions";
 import LoanTransactionsFilter from "../../../components/filters/LoanTransactionsFilter";
+import { useNavigate } from "react-router-dom";
+import Pagination from "../../../components/pagination/Pagination";
 
 export default function LoanTransactions() {
   const [searchQuery, setSearchQuery] = useState("");
   const formatAmount = useFormatAmount();
   const [showFilters, setShowFilters] = useState(false);
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
@@ -29,152 +34,7 @@ export default function LoanTransactions() {
   });
   const { showToast } = useToast();
   const [totalItems, setTotalItems] = useState(0);
-  const [loanTransactions, setLoanTransactions] = useState([
-    {
-      id: "b0c54688-96c0-4e39-ab31-eeb47704b585",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "2500.00",
-      principal_paid: "2000.00",
-      interest_paid: "500.00",
-      penalty_paid: "0.00",
-      payment_mode: "MPESA",
-      transaction_ref: "QHH4LDXYZ1",
-      is_reversed: false,
-      created_at: "2026-06-09T19:59:30.291Z",
-    },
-    {
-      id: "a1b2c3d4-e5f6-4789-a0b1-c2d3e4f5a6b7",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "3200.00",
-      principal_paid: "2500.00",
-      interest_paid: "700.00",
-      penalty_paid: "0.00",
-      payment_mode: "BANK_TRANSFER",
-      transaction_ref: "BKT9928374",
-      is_reversed: false,
-      created_at: "2026-06-10T09:15:22.000Z",
-    },
-    {
-      id: "f5e4d3c2-b1a0-9876-5432-1fedcba09876",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "1500.00",
-      principal_paid: "1200.00",
-      interest_paid: "300.00",
-      penalty_paid: "0.00",
-      payment_mode: "MPESA",
-      transaction_ref: "QHH4LDXYZ2",
-      is_reversed: true,
-      created_at: "2026-06-11T14:20:10.500Z",
-    },
-    {
-      id: "99887766-5544-3322-1100-aabbccddeeff",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "5000.00",
-      principal_paid: "4000.00",
-      interest_paid: "800.00",
-      penalty_paid: "200.00",
-      payment_mode: "MPESA",
-      transaction_ref: "QHH4LDXYZ3",
-      is_reversed: false,
-      created_at: "2026-06-12T10:05:45.120Z",
-    },
-    {
-      id: "12345678-1234-5678-1234-567812345678",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "2100.00",
-      principal_paid: "2000.00",
-      interest_paid: "100.00",
-      penalty_paid: "0.00",
-      payment_mode: "BANK_TRANSFER",
-      transaction_ref: "BKT9928375",
-      is_reversed: false,
-      created_at: "2026-06-13T16:40:00.000Z",
-    },
-    {
-      id: "87654321-8765-4321-8765-432187654321",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "4000.00",
-      principal_paid: "3500.00",
-      interest_paid: "500.00",
-      penalty_paid: "0.00",
-      payment_mode: "MPESA",
-      transaction_ref: "QHH4LDXYZ4",
-      is_reversed: false,
-      created_at: "2026-06-14T11:12:30.900Z",
-    },
-    {
-      id: "abcdef12-3456-7890-abcd-ef1234567890",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "2500.00",
-      principal_paid: "2000.00",
-      interest_paid: "500.00",
-      penalty_paid: "0.00",
-      payment_mode: "BANK_TRANSFER",
-      transaction_ref: "BKT9928376",
-      is_reversed: false,
-      created_at: "2026-06-15T09:00:00.000Z",
-    },
-    {
-      id: "fedcba21-6543-0987-fedc-ba0987654321",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "1000.00",
-      principal_paid: "1000.00",
-      interest_paid: "0.00",
-      penalty_paid: "0.00",
-      payment_mode: "MPESA",
-      transaction_ref: "QHH4LDXYZ5",
-      is_reversed: false,
-      created_at: "2026-06-16T10:30:15.000Z",
-    },
-    {
-      id: "55556666-7777-8888-9999-000011112222",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "3500.00",
-      principal_paid: "3000.00",
-      interest_paid: "500.00",
-      penalty_paid: "0.00",
-      payment_mode: "MPESA",
-      transaction_ref: "QHH4LDXYZ6",
-      is_reversed: false,
-      created_at: "2026-06-16T11:45:00.000Z",
-    },
-    {
-      id: "44443333-2222-1111-0000-999988887777",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "750.00",
-      principal_paid: "0.00",
-      interest_paid: "0.00",
-      penalty_paid: "750.00",
-      payment_mode: "BANK_TRANSFER",
-      transaction_ref: "BKT9928377",
-      is_reversed: false,
-      created_at: "2026-06-16T12:00:00.000Z",
-    },
-    {
-      id: "11112222-3333-4444-5555-666677778888",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "2200.00",
-      principal_paid: "2000.00",
-      interest_paid: "200.00",
-      penalty_paid: "0.00",
-      payment_mode: "MPESA",
-      transaction_ref: "QHH4LDXYZ7",
-      is_reversed: false,
-      created_at: "2026-06-16T12:30:00.000Z",
-    },
-    {
-      id: "99998888-7777-6666-5555-444433332222",
-      loan_id: "e941949d-dfc0-40ae-9fd3-4674eb2f344c",
-      amount_paid: "5000.00",
-      principal_paid: "5000.00",
-      interest_paid: "0.00",
-      penalty_paid: "0.00",
-      payment_mode: "BANK_TRANSFER",
-      transaction_ref: "BKT9928378",
-      is_reversed: false,
-      created_at: "2026-06-16T13:00:00.000Z",
-    },
-  ]);
+  const [loanTransactions, setLoanTransactions] = useState([]);
 
   const getTxType = (tx) => {
     if (parseFloat(tx.penalty_paid) > 0) return "Penalty";
@@ -211,11 +71,11 @@ export default function LoanTransactions() {
       return response?.data?.data;
     },
     onSuccess: (data) => {
-    //   setLoanTransactions(data?.transactions);
+      setLoanTransactions(data?.transactions);
       setFilters((prev) => ({
         ...prev,
-        page: data.currentPage,
-        limit: data.itemsPerPage,
+        page: data.page,
+        limit: data.limit,
       }));
       setTotalItems(data.total);
     },
@@ -228,6 +88,20 @@ export default function LoanTransactions() {
       });
     },
   });
+
+  const handlePageChange = (page) => {
+    setFilters((prev) => ({
+      ...prev,
+      page: page,
+    }));
+  };
+
+  const handleOnItemsPageChange = (limit) => {
+    setFilters((prev) => ({
+      ...prev,
+      limit: limit,
+    }));
+  };
 
   return (
     <>
@@ -252,106 +126,253 @@ export default function LoanTransactions() {
           </div>
         </div>
         {/* 2. TOOLBAR */}
-        <div className="flex justify-between items-center bg-white p-3 rounded-2xl border border-slate-200/60 shadow-sm">
-          <div className="relative w-64">
-            <Search
-              size={14}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
-            />
-            <input
-              className="w-full h-9 pl-9 pr-4 bg-slate-50 rounded-xl text-xs border border-transparent focus:border-primary outline-none"
-              placeholder="Search by ref..."
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+        <div className="w-full flex justify-between items-center bg-white p-3 rounded-2xl border border-slate-200/60 shadow-sm">
+          {/* Left Controls: Search & Advanced Filters Group */}
+          <div className="w-full flex items-center gap-2">
+            <div className="relative w-[50%]">
+              <Search
+                size={14}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+              />
+              <input
+                className="w-full h-9 pl-9 pr-4 bg-slate-50 rounded-xl text-xs border border-transparent focus:border-primary outline-none"
+                placeholder="Search by ref..."
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+            {/* NEW: Advanced Filter Toggle Button */}
           </div>
-          <button className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-all">
-            <Download size={14} /> Export Statement
-          </button>
+
+          {/* Right Controls: Context Actions */}
+
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => setShowFilters(true)} // Connect to your drawer display state variable
+              className="flex items-center gap-2 h-9 px-3.5 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-bold transition-all shadow-3xs cursor-pointer active:scale-98"
+            >
+              <SlidersHorizontal size={13} />
+              <span>Filters</span>
+            </button>
+            <button
+              type="button"
+              className="w-fit whitespace-nowrap flex items-center gap-2 h-9 px-4 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer active:scale-98"
+            >
+              <Download size={14} /> Export Statement
+            </button>
+          </div>
         </div>
 
         {/* 3. DETAILED LEDGER TABLE */}
         <div className="bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
-          <table className="w-full text-left border-collapse font-sans table-auto">
+          <table className="w-full text-left border-collapse table-auto">
             <thead>
               <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
                 <th className="py-4.5 px-6">Transaction Ref & Date</th>
                 <th className="py-4.5 px-6">Mode & Type</th>
-                <th className="py-4.5 px-6">Payment Breakdown</th>
+                <th className="py-4.5 px-6">Loan Allocation</th>
                 <th className="py-4.5 px-6 text-right">Total Paid</th>
                 <th className="py-4.5 px-6 text-center">Status</th>
                 <th className="py-4.5 px-6 text-center">Action</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs">
-              {loanTransactions?.map((tx) => (
-                <tr
-                  key={tx.id}
-                  className="group hover:bg-slate-50/60 transition-colors"
-                >
-                  <td className="py-4 px-6">
-                    <div className="flex flex-col">
-                      <span className="font-bold text-slate-900">
-                        {tx.transaction_ref}
-                      </span>
-                      <span className="text-[10px] text-slate-400">
-                        {new Date(tx.created_at).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex flex-col gap-1">
-                      <span className="px-2 py-0.5 bg-slate-100 rounded-md text-[9px] font-bold uppercase tracking-wide w-fit">
-                        {tx.payment_mode}
-                      </span>
-                      <span className="text-[9px] font-medium text-slate-500 uppercase">
-                        {getTxType(tx)}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6">
-                    <div className="flex gap-10">
-                      <div className="flex flex-col">
-                        <span className="text-[9px] text-slate-400 uppercase">
-                          Principal
-                        </span>
-                        <span className="font-semibold text-slate-700">
-                          {formatAmount(tx.principal_paid)}
-                        </span>
-                      </div>
-                      <div className="flex flex-col">
-                        <span className="text-[9px] text-slate-400 uppercase">
-                          Interest
-                        </span>
-                        <span className="font-semibold text-slate-700">
-                          {formatAmount(tx.interest_paid)}
-                        </span>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 text-right font-bold text-slate-900">
-                    {formatAmount(tx.amount_paid)}
-                  </td>
-                  <td className="py-4 px-6 text-center">
-                    <span
-                      className={`inline-flex items-center gap-1.5 text-[9px] font-bold uppercase px-2 py-0.5 rounded-full ${tx.is_reversed ? "bg-red-50 text-red-600" : "bg-emerald-50 text-emerald-600"}`}
+              {isFetching ? (
+                Array(10)
+                  .fill(0)
+                  .map((_, index) => (
+                    <tr
+                      key={`tx-skeleton-${index}`}
+                      className="animate-pulse border-b border-slate-100 last:border-none"
                     >
-                      {tx.is_reversed ? (
-                        <AlertCircle size={10} />
-                      ) : (
-                        <CheckCircle2 size={10} />
-                      )}
-                      {tx.is_reversed ? "Reversed" : "Verified"}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6 text-center">
-                    <button className="text-slate-400 hover:text-primary transition-colors">
-                      <ArrowUpRight size={16} />
-                    </button>
+                      {/* Column 1: Transaction Reference and Date Skeleton */}
+                      <td className="py-3 px-6">
+                        <div className="flex flex-col gap-1.5">
+                          {/* Reference Hash Placeholder */}
+                          <div className="h-4 w-24 bg-slate-200 rounded" />
+                          {/* Calendar Date Line */}
+                          <div className="h-3 w-16 bg-slate-100 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Column 2: Payment Channel and Type Skeleton */}
+                      <td className="py-3 px-6">
+                        <div className="flex flex-col gap-1.5">
+                          {/* Channel Badge Mock */}
+                          <div className="h-4 w-14 bg-slate-200 rounded-md" />
+                          {/* Transaction Type Label */}
+                          <div className="h-3 w-16 bg-slate-100 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Column 3: Target Loan Account Mapping Context Skeleton */}
+                      <td className="py-3 px-6">
+                        <div className="flex gap-8">
+                          {/* Loan Code Column Segment */}
+                          <div className="flex flex-col gap-1">
+                            <div className="h-2.5 w-12 bg-slate-100 rounded" />
+                            <div className="h-4 w-14 bg-slate-200 rounded" />
+                          </div>
+                          {/* Product Family Column Segment */}
+                          <div className="flex flex-col gap-1">
+                            <div className="h-2.5 w-16 bg-slate-100 rounded" />
+                            <div className="h-4 w-24 bg-slate-200 rounded" />
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Column 4: Sum Value Paid Skeleton */}
+                      <td className="py-3 px-6 text-right">
+                        {/* Total Amount Value Box */}
+                        <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
+                      </td>
+
+                      {/* Column 5: Structural Processing State Status Skeleton */}
+                      <td className="py-3 px-6 text-center">
+                        {/* Rounded Pill Status Tag Shell */}
+                        <div className="h-6 w-16 bg-slate-100 rounded-full mx-auto" />
+                      </td>
+
+                      {/* Column 6: Deep-Link Action Redirect Skeleton */}
+                      <td className="py-3 px-6 text-center align-middle">
+                        {/* Action Button Circular Box Icon Shell */}
+                        <div className="size-6 bg-slate-50 border border-slate-200/30 rounded-lg mx-auto" />
+                      </td>
+                    </tr>
+                  ))
+              ) : loanTransactions?.length > 0 ? (
+                loanTransactions?.map((tx) => (
+                  <tr
+                    key={tx.id}
+                    className="group hover:bg-slate-50/60 transition-colors"
+                  >
+                    <td className="py-3 px-6">
+                      <div className="flex flex-col">
+                        <span className="font-bold text-slate-900">
+                          {tx.reference || "—"}
+                        </span>
+                        <span className="text-[10px] text-slate-400">
+                          {tx.transaction_date
+                            ? new Date(tx.transaction_date).toLocaleDateString(
+                                "en-KE",
+                                {
+                                  dateStyle: "medium",
+                                },
+                              )
+                            : "—"}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Column 2: Payment Channel and Type */}
+                    <td className="py-3 px-6">
+                      <div className="flex flex-col gap-1">
+                        <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[9px] font-bold uppercase tracking-wide w-fit">
+                          {tx.channel || "Manual"}
+                        </span>
+                        <span className="text-[9px] font-medium text-slate-500 uppercase tracking-wide">
+                          {tx.transaction_type?.replace(/_/g, " ") ||
+                            "Repayment"}
+                        </span>
+                      </div>
+                    </td>
+
+                    {/* Column 3: Target Loan Account Mapping Context */}
+                    <td className="py-3 px-6">
+                      <div className="flex gap-8">
+                        <div className="flex flex-col">
+                          <span className="text-[9px] text-slate-400 uppercase tracking-wider">
+                            Loan Code
+                          </span>
+                          <span className="font-mono font-bold text-slate-700 mt-0.5">
+                            {tx.loan_code || "—"}
+                          </span>
+                        </div>
+                        <div className="flex flex-col">
+                          <span className="text-[9px] text-slate-400 uppercase tracking-wider">
+                            Product Family
+                          </span>
+                          <span className="font-semibold text-slate-600 capitalize mt-0.5">
+                            {tx.loan_type?.replace(/_/g, " ") || "—"}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Column 4: Sum Value Paid */}
+                    <td className="py-3 px-6 text-right font-bold text-slate-900">
+                      {formatAmount
+                        ? formatAmount(tx.amount)
+                        : `KES ${Number(tx.amount || 0).toLocaleString()}`}
+                    </td>
+
+                    {/* Column 5: Structural Processing State Status */}
+                    <td className="py-3 px-6 text-center">
+                      <span
+                        className={`inline-flex items-center gap-1.5 text-[9px] font-bold uppercase px-2.5 py-1 rounded-full ${
+                          tx.status?.toLowerCase() === "posted" ||
+                          tx.status?.toLowerCase() === "success"
+                            ? "bg-emerald-50 text-emerald-600"
+                            : tx.status?.toLowerCase() === "reversed"
+                              ? "bg-rose-50 text-rose-600"
+                              : "bg-amber-50 text-amber-600"
+                        }`}
+                      >
+                        {tx.status?.toLowerCase() === "reversed" ? (
+                          <AlertCircle size={10} />
+                        ) : (
+                          <CheckCircle2 size={10} />
+                        )}
+                        {tx.status || "Pending"}
+                      </span>
+                    </td>
+
+                    {/* Column 6: Deep-Link Action Redirect */}
+                    <td className="py-3 px-6 text-center">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          navigate?.(`/admin/transactions/${tx.id}`)
+                        }
+                        className="text-slate-400 hover:text-[#074073] transition-colors cursor-pointer"
+                      >
+                        <ArrowUpRight size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={6} className="py-8 px-6">
+                    <div className="w-full bg-white border border-dashed border-slate-200 rounded-[24px] p-16 text-center select-none">
+                      {/* Icon Wrapper */}
+                      <div className="size-12 bg-slate-50 border border-slate-200/60 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4 shadow-3xs">
+                        <Receipt size={22} className="opacity-80" />
+                      </div>
+
+                      {/* Primary Message */}
+                      <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
+                        No Transactions Found
+                      </h3>
+
+                      {/* Conversational Description */}
+                      <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
+                        There are no repayment records or deposit receipts
+                        logged under the current search parameters.
+                      </p>
+                    </div>
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
+          <Pagination
+            currentPage={filters?.page}
+            totalItems={totalItems}
+            itemsPerPage={filters?.limit}
+            onPageChange={handlePageChange}
+            onItemsPerPageChange={handleOnItemsPageChange}
+          />
         </div>
       </div>
     </>

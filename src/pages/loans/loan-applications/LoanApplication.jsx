@@ -220,11 +220,6 @@ export default function LoanApplication() {
               value={application.applicant_mobile}
             />
             <MetricItem
-              icon={<ShieldCheck />}
-              label="Customer ID"
-              value={application.customer_id}
-            />
-            <MetricItem
               icon={<Briefcase />}
               label="Branch Code"
               value={application.loan_org_code}
@@ -252,7 +247,7 @@ export default function LoanApplication() {
             <MetricItem
               icon={<Calendar />}
               label="Loan Duration"
-              value={`${application.loan_period} Months (${application.duration_key})`}
+              value={`${application.loan_period} Months`}
             />
             <MetricItem
               icon={<Clock />}
@@ -641,52 +636,6 @@ export default function LoanApplication() {
                       />
                     </div>
                   </div>
-
-                  {/* NEW ADDITION: MICRO-VOTER REGISTER LIST */}
-                  <div className="border-t border-slate-200/50 pt-3">
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block mb-2">
-                      Voter Breakdown
-                    </span>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                      {application?.committee_voters_list?.map((voter, idx) => (
-                        <div
-                          key={idx}
-                          className="bg-white border border-slate-200/60 rounded-lg p-2 flex items-center justify-between text-xs"
-                        >
-                          <div className="min-w-0">
-                            <p className="font-bold text-slate-800 truncate">
-                              {voter.name}
-                            </p>
-                            <p className="text-[10px] text-slate-400 font-medium capitalize">
-                              {voter.role?.replace("_", " ")}
-                            </p>
-                          </div>
-
-                          {/* Status-specific rendering for vote tokens */}
-                          <span
-                            className={`text-[9px] font-bold uppercase px-2 py-0.5 rounded ${
-                              voter.decision === "approved"
-                                ? "bg-emerald-50 text-emerald-600"
-                                : voter.decision === "rejected"
-                                  ? "bg-rose-50 text-rose-600"
-                                  : "bg-slate-100 text-slate-400"
-                            }`}
-                          >
-                            {voter.decision === "approved"
-                              ? "Approved"
-                              : voter.decision === "rejected"
-                                ? "Vetoed"
-                                : "Awaiting"}
-                          </span>
-                        </div>
-                      )) || (
-                        /* Fallback list context if voter objects array isn't populated dynamically */
-                        <p className="text-[11px] text-slate-400 italic">
-                          Individual voter assignments have not been logged yet.
-                        </p>
-                      )}
-                    </div>
-                  </div>
                 </div>
               ) : (
                 /* COMMITTEE VOTES NOT REQUIRED INLINE STATE */
@@ -885,7 +834,7 @@ export default function LoanApplication() {
 
 const ApplicationCard = ({ title, icon, children }) => (
   <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] overflow-hidden w-full h-full">
-    <div className="px-5 py-4 bg-slate-50/60 border-b border-slate-100 flex items-center gap-2.5 select-none">
+    <div className="px-5 py-3 bg-slate-50/60 border-b border-slate-100 flex items-center gap-2.5 select-none">
       <div className="size-7 rounded-lg bg-white border border-slate-200/60 flex items-center justify-center text-slate-400 shadow-2xs">
         {icon}
       </div>
@@ -893,7 +842,7 @@ const ApplicationCard = ({ title, icon, children }) => (
         {title}
       </h3>
     </div>
-    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
       {children}
     </div>
   </div>

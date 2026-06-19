@@ -42,26 +42,24 @@ export default function Homelayer() {
       badge: "1,240",
     },
     {
-      id: "users",
-      label: "Users",
-      path: "/admin/users",
-      icon: <UserCog size={18} />,
-      subItems: [
-        { label: "All Users", path: "/admin/all-users" },
-        { label: "Roles & Permissions", path: "/admin/roles-permissions" },
-        { label: "Audit Trails", path: "/admin/audit-trails" },
-      ],
-    },
-    {
       id: "loans",
       label: "Loans",
       path: "/admin/loans",
       icon: <FileClock size={18} />,
       badge: "18",
       subItems: [
-        { label: "Loan Applications", path: "/admin/loan-applications" },
         { label: "All Loans", path: "/admin/all-loans" },
         { label: "Guarantors", path: "/admin/guarantors" },
+      ],
+    },
+    {
+      id: "loan-applications",
+      label: "Loan Applications",
+      path: "/admin/loan-applications",
+      icon: <FileClock size={18} />,
+      badge: "18",
+      subItems: [
+        { label: "Loan Applications", path: "/admin/loan-applications" },
         { label: "Loan Products", path: "/admin/loan-products" },
         {
           label: "Loan Application Approvals",
@@ -78,6 +76,17 @@ export default function Homelayer() {
         { label: "Account Transactions", path: "/admin/account-transactions" },
         { label: "Loan Transactions", path: "/admin/loan-transactions" },
         { label: "Bulk Payments", path: "/admin/bulk-payments" },
+      ],
+    },
+    {
+      id: "users",
+      label: "Users",
+      path: "/admin/users",
+      icon: <UserCog size={18} />,
+      subItems: [
+        { label: "All Users", path: "/admin/all-users" },
+        { label: "Roles & Permissions", path: "/admin/roles-permissions" },
+        { label: "Audit Trails", path: "/admin/audit-trails" },
       ],
     },
     {

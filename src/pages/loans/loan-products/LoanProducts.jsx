@@ -195,36 +195,6 @@ export default function LoanProducts() {
 
       {/* 3. INTERACTIVE SEARCH FILTER & ACCORDION CONTROL PANE */}
       <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        {/* Segments: Active vs Non-Active Toggles */}
-        <div className="flex bg-slate-100 p-1 rounded-xl h-10 w-fit select-none">
-          <button
-            onClick={() => setActiveTab("active")}
-            className={`px-4 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
-              activeTab === "active"
-                ? "bg-white text-primary shadow-sm"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <span
-              className={`size-1.5 rounded-full ${activeTab === "active" ? "bg-success" : "bg-slate-300"}`}
-            />
-            <span>Active Products ({stats.active})</span>
-          </button>
-          <button
-            onClick={() => setActiveTab("inactive")}
-            className={`px-4 rounded-lg text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2 ${
-              activeTab === "inactive"
-                ? "bg-white text-warning shadow-sm"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <span
-              className={`size-1.5 rounded-full ${activeTab === "inactive" ? "bg-warning" : "bg-slate-300"}`}
-            />
-            <span>Inactive Products ({stats.inactive})</span>
-          </button>
-        </div>
-
         {/* Local Scope Product Filter Search Input */}
         <div className="relative w-full md:w-72">
           <Search

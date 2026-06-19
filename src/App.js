@@ -32,6 +32,12 @@ import ApproveApplication from "./pages/loans/loan-applications/ApproveApplicati
 import ApplyProducts from "./pages/loans/apply-loan/ApplyProducts";
 import LoanEligibility from "./pages/loans/apply-loan/Eligibility";
 import LoanApplicationDetails from "./pages/loans/apply-loan/LoanApplicationDetails";
+import DisburseLoan from "./pages/loans/loan-applications/DisburseApplication";
+import CancelApplication from "./pages/loans/loan-applications/CancelApplication";
+import NotifyApplicant from "./pages/loans/loan-applications/NotifyApplicant";
+import NotifyBorrower from "./pages/loans/all-loans/NotifyBorrower";
+import RecordManualPayment from "./pages/loans/all-loans/RecordManualPayment";
+import LoanStatements from "./pages/loans/all-loans/LoanStatements";
 
 function App() {
   return (
@@ -45,10 +51,34 @@ function App() {
 
         <Route path="loan-applications" element={<LoanApplications />} />
         <Route path="loan-applications/:id" element={<LoanApplication />} />
+        <Route
+          path="loan-applications/:id/disburse"
+          element={<DisburseLoan />}
+        />
+        <Route
+          path="loan-applications/:id/cancel-application"
+          element={<CancelApplication />}
+        />
+        <Route
+          path="loan-applications/:id/send-notification"
+          element={<NotifyApplicant />}
+        />
 
         <Route path="all-loans" element={<AllLoans />} />
         <Route path="all-loans/:id" element={<Loan />} />
         <Route path="guarantors" element={<Guarantors />} />
+        <Route
+          path="all-loans/:id/send-notification"
+          element={<NotifyBorrower />}
+        />
+        <Route
+          path="all-loans/:id/record-payment"
+          element={<RecordManualPayment />}
+        />
+        <Route
+          path="all-loans/:id/loan-statements"
+          element={<LoanStatements />}
+        />
 
         <Route path="all-users" element={<AllUsers />} />
         <Route path="all-users/:id" element={<AdminUser />} />

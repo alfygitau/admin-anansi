@@ -360,7 +360,7 @@ export default function Homelayer() {
       {/* WORKSPACE CANVAS CONTAINER */}
       <div className="flex flex-col flex-grow min-w-0 overflow-hidden">
         {/* GLOBAL HEADER */}
-        <header className="h-20 bg-white border-b border-slate-200/80 flex items-center justify-between px-4 md:pl-3 md:pr-8 shrink-0 relative z-30 select-none">
+        <header className="h-20 bg-white border-b border-slate-200/80 flex items-center justify-between px-4 md:pl-3 shrink-0 relative z-30 select-none">
           {/* LEFT SECTION: Context Branding & Route Identifiers */}
           <div className="flex items-center gap-4">
             {/* Mobile Sidebar Navigation Toggle Trigger */}

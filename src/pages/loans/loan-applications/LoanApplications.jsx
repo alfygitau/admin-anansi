@@ -14,11 +14,13 @@ import {
   Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../../contexts/ToastProvider";
 
 export default function LoanApplications() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const { toast } = useToast();
   const loanApplications = [
     {
       id: "b0d1b573-e491-403b-b2e8-4daa7633ecc3",
@@ -423,6 +425,9 @@ export default function LoanApplications() {
                   <td className="py-4 px-6 text-right pr-8">
                     <div className="flex items-center justify-end gap-1.5">
                       <button
+                        onClick={() =>
+                          navigate(`/admin/loan-applications/${app?.id}`)
+                        }
                         className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-2xs bg-white cursor-pointer"
                         title="View Application Audit File"
                       >
@@ -430,12 +435,6 @@ export default function LoanApplications() {
                       </button>
                       {app.status !== "approved" && (
                         <>
-                          <button
-                            className="size-8 rounded-xl border border-emerald-100 flex items-center justify-center text-success hover:bg-emerald-50 hover:border-emerald-200 transition-all shadow-2xs bg-white cursor-pointer"
-                            title="Affirm Committee Approval Vote"
-                          >
-                            <Check size={14} />
-                          </button>
                           <button
                             className="size-8 rounded-xl border border-rose-100 flex items-center justify-center text-error hover:bg-rose-50 hover:border-rose-200 transition-all shadow-2xs bg-white cursor-pointer"
                             title="Log Disapproval Veto"

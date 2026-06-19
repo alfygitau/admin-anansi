@@ -684,7 +684,7 @@ export const FormInput = ({ icon, label, error, ...props }) => (
       <div className="absolute left-10 top-1/2 -translate-y-1/2 w-px h-4 bg-slate-200/80 group-focus-within:bg-primary/30 transition-colors pointer-events-none z-10" />
       <input
         {...props}
-        className={`w-full h-12 pl-12 pr-4 bg-slate-50/60 border rounded-xl text-xs font-semibold outline-none transition-all focus:bg-white focus:ring-4 focus:ring-primary/5 placeholder:text-slate-400 placeholder:font-normal font-sans ${
+        className={`w-full h-14 pl-12 pr-4 bg-slate-50/60 border rounded-xl text-xs font-semibold outline-none transition-all focus:bg-white focus:ring-4 focus:ring-primary/5 placeholder:text-slate-400 placeholder:font-normal font-sans ${
           error
             ? "border-rose-400 text-rose-900 focus:border-rose-500 focus:ring-rose-500/5"
             : "border-slate-200/80 text-slate-800 focus:border-primary"
@@ -714,7 +714,7 @@ export const FormSelect = ({ icon, label, error, children, ...props }) => (
       <div className="absolute left-10 top-1/2 -translate-y-1/2 w-px h-4 bg-slate-200/80 group-focus-within:bg-primary/30 transition-colors pointer-events-none z-10" />
       <select
         {...props}
-        className={`w-full h-12 pl-12 pr-10 bg-slate-50/60 border rounded-xl text-xs font-semibold outline-none transition-all focus:bg-white focus:ring-4 focus:ring-primary/5 appearance-none font-sans cursor-pointer ${
+        className={`w-full h-14 pl-12 pr-10 bg-slate-50/60 border rounded-xl text-xs font-semibold outline-none transition-all focus:bg-white focus:ring-4 focus:ring-primary/5 appearance-none font-sans cursor-pointer ${
           error
             ? "border-rose-400 text-rose-900 focus:border-rose-500 focus:ring-rose-500/5"
             : "border-slate-200/80 text-slate-800 focus:border-primary"

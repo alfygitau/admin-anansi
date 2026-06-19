@@ -22,11 +22,14 @@ import {
   DownloadCloud,
   Sliders,
   ChevronDown,
+  Upload,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function LoanApplication() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
+  const navigate = useNavigate();
 
   // Close the drop panel if an underwriter clicks outside of it
   useEffect(() => {
@@ -38,9 +41,9 @@ export default function LoanApplication() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
   // Populated directly from your core application JSON schema configuration
   const [application] = useState({
-    // Core Identification Trace Parameters
     id: "b0d1b573-e491-403b-b2e8-4daa7633ecc3",
     application_number: "APP-00002",
     loan_id: null,
@@ -49,11 +52,9 @@ export default function LoanApplication() {
     member_snapshot_id: "22039766-0978-4981-bf32-e5ed39531d2c",
     loan_org_code: "BA208",
 
-    // Applicant Identity Details
     applicant_name: "ALMASI ALUOCH",
     applicant_mobile: "+254765350350",
 
-    // Requested Financial Parameters
     loan_type: "Development_loan",
     applied_amount: "60,000.00",
     loan_period: 8,
@@ -64,11 +65,9 @@ export default function LoanApplication() {
     loan_mode: 1,
     loan_purpose: "I would like to buy a car",
 
-    // Underwriting Decisions
     approved_amount: null,
     approved_period: null,
 
-    // Automated Risk Eligibility Result Snapshot
     eligibility_passed: true,
     eligibility_result: {
       limit: "110,005.00",
@@ -82,7 +81,6 @@ export default function LoanApplication() {
       current_multiplier: null,
     },
 
-    // Workflow Status and Governance Controls
     status: "pending_credit_committee",
     status_label: "Pending Credit Committee",
     current_stage_label: "Credit Committee",
@@ -90,11 +88,9 @@ export default function LoanApplication() {
     committee_approvals_received: 2,
     committee_rejections_received: 0,
 
-    // Evaluation Notes Ledger
     applicant_notes: null,
     admin_notes: null,
 
-    // Collateral Pledges & Chattels Registry
     requires_collateral: false,
     collateral_type: null,
     collateral_description:
@@ -109,7 +105,6 @@ export default function LoanApplication() {
       },
     ],
 
-    // Co-Signers & Guarantors Matrix
     requires_guarantor: true,
     min_guarantors: 2,
     max_guarantors: 4,
@@ -130,7 +125,6 @@ export default function LoanApplication() {
       },
     ],
 
-    // Verification & Underwriting Attachments
     documents: [
       {
         name: "National_ID_Pass.pdf",
@@ -152,7 +146,6 @@ export default function LoanApplication() {
       },
     ],
 
-    // Core System Lifecycle Timestamps
     application_date: "2026-06-13",
     submitted_at: "2026-06-13T11:05:54.148Z",
     terms_accepted_at: "2026-06-13T11:29:31.520Z",
@@ -163,14 +156,11 @@ export default function LoanApplication() {
     created_at: "2026-06-13T11:05:54.150Z",
     updated_at: "2026-06-15T08:05:26.191Z",
 
-    // Disbursement Log
     disbursement: null,
 
-    // System Ingestion Status Flags
     is_imported: false,
     legacy_data: null,
 
-    // Complete Product Matrix Backing Blueprint
     product: {
       id: "c2e4e26e-5071-4eb0-ab89-26732c208ece",
       product_code: "Development_loan",
@@ -237,12 +227,11 @@ export default function LoanApplication() {
       allowed_currencies: ["KES"],
     },
 
-    // Historical Chronological Status Workflow Logs
     stage_history: [
       {
         stage: "eligibility",
         status: "passed",
-        note: "Automated core metrics and system validation controls verified successfully.",
+        note: "Automated checks and basic member parameters verified successfully.",
         actor: "system",
         actor_name: "System",
         timestamp: "2026-06-13T11:05:54.148Z",
@@ -250,7 +239,7 @@ export default function LoanApplication() {
       {
         stage: "guarantor",
         status: "pending_guarantor",
-        note: "3 guarantor request(s) committed and sent for profile response validation.",
+        note: "Guarantor requests sent out and awaiting confirmation.",
         actor: "system",
         actor_name: "System",
         timestamp: "2026-06-13T11:29:15.412Z",
@@ -258,7 +247,7 @@ export default function LoanApplication() {
       {
         stage: "guarantor",
         status: "guarantor_approved",
-        note: "All required guarantors approved. Total covered liabilities: KES 60,000.",
+        note: "All selected guarantors have signed off. Total amount covered: KES 60,000.",
         actor: "a8e19467-5a87-a9b2-605a-68c46ae5b8fe",
         actor_name: "IAN NJAGAH NDUNGU",
         timestamp: "2026-06-14T19:24:08.269Z",
@@ -266,7 +255,7 @@ export default function LoanApplication() {
       {
         stage: "credit_committee",
         status: "pending_credit_committee",
-        note: "Forwarded to board credit committee for quorum review and voting tracks.",
+        note: "Forwarded to the credit committee for review and voting tabs.",
         actor: "system",
         actor_name: "System",
         timestamp: "2026-06-14T19:24:08.269Z",
@@ -275,15 +264,19 @@ export default function LoanApplication() {
   });
 
   const handleApprove = () => {
-    // Pipeline approval handler trigger
+    navigate(`/admin/loan-applications/${application?.id}/approve`);
+  };
+
+  const handleDisburse = () => {
+    navigate(`/admin/loan-applications/${application?.id}/disburse`);
   };
 
   const handleCancel = () => {
-    // Pipeline revocation handler trigger
+    navigate(`/admin/loan-applications/${application?.id}/cancel-application`);
   };
 
   const handleSendNotification = () => {
-    // Channel SMS/Email notification dispatch pipeline
+    navigate(`/admin/loan-applications/${application?.id}/send-notification`);
   };
 
   return (
@@ -322,7 +315,7 @@ export default function LoanApplication() {
             }`}
           >
             <Sliders size={14} className={isMenuOpen ? "animate-pulse" : ""} />
-            <span>Manage Application</span>
+            <span>Manage Loan Application</span>
             <ChevronDown
               size={14}
               className={`transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`}
@@ -334,7 +327,7 @@ export default function LoanApplication() {
             <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200/80 rounded-2xl shadow-xl p-2 z-50 origin-top-right animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="px-3 py-2 border-b border-slate-100 mb-1 select-none">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Available Actions
+                  Quick Actions
                 </p>
               </div>
 
@@ -353,7 +346,7 @@ export default function LoanApplication() {
                   <span>Notify Applicant</span>
                 </button>
 
-                {/* ACTION 2: CANCEL APPLICATION (HIGH WARNING) */}
+                {/* ACTION 2: CANCEL APPLICATION */}
                 <button
                   onClick={() => {
                     handleCancel();
@@ -367,7 +360,7 @@ export default function LoanApplication() {
                   <span>Cancel Application</span>
                 </button>
 
-                {/* ACTION 3: APPROVE FORMAL PROCESS */}
+                {/* ACTION 3: APPROVE */}
                 <button
                   onClick={() => {
                     handleApprove();
@@ -380,42 +373,51 @@ export default function LoanApplication() {
                   </div>
                   <span>Approve Application</span>
                 </button>
+                <button
+                  onClick={() => {
+                    handleDisburse();
+                    setIsMenuOpen(false);
+                  }}
+                  className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/50 transition-colors text-left cursor-pointer group"
+                >
+                  <div className="size-6 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:text-success group-hover:bg-emerald-50 group-hover:border-emerald-100 transition-colors">
+                    <Upload size={13} />
+                  </div>
+                  <span>Disburse Application</span>
+                </button>
               </div>
             </div>
           )}
         </div>
       </div>
 
-      {/* SYMMETRIC WORKSPACE GRID GRID (6 Equal-Weight Section Panels) */}
+      {/* SYMMETRIC WORKSPACE GRID GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* CONTAINER 1: APPLICANT IDENTITY LEDGER */}
-        <ApplicationCard
-          title="Applicant Identity Profile"
-          icon={<User size={16} />}
-        >
+        <ApplicationCard title="Borrower Profile" icon={<User size={16} />}>
           <MetricItem
             icon={<User />}
-            label="Full Registry Legal Name"
+            label="Full Name"
             value={application.applicant_name}
           />
           <MetricItem
             icon={<Smartphone />}
-            label="Mobile Communications Terminal"
+            label="Phone Number"
             value={application.applicant_mobile}
           />
           <MetricItem
             icon={<ShieldCheck />}
-            label="Global Customer Reference ID"
+            label="Customer ID"
             value={application.customer_id}
           />
           <MetricItem
             icon={<Briefcase />}
-            label="Organization Origin Code"
+            label="Branch Code"
             value={application.loan_org_code}
           />
           <div className="md:col-span-2 space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100 mt-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-              Declarative Loan Purpose Context
+              Reason for Loan
             </span>
             <p className="text-xs text-slate-600 font-medium leading-relaxed">
               "{application.loan_purpose}"
@@ -424,111 +426,103 @@ export default function LoanApplication() {
         </ApplicationCard>
 
         {/* CONTAINER 2: REQUESTED FINANCIAL STRUCTURING */}
-        <ApplicationCard
-          title="Financial Structuring Parameters"
-          icon={<DollarSign size={16} />}
-        >
+        <ApplicationCard title="Loan Details" icon={<DollarSign size={16} />}>
           <MetricItem
             icon={<DollarSign />}
-            label="Applied Capital Principal"
+            label="Amount Requested"
             value={`KES ${application.applied_amount}`}
           />
           <MetricItem
             icon={<Calendar />}
-            label="Amortization Period Duration"
+            label="Loan Duration"
             value={`${application.loan_period} Months (${application.duration_key})`}
           />
           <MetricItem
             icon={<Clock />}
-            label="Repayment Settlement Interval"
+            label="Payment Frequency"
             value={application.loan_interval}
           />
           <MetricItem
             icon={<Layers />}
-            label="Origination Channel Terminal"
+            label="Application Channel"
             value={application.loan_channel}
           />
           <MetricItem
             icon={<FileText />}
-            label="Structural Micro Ledger Code"
+            label="Loan Code"
             value={application.loan_code}
           />
           <MetricItem
             icon={<ShieldCheck />}
-            label="Financial Currency Standard"
+            label="Currency"
             value={application.currency || "KES"}
           />
         </ApplicationCard>
 
         {/* CONTAINER 3: ATTACHED PRODUCT BLUEPRINT */}
-        <ApplicationCard
-          title="Target Framework Product Profile"
-          icon={<Briefcase size={16} />}
-        >
+        <ApplicationCard title="Product Profile" icon={<Briefcase size={16} />}>
           <MetricItem
             icon={<Briefcase />}
-            label="Loan Product Specification"
+            label="Product Name"
             value={application.product.product_name}
           />
           <MetricItem
             icon={<Settings />}
-            label="Product Machine System Code"
+            label="Product Code"
             value={application.product.product_code}
           />
           <MetricItem
             icon={<Percent />}
-            label="Product Nominal Interest Rate"
+            label="Interest Rate"
             value={`${parseFloat(application.product.interest_rate).toFixed(2)}% p.m.`}
           />
           <MetricItem
             icon={<Settings />}
-            label="Interest Amortization Methodology"
+            label="Interest Calculation Method"
             value={application.product.interest_method.replace("_", " ")}
             isCapitalized
           />
           <MetricItem
             icon={<Users />}
             label="Required Committee Approvals"
-            value={`${application.committee_approvals_required} Affirmed Votes`}
+            value={`${application.committee_approvals_required} Votes Needed`}
           />
           <MetricItem
             icon={<Users />}
-            label="Current Approvals Transmitted"
-            value={`${application.committee_approvals_received} Valid Votes`}
+            label="Approvals Received"
+            value={`${application.committee_approvals_received} Votes Cast`}
           />
         </ApplicationCard>
 
         <ApplicationCard
-          title="Guarantors Underwriting Matrix"
+          title="Guarantors & Co-signers"
           icon={<Users size={16} />}
         >
           <MetricItem
             icon={<ShieldCheck />}
-            label="Guarantorship Enforcement"
-            value={
-              application.requires_guarantor ? "Mandatory Policy" : "Optional"
-            }
+            label="Guarantor Policy"
+            value={application.requires_guarantor ? "Required" : "Optional"}
           />
           <MetricItem
             icon={<Users />}
-            label="Group Capacity Bounds"
+            label="Guarantor Count Limits"
             value={`Min: ${application.min_guarantors} / Max: ${application.max_guarantors}`}
           />
           <MetricItem
             icon={<DollarSign />}
-            label="Enforcement Threshold Floor"
+            label="Required for Amounts Above"
             value={`KES ${application.guarantor_required_above_amount}`}
           />
           <MetricItem
             icon={<Percent />}
-            label="Required Liability Coverage"
-            value={`${application.guarantor_coverage_percent}% Net`}
+            label="Required Coverage"
+            value={`${application.guarantor_coverage_percent}%`}
           />
 
           {/* Active Co-Signers List Ledger */}
           <div className="md:col-span-2 space-y-3.5 border-t border-slate-100 pt-5 mt-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
-              Attached Co-Signer Profiles
+              Assigned Guarantors
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {application.guarantors.map((g, i) => (
@@ -561,26 +555,26 @@ export default function LoanApplication() {
 
         {/* SECTION 2: REGISTERED COLLATERAL & CHATTELS */}
         <ApplicationCard
-          title="Registered Collateral & Chattels"
+          title="Collateral & Security"
           icon={<ShieldAlert size={16} />}
         >
           <MetricItem
             icon={<ShieldCheck />}
-            label="Collateral Requirement Security"
+            label="Collateral Requirement"
             value={
               application.requires_collateral
-                ? "Mandatory Asset Pledge"
+                ? "Asset Pledge Required"
                 : "Not Required"
             }
           />
           <MetricItem
             icon={<DollarSign />}
-            label="Total Declared Asset Value"
+            label="Total Asset Value"
             value={`KES ${application.collateral_value}`}
           />
           <div className="md:col-span-2 space-y-1 bg-slate-50 p-4 rounded-xl border border-slate-100 mb-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-              Accepted Collateral Descriptions
+              Accepted Security Types
             </span>
             <p className="text-xs text-slate-600 font-medium leading-relaxed">
               {application.collateral_description}
@@ -590,7 +584,7 @@ export default function LoanApplication() {
           {/* Physical Asset Valuation Registry Ledger */}
           <div className="md:col-span-2 space-y-3.5 border-t border-slate-100 pt-5 mt-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
-              Physical Asset Valuation Registry
+              Asset Valuation Details
             </span>
             <div className="space-y-3">
               {application.chattels.map((c, i) => (
@@ -608,7 +602,7 @@ export default function LoanApplication() {
                   </div>
                   <div>
                     <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                      Registry Trace
+                      Description / Details
                     </span>
                     <p className="text-xs text-slate-500 font-medium mt-0.5 truncate">
                       {c.description}
@@ -635,24 +629,23 @@ export default function LoanApplication() {
 
         {/* SECTION 3: UNDERWRITING DOSSIER & DOCUMENTS */}
         <ApplicationCard
-          title="Underwriting Dossier Attachments"
+          title="Attached Documents"
           icon={<Paperclip size={16} />}
         >
           <div className="md:col-span-2 space-y-1 bg-slate-50 p-4 rounded-xl border border-slate-100 mb-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-              Dossier Compliance Guideline
+              Document Requirements
             </span>
             <p className="text-xs text-slate-500 font-medium leading-relaxed">
-              All documents must be fully notarized and verified against
-              national registries before final board sign-off parameters can
-              trigger.
+              Please make sure all files are clearly uploaded and verified
+              before the application is passed on for final approval.
             </p>
           </div>
 
           {/* Document Attachment Rows */}
-          <div className="md:col-span-2 space-y-3 border-t border-slate-100 pt-5 mt-1">
+          <div className="md:col-span-2 space-y-3 Tri border-t border-slate-100 pt-5 mt-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
-              Verified File Repositories
+              Files Registry
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               {application.documents.map((doc, i) => (
@@ -686,26 +679,23 @@ export default function LoanApplication() {
         </ApplicationCard>
 
         {/* CONTAINER 5: GOVERNANCE STAGE WORKFLOW */}
-        <ApplicationCard
-          title="Governance Pipeline Underwriting"
-          icon={<Layers size={16} />}
-        >
+        <ApplicationCard title="Review Progress" icon={<Layers size={16} />}>
           <MetricItem
             icon={<Layers />}
-            label="Current Operational Review Stage"
+            label="Current Review Stage"
             value={application.current_stage_label}
           />
           <MetricItem
             icon={<Settings />}
-            label="Governance Workflow Engine Schema"
+            label="Workflow Rule"
             value="Joint Committee & Manager Sign-off"
           />
           <div className="md:col-span-2 space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100 mt-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-              Committee Approval Metrics Status
+              Committee Voting Status
             </span>
             <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
-              <span>Votes Cast Quorum Progress</span>
+              <span>Voting Progress</span>
               <span className="font-bold text-slate-900">
                 {application.committee_approvals_received} /{" "}
                 {application.product.committee_approvals_required} Votes
@@ -724,7 +714,7 @@ export default function LoanApplication() {
 
         {/* CONTAINER 6: CHRONOLOGICAL STAGE AUDIT LOGS */}
         <ApplicationCard
-          title="Chronological Stage Audit Logs"
+          title="Application Timeline"
           icon={<History size={16} />}
         >
           <div className="md:col-span-2 space-y-4 max-h-[295px] overflow-y-auto pr-1">
@@ -764,7 +754,6 @@ export default function LoanApplication() {
    SUPPORTIVE CHILD UTILITY TEMPLATE HOOKS
    ========================================================================== */
 
-// Unified Layout Card Body
 const ApplicationCard = ({ title, icon, children }) => (
   <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] overflow-hidden w-full h-full">
     <div className="px-5 py-4 bg-slate-50/60 border-b border-slate-100 flex items-center gap-2.5 select-none">
@@ -781,7 +770,6 @@ const ApplicationCard = ({ title, icon, children }) => (
   </div>
 );
 
-// High-Density Metric Grid Items
 const MetricItem = ({ icon, label, value, isCapitalized = false }) => (
   <div className="flex items-start gap-3 min-w-0">
     <div className="size-8 rounded-xl bg-slate-50 border border-slate-200/40 flex items-center justify-center text-slate-400 shrink-0 shadow-2xs mt-0.5">

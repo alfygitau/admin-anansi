@@ -78,17 +78,29 @@ export default function RolesTable() {
         <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              Authorization Roles
+              Authorization Roles & Permissions
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-1">
               Maintain cryptography claims mapping, audit platform permissions
               matrices, and inspect provisioned operators.
             </p>
           </div>
-          <button className="h-10 px-4 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all flex items-center gap-2 w-fit cursor-pointer">
-            <Plus size={14} />
-            <span>Add Role</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setShowAddRole(true)}
+              className="h-10 px-4 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all flex items-center gap-2 w-fit cursor-pointer"
+            >
+              <Plus size={14} />
+              <span>Add Role</span>
+            </button>
+            <button
+              onClick={() => setShowAddRole(true)}
+              className="h-10 px-4 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all flex items-center gap-2 w-fit cursor-pointer"
+            >
+              <Plus size={14} />
+              <span>Add Permission</span>
+            </button>
+          </div>
         </div>
 
         {/* COMPONENT FILTERS WRAPPER */}

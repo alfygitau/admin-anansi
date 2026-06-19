@@ -21,10 +21,12 @@ import {
   Receipt,
   ShieldAlert,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function Loan() {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const actionMenuRef = useRef(null);
+  const navigate = useNavigate();
 
   // Populated directly from your core banking single loan ledger payload schema
   const [loan] = useState({
@@ -203,7 +205,6 @@ export default function Loan() {
     ],
   });
 
-  // Handle document click triggers for menu auto-collapse
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -217,10 +218,22 @@ export default function Loan() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleSendNotification = () => {
+    navigate(`/admin/all-loans/${loan?.id}/send-notification`);
+  };
+
+  const handleRecordPayment = () => {
+    navigate(`/admin/all-loans/${loan?.id}/record-payment`);
+  };
+
+  const handleViewStatements = () => {
+    navigate(`/admin/all-loans/${loan?.id}/loan-statements`);
+  };
+
   return (
-    <div className="w-full space-y-8 font-sans antialiased text-slate-800">
+    <div className="w-full space-y-5 antialiased text-slate-800">
       {/* EXECUTIVE CONTROL HEADER LAYER */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 pb-6 select-none">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2 select-none">
         <div className="flex items-center gap-4">
           <button className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all shadow-3xs cursor-pointer">
             <ArrowLeft size={16} />
@@ -272,29 +285,33 @@ export default function Loan() {
             <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200/80 rounded-2xl shadow-xl p-2 z-50 origin-top-right animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="px-3 py-2 border-b border-slate-100 mb-1 select-none">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Execution Handlers
+                  Quick Actions
                 </p>
               </div>
               <div className="space-y-1">
                 <MenuActionButton
-                  icon={<Check size={13} />}
-                  label="Disburse"
-                  onClick={() => setIsActionMenuOpen(false)}
-                />
-                <MenuActionButton
                   icon={<History size={13} />}
-                  label="Process Statements"
-                  onClick={() => setIsActionMenuOpen(false)}
+                  label="View Loan Statement"
+                  onClick={() => {
+                    handleViewStatements();
+                    setIsActionMenuOpen(false);
+                  }}
                 />
                 <MenuActionButton
                   icon={<Bell size={13} />}
-                  label="Send Notifications"
-                  onClick={() => setIsActionMenuOpen(false)}
+                  label="Send Reminder Notification"
+                  onClick={() => {
+                    handleSendNotification();
+                    setIsActionMenuOpen(false);
+                  }}
                 />
                 <MenuActionButton
                   icon={<DollarSign size={13} />}
-                  label="Make Manual Payment"
-                  onClick={() => setIsActionMenuOpen(false)}
+                  label="Record Manual Payment"
+                  onClick={() => {
+                    handleRecordPayment();
+                    setIsActionMenuOpen(false);
+                  }}
                   isSuccess
                   variant
                 />
@@ -304,122 +321,116 @@ export default function Loan() {
         </div>
       </div>
 
-      {/* CORE INDUSTRIAL PARAMETERS VIEW GRID: Side by Side on Desktop, 1 Column on Mobile */}
+      {/* CORE INDUSTRIAL PARAMETERS VIEW GRID */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
         {/* CONTAINER 1: DEBTOR IDENTITY & CHANNEL METADATA */}
-        <LoanCard title="Borrower Identity" icon={<User size={16} />}>
+        <LoanCard title="Borrower Details" icon={<User size={16} />}>
           <MetricItem
             icon={<User />}
-            label="Legal Account Holder Name"
+            label="Borrower Name"
             value={loan.loan_name}
           />
           <MetricItem
             icon={<Smartphone />}
-            label="Mobile Communications Terminal"
+            label="Phone Number"
             value={loan.loan_mobile}
           />
           <MetricItem
             icon={<ShieldCheck />}
-            label="Global Customer Reference ID"
+            label="Customer ID"
             value={loan.customer_id}
           />
           <MetricItem
             icon={<Briefcase />}
-            label="Organization Branch Code"
+            label="Branch Code"
             value={loan.loan_org_code}
           />
           <MetricItem
             icon={<Layers />}
-            label="Origination Ingestion Channel"
+            label="Application Channel"
             value={loan.loan_channel}
           />
           <MetricItem
             icon={<Settings />}
-            label="Core Engine Operational Mode"
-            value={`Layer Tier ${loan.loan_mode}`}
+            label="System Processing Mode"
+            value={`Tier ${loan.loan_mode}`}
           />
         </LoanCard>
 
         {/* CONTAINER 2: LIABILITIES & RECOVERY CAPITAL METRICS */}
-        <LoanCard
-          title="Loan Principal & Balances"
-          icon={<DollarSign size={16} />}
-        >
+        <LoanCard title="Balances & Amounts" icon={<DollarSign size={16} />}>
           <MetricItem
             icon={<DollarSign />}
-            label="Issued Principal Capital"
+            label="Amount Borrowed"
             value={`${loan.currency} ${parseFloat(loan.loan_amount).toFixed(2)}`}
           />
           <MetricItem
             icon={<TrendingUp />}
-            label="Cumulative Book Obligation"
+            label="Total to Repay (with Interest)"
             value={`${loan.currency} ${parseFloat(loan.loan_total_amount).toFixed(2)}`}
           />
           <MetricItem
             icon={<Receipt />}
-            label="Outstanding Net Ledger Balance"
+            label="Total Current Balance"
             value={`${loan.currency} ${parseFloat(loan.loan_Balance).toFixed(2)}`}
           />
           <MetricItem
             icon={<Check />}
-            label="Total Cleared Payments Liquidation"
+            label="Total Paid So Far"
             value={`${loan.currency} ${parseFloat(loan.loan_total_payments.toString()).toFixed(2)}`}
           />
           <MetricItem
             icon={<Percent />}
-            label="Principal Remaining Balance"
+            label="Remaining Principal"
             value={`${loan.currency} ${parseFloat(loan.loan_principal_balance).toFixed(2)}`}
           />
           <MetricItem
             icon={<X />}
-            label="Active Default Delinquency Penalty"
+            label="Accrued Penalties"
             value={`${loan.currency} ${parseFloat(loan.loan_penalty_balance).toFixed(2)}`}
           />
         </LoanCard>
 
         {/* CONTAINER 3: ATTACHED PRODUCT SPECIFICATION BLUEPRINT */}
-        <LoanCard
-          title="Loan Product Specifications"
-          icon={<Briefcase size={16} />}
-        >
+        <LoanCard title="Loan Features" icon={<Briefcase size={16} />}>
           <MetricItem
             icon={<Briefcase />}
-            label="Sacco Backing Blueprint Name"
+            label="Product Name"
             value={loan.loan_product.product_name}
           />
           <MetricItem
             icon={<Settings />}
-            label="Machine Framework Product Code"
+            label="Product Code"
             value={loan.loan_product.product_code}
           />
           <MetricItem
             icon={<Percent />}
-            label="Nominal Interest Matrix Value"
+            label="Interest Rate"
             value={`${parseFloat(loan.loan_interest_per).toFixed(2)}% / ${loan.interest_key}`}
           />
           <MetricItem
             icon={<Settings />}
-            label="Amortization Calculation Paradigm"
+            label="Interest Calculation Method"
             value={loan.interest_method.replace("_", " ")}
             isCapitalized
           />
           <MetricItem
             icon={<Calendar />}
-            label="Contractual Account Loan Period"
+            label="Loan Duration"
             value={`${loan.loan_period} Month (${loan.duration_key})`}
           />
           <MetricItem
             icon={<Clock />}
-            label="Contractual Settlement Interval"
+            label="Payment Frequency"
             value={loan.loan_interval}
           />
         </LoanCard>
 
         {/* CONTAINER 4: UPCOMING AMORTIZATION MILESTONE TRACKER */}
-        <LoanCard title="Next Installment Details" icon={<Clock size={16} />}>
+        <LoanCard title="Next Payment Details" icon={<Clock size={16} />}>
           <MetricItem
             icon={<Calendar />}
-            label="Expected Milestone Target Due Date"
+            label="Payment Due Date"
             value={new Date(loan.next_payment.due_date).toLocaleDateString(
               "en-KE",
               { dateStyle: "long" },
@@ -427,24 +438,24 @@ export default function Loan() {
           />
           <MetricItem
             icon={<DollarSign />}
-            label="Milestone Comprehensive Amount Due"
+            label="Total Due This Month"
             value={`${loan.currency} ${parseFloat(loan.next_payment.amount_due.toString()).toFixed(2)}`}
           />
           <MetricItem
             icon={<Check />}
-            label="Milestone Allocated Capital Received"
+            label="Amount Paid This Month"
             value={`${loan.currency} ${parseFloat(loan.next_payment.amount_paid.toString()).toFixed(2)}`}
           />
           <MetricItem
             icon={<Receipt />}
-            label="Milestone Outstanding Balance Due"
+            label="Balance Due This Month"
             value={`${loan.currency} ${parseFloat(loan.next_payment.balance_due.toString()).toFixed(2)}`}
           />
 
           <div className="md:col-span-2 space-y-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
             <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
               <span className="flex items-center gap-1.5">
-                <History size={13} /> Complete Book Liquidation Velocity
+                <History size={13} /> Overall Loan Progress
               </span>
               <span className="font-bold text-slate-900">
                 {loan.repayment_progress_percent}%
@@ -464,15 +475,15 @@ export default function Loan() {
           <div className="px-5 py-4 bg-slate-50/60 border-b border-slate-100 flex items-center gap-2.5 select-none">
             <Calendar size={16} className="text-slate-400" />
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-              Loan Schedule
+              Payment Schedule
             </h3>
           </div>
           <div className="p-4 overflow-x-auto">
             <table className="w-full text-left text-xs">
               <thead>
                 <tr className="text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 pb-2 select-none">
-                  <th className="pb-3 pl-2">Inst.</th>
-                  <th className="pb-3">Target Due Date</th>
+                  <th className="pb-3 pl-2">No.</th>
+                  <th className="pb-3">Due Date</th>
                   <th className="pb-3">Principal Due</th>
                   <th className="pb-3">Interest Due</th>
                   <th className="pb-3 text-right pr-2">Status</th>
@@ -508,7 +519,7 @@ export default function Loan() {
           <div className="px-5 py-4 bg-slate-50/60 border-b border-slate-100 flex items-center gap-2.5 select-none">
             <History size={16} className="text-slate-400" />
             <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
-              Repayments Transactions
+              Recent Repayments
             </h3>
           </div>
           <div className="p-4 max-h-[300px] overflow-y-auto space-y-2.5 pr-2">
@@ -527,7 +538,7 @@ export default function Loan() {
                     </span>
                   </div>
                   <p className="text-[10px] text-slate-400 font-medium">
-                    Processed{" "}
+                    Processed on{" "}
                     {new Date(r.payment_date).toLocaleDateString("en-KE", {
                       dateStyle: "medium",
                     })}
@@ -551,7 +562,7 @@ export default function Loan() {
           {/* Dynamic Row Item Array Ledger */}
           <div className="md:col-span-2 space-y-2.5 border-t border-slate-100 pt-5 mt-1">
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
-              Itemized Penalty Assessment Logs
+              Penalty History
             </span>
             {loan.penalties && loan.penalties.length > 0 ? (
               <div className="space-y-2 max-h-[150px] overflow-y-auto pr-1">
@@ -562,10 +573,10 @@ export default function Loan() {
                   >
                     <div className="space-y-0.5">
                       <p className="text-xs font-bold text-slate-800 uppercase tracking-wide">
-                        Grace Overstep Levy
+                        Late Payment Fee
                       </p>
                       <p className="text-[10px] text-slate-400 font-medium">
-                        Assessed on lifecycle processing trace
+                        Charged automatically for missing the grace period
                       </p>
                     </div>
                     <p className="text-xs font-bold text-error">
@@ -578,7 +589,7 @@ export default function Loan() {
               /* Fallback state when penalty array reads empty */
               <div className="border border-dashed border-slate-200 rounded-xl p-6 text-center bg-slate-50/30 select-none">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  No Delinquency Penalties Levied Against Account
+                  No penalties charged to this account yet.
                 </p>
               </div>
             )}

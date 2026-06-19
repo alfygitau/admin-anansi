@@ -11,14 +11,14 @@ import {
   Download,
 } from "lucide-react";
 import Pagination from "../../../components/pagination/Pagination";
+import { useNavigate } from "react-router-dom";
 
 export default function AllLoans() {
   const [activeTab, setActiveTab] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-
-  // 1. Process standard slice boundaries
+  const navigate = useNavigate();
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
 
@@ -449,6 +449,7 @@ export default function AllLoans() {
                 <td className="py-4 px-6 text-right pr-8">
                   <div className="flex items-center justify-end gap-1.5">
                     <button
+                      onClick={() => navigate(`/admin/all-loans/${loan?.id}`)}
                       className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
                       title="Open Amortization File"
                     >

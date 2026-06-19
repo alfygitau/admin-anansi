@@ -10,13 +10,14 @@ import {
   FileText,
   Clock,
 } from "lucide-react";
+import { useToast } from "../../../contexts/ToastProvider";
 
 const ApproveApplication = ({
   applicationData,
   onDecisionSubmit,
   onItemDetailView,
 }) => {
-  // Sample fallback data if props aren't provided
+  const { toast } = useToast();
   const app = applicationData || {
     id: "APP-2026-8942",
     applicant: "Jane S. Moraa",

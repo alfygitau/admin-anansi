@@ -1,13 +1,15 @@
 import React, { useState } from "react";
-import { X, Calendar, Hash, ChevronDown, ArrowUpDown, Coins } from "lucide-react";
+import {
+  X,
+  Calendar,
+  Hash,
+  ChevronDown,
+  ArrowUpDown,
+  Coins,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const LoanTransactionsFilter = ({
-  isOpen,
-  onClose,
-  filters,
-  setFilters,
-}) => {
+const LoanTransactionsFilter = ({ isOpen, onClose, filters, setFilters }) => {
   // Separate toggle states for each dropdown group
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
@@ -45,24 +47,6 @@ const LoanTransactionsFilter = ({
     { value: "Transfer", label: "Internal Transfer" },
     { value: "Loan Repayment", label: "Loan Repayment" },
   ];
-
-  const FilterField = ({ label, icon: Icon, children }) => (
-    <div className="space-y-2 w-full">
-      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
-        {label}
-      </label>
-      <div className="relative group">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
-          <Icon
-            size={18}
-            className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
-          />
-          <div className="w-[1.5px] h-5 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
-        </div>
-        {children}
-      </div>
-    </div>
-  );
 
   return (
     <AnimatePresence>
@@ -102,7 +86,6 @@ const LoanTransactionsFilter = ({
             <div className="border-b mx-8 border-slate-100"></div>
 
             <div className="flex-1 overflow-y-auto px-8 py-6 space-y-6">
-              
               {/* Transaction Status Dropdown */}
               <FilterField label="Transaction Status" icon={Hash}>
                 <div className="relative w-full">
@@ -113,11 +96,20 @@ const LoanTransactionsFilter = ({
                       setTypeDropdownOpen(false); // Clean overlay handoff
                     }}
                     className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
-                      statusDropdownOpen ? "bg-white border-[#074073] ring-4 ring-[#074073]/5" : ""
+                      statusDropdownOpen
+                        ? "bg-white border-[#074073] ring-4 ring-[#074073]/5"
+                        : ""
                     }`}
                   >
-                    <span className={filters.status ? "text-slate-800 font-bold" : "text-slate-400 font-medium"}>
-                      {statusOptions.find((opt) => opt.value === filters.status)?.label || "Select status..."}
+                    <span
+                      className={
+                        filters.status
+                          ? "text-slate-800 font-bold"
+                          : "text-slate-400 font-medium"
+                      }
+                    >
+                      {statusOptions.find((opt) => opt.value === filters.status)
+                        ?.label || "Select status..."}
                     </span>
                     <ChevronDown
                       size={16}
@@ -130,7 +122,10 @@ const LoanTransactionsFilter = ({
                   <AnimatePresence>
                     {statusDropdownOpen && (
                       <>
-                        <div className="fixed inset-0 z-30" onClick={() => setStatusDropdownOpen(false)} />
+                        <div
+                          className="fixed inset-0 z-30"
+                          onClick={() => setStatusDropdownOpen(false)}
+                        />
                         <motion.div
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -147,7 +142,9 @@ const LoanTransactionsFilter = ({
                                 setStatusDropdownOpen(false);
                               }}
                               className={`w-full px-6 py-3.5 text-xs text-left font-semibold transition-colors cursor-pointer ${
-                                filters.status === opt.value ? "bg-blue-50/70 text-[#074073] font-bold" : "text-slate-600 hover:bg-slate-50"
+                                filters.status === opt.value
+                                  ? "bg-blue-50/70 text-[#074073] font-bold"
+                                  : "text-slate-600 hover:bg-slate-50"
                               }`}
                             >
                               {opt.label}
@@ -170,11 +167,20 @@ const LoanTransactionsFilter = ({
                       setStatusDropdownOpen(false); // Clean overlay handoff
                     }}
                     className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
-                      typeDropdownOpen ? "bg-white border-[#074073] ring-4 ring-[#074073]/5" : ""
+                      typeDropdownOpen
+                        ? "bg-white border-[#074073] ring-4 ring-[#074073]/5"
+                        : ""
                     }`}
                   >
-                    <span className={filters.type ? "text-slate-800 font-bold" : "text-slate-400 font-medium"}>
-                      {typeOptions.find((opt) => opt.value === filters.type)?.label || "Select type..."}
+                    <span
+                      className={
+                        filters.type
+                          ? "text-slate-800 font-bold"
+                          : "text-slate-400 font-medium"
+                      }
+                    >
+                      {typeOptions.find((opt) => opt.value === filters.type)
+                        ?.label || "Select type..."}
                     </span>
                     <ChevronDown
                       size={16}
@@ -187,7 +193,10 @@ const LoanTransactionsFilter = ({
                   <AnimatePresence>
                     {typeDropdownOpen && (
                       <>
-                        <div className="fixed inset-0 z-30" onClick={() => setTypeDropdownOpen(false)} />
+                        <div
+                          className="fixed inset-0 z-30"
+                          onClick={() => setTypeDropdownOpen(false)}
+                        />
                         <motion.div
                           initial={{ opacity: 0, y: 8 }}
                           animate={{ opacity: 1, y: 0 }}
@@ -204,7 +213,9 @@ const LoanTransactionsFilter = ({
                                 setTypeDropdownOpen(false);
                               }}
                               className={`w-full px-6 py-3.5 text-xs text-left font-semibold transition-colors cursor-pointer ${
-                                filters.type === opt.value ? "bg-blue-50/70 text-[#074073] font-bold" : "text-slate-600 hover:bg-slate-50"
+                                filters.type === opt.value
+                                  ? "bg-blue-50/70 text-[#074073] font-bold"
+                                  : "text-slate-600 hover:bg-slate-50"
                               }`}
                             >
                               {opt.label}
@@ -229,7 +240,9 @@ const LoanTransactionsFilter = ({
                       placeholder="0.00"
                       className="w-full pl-[74px] pr-4 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
                       value={filters.leastAmount}
-                      onChange={(e) => setFilters({ ...filters, leastAmount: e.target.value })}
+                      onChange={(e) =>
+                        setFilters({ ...filters, leastAmount: e.target.value })
+                      }
                     />
                   </FilterField>
 
@@ -239,7 +252,9 @@ const LoanTransactionsFilter = ({
                       placeholder="No limit"
                       className="w-full pl-[74px] pr-4 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
                       value={filters.mostAmount}
-                      onChange={(e) => setFilters({ ...filters, mostAmount: e.target.value })}
+                      onChange={(e) =>
+                        setFilters({ ...filters, mostAmount: e.target.value })
+                      }
                     />
                   </FilterField>
                 </div>
@@ -257,7 +272,9 @@ const LoanTransactionsFilter = ({
                       type="date"
                       className="w-full pl-[74px] pr-4 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold uppercase text-slate-800"
                       value={filters.fromDate}
-                      onChange={(e) => setFilters({ ...filters, fromDate: e.target.value })}
+                      onChange={(e) =>
+                        setFilters({ ...filters, fromDate: e.target.value })
+                      }
                     />
                   </FilterField>
 
@@ -266,7 +283,9 @@ const LoanTransactionsFilter = ({
                       type="date"
                       className="w-full pl-[74px] pr-4 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold uppercase text-slate-800"
                       value={filters.toDate}
-                      onChange={(e) => setFilters({ ...filters, toDate: e.target.value })}
+                      onChange={(e) =>
+                        setFilters({ ...filters, toDate: e.target.value })
+                      }
                     />
                   </FilterField>
                 </div>
@@ -296,5 +315,23 @@ const LoanTransactionsFilter = ({
     </AnimatePresence>
   );
 };
+
+const FilterField = ({ label, icon: Icon, children }) => (
+  <div className="space-y-2 w-full">
+    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+      {label}
+    </label>
+    <div className="relative group">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
+        <Icon
+          size={18}
+          className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
+        />
+        <div className="w-[1.5px] h-5 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
+      </div>
+      {children}
+    </div>
+  </div>
+);
 
 export default LoanTransactionsFilter;

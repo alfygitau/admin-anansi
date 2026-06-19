@@ -25,24 +25,6 @@ const UsersFilter = ({ isOpen, onClose, filters, setFilters, roles }) => {
     { value: "Suspended", label: "Suspended" },
   ];
 
-  const FilterField = ({ label, icon: Icon, children }) => (
-    <div className="space-y-2">
-      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
-        {label}
-      </label>
-      <div className="relative group">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
-          <Icon
-            size={18}
-            className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
-          />
-          <div className="w-[1.5px] h-5 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -278,5 +260,23 @@ const UsersFilter = ({ isOpen, onClose, filters, setFilters, roles }) => {
     </AnimatePresence>
   );
 };
+
+const FilterField = ({ label, icon: Icon, children }) => (
+  <div className="space-y-2">
+    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+      {label}
+    </label>
+    <div className="relative group">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
+        <Icon
+          size={18}
+          className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
+        />
+        <div className="w-[1.5px] h-5 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
+      </div>
+      {children}
+    </div>
+  </div>
+);
 
 export default UsersFilter;

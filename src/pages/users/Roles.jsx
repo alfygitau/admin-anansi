@@ -93,13 +93,6 @@ export default function RolesTable() {
               <Plus size={14} />
               <span>Add Role</span>
             </button>
-            <button
-              onClick={() => setShowAddRole(true)}
-              className="h-10 px-4 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all flex items-center gap-2 w-fit cursor-pointer"
-            >
-              <Plus size={14} />
-              <span>Add Permission</span>
-            </button>
           </div>
         </div>
 

@@ -11,36 +11,63 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modulesList = [] }) => {
+const AddPermission = ({
+  isOpen,
+  onClose,
+  onSave,
+  formData,
+  setFormData,
+  modulesList = [],
+}) => {
   // Screen management toggle between the input form and the completion state
   const [isSuccess, setIsSuccess] = useState(false);
 
   // Fallback default list of SACCO sections if none are passed through props
   const defaultModulesList = [
-    { id: "901dc2f4-f337-f220-9b73-888f5d760fc4", name: "Dashboard", moduleCode: 79 },
-    { id: "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d", name: "Member Management", moduleCode: 80 },
-    { id: "f8e7d6c5-b4a3-9281-7061-5041302110a0", name: "Loan Underwriting", moduleCode: 81 },
-    { id: "b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e", name: "Savings & Deposits", moduleCode: 82 }
+    {
+      id: "901dc2f4-f337-f220-9b73-888f5d760fc4",
+      name: "Dashboard",
+      moduleCode: 79,
+    },
+    {
+      id: "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+      name: "Member Management",
+      moduleCode: 80,
+    },
+    {
+      id: "f8e7d6c5-b4a3-9281-7061-5041302110a0",
+      name: "Loan Underwriting",
+      moduleCode: 81,
+    },
+    {
+      id: "b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e",
+      name: "Savings & Deposits",
+      moduleCode: 82,
+    },
   ];
 
-  const availableModules = modulesList.length > 0 ? modulesList : defaultModulesList;
+  const availableModules =
+    modulesList.length > 0 ? modulesList : defaultModulesList;
 
   // Dropdown change handler that updates both name and ID in one click
   const handleModuleChange = (e) => {
     const selectedModuleId = e.target.value;
-    const selectedModule = availableModules.find(mod => mod.id === selectedModuleId);
-    
+    const selectedModule = availableModules.find(
+      (mod) => mod.id === selectedModuleId,
+    );
+
     if (selectedModule) {
       setFormData({
         ...formData,
         module_id: selectedModule.id,
-        moduleName: selectedModule.name
+        moduleName: selectedModule.name,
       });
     }
   };
 
   const handleSave = async () => {
-    if (!formData.permissionName) return alert("Please enter a name for this permission.");
+    if (!formData.permissionName)
+      return alert("Please enter a name for this permission.");
     if (!formData.module_id) return alert("Please select a system section.");
 
     // Fire the save action up to your server database log layer
@@ -58,22 +85,6 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
     setIsSuccess(false);
     setFormData({ permissionName: "", module_id: "", moduleName: "" });
   };
-
-  // Premium prefixed wrapper layout featuring your vertical divider separator line
-  const InputFieldContainer = ({ label, icon: Icon, children }) => (
-    <div className="space-y-2 w-full">
-      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 block select-none">
-        {label}
-      </label>
-      <div className="relative group w-full">
-        <div className="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none z-10 text-slate-300 group-focus-within:text-[#074073] transition-colors">
-          <Icon size={16} />
-          <div className="w-[1px] h-4 bg-slate-200 ml-3.5 group-focus-within:bg-[#074073]/20 transition-colors" />
-        </div>
-        {children}
-      </div>
-    </div>
-  );
 
   return (
     <AnimatePresence>
@@ -108,29 +119,38 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
                     Create New Permission
                   </h2>
                   <p className="text-xs text-slate-400 font-medium mt-0.5">
-                    Add a clear action rule or access right for your team members.
+                    Add a clear action rule or access right for your team
+                    members.
                   </p>
                 </div>
                 <div className="border-b mx-8 border-slate-100"></div>
 
                 <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5">
-                  
                   {/* FIELD 1: INPUT MANUALLY STATED PERMISSION STRING */}
-                  <InputFieldContainer label="Permission Action Name" icon={Key}>
+                  <InputFieldContainer
+                    label="Permission Action Name"
+                    icon={Key}
+                  >
                     <input
                       type="text"
                       className="w-full pl-[56px] pr-4 h-12 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#074073] focus:bg-white transition-all shadow-3xs"
                       placeholder="e.g., Enter permission name"
                       value={formData.permissionName || ""}
                       onChange={(e) =>
-                        setFormData({ ...formData, permissionName: e.target.value })
+                        setFormData({
+                          ...formData,
+                          permissionName: e.target.value,
+                        })
                       }
                       required
                     />
                   </InputFieldContainer>
 
                   {/* FIELD 2: DYNAMIC SELECT DROPDOWN ATTACHMENT HUB */}
-                  <InputFieldContainer label="Assign to System Section" icon={Layers}>
+                  <InputFieldContainer
+                    label="Assign to System Section"
+                    icon={Layers}
+                  >
                     <div className="relative w-full">
                       <select
                         className="w-full pl-[56px] pr-10 h-12 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:outline-none focus:border-[#074073] focus:bg-white transition-all shadow-3xs appearance-none cursor-pointer"
@@ -138,7 +158,9 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
                         onChange={handleModuleChange}
                         required
                       >
-                        <option value="" disabled hidden>Choose a permission module...</option>
+                        <option value="" disabled hidden>
+                          Choose a permission module...
+                        </option>
                         {availableModules.map((mod) => (
                           <option key={mod.id} value={mod.id}>
                             {mod.name} (Code #{mod.moduleCode || "N/A"})
@@ -147,7 +169,17 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
                       </select>
                       {/* Premium dropdown arrow integration */}
                       <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="12"
+                          height="12"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
                           <path d="m 6,9 6,6 6,-6" />
                         </svg>
                       </div>
@@ -156,12 +188,15 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
 
                   {/* FIELD 3: DYNAMIC READ-ONLY CODE REVEAL STRIP */}
                   {formData.module_id && (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: -4 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="animate-in fade-in duration-150"
                     >
-                      <InputFieldContainer label="Linked System Identifier ID" icon={Hash}>
+                      <InputFieldContainer
+                        label="Linked System Identifier ID"
+                        icon={Hash}
+                      >
                         <input
                           type="text"
                           className="w-full pl-[56px] pr-4 h-11 bg-slate-100 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-500 opacity-70 outline-none select-all"
@@ -172,7 +207,6 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
                       </InputFieldContainer>
                     </motion.div>
                   )}
-
                 </div>
 
                 {/* BOTTOM CORE OPERATIONS DOCK TRIGGER CONTROL BAR */}
@@ -190,7 +224,7 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
                     disabled={!formData.permissionName || !formData.module_id}
                     className="flex-[2] h-12 font-bold text-xs bg-[#074073] text-white rounded-xl shadow-md flex items-center justify-center gap-2 hover:bg-[#052d52] transition-colors cursor-pointer disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed"
                   >
-                    <Save size={14} /> 
+                    <Save size={14} />
                     <span>Save Permission</span>
                   </button>
                 </div>
@@ -206,7 +240,12 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    transition={{ type: "spring", stiffness: 300, damping: 20, delay: 0.1 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 20,
+                      delay: 0.1,
+                    }}
                     className="size-14 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center border-4 border-white shadow-md shadow-emerald-600/10"
                   >
                     <CheckCircle2 size={30} strokeWidth={2.5} />
@@ -217,7 +256,8 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
                       Permission Rule Created
                     </h3>
                     <p className="text-xs text-slate-400 font-medium">
-                      The access rule was successfully attached to the system feature.
+                      The access rule was successfully attached to the system
+                      feature.
                     </p>
                   </div>
 
@@ -252,7 +292,7 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
                     onClick={handleCreateAnother}
                     className="w-full h-12 font-bold text-xs bg-slate-50 border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-100 transition-all flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    <Plus size={14} /> 
+                    <Plus size={14} />
                     <span>Add Another Rule</span>
                   </button>
                   <button
@@ -272,5 +312,21 @@ const AddPermission = ({ isOpen, onClose, onSave, formData, setFormData, modules
     </AnimatePresence>
   );
 };
+
+// Premium prefixed wrapper layout featuring your vertical divider separator line
+const InputFieldContainer = ({ label, icon: Icon, children }) => (
+  <div className="space-y-2 w-full">
+    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 block select-none">
+      {label}
+    </label>
+    <div className="relative group w-full">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-5 pointer-events-none z-10 text-slate-300 group-focus-within:text-[#074073] transition-colors">
+        <Icon size={16} />
+        <div className="w-[1px] h-4 bg-slate-200 ml-3.5 group-focus-within:bg-[#074073]/20 transition-colors" />
+      </div>
+      {children}
+    </div>
+  </div>
+);
 
 export default AddPermission;

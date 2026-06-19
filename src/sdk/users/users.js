@@ -120,3 +120,27 @@ export const getModules = async () => {
     throw error?.response?.data || error;
   }
 };
+
+export const addRole = async (name, description) => {
+  try {
+    const response = await client.post(`/roles`, {
+      name,
+      description,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const editRole = async (id, name, description) => {
+  try {
+    const response = await client.patch(`/roles/${id}`, {
+      name,
+      description,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

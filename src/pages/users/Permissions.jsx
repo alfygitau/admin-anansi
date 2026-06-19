@@ -61,7 +61,7 @@ export default function Permissions() {
         formData={formData}
         setFormData={setFormData}
       />
-      <div className="w-full space-y-6 font-sans antialiased text-slate-800 p-1">
+      <div className="w-full space-y-6 font-sans antialiased text-slate-800">
         {/* 1. APP MODULE DIRECTORY CONTROLS HEADER */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/60 pb-5 select-none w-full">
           <div className="flex items-center justify-between gap-4">

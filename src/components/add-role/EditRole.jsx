@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const AddRole = ({
+const EditRole = ({
   isOpen,
   onClose,
   onSave,
@@ -96,15 +96,17 @@ const AddRole = ({
             >
               <X size={16} />
             </button>
+
+            {/* --- STEP 1: EDIT ROLE INPUT FORM --- */}
             {step === "form" && (
               <>
                 <div className="px-8 pt-5 pb-6 select-none">
                   <h2 className="text-xl font-black text-[#074073] tracking-tight">
-                    Add New Role
+                    Edit Role Parameters
                   </h2>
                   <p className="text-xs text-slate-400 font-medium mt-0.5">
-                    Define an administrative security tier and outline its
-                    operational duties.
+                    Modify an existing administrative security tier and adjust
+                    its operational duties.
                   </p>
                 </div>
                 <div className="border-b mx-8 border-slate-100"></div>
@@ -175,22 +177,23 @@ const AddRole = ({
                     onClick={handleProceedToPreview}
                     className="flex-[2] h-12 font-bold text-xs bg-[#074073] text-white rounded-xl shadow-md flex items-center justify-center gap-2 hover:bg-[#052d52] transition-colors cursor-pointer active:scale-[0.98]"
                   >
-                    <span>Review Configuration</span>
+                    <span>Review Changes</span>
                     <ArrowRight size={14} />
                   </button>
                 </div>
               </>
             )}
 
+            {/* --- STEP 2: MODIFICATION PREVIEW SCREEN --- */}
             {step === "preview" && (
               <>
                 <div className="px-8 pt-5 pb-6 select-none">
                   <h2 className="text-xl font-black text-[#074073] tracking-tight">
-                    Review Role Details
+                    Review Updated Details
                   </h2>
                   <p className="text-xs text-slate-400 font-medium mt-0.5">
-                    Verify these parameters before writing them to your access
-                    directory.
+                    Verify these updated parameters before saving changes to
+                    your access directory.
                   </p>
                 </div>
                 <div className="border-b mx-8 border-slate-100"></div>
@@ -199,7 +202,7 @@ const AddRole = ({
                   <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-5 space-y-4 shadow-3xs relative overflow-hidden">
                     <div className="space-y-1 relative z-10">
                       <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
-                        Assigned Role Identifier
+                        Updated Role Identifier
                       </span>
                       <p className="text-base font-black text-slate-900 tracking-tight">
                         {formData.roleName}
@@ -222,8 +225,8 @@ const AddRole = ({
                       className="text-[#074073] shrink-0 mt-0.5"
                     />
                     <p className="text-[11px] font-medium text-[#074073]/80 leading-normal">
-                      Saving this will immediately allow system module
-                      architects to link custom security rules directly to this
+                      Updating this profile configuration will instantly apply
+                      modifications across all system modules linked to this
                       title.
                     </p>
                   </div>
@@ -252,7 +255,7 @@ const AddRole = ({
                     {loading ? (
                       <>
                         <Loader2 size={13} className="animate-spin" />
-                        <span>Saving Records...</span>
+                        <span>Updating Records...</span>
                       </>
                     ) : (
                       <>
@@ -265,6 +268,7 @@ const AddRole = ({
               </>
             )}
 
+            {/* --- STEP 3: SUCCESS CONFIRMATION VIEW --- */}
             {step === "success" && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
@@ -288,11 +292,11 @@ const AddRole = ({
 
                   <div className="space-y-1">
                     <h3 className="text-lg font-black text-slate-900 tracking-tight">
-                      Role Added Successfully
+                      Role Updated Successfully
                     </h3>
                     <p className="text-xs text-slate-400 font-medium">
-                      The new operational tier is now fully active across system
-                      security parameters.
+                      The security tier changes are now active across your
+                      administrative parameter channels.
                     </p>
                   </div>
 
@@ -319,15 +323,15 @@ const AddRole = ({
                 <div className="flex flex-col gap-3 w-full">
                   <button
                     type="button"
-                    onClick={() => setStep("form")} // Shifts back to step 1 cleanly
+                    onClick={() => setStep("form")}
                     className="w-full h-12 font-bold text-xs bg-slate-50 border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-100 transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-[0.99]"
                   >
-                    <Plus size={14} /> Define Another Role
+                    <Plus size={14} /> Modify Role Details Again
                   </button>
                   <button
                     type="button"
                     onClick={handleResetAndClose}
-                    className="w-full h-12 font-bold text-xs bg-[#074073] text-white rounded-xl hover:bg-[#052d52] transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.99]"
+                    className="w-full h-12 font-bold text-xs bg-[#074073] text-white rounded-xl shadow-md hover:bg-[#052d52] transition-all shadow-md flex items-center justify-center gap-1.5 cursor-pointer active:scale-[0.99]"
                   >
                     <span>Return to Directory</span>
                     <ArrowRight size={14} />
@@ -390,4 +394,4 @@ const FilterField = ({ label, icon: Icon, error, children }) => (
   </div>
 );
 
-export default AddRole;
+export default EditRole;

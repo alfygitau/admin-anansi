@@ -180,11 +180,11 @@ export default function AuditTrail() {
         {/* 3. PREMIUM AUDIT WORKSPACE TRACE DATA TABLE */}
         <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] overflow-hidden w-full">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse font-sans table-auto">
+            <table className="w-full text-left border-collapse table-auto">
               <thead>
                 <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
                   <th className="py-4.5 px-6">User / Executing Actor</th>
-                  <th className="py-4.5 px-6">Operation Category</th>
+                  <th className="py-4.5 px-6">Category</th>
                   <th className="py-4.5 px-6 max-w-sm">
                     Detailed Action Description
                   </th>

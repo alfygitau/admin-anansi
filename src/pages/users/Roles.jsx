@@ -15,10 +15,12 @@ import {
   Mail,
   Smartphone,
 } from "lucide-react";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { useToast } from "../../contexts/ToastProvider";
 import { getRoles } from "../../sdk/roles/roles";
 import AddRole from "../../components/add-role/AddRole";
+import { addRole, editRole } from "../../sdk/users/users";
+import EditRole from "../../components/add-role/EditRole";
 
 export default function RolesTable() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -28,7 +30,16 @@ export default function RolesTable() {
   const { showToast } = useToast();
   const [roles, setRoles] = useState([]);
   const [showAddRole, setShowAddRole] = useState(false);
+  const [showEditRole, setShowEditRole] = useState(false);
+  const [step, setStep] = useState("form");
+  const [editStep, setEditStep] = useState("form");
+  const [selectedRole, setSelectedRole] = useState({});
   const [formData, setFormData] = useState({
+    roleName: "",
+    description: "",
+  });
+
+  const [editFormData, setEditFormData] = useState({
     roleName: "",
     description: "",
   });
@@ -46,7 +57,7 @@ export default function RolesTable() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const { isFetching } = useQuery({
+  const { isFetching, refetch } = useQuery({
     queryKey: ["roles"],
     queryFn: async () => {
       const response = await getRoles();
@@ -65,6 +76,63 @@ export default function RolesTable() {
     },
   });
 
+  const { mutate, isLoading } = useMutation({
+    mutationKey: ["add role"],
+    mutationFn: async () => {
+      const response = await addRole(formData?.roleName, formData?.description);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setStep("success");
+      setFormData({ roleName: "", description: "" });
+      refetch();
+    },
+    onError: (error) => {
+      setStep("form");
+      showToast({
+        title: "Roles processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { editMutate, isLoading: editLoading } = useMutation({
+    mutationKey: ["add role"],
+    mutationFn: async () => {
+      const response = await editRole(
+        selectedRole?.id,
+        formData?.roleName,
+        formData?.description,
+      );
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setEditStep("success");
+      setEditFormData({ roleName: "", description: "" });
+      refetch();
+    },
+    onError: (error) => {
+      setStep("form");
+      showToast({
+        title: "Roles processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const handleSelectRole = (role) => {
+    setSelectedRole(role);
+    setEditFormData({
+      roleName: role?.name,
+      description: role?.description,
+    });
+    setShowEditRole(true);
+  };
+
   return (
     <>
       <AddRole
@@ -72,7 +140,23 @@ export default function RolesTable() {
         onClose={() => setShowAddRole(false)}
         formData={formData}
         setFormData={setFormData}
+        step={step}
+        setStep={setStep}
+        onSave={mutate}
+        loading={isLoading}
       />
+
+      <EditRole
+        isOpen={showEditRole}
+        onClose={() => setShowEditRole(false)}
+        formData={editFormData}
+        setFormData={setEditFormData}
+        step={editStep}
+        setStep={setEditStep}
+        onSave={editMutate}
+        loading={editLoading}
+      />
+
       <div className="w-full space-y-5 antialiased text-slate-800">
         {/* EXECUTIVE COMMAND MODULE */}
         <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
@@ -263,7 +347,10 @@ export default function RolesTable() {
                               }}
                               className="absolute right-14 mt-2 w-44 bg-white border border-slate-200/80 rounded-xl shadow-xl p-1.5 z-50 text-left animate-in fade-in slide-in-from-top-1 duration-100"
                             >
-                              <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer">
+                              <button
+                                onClick={() => handleSelectRole(role)}
+                                className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer"
+                              >
                                 <History size={12} />
                                 <span>Modify Role</span>
                               </button>

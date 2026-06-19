@@ -47,6 +47,12 @@ export default function LoanProducts() {
     inactive: loanProducts?.filter((p) => p.status === "inactive")?.length,
   };
 
+  const formatSentenceCase = (str) => {
+    if (!str) return "";
+    const withSpaces = str.replace(/_/g, " ");
+    return withSpaces.charAt(0).toUpperCase() + withSpaces.slice(1);
+  };
+
   return (
     <div className="space-y-6 antialiased">
       {/* 1. UPPER EXECUTIVE COMMAND BAR */}
@@ -162,7 +168,7 @@ export default function LoanProducts() {
                           {product.interest_rate}
                         </span>
                         <span className="text-[11px] text-slate-400 font-medium mt-0.5">
-                          {product.interest_method}
+                          {formatSentenceCase(product?.interest_method)}
                         </span>
                       </div>
                     </td>
@@ -171,10 +177,10 @@ export default function LoanProducts() {
                     <td className="py-4 px-6">
                       <div className="flex flex-col">
                         <span className="font-semibold text-slate-700">
-                          {product.min_period}
+                          {product.min_period} Months
                         </span>
-                        <span className="text-[11px] text-primary font-bold tracking-wide uppercase mt-0.5">
-                          {product.max_period}
+                        <span className="text-[11px] text-primary font-bold tracking-wide mt-0.5">
+                          {product.max_period} Months
                         </span>
                       </div>
                     </td>
@@ -198,10 +204,11 @@ export default function LoanProducts() {
                     <td className="py-4 px-6">
                       <div className="flex flex-col">
                         <span className="font-medium text-slate-700">
-                          {product.min_guarantors}
+                          {product.min_guarantors} Guarantors
                         </span>
                         <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
-                          Levy: {product.insurance_rate}
+                          Insurance: {Number(product.insurance_rate).toFixed(1)}
+                          %
                         </span>
                       </div>
                     </td>

@@ -9,6 +9,7 @@ import {
   XCircle,
   FileText,
   Clock,
+  ArrowUpRight,
 } from "lucide-react";
 import { useToast } from "../../../contexts/ToastProvider";
 
@@ -342,11 +343,18 @@ const ApproveApplication = ({
               </div>
             )}
           </div>
-
+        </div>
+        <div className="bg-white rounded-[24px] border border-slate-200/60 p-4 flex items-center justify-end gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
+          <button
+            type="button"
+            className="h-11 px-5 border border-slate-200/80 bg-white text-slate-600 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-all cursor-pointer"
+          >
+            Cancel
+          </button>
           <button
             type="submit"
             disabled={!decision}
-            className={`w-full sm:w-auto h-12 px-6 rounded-xl text-xs font-bold transition-all text-white shadow-md flex items-center justify-center gap-1.5 cursor-pointer disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed shrink-0 ${
+            className={`h-12 px-6 rounded-xl text-xs font-bold transition-all text-white shadow-md flex items-center justify-center gap-1.5 cursor-pointer disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed shrink-0 ${
               decision === "approve"
                 ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/10"
                 : decision === "reject"
@@ -354,7 +362,8 @@ const ApproveApplication = ({
                   : "bg-slate-800"
             }`}
           >
-            Submit Final Decision
+            <span>Submit Final Decision</span>
+            <ArrowUpRight size={14} />
           </button>
         </div>
       </form>

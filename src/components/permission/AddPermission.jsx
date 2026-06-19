@@ -19,40 +19,11 @@ const AddPermission = ({
   setFormData,
   modulesList = [],
 }) => {
-  // Screen management toggle between the input form and the completion state
   const [isSuccess, setIsSuccess] = useState(false);
 
-  // Fallback default list of SACCO sections if none are passed through props
-  const defaultModulesList = [
-    {
-      id: "901dc2f4-f337-f220-9b73-888f5d760fc4",
-      name: "Dashboard",
-      moduleCode: 79,
-    },
-    {
-      id: "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
-      name: "Member Management",
-      moduleCode: 80,
-    },
-    {
-      id: "f8e7d6c5-b4a3-9281-7061-5041302110a0",
-      name: "Loan Underwriting",
-      moduleCode: 81,
-    },
-    {
-      id: "b4c5d6e7-f8a9-0b1c-2d3e-4f5a6b7c8d9e",
-      name: "Savings & Deposits",
-      moduleCode: 82,
-    },
-  ];
-
-  const availableModules =
-    modulesList.length > 0 ? modulesList : defaultModulesList;
-
-  // Dropdown change handler that updates both name and ID in one click
   const handleModuleChange = (e) => {
     const selectedModuleId = e.target.value;
-    const selectedModule = availableModules.find(
+    const selectedModule = modulesList.find(
       (mod) => mod.id === selectedModuleId,
     );
 
@@ -161,9 +132,9 @@ const AddPermission = ({
                         <option value="" disabled hidden>
                           Choose a permission module...
                         </option>
-                        {availableModules.map((mod) => (
+                        {modulesList.map((mod) => (
                           <option key={mod.id} value={mod.id}>
-                            {mod.name} (Code #{mod.moduleCode || "N/A"})
+                            {mod.name}
                           </option>
                         ))}
                       </select>

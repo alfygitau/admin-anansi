@@ -21,6 +21,7 @@ import { getRoles } from "../../sdk/roles/roles";
 import AddRole from "../../components/add-role/AddRole";
 import { addRole, editRole } from "../../sdk/users/users";
 import EditRole from "../../components/add-role/EditRole";
+import AssignPermissions from "../../components/add-role/EditRolePermissions";
 
 export default function RolesTable() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -30,6 +31,7 @@ export default function RolesTable() {
   const { showToast } = useToast();
   const [roles, setRoles] = useState([]);
   const [showAddRole, setShowAddRole] = useState(false);
+  const [showEditRolePermissions, setShowEditRolePermissions] = useState(false);
   const [showEditRole, setShowEditRole] = useState(false);
   const [step, setStep] = useState("form");
   const [editStep, setEditStep] = useState("form");
@@ -133,6 +135,15 @@ export default function RolesTable() {
     setShowEditRole(true);
   };
 
+  const handleSelectEditRole = (role) => {
+    setSelectedRole(role);
+    setEditFormData({
+      roleName: role?.name,
+      description: role?.description,
+    });
+    setShowEditRolePermissions(true);
+  };
+
   return (
     <>
       <AddRole
@@ -155,6 +166,12 @@ export default function RolesTable() {
         setStep={setEditStep}
         onSave={editMutate}
         loading={editLoading}
+      />
+
+      <AssignPermissions
+        isOpen={showEditRolePermissions}
+        onClose={() => setShowEditRolePermissions(false)}
+        roleName={selectedRole?.name}
       />
 
       <div className="w-full space-y-5 antialiased text-slate-800">
@@ -354,7 +371,10 @@ export default function RolesTable() {
                                 <History size={12} />
                                 <span>Modify Role</span>
                               </button>
-                              <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-semibold text-error hover:bg-rose-50/50 transition-colors cursor-pointer">
+                              <button
+                                onClick={() => handleSelectEditRole(role)}
+                                className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-semibold text-error hover:bg-rose-50/50 transition-colors cursor-pointer"
+                              >
                                 <UserMinus size={12} />
                                 <span>Add Permission</span>
                               </button>

@@ -60,6 +60,8 @@ export default function Permissions() {
         onClose={() => setShowAddPermission(false)}
         formData={formData}
         setFormData={setFormData}
+        modulesList={modulesList}
+        
       />
       <div className="w-full space-y-6 font-sans antialiased text-slate-800">
         {/* 1. APP MODULE DIRECTORY CONTROLS HEADER */}

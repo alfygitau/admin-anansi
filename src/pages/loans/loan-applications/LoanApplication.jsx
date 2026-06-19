@@ -91,7 +91,7 @@ export default function LoanApplication() {
   });
 
   return (
-    <div className="w-full space-y-8 font-sans antialiased text-slate-800">
+    <div className="w-full space-y-5 font-sans antialiased text-slate-800">
       {/* EXECUTIVE COMMAND TRACKER HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 pb-6 select-none">
         <div className="flex items-center gap-4">
@@ -206,7 +206,7 @@ export default function LoanApplication() {
       {isFetching ? (
         <ApplicationLoader />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
           {/* CONTAINER 1: APPLICANT IDENTITY LEDGER */}
           <ApplicationCard title="Borrower Profile" icon={<User size={16} />}>
             <MetricItem

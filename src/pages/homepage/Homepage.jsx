@@ -25,7 +25,7 @@ export default function Homepage() {
       <div className="space-y-4">
         <div>
           <h2 className="text-base font-black tracking-tight text-slate-900">
-            Financial Health Overview
+            Financial Health
           </h2>
           <p className="text-xs text-slate-400 font-medium">
             Review total funds held, active money out in loans, and available

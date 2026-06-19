@@ -78,29 +78,56 @@ export default function LoanProducts() {
       </div>
 
       {/* 2. ANALYTICAL HIGH-LEVEL SUMMARY METRIC ROWS */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <SummaryMetricCard
-          title="Total Registered Catalog"
-          value={`${stats.total} Loan Products`}
-          desc="Across all active and legacy product lines"
-          icon={<Layers size={18} />}
-          color="text-primary bg-primary/5"
-        />
-        <SummaryMetricCard
-          title="Active Products In Circulation"
-          value={`${stats.active} Operational`}
-          desc="Visible to member portals for loan drafting"
-          icon={<CheckCircle2 size={18} />}
-          color="text-success bg-success/5"
-        />
-        <SummaryMetricCard
-          title="Deactivated Product Lines"
-          value={`${stats.inactive} Offline`}
-          desc="Archived products restricted from entry"
-          icon={<AlertTriangle size={18} />}
-          color="text-warning bg-warning/5"
-        />
-      </div>
+      {isFetching ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {Array(3)
+            .fill(0)
+            .map((_, index) => (
+              <div
+                key={`metric-skeleton-${index}`}
+                className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 animate-pulse flex items-start justify-between gap-4"
+              >
+                <div className="space-y-3 flex-1">
+                  {/* Card Title Line */}
+                  <div className="h-3 w-28 bg-slate-200 rounded" />
+
+                  {/* Big Metric Value Line */}
+                  <div className="h-7 w-24 bg-slate-200 rounded-lg" />
+
+                  {/* Description Subtext Line */}
+                  <div className="h-3 w-44 bg-slate-100 rounded" />
+                </div>
+
+                {/* Icon Shell Box Placeholder */}
+                <div className="size-9 rounded-xl bg-slate-100 border border-slate-200/20 shrink-0" />
+              </div>
+            ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <SummaryMetricCard
+            title="Total Loan Products"
+            value={`${stats.total} Products`}
+            desc="Every loan product ever created in the system"
+            icon={<Layers size={18} />}
+            color="text-primary bg-primary/5"
+          />
+          <SummaryMetricCard
+            title="Available to Members"
+            value={`${stats.active} Active`}
+            desc="Loans that members can see and apply for right now"
+            icon={<CheckCircle2 size={18} />}
+            color="text-success bg-success/5"
+          />
+          <SummaryMetricCard
+            title="Hidden or Paused Loans"
+            value={`${stats.inactive} Inactive`}
+            desc="Turned off and closed to new applications"
+            icon={<AlertTriangle size={18} />}
+            color="text-warning bg-warning/5"
+          />
+        </div>
+      )}
 
       {/* 3. INTERACTIVE SEARCH FILTER & ACCORDION CONTROL PANE */}
       <div className="bg-white rounded-2xl border border-slate-200/60 shadow-sm p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -121,26 +148,104 @@ export default function LoanProducts() {
       </div>
 
       {/* 4. PRODUCT MATRIX DENSE TABULAR CANVAS */}
-      {loanProducts?.length > 0 ? (
-        <div className="w-full bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
-          <div className="overflow-x-auto w-full">
-            <table className="w-full text-left border-collapse whitespace-nowrap">
-              {/* Table Header Structure */}
-              <thead>
-                <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
-                  <th className="py-4.5 px-6">Product Code & Name</th>
-                  <th className="py-4.5 px-6">Interest Configuration</th>
-                  <th className="py-4.5 px-6">Tenor & Multiplier</th>
-                  <th className="py-4.5 px-6">Amounts Requirements</th>
-                  <th className="py-4.5 px-6">Underwriting Rules</th>
-                  <th className="py-4.5 px-6">Status</th>
-                  <th className="py-4.5 px-6 text-right pr-8">Actions</th>
-                </tr>
-              </thead>
 
-              {/* Table Body Content Matrix */}
-              <tbody className="divide-y divide-slate-100 text-xs">
-                {loanProducts?.map((product) => (
+      <div className="w-full bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left border-collapse whitespace-nowrap">
+            {/* Table Header Structure */}
+            <thead>
+              <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
+                <th className="py-4.5 px-6">Product Code & Name</th>
+                <th className="py-4.5 px-6">Interest Configuration</th>
+                <th className="py-4.5 px-6">Tenor & Multiplier</th>
+                <th className="py-4.5 px-6">Amounts Requirements</th>
+                <th className="py-4.5 px-6">Underwriting Rules</th>
+                <th className="py-4.5 px-6">Status</th>
+                <th className="py-4.5 px-6 text-right pr-8">Actions</th>
+              </tr>
+            </thead>
+
+            {/* Table Body Content Matrix */}
+            <tbody className="divide-y divide-slate-100 text-xs">
+              {isFetching ? (
+                Array(10)
+                  .fill(0)
+                  .map((_, index) => (
+                    <tr
+                      key={`product-skeleton-${index}`}
+                      className="animate-pulse border-b border-slate-100 last:border-none"
+                    >
+                      {/* Column 1: Core Identification Assets Skeleton */}
+                      <td className="py-4 px-6 max-w-xs">
+                        <div className="flex flex-col gap-1.5">
+                          {/* Product Code Tag Placeholder */}
+                          <div className="h-4 w-14 bg-slate-200 rounded-md" />
+                          {/* Product Name Title Line */}
+                          <div className="h-4 w-40 bg-slate-200 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Column 2: Interest Parameter Models Skeleton */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col gap-1.5">
+                          {/* Interest Rate Line */}
+                          <div className="h-4 w-12 bg-slate-200 rounded" />
+                          {/* Interest Method Subtext */}
+                          <div className="h-3 w-24 bg-slate-100 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Column 3: Amortization Framing Tiers Skeleton */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col gap-1.5">
+                          {/* Min Period Line */}
+                          <div className="h-4 w-16 bg-slate-200 rounded" />
+                          {/* Max Period Line */}
+                          <div className="h-3 w-16 bg-slate-100 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Column 4: Dynamic Capital Range Limits Skeleton */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col gap-1.5">
+                          {/* Max Capital Floor Line */}
+                          <div className="h-4 w-28 bg-slate-200 rounded" />
+                          {/* Min Capital Ceiling Line */}
+                          <div className="h-3 w-20 bg-slate-100 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Column 5: Legal Risk Contingencies Skeleton */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col gap-1.5">
+                          {/* Guarantor Count Requirement Line */}
+                          <div className="h-4 w-24 bg-slate-200 rounded" />
+                          {/* Insurance Protection % Line */}
+                          <div className="h-3.5 w-20 bg-slate-100 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Column 6: Status Allocation Indicator Flags Skeleton */}
+                      <td className="py-4 px-6 align-middle">
+                        {/* Rounded Status Pill Wrapper Box Mock */}
+                        <div className="h-6 w-16 bg-slate-100 rounded-full" />
+                      </td>
+
+                      {/* Column 7: Operational Admin Utilities Skeleton */}
+                      <td className="py-4 px-6 text-right pr-8 align-middle">
+                        <div className="flex items-center justify-end gap-1.5">
+                          {/* View Details Icon Box */}
+                          <div className="size-8 rounded-xl bg-slate-100 border border-slate-200/30 shrink-0" />
+                          {/* Edit parameters Icon Box */}
+                          <div className="size-8 rounded-xl bg-slate-100 border border-slate-200/30 shrink-0" />
+                          {/* Toggle Activation State Icon Box */}
+                          <div className="size-8 rounded-xl bg-slate-100 border border-slate-200/30 shrink-0" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+              ) : loanProducts?.length > 0 ? (
+                loanProducts?.map((product) => (
                   <tr
                     key={product.id}
                     className={`group transition-colors hover:bg-slate-50/60 ${
@@ -262,26 +367,25 @@ export default function LoanProducts() {
                       </div>
                     </td>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                ))
+              ) : (
+                <div className="bg-white border border-dashed border-slate-300 rounded-[28px] p-16 text-center max-w-xl mx-auto mt-6">
+                  <div className="size-12 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4">
+                    <Layers size={22} />
+                  </div>
+                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
+                    No configured products found
+                  </h3>
+                  <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
+                    There are no product profiles matching "{searchQuery}" under
+                    the current {activeTab} framework toggle index.
+                  </p>
+                </div>
+              )}
+            </tbody>
+          </table>
         </div>
-      ) : (
-        /* Empty Ledger Redirection Screen State */
-        <div className="bg-white border border-dashed border-slate-300 rounded-[28px] p-16 text-center max-w-xl mx-auto mt-6">
-          <div className="size-12 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4">
-            <Layers size={22} />
-          </div>
-          <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
-            No configured products found
-          </h3>
-          <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
-            There are no product profiles matching "{searchQuery}" under the
-            current {activeTab} framework toggle index.
-          </p>
-        </div>
-      )}
+      </div>
     </div>
   );
 }

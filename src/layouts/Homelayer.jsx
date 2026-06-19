@@ -85,8 +85,9 @@ export default function Homelayer() {
       icon: <UserCog size={18} />,
       subItems: [
         { label: "All Users", path: "/admin/all-users" },
-        { label: "Roles & Permissions", path: "/admin/roles-permissions" },
-        { label: "Audit Trails", path: "/admin/audit-trails" },
+        { label: "Roles", path: "/admin/roles" },
+        { label: "Permissions", path: "/admin/permissions" },
+        { label: "Audit Trails", path: "/admin/audit-trail" },
       ],
     },
     {

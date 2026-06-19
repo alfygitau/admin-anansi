@@ -1,3 +1,4 @@
+import { auditClient } from "../client/audit-trail-client";
 import { client } from "../client/client";
 
 export const getUsers = async (
@@ -34,6 +35,46 @@ export const getUsers = async (
   }
 };
 
+export const getAuditTrails = async (
+  page,
+  limit,
+  search,
+  username,
+  category,
+  actionCode,
+  adminUsername,
+  startDate,
+  endDate,
+) => {
+  try {
+    const params = new URLSearchParams();
+
+    // Numbers & Pagination checks
+    if (page != null) params.append("page", page);
+    if (limit != null) params.append("limit", limit);
+
+    // Text & Search filters
+    if (search) params.append("q", search);
+    if (adminUsername) params.append("adminUsername", adminUsername);
+    if (actionCode) params.append("actionCode", actionCode);
+    if (category) params.append("category", category);
+
+    if (username) params.append("username", username);
+
+    // Timeline range filters
+    if (startDate) params.append("startDate", startDate);
+    if (endDate) params.append("endDate", endDate);
+
+    // Send the final request with the combined search parameters
+    const response = await auditClient.get(
+      `/audit/business?${params.toString()}`,
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
 export const addUser = async (
   email,
   username,
@@ -47,7 +88,7 @@ export const addUser = async (
   county,
   subcounty,
   address,
-  role_id
+  role_id,
 ) => {
   try {
     const response = await client.post(`/users`, {
@@ -63,8 +104,17 @@ export const addUser = async (
       county,
       subcounty,
       address,
-      role_id
+      role_id,
     });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const getModules = async () => {
+  try {
+    const response = await client.get(`/modules`);
     return response;
   } catch (error) {
     throw error?.response?.data || error;

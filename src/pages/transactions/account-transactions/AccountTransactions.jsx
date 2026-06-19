@@ -305,8 +305,8 @@ export default function AccountTransactions() {
                         </div>
                         <div className="text-[11px] text-slate-500 font-medium">
                           Running Bal:{" "}
-                          <span className="font-mono font-bold text-slate-700">
-                            KES {Number(tx.running_balance).toLocaleString()}
+                          <span className="font-bold text-slate-700">
+                            {formatAmount(tx.running_balance)}
                           </span>
                         </div>
                       </div>

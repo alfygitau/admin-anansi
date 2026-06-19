@@ -38,6 +38,8 @@ import NotifyApplicant from "./pages/loans/loan-applications/NotifyApplicant";
 import NotifyBorrower from "./pages/loans/all-loans/NotifyBorrower";
 import RecordManualPayment from "./pages/loans/all-loans/RecordManualPayment";
 import LoanStatements from "./pages/loans/all-loans/LoanStatements";
+import Permissions from "./pages/users/Permissions";
+import AuditTrail from "./pages/users/AuditTrail";
 
 function App() {
   return (
@@ -83,7 +85,9 @@ function App() {
         <Route path="all-users" element={<AllUsers />} />
         <Route path="all-users/:id" element={<AdminUser />} />
         <Route path="add-admin-user" element={<AddAdminUser />} />
-        <Route path="roles-permissions" element={<Roles />} />
+        <Route path="roles" element={<Roles />} />
+        <Route path="permissions" element={<Permissions />} />
+        <Route path="audit-trail" element={<AuditTrail />} />
 
         <Route path="account-transactions" element={<AccountTransactions />} />
         <Route path="loan-transactions" element={<LoanTransactions />} />

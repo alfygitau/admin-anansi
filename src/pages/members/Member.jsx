@@ -105,7 +105,7 @@ export default function MemberDetails({ onBack }) {
                   className="text-slate-400 group-hover:text-slate-500"
                 />
 
-                <span>Member Actions</span>
+                <span>Manage Member</span>
 
                 <ChevronDown
                   size={14}

@@ -26,7 +26,6 @@ export default function LoanApplications() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showFilters, setShowFilters] = useState(false);
-
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,

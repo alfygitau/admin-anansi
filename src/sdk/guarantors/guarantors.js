@@ -1,6 +1,6 @@
 import { loanClient } from "../client/loan-client";
 
-export const getGuarantorss = async (
+export const getGuarantors = async (
   page,
   limit,
   status,

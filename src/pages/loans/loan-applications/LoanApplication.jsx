@@ -23,15 +23,22 @@ import {
   Sliders,
   ChevronDown,
   Upload,
+  AlertCircle,
+  Building,
+  ArrowDownCircle,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery } from "react-query";
+import { getApplication } from "../../../sdk/loan-applications/loan-applications";
+import { useToast } from "../../../contexts/ToastProvider";
 
 export default function LoanApplication() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { showToast } = useToast();
 
-  // Close the drop panel if an underwriter clicks outside of it
   useEffect(() => {
     function handleClickOutside(event) {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -42,226 +49,7 @@ export default function LoanApplication() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Populated directly from your core application JSON schema configuration
-  const [application] = useState({
-    id: "b0d1b573-e491-403b-b2e8-4daa7633ecc3",
-    application_number: "APP-00002",
-    loan_id: null,
-    loan_code: "L00002",
-    customer_id: "a8426991-3061-d0e7-7fd6-019456264e89",
-    member_snapshot_id: "22039766-0978-4981-bf32-e5ed39531d2c",
-    loan_org_code: "BA208",
-
-    applicant_name: "ALMASI ALUOCH",
-    applicant_mobile: "+254765350350",
-
-    loan_type: "Development_loan",
-    applied_amount: "60,000.00",
-    loan_period: 8,
-    duration_key: "pm",
-    loan_interval: "Monthly",
-    loan_channel: "WEB",
-    currency: "KES",
-    loan_mode: 1,
-    loan_purpose: "I would like to buy a car",
-
-    approved_amount: null,
-    approved_period: null,
-
-    eligibility_passed: true,
-    eligibility_result: {
-      limit: "110,005.00",
-      passed: true,
-      total_shares: "22,001.00",
-      total_savings: "250,201.00",
-      limit_algorithm: "fixed",
-      limit_was_reset: false,
-      blocking_reasons: [],
-      cleared_loan_count: 0,
-      current_multiplier: null,
-    },
-
-    status: "pending_credit_committee",
-    status_label: "Pending Credit Committee",
-    current_stage_label: "Credit Committee",
-    committee_approvals_required: 3,
-    committee_approvals_received: 2,
-    committee_rejections_received: 0,
-
-    applicant_notes: null,
-    admin_notes: null,
-
-    requires_collateral: false,
-    collateral_type: null,
-    collateral_description:
-      "Logbook, title deed, or other acceptable collateral",
-    collateral_value: "0.00",
-    chattels: [
-      {
-        type: "Motor Vehicle Logbook",
-        description: "Toyota Vanguard KDG 123X",
-        calculated_value: "1,500,000.00",
-        validation: "Verified",
-      },
-    ],
-
-    requires_guarantor: true,
-    min_guarantors: 2,
-    max_guarantors: 4,
-    guarantor_required_above_amount: "0.00",
-    guarantor_coverage_percent: "100.0000",
-    guarantors: [
-      {
-        name: "ALFRED KARIUKI GITAU",
-        mobile: "+254711223344",
-        coverage_amount: "30,000.00",
-        status: "Approved",
-      },
-      {
-        name: "IAN NJAGAH NDUNGU",
-        mobile: "+254722556677",
-        coverage_amount: "30,000.00",
-        status: "Approved",
-      },
-    ],
-
-    documents: [
-      {
-        name: "National_ID_Pass.pdf",
-        type: "Identification",
-        size: "2.4 MB",
-        uploaded_at: "2026-06-13",
-      },
-      {
-        name: "Bank_Statement_3MA.xlsx",
-        type: "Financial Record",
-        size: "4.1 MB",
-        uploaded_at: "2026-06-13",
-      },
-      {
-        name: "Sacco_Shares_Ledger.pdf",
-        type: "Equity Verification",
-        size: "1.8 MB",
-        uploaded_at: "2026-06-13",
-      },
-    ],
-
-    application_date: "2026-06-13",
-    submitted_at: "2026-06-13T11:05:54.148Z",
-    terms_accepted_at: "2026-06-13T11:29:31.520Z",
-    requested_disbursement_date: null,
-    approved_at: null,
-    rejected_at: null,
-    disbursed_at: null,
-    created_at: "2026-06-13T11:05:54.150Z",
-    updated_at: "2026-06-15T08:05:26.191Z",
-
-    disbursement: null,
-
-    is_imported: false,
-    legacy_data: null,
-
-    product: {
-      id: "c2e4e26e-5071-4eb0-ab89-26732c208ece",
-      product_code: "Development_loan",
-      product_name: "Development Loan",
-      description:
-        "Long-term development loan requiring full credit committee review",
-      features: null,
-      terms_and_conditions: null,
-      is_active: true,
-      org_code: "BA208",
-      loan_mode: 1,
-      min_amount: "50000.00",
-      max_amount: "5000000.00",
-      min_period: 6,
-      max_period: 60,
-      limit_algorithm: "fixed",
-      limit_start_amount: "0.00",
-      limit_increment_amount: "0.00",
-      limit_start_multiplier: "1.5000",
-      limit_increment_multiplier: "0.5000",
-      limit_max_multiplier: "3.0000",
-      limit_multiplier_basis: "savings",
-      limit_resets_on_default: true,
-      interest_rate: "1.5000",
-      interest_key: "pm",
-      interest_method: "reducing_balance",
-      repayment_interval: "Monthly",
-      duration_key: "pm",
-      processing_fee_type: "percentage",
-      processing_fee_value: "1.0000",
-      deduct_fee_from_principal: true,
-      has_insurance: true,
-      insurance_rate: "0.5000",
-      has_penalty: true,
-      penalty_type: "percentage_of_outstanding",
-      penalty_value: "5.0000",
-      penalty_frequency: "monthly",
-      grace_period_days: 30,
-      penalty_cap_days: 0,
-      max_penalty_rate: "20.0000",
-      workflow_type: "committee_and_manager",
-      auto_disburse: false,
-      committee_group_id: "credit-committee-group-uuid",
-      allowed_disbursement_methods: ["MPESA", "BANK"],
-      min_membership_months: 6,
-      min_shares_amount: "10000.00",
-      min_savings_amount: "20000.00",
-      max_loan_to_shares_ratio: "5.0000",
-      max_loan_to_savings_ratio: "0.0000",
-      max_active_loans_of_type: 1,
-      max_total_active_loans: 2,
-      blocked_concurrent_loan_types: ["Development_loan"],
-      allowed_concurrent_loan_types: [],
-      block_if_defaulted: true,
-      min_repayment_percent_before_reapply: "100.0000",
-      block_if_guarantor_on_defaulted: true,
-      required_kyc_level: 1,
-      allows_rollover: false,
-      allows_topup: true,
-      min_repayment_percent_for_topup: "50.0000",
-      moratorium_months: 0,
-      moratorium_interest_handling: "interest_only",
-      penalty_grace_period_days: 0,
-      allowed_currencies: ["KES"],
-    },
-
-    stage_history: [
-      {
-        stage: "eligibility",
-        status: "passed",
-        note: "Automated checks and basic member parameters verified successfully.",
-        actor: "system",
-        actor_name: "System",
-        timestamp: "2026-06-13T11:05:54.148Z",
-      },
-      {
-        stage: "guarantor",
-        status: "pending_guarantor",
-        note: "Guarantor requests sent out and awaiting confirmation.",
-        actor: "system",
-        actor_name: "System",
-        timestamp: "2026-06-13T11:29:15.412Z",
-      },
-      {
-        stage: "guarantor",
-        status: "guarantor_approved",
-        note: "All selected guarantors have signed off. Total amount covered: KES 60,000.",
-        actor: "a8e19467-5a87-a9b2-605a-68c46ae5b8fe",
-        actor_name: "IAN NJAGAH NDUNGU",
-        timestamp: "2026-06-14T19:24:08.269Z",
-      },
-      {
-        stage: "credit_committee",
-        status: "pending_credit_committee",
-        note: "Forwarded to the credit committee for review and voting tabs.",
-        actor: "system",
-        actor_name: "System",
-        timestamp: "2026-06-14T19:24:08.269Z",
-      },
-    ],
-  });
+  const [application, setApplication] = useState({});
 
   const handleApprove = () => {
     navigate(`/admin/loan-applications/${application?.id}/approve`);
@@ -278,6 +66,25 @@ export default function LoanApplication() {
   const handleSendNotification = () => {
     navigate(`/admin/loan-applications/${application?.id}/send-notification`);
   };
+
+  const { isFetching } = useQuery({
+    queryKey: ["get loan application", id],
+    queryFn: async () => {
+      const response = await getApplication(id);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setApplication(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Transactions processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
   return (
     <div className="w-full space-y-8 font-sans antialiased text-slate-800">
@@ -464,33 +271,36 @@ export default function LoanApplication() {
           <MetricItem
             icon={<Briefcase />}
             label="Product Name"
-            value={application.product.product_name}
+            value={application?.loan_product?.product_name}
           />
           <MetricItem
             icon={<Settings />}
             label="Product Code"
-            value={application.product.product_code}
+            value={application?.loan_product?.product_code}
           />
           <MetricItem
             icon={<Percent />}
             label="Interest Rate"
-            value={`${parseFloat(application.product.interest_rate).toFixed(2)}% p.m.`}
+            value={`${parseFloat(application?.loan_product?.interest_rate)?.toFixed(2)}% p.m.`}
           />
           <MetricItem
             icon={<Settings />}
             label="Interest Calculation Method"
-            value={application.product.interest_method.replace("_", " ")}
+            value={application?.loan_product?.interest_method?.replace(
+              "_",
+              " ",
+            )}
             isCapitalized
           />
           <MetricItem
             icon={<Users />}
             label="Required Committee Approvals"
-            value={`${application.committee_approvals_required} Votes Needed`}
+            value={`${application?.loan_product?.committee_approvals_required} Votes Needed`}
           />
           <MetricItem
             icon={<Users />}
             label="Approvals Received"
-            value={`${application.committee_approvals_received} Votes Cast`}
+            value={`${application?.committee_approvals_received} Votes Cast`}
           />
         </ApplicationCard>
 
@@ -501,22 +311,26 @@ export default function LoanApplication() {
           <MetricItem
             icon={<ShieldCheck />}
             label="Guarantor Policy"
-            value={application.requires_guarantor ? "Required" : "Optional"}
+            value={
+              application?.loan_product?.requires_guarantor
+                ? "Required"
+                : "Optional"
+            }
           />
           <MetricItem
             icon={<Users />}
             label="Guarantor Count Limits"
-            value={`Min: ${application.min_guarantors} / Max: ${application.max_guarantors}`}
+            value={`Min: ${application.loan_product?.min_guarantors} / Max: ${application?.loan_product?.max_guarantors}`}
           />
           <MetricItem
             icon={<DollarSign />}
             label="Required for Amounts Above"
-            value={`KES ${application.guarantor_required_above_amount}`}
+            value={`KES ${application?.loan_product?.guarantor_required_above_amount}`}
           />
           <MetricItem
             icon={<Percent />}
             label="Required Coverage"
-            value={`${application.guarantor_coverage_percent}%`}
+            value={`${Number(application?.loan_product?.guarantor_coverage_percent ?? 0).toFixed(0)}%`}
           />
 
           {/* Active Co-Signers List Ledger */}
@@ -525,22 +339,22 @@ export default function LoanApplication() {
               Assigned Guarantors
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {application.guarantors.map((g, i) => (
+              {application?.guarantors?.map((g, i) => (
                 <div
                   key={i}
                   className="border border-slate-200/60 p-4 rounded-xl flex items-center justify-between bg-slate-50/50"
                 >
                   <div className="space-y-1 min-w-0">
                     <p className="text-xs font-bold text-slate-900 tracking-tight truncate">
-                      {g.name}
+                      {g.guarantor_name}
                     </p>
                     <p className="text-[11px] text-slate-400 font-medium tracking-wide">
-                      {g.mobile}
+                      {g.guarantor_mobile}
                     </p>
                     <p className="text-[11px] text-slate-500 font-medium pt-1">
                       Guaranteed:{" "}
                       <span className="font-bold text-slate-800">
-                        KES {g.coverage_amount}
+                        KES {g.amount_guaranteed}
                       </span>
                     </p>
                   </div>
@@ -572,59 +386,61 @@ export default function LoanApplication() {
             label="Total Asset Value"
             value={`KES ${application.collateral_value}`}
           />
-          <div className="md:col-span-2 space-y-1 bg-slate-50 p-4 rounded-xl border border-slate-100 mb-1">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-              Accepted Security Types
-            </span>
-            <p className="text-xs text-slate-600 font-medium leading-relaxed">
-              {application.collateral_description}
-            </p>
-          </div>
-
-          {/* Physical Asset Valuation Registry Ledger */}
-          <div className="md:col-span-2 space-y-3.5 border-t border-slate-100 pt-5 mt-1">
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
-              Asset Valuation Details
-            </span>
-            <div className="space-y-3">
-              {application.chattels.map((c, i) => (
-                <div
-                  key={i}
-                  className="border border-slate-200/60 p-4 rounded-xl bg-slate-50/50 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center"
-                >
-                  <div>
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                      Asset Type
-                    </span>
-                    <p className="text-xs font-bold text-slate-800 tracking-tight mt-0.5">
-                      {c.type}
-                    </p>
-                  </div>
-                  <div>
-                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                      Description / Details
-                    </span>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5 truncate">
-                      {c.description}
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between sm:justify-end gap-4">
-                    <div className="sm:text-right">
-                      <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">
-                        Valuation
-                      </span>
-                      <p className="text-xs font-bold text-primary tracking-tight mt-0.5">
-                        KES {c.calculated_value}
-                      </p>
+          {application.requires_collateral && (
+            <>
+              <div className="md:col-span-2 space-y-1 bg-slate-50 p-4 rounded-xl border border-slate-100 mb-1">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
+                  Accepted Security Types
+                </span>
+                <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                  {application.collateral_description}
+                </p>
+              </div>
+              <div className="md:col-span-2 space-y-3.5 border-t border-slate-100 pt-5 mt-1">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
+                  Asset Valuation Details
+                </span>
+                <div className="space-y-3">
+                  {application?.chattels?.map((c, i) => (
+                    <div
+                      key={i}
+                      className="border border-slate-200/60 p-4 rounded-xl bg-slate-50/50 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center"
+                    >
+                      <div>
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                          Asset Type
+                        </span>
+                        <p className="text-xs font-bold text-slate-800 tracking-tight mt-0.5">
+                          {c.type}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                          Description / Details
+                        </span>
+                        <p className="text-xs text-slate-500 font-medium mt-0.5 truncate">
+                          {c.description}
+                        </p>
+                      </div>
+                      <div className="flex items-center justify-between sm:justify-end gap-4">
+                        <div className="sm:text-right">
+                          <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">
+                            Valuation
+                          </span>
+                          <p className="text-xs font-bold text-primary tracking-tight mt-0.5">
+                            KES {c.calculated_value}
+                          </p>
+                        </div>
+                        <span className="text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md bg-primary/5 border border-primary/10 text-primary">
+                          {c.validation}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md bg-primary/5 border border-primary/10 text-primary">
-                      {c.validation}
-                    </span>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            </>
+          )}
         </ApplicationCard>
 
         {/* SECTION 3: UNDERWRITING DOSSIER & DOCUMENTS */}
@@ -648,7 +464,7 @@ export default function LoanApplication() {
               Files Registry
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              {application.documents.map((doc, i) => (
+              {application?.documents?.map((doc, i) => (
                 <div
                   key={i}
                   className="border border-slate-200/60 p-3.5 rounded-xl flex items-center justify-between bg-white hover:border-primary/30 transition-all group shadow-2xs"
@@ -697,15 +513,15 @@ export default function LoanApplication() {
             <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
               <span>Voting Progress</span>
               <span className="font-bold text-slate-900">
-                {application.committee_approvals_received} /{" "}
-                {application.product.committee_approvals_required} Votes
+                {application?.committee_approvals_received} /{" "}
+                {application?.loan_product?.committee_approvals_required} Votes
               </span>
             </div>
             <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-primary h-full transition-all duration-300"
                 style={{
-                  width: `${(application.committee_approvals_received / application.product.committee_approvals_required) * 100}%`,
+                  width: `${(application?.committee_approvals_received / application?.loan_product?.committee_approvals_required) * 100}%`,
                 }}
               />
             </div>
@@ -714,45 +530,143 @@ export default function LoanApplication() {
 
         {/* CONTAINER 6: CHRONOLOGICAL STAGE AUDIT LOGS */}
         <ApplicationCard
-          title="Application Timeline"
-          icon={<History size={16} />}
+          title="Disbursement Payout Details"
+          icon={<ArrowDownCircle size={16} className="text-slate-500" />}
+          className="col-span-full" /* Tells the main page layout to make the card wide */
         >
-          <div className="md:col-span-2 space-y-4 max-h-[295px] overflow-y-auto pr-1">
-            {application.stage_history.map((log, index) => (
-              <div
-                key={index}
-                className="flex gap-3 items-start border-l-2 border-slate-100 pl-4 relative ml-2 first:border-primary/30"
-              >
-                <div
-                  className={`absolute -left-1.5 top-1.5 size-2.5 rounded-full border border-white ${
-                    log.status === "pending" ? "bg-warning" : "bg-primary"
-                  }`}
-                />
-                <div className="flex-grow space-y-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-800 uppercase tracking-wide">
-                      Stage: {log.stage.replace("_", " ")}
+          {/* FIX: col-span-full tells the card's inner grid to let this container take up the whole row */}
+          <div className="col-span-full flex flex-col gap-5 w-full">
+            {/* 1. STATUS ALERT BANNER (Handles Failed State Warmly) */}
+
+            {/* 2. CORE FINANCIAL BREAKDOWN LOGIC */}
+            <div className="bg-slate-50/50 border border-slate-200/50 rounded-2xl p-4 space-y-3 w-full">
+              <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
+                Financial Breakdown
+              </span>
+
+              <div className="flex justify-between items-center text-xs text-slate-500 font-medium">
+                <span>Approved Gross Amount</span>
+                <span className="font-semibold text-slate-800">
+                  KES{" "}
+                  {Number(
+                    application?.disbursement?.gross_amount,
+                  ).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                  })}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center text-xs text-slate-500 font-medium">
+                <span className="flex items-center gap-1">
+                  Processing Fee{" "}
+                  <span className="text-[10px] text-slate-400 font-normal">
+                    (Deducted)
+                  </span>
+                </span>
+                <span className="font-semibold text-rose-600">
+                  - KES{" "}
+                  {Number(
+                    application?.disbursement?.processing_fee_deducted,
+                  ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center text-xs text-slate-500 font-medium pb-2 border-b border-slate-200/40">
+                <span className="flex items-center gap-1">
+                  Insurance Cover{" "}
+                  <span className="text-[10px] text-slate-400 font-normal">
+                    (Deducted)
+                  </span>
+                </span>
+                <span className="font-semibold text-rose-600">
+                  - KES{" "}
+                  {Number(
+                    application?.disbursement?.insurance_deducted,
+                  ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center pt-1">
+                <span className="text-xs font-bold text-slate-900">
+                  Final Net Payout
+                </span>
+                <span className="text-sm font-black text-emerald-600 font-mono">
+                  KES{" "}
+                  {Number(application?.disbursement?.net_amount).toLocaleString(
+                    undefined,
+                    {
+                      minimumFractionDigits: 2,
+                    },
+                  )}
+                </span>
+              </div>
+            </div>
+
+            {/* 3. DESTINATION & SYSTEM ATTRIBUTION TARGETS */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs w-full">
+              {/* Target Destination Profile Container */}
+              <div className="space-y-2.5">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
+                  Recipient Destination
+                </span>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
+                    {application?.disbursement?.method === "MPESA" ? (
+                      <Smartphone size={13} className="text-slate-400" />
+                    ) : (
+                      <Building size={13} className="text-slate-400" />
+                    )}
+                    <span className="uppercase font-bold text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
+                      {application?.disbursement?.method}
                     </span>
-                    <span className="text-[10px] text-slate-400 font-medium">
-                      {log.timestamp}
+                    <span className="font-mono text-xs">
+                      {application?.disbursement?.recipient_phone}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                    {log.note}
+                  <p className="text-[11px] text-slate-400 font-medium pl-1">
+                    {application?.disbursement?.bank_name} •{" "}
+                    {application?.disbursement?.bank_branch} <br />
+                    Acc: {application?.disbursement?.bank_account_number}
                   </p>
                 </div>
               </div>
-            ))}
+
+              {/* System Audit attribution information logs */}
+              <div className="space-y-2.5 md:border-l md:border-slate-100 md:pl-4">
+                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
+                  Audit Attribution
+                </span>
+                <div className="space-y-1 text-slate-500 font-medium">
+                  <p className="flex items-center gap-1">
+                    Ref:{" "}
+                    <span className="font-mono font-bold text-slate-800 uppercase">
+                      {application?.disbursement?.transaction_ref || "—"}
+                    </span>
+                  </p>
+                  <p>
+                    Initiated By:{" "}
+                    <span className="font-semibold text-slate-700">
+                      {application?.disbursement?.disbursed_by_name}
+                    </span>
+                  </p>
+                  <p className="text-[10px] text-slate-400">
+                    On:{" "}
+                    {new Date(
+                      application?.disbursement?.initiated_at,
+                    ).toLocaleString("en-KE", {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </ApplicationCard>
       </div>
     </div>
   );
 }
-
-/* ==========================================================================
-   SUPPORTIVE CHILD UTILITY TEMPLATE HOOKS
-   ========================================================================== */
 
 const ApplicationCard = ({ title, icon, children }) => (
   <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] overflow-hidden w-full h-full">

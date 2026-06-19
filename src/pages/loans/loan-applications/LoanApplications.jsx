@@ -19,6 +19,7 @@ import { useQuery } from "react-query";
 import { getLoanApplications } from "../../../sdk/loan-applications/loan-applications";
 import Pagination from "../../../components/pagination/Pagination";
 import FilterApplications from "../../../components/filters/ApplicationFilter";
+import { useFormatAmount } from "../../../hooks/useFormatAmount";
 
 export default function LoanApplications() {
   const [activeTab, setActiveTab] = useState("all");
@@ -26,6 +27,7 @@ export default function LoanApplications() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showFilters, setShowFilters] = useState(false);
+  const formatAmount = useFormatAmount();
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
@@ -356,7 +358,7 @@ export default function LoanApplications() {
                     <td className="py-4 px-6">
                       <div className="flex flex-col space-y-1.5">
                         <span className="font-semibold text-slate-900 text-sm tracking-tight">
-                          KES {app.applied_amount}
+                          {formatAmount(app.applied_amount)}
                         </span>
                         <div className="text-[11px] text-slate-400 font-medium flex items-center gap-2">
                           <span>

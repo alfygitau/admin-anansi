@@ -7,6 +7,8 @@ import {
   CheckCircle2,
   Receipt,
   SlidersHorizontal,
+  Layers,
+  AlertTriangle,
 } from "lucide-react";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
 import { useQuery } from "react-query";
@@ -103,6 +105,21 @@ export default function LoanTransactions() {
     }));
   };
 
+  const metrics = {
+    // Total value of all posted transactions combined
+    postedVolume: "4,820,500",
+
+    // Total number of payments currently clearing or processing
+    pendingCount: 14,
+
+    // Total number of entries that have been reversed or rolled back
+    reversedCount: 3,
+
+    // Extra metrics you can use for internal calculations if needed
+    totalTransactionsProcessed: 342,
+    todayCollections: "185,000",
+  };
+
   return (
     <>
       <LoanTransactionsFilter
@@ -125,6 +142,57 @@ export default function LoanTransactions() {
             </p>
           </div>
         </div>
+
+        {isFetching ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {Array(3)
+              .fill(0)
+              .map((_, index) => (
+                <div
+                  key={`metric-skeleton-${index}`}
+                  className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 animate-pulse flex items-start justify-between gap-4"
+                >
+                  <div className="space-y-3 flex-1">
+                    {/* Card Title Line */}
+                    <div className="h-3 w-28 bg-slate-200 rounded" />
+
+                    {/* Big Metric Value Line */}
+                    <div className="h-7 w-24 bg-slate-200 rounded-lg" />
+
+                    {/* Description Subtext Line */}
+                    <div className="h-3 w-44 bg-slate-100 rounded" />
+                  </div>
+
+                  {/* Icon Shell Box Placeholder */}
+                  <div className="size-9 rounded-xl bg-slate-100 border border-slate-200/20 shrink-0" />
+                </div>
+              ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <SummaryMetricCard
+              title="Successful Payments"
+              value={`KES ${metrics.postedVolume}`}
+              desc="Money safely received and updated in member accounts"
+              icon={<CheckCircle2 size={18} />}
+              color="text-success bg-success/5"
+            />
+            <SummaryMetricCard
+              title="On the Way"
+              value={`${metrics.pendingCount} Processing`}
+              desc="Payments currently making their way through M-Pesa or bank systems"
+              icon={<Layers size={18} />}
+              color="text-primary bg-primary/5"
+            />
+            <SummaryMetricCard
+              title="Returned or Fixed"
+              value={`${metrics.reversedCount} Reversed`}
+              desc="Bounced transactions or minor corrections kept safely for our records"
+              icon={<AlertTriangle size={18} />}
+              color="text-warning bg-warning/5"
+            />
+          </div>
+        )}
         {/* 2. TOOLBAR */}
         <div className="w-full flex justify-between items-center bg-white p-3 rounded-2xl border border-slate-200/60 shadow-sm">
           {/* Left Controls: Search & Advanced Filters Group */}
@@ -378,3 +446,24 @@ export default function LoanTransactions() {
     </>
   );
 }
+
+const SummaryMetricCard = ({ title, value, desc, icon, color }) => (
+  <div className="bg-white p-6 rounded-2xl border border-slate-200/60 shadow-xs flex items-start justify-between">
+    <div className="space-y-1">
+      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+        {title}
+      </p>
+      <h3 className="text-xl font-bold text-slate-800 tracking-tight pt-1">
+        {value}
+      </h3>
+      <p className="text-[11px] text-slate-400 font-medium leading-normal pt-1">
+        {desc}
+      </p>
+    </div>
+    <div
+      className={`size-10 rounded-xl flex items-center justify-center shrink-0 ${color}`}
+    >
+      {icon}
+    </div>
+  </div>
+);

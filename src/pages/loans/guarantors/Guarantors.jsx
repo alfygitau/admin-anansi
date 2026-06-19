@@ -342,7 +342,7 @@ export default function Guarantors() {
                       minimumFractionDigits: 2,
                     })}
                   </td>
-                  <td className="py-4 px-6 text-right font-semibold text-orange-600">
+                  <td className="py-4 px-6 text-right font-semibold text-success">
                     KES{" "}
                     {g.guarantor?.available_backing.toLocaleString(undefined, {
                       minimumFractionDigits: 2,

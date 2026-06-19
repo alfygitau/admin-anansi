@@ -13,13 +13,14 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getLoanProducts } from "../../../sdk/loan-products/loan-products";
 import { useToast } from "../../../contexts/ToastProvider";
+import { useFormatAmount } from "../../../hooks/useFormatAmount";
 
 export default function LoanProducts() {
   const [activeTab, setActiveTab] = useState("active");
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
   const { showToast } = useToast();
-
+  const formatAmount = useFormatAmount();
   const [loanProducts, setLoanProducts] = useState([]);
 
   const { isFetching } = useQuery({
@@ -270,7 +271,7 @@ export default function LoanProducts() {
                     <td className="py-4 px-6">
                       <div className="flex flex-col">
                         <span className="font-bold text-slate-700 text-sm">
-                          {product.interest_rate}
+                          {Number(product.interest_rate).toFixed(1)}
                         </span>
                         <span className="text-[11px] text-slate-400 font-medium mt-0.5">
                           {formatSentenceCase(product?.interest_method)}
@@ -296,11 +297,11 @@ export default function LoanProducts() {
                         <div className="text-slate-700 font-medium">
                           Max:{" "}
                           <span className="font-bold">
-                            {product.max_amount}
+                            {formatAmount(product.max_amount)}
                           </span>
                         </div>
                         <div className="text-[11px] text-slate-400 font-medium mt-0.5">
-                          Min Floor: {product.min_amount}
+                          Min Floor: {formatAmount(product.min_amount)}
                         </div>
                       </div>
                     </td>

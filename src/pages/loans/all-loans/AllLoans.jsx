@@ -17,6 +17,7 @@ import { useQuery } from "react-query";
 import { getLoans } from "../../../sdk/loans/loans";
 import { useToast } from "../../../contexts/ToastProvider";
 import FilterLoans from "../../../components/filters/FilterLoans";
+import { useFormatAmount } from "../../../hooks/useFormatAmount";
 
 export default function AllLoans() {
   const [activeTab, setActiveTab] = useState("all");
@@ -24,6 +25,7 @@ export default function AllLoans() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showFilters, setShowFilters] = useState(false);
+  const formatAmount = useFormatAmount();
 
   const [filters, setFilters] = useState({
     page: 1,
@@ -354,13 +356,13 @@ export default function AllLoans() {
                         <div className="text-[11px] text-slate-500 font-medium">
                           Issued:{" "}
                           <span className="font-semibold text-slate-900">
-                            KES {loan.loan_amount}
+                            {formatAmount(loan.loan_amount)}
                           </span>
                         </div>
                         <div className="text-[11px] text-slate-500 font-medium">
                           Oustanding:{" "}
                           <span className="font-bold text-error">
-                            KES {loan.loan_Balance}
+                            {formatAmount(loan.loan_Balance)}
                           </span>
                         </div>
                       </div>
@@ -373,11 +375,12 @@ export default function AllLoans() {
                           <span>
                             Paid:{" "}
                             <span className="font-semibold text-slate-800">
-                              KES {loan.loan_total_payments}
+                              {formatAmount(loan.loan_total_payments)}
                             </span>
                           </span>
                           <span className="font-bold text-slate-900 pl-2">
-                            {loan.repayment_progress_percent}%
+                            {Number(loan.repayment_progress_percent).toFixed(0)}
+                            %
                           </span>
                         </div>
                         <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">

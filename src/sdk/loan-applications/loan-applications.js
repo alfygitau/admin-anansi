@@ -77,3 +77,12 @@ export const getAllApprovals = async (
     throw error?.response?.data || error;
   }
 };
+
+export const getApplication = async (id) => {
+  try {
+    const response = await loanClient.get(`/loan-applications/${id}`);
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

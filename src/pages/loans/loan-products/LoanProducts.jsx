@@ -10,138 +10,41 @@ import {
   Search,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
+import { getLoanProducts } from "../../../sdk/loan-products/loan-products";
+import { useToast } from "../../../contexts/ToastProvider";
 
 export default function LoanProducts() {
   const [activeTab, setActiveTab] = useState("active");
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
-  const loanProducts = [
-    {
-      id: "PROD-DEV-01",
-      name: "Normal Development Loan",
-      code: "DEV_L01",
-      status: "active",
-      interestRate: "12% p.a.",
-      interestType: "Reducing Balance",
-      maxTenor: "72 Months",
-      multiplier: "3x Shares",
-      minDeposits: "KES 50,000",
-      maxAmount: "KES 5,000,000",
-      guarantorsRequired: "Minimum 3",
-      insuranceFee: "0.5% upfront",
-      description:
-        "Long-term investment funding engineered for capital development and property asset acquisitions.",
-    },
-    {
-      id: "PROD-EMG-02",
-      name: "Instant Emergency Loan",
-      code: "EMG_L02",
-      status: "active",
-      interestRate: "1.5% per month",
-      interestType: "Flat Rate",
-      maxTenor: "12 Months",
-      multiplier: "1x Shares",
-      minDeposits: "KES 10,000",
-      maxAmount: "KES 150,000",
-      guarantorsRequired: "Not Required",
-      insuranceFee: "1.0% upfront",
-      description:
-        "Immediate relief funding channeled directly via mobile money networks for prompt financial bridging.",
-    },
-    {
-      id: "PROD-AST-03",
-      name: "Asset Financing Facility",
-      code: "AST_F03",
-      status: "active",
-      interestRate: "13.5% p.a.",
-      interestType: "Reducing Balance",
-      maxTenor: "48 Months",
-      multiplier: "4x Collateralized Value",
-      minDeposits: "KES 100,000",
-      maxAmount: "KES 10,000,000",
-      guarantorsRequired: "Minimum 2 + Asset Chattels",
-      insuranceFee: "0.75% annualized",
-      description:
-        "Structured vehicle and logbook processing systems optimized for physical machinery acquisitions.",
-    },
-    {
-      id: "PROD-SAL-04",
-      name: "Salary Advance Buffer",
-      code: "SAL_A04",
-      status: "inactive",
-      interestRate: "5.0% flat fee",
-      interestType: "One-off deduction",
-      maxTenor: "3 Months",
-      multiplier: "Up to 50% net pay",
-      minDeposits: "KES 5,000",
-      maxAmount: "KES 80,000",
-      guarantorsRequired: "Not Required",
-      insuranceFee: "None",
-      description:
-        "Short term payroll check-off bridge structured to cover immediate month-end cash flow mismatches.",
-    },
-    {
-      id: "PROD-EDU-05",
-      name: "Elimu Education Loan",
-      code: "EDU_L05",
-      status: "active",
-      interestRate: "10% p.a.",
-      interestType: "Reducing Balance",
-      maxTenor: "12 Months",
-      multiplier: "3x Shares",
-      minDeposits: "KES 20,000",
-      maxAmount: "KES 500,000",
-      guarantorsRequired: "Minimum 2",
-      insuranceFee: "0.4% upfront",
-      description:
-        "Dedicated education funding mapped to term calendars for seamless tuition and school fee disbursements.",
-    },
-    {
-      id: "PROD-AGR-06",
-      name: "Kilimo Bora Agri-Business",
-      code: "AGR_F06",
-      status: "active",
-      interestRate: "11.5% p.a.",
-      interestType: "Reducing Balance",
-      maxTenor: "36 Months",
-      multiplier: "3x Shares",
-      minDeposits: "KES 30,000",
-      maxAmount: "KES 2,000,000",
-      guarantorsRequired: "Minimum 2 + Crop Registry",
-      insuranceFee: "0.6% upfront",
-      description:
-        "Tailored financial injection designed for agricultural input sourcing, cold chain logistics, and mechanized equipment upgrades.",
-    },
-    {
-      id: "PROD-BIA-07",
-      name: "Biashara Jiinue Premium",
-      code: "BIA_P07",
-      status: "inactive",
-      interestRate: "14% p.a.",
-      interestType: "Reducing Balance",
-      maxTenor: "60 Months",
-      multiplier: "4x Shares",
-      minDeposits: "KES 150,000",
-      maxAmount: "KES 7,500,000",
-      guarantorsRequired: "Minimum 4",
-      insuranceFee: "0.8% upfront",
-      description:
-        "Legacy high-tier enterprise scale investment framework structured for commercial scaling, currently suspended for portfolio review.",
-    },
-  ];
+  const [loanProducts, setLoanProducts] = useState([]);
 
-  // Pipeline Filter logic matching state arrays
-  const filteredProducts = loanProducts.filter(
-    (product) =>
-      product.status === activeTab &&
-      product.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const { isFetching } = useQuery({
+    queryKey: ["loan-products"],
+    queryFn: async () => {
+      const response = await getLoanProducts();
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setLoanProducts(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Loan Products processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
   const stats = {
-    total: loanProducts.length,
-    active: loanProducts.filter((p) => p.status === "active").length,
-    inactive: loanProducts.filter((p) => p.status === "inactive").length,
+    total: loanProducts?.length,
+    active: loanProducts?.filter((p) => p.status === "active")?.length,
+    inactive: loanProducts?.filter((p) => p.status === "inactive")?.length,
   };
 
   return (
@@ -212,7 +115,7 @@ export default function LoanProducts() {
       </div>
 
       {/* 4. PRODUCT MATRIX DENSE TABULAR CANVAS */}
-      {filteredProducts.length > 0 ? (
+      {loanProducts?.length > 0 ? (
         <div className="w-full bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
           <div className="overflow-x-auto w-full">
             <table className="w-full text-left border-collapse whitespace-nowrap">
@@ -231,11 +134,11 @@ export default function LoanProducts() {
 
               {/* Table Body Content Matrix */}
               <tbody className="divide-y divide-slate-100 text-xs">
-                {filteredProducts.map((product) => (
+                {loanProducts?.map((product) => (
                   <tr
                     key={product.id}
                     className={`group transition-colors hover:bg-slate-50/60 ${
-                      product.status !== "active" ? "bg-slate-50/20" : ""
+                      !product.is_active ? "bg-slate-50/20" : ""
                     }`}
                   >
                     {/* Column 1: Core Identification Assets */}
@@ -243,14 +146,11 @@ export default function LoanProducts() {
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2">
                           <span className="font-mono font-bold text-[10px] tracking-wide uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
-                            {product.code}
-                          </span>
-                          <span className="text-[10px] font-mono text-slate-400 font-medium">
-                            {product.id}
+                            {product.product_code}
                           </span>
                         </div>
                         <span className="font-bold text-slate-800 text-sm tracking-tight truncate group-hover:text-primary transition-colors">
-                          {product.name}
+                          {product.product_name}
                         </span>
                       </div>
                     </td>
@@ -259,10 +159,10 @@ export default function LoanProducts() {
                     <td className="py-4 px-6">
                       <div className="flex flex-col">
                         <span className="font-bold text-slate-700 text-sm">
-                          {product.interestRate}
+                          {product.interest_rate}
                         </span>
                         <span className="text-[11px] text-slate-400 font-medium mt-0.5">
-                          {product.interestType}
+                          {product.interest_method}
                         </span>
                       </div>
                     </td>
@@ -271,10 +171,10 @@ export default function LoanProducts() {
                     <td className="py-4 px-6">
                       <div className="flex flex-col">
                         <span className="font-semibold text-slate-700">
-                          {product.maxTenor}
+                          {product.min_period}
                         </span>
                         <span className="text-[11px] text-primary font-bold tracking-wide uppercase mt-0.5">
-                          {product.multiplier}
+                          {product.max_period}
                         </span>
                       </div>
                     </td>
@@ -284,10 +184,12 @@ export default function LoanProducts() {
                       <div className="flex flex-col">
                         <div className="text-slate-700 font-medium">
                           Max:{" "}
-                          <span className="font-bold">{product.maxAmount}</span>
+                          <span className="font-bold">
+                            {product.max_amount}
+                          </span>
                         </div>
                         <div className="text-[11px] text-slate-400 font-medium mt-0.5">
-                          Min Floor: {product.minDeposits}
+                          Min Floor: {product.min_amount}
                         </div>
                       </div>
                     </td>
@@ -296,10 +198,10 @@ export default function LoanProducts() {
                     <td className="py-4 px-6">
                       <div className="flex flex-col">
                         <span className="font-medium text-slate-700">
-                          {product.guarantorsRequired}
+                          {product.min_guarantors}
                         </span>
                         <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-0.5">
-                          Levy: {product.insuranceFee}
+                          Levy: {product.insurance_rate}
                         </span>
                       </div>
                     </td>
@@ -308,15 +210,15 @@ export default function LoanProducts() {
                     <td className="py-4 px-6">
                       <span
                         className={`inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase px-2.5 py-1 rounded-full ${
-                          product.status === "active"
+                          product.is_active
                             ? "bg-success/10 text-success"
                             : "bg-slate-100 text-slate-500"
                         }`}
                       >
                         <span
-                          className={`size-1.5 rounded-full ${product.status === "active" ? "bg-success" : "bg-slate-400"}`}
+                          className={`size-1.5 rounded-full ${product.is_active ? "bg-success" : "bg-slate-400"}`}
                         />
-                        {product.status}
+                        {product.is_active ? "Active" : "Inactive"}
                       </span>
                     </td>
 
@@ -338,12 +240,12 @@ export default function LoanProducts() {
                         </button>
                         <button
                           className={`size-8 rounded-xl border flex items-center justify-center transition-all shadow-sm bg-white ${
-                            product.status === "active"
+                            product.is_active
                               ? "border-rose-100 text-error hover:bg-rose-50 hover:border-rose-200"
                               : "border-emerald-100 text-success hover:bg-emerald-50 hover:border-emerald-200"
                           }`}
                           title={
-                            product.status === "active"
+                            product.is_active
                               ? "Deactivate Product"
                               : "Activate Product"
                           }

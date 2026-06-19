@@ -463,61 +463,64 @@ export default function MemberDetails({ onBack }) {
           {/* 4. THIRD ROW: NEXT OF KIN & LOAN GUARANTEES PROFILE BLOCK */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             {/* NEXT OF KIN PANEL (SPANS 2 COLUMNS) */}
-            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4">
-              <div className="w-full flex items-center justify-between">
-                <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
-                  <Users size={14} /> Next of Kin
-                </h3>
-                <Edit size={14} className="text-slate-400 cursor-pointer" />
-              </div>
+            <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 flex flex-col justify-between space-y-4 h-full">
+              <div className="space-y-4 flex-1">
+                <div className="w-full flex items-center justify-between">
+                  <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
+                    <Users size={14} /> Next of Kin
+                  </h3>
+                  <Edit size={14} className="text-slate-400 cursor-pointer" />
+                </div>
 
-              {/* Changed from space-y-3 to a responsive grid layout so kin profiles sit side-by-side */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {member?.nextOfKins?.map((kin) => (
-                  <div
-                    key={kin.id}
-                    className="grid grid-cols-2 gap-4 p-4 border border-slate-100 bg-slate-50/40 rounded-xl text-xs font-medium"
-                  >
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                        Full Name
-                      </p>
-                      <p className="text-slate-900 font-bold mt-0.5 truncate">
-                        {kin.name || "—"}
-                      </p>
+                {/* FIXED: Removed md:grid-cols-2 so items take the full width of the panel */}
+                <div className="grid grid-cols-1 gap-3">
+                  {member?.nextOfKins?.map((kin) => (
+                    <div
+                      key={kin.id}
+                      /* FIXED: Changed to md:grid-cols-4 so all 4 fields sit in a single straight line */
+                      className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-slate-100 bg-slate-50/40 rounded-xl text-xs font-medium items-center"
+                    >
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                          Full Name
+                        </p>
+                        <p className="text-slate-900 font-bold mt-0.5 truncate">
+                          {kin.name || "—"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                          Relationship
+                        </p>
+                        <p className="text-slate-600 capitalize mt-0.5 truncate">
+                          {kin.relationship || "—"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                          Phone Number
+                        </p>
+                        <p className="text-slate-700 font-mono mt-0.5 truncate">
+                          {kin.phoneNumber || "—"}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                          Location
+                        </p>
+                        <p className="text-slate-500 mt-0.5 truncate">
+                          {kin.location || "—"}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                        Relationship
-                      </p>
-                      <p className="text-slate-600 capitalize mt-0.5 truncate">
-                        {kin.relationship || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                        Phone Number
-                      </p>
-                      <p className="text-slate-700 font-mono mt-0.5 truncate">
-                        {kin.phoneNumber || "—"}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                        Location
-                      </p>
-                      <p className="text-slate-500 mt-0.5 truncate">
-                        {kin.location || "—"}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  ))}
 
-                {(!member?.nextOfKins || member?.nextOfKins.length === 0) && (
-                  <p className="text-xs text-slate-400 italic py-2 col-span-full">
-                    No next of kin records registered.
-                  </p>
-                )}
+                  {(!member?.nextOfKins || member?.nextOfKins.length === 0) && (
+                    <p className="text-xs text-slate-400 italic py-2 col-span-full">
+                      No next of kin records registered.
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
 

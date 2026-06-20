@@ -499,10 +499,7 @@ export default function LoanApplication() {
                 </p>
               </div>
             ) : (
-              <div className="md:col-span-2 space-y-3.5 border-t border-slate-100 pt-5 mt-1 w-full">
-                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block pl-0.5">
-                  Assigned Risk Backers
-                </span>
+              <div className="md:col-span-2 space-y-3.5 pt-2 w-full">
                 {application?.guarantors &&
                 application.guarantors.length > 0 ? (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -833,7 +830,7 @@ export default function LoanApplication() {
                 </div>
 
                 {/* Dynamic Next Steps Operational Callout Box */}
-                <div className="md:col-span-2 flex items-start gap-3 bg-blue-50/50 border border-blue-100/70 p-4 rounded-2xl text-xs w-full">
+                <div className="md:col-span-2 flex items-center gap-3 bg-blue-50/50 border border-blue-100/70 p-4 rounded-2xl text-xs w-full">
                   <HelpCircle
                     size={15}
                     className="text-blue-500 shrink-0 mt-0.5"

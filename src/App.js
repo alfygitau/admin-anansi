@@ -42,6 +42,9 @@ import Permissions from "./pages/users/Permissions";
 import AuditTrail from "./pages/users/AuditTrail";
 import LoanApplicationApprovals from "./pages/loans/loan-applications/LoanApplicationApprovals";
 import AddMember from "./pages/members/RegisterMember";
+import AddGuarantor from "./pages/loans/apply-loan/AddGuarantor";
+import ChattelRegistry from "./pages/loans/apply-loan/Collaterals";
+import LoanDocuments from "./pages/loans/apply-loan/AddLoanDocuments";
 
 function App() {
   return (
@@ -120,6 +123,9 @@ function App() {
           path="apply-loan/loan-application-details"
           element={<LoanApplicationDetails />}
         />
+        <Route path="apply-loan/add-guarantor" element={<AddGuarantor />} />
+        <Route path="apply-loan/collaterals" element={<ChattelRegistry />} />
+        <Route path="apply-loan/loan-documents" element={<LoanDocuments />} />
       </Route>
 
       <Route path="/auth/member-login" element={<MemberLogin />} />

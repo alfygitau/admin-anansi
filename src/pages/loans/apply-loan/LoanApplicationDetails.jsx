@@ -93,21 +93,7 @@ const LoanApplicationDetails = ({
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (amount > member.maxEligibility) {
-      return alert("Requested amount exceeds the member's borrowing ceiling.");
-    }
-
-    onSubmitApplication?.({
-      memberId: member.id,
-      productId: product.id,
-      amount: Number(amount),
-      period: Number(period),
-      frequency,
-      purposeCategory,
-      purposeDetails,
-      disbursementChannel,
-      metrics,
-    });
+    navigate("/admin/apply-loan/add-guarantor");
   };
 
   return (
@@ -118,9 +104,12 @@ const LoanApplicationDetails = ({
           <h2 className="text-xl font-black text-slate-900 tracking-tight">
             Configure Loan Parameters
           </h2>
+
+          {/* INLINE TAILWIND CSS UTILITY CLASSES */}
           <p className="text-sm font-bold text-slate-700 mt-0.5 capitalize">
             {member.name}
           </p>
+
           <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
             <span>Member ID:</span>
             <span className="font-mono font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/50">

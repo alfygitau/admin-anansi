@@ -109,6 +109,28 @@ export default function LoanApplication() {
     return "bg-amber-50/80 border-amber-100 text-amber-700 font-bold";
   };
 
+  const getStatusStyles = (status) => {
+    const currentStatus = (status || "Verified").toLowerCase();
+
+    switch (currentStatus) {
+      case "approved":
+      case "active":
+      case "excellent":
+      case "good standing":
+        return "bg-emerald-50 border-emerald-100 text-emerald-700";
+      case "pending":
+      case "conditional":
+      case "review":
+        return "bg-amber-50 border-amber-100 text-amber-700";
+      case "rejected":
+      case "failed":
+      case "inactive":
+        return "bg-rose-50 border-rose-100 text-rose-700";
+      default:
+        return "bg-slate-50 border-slate-200 text-slate-600";
+    }
+  };
+
   return (
     <div className="w-full space-y-4 antialiased text-slate-800 bg-slate-50/30 p-1 rounded-3xl">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/70 pb-6 select-none">
@@ -477,78 +499,55 @@ export default function LoanApplication() {
                 </p>
               </div>
             ) : (
-              /* 2. STANDARD RUNTIME GRID LAYOUT (Only loads if required) */
-              <>
-                <MetricItem
-                  icon={<ShieldCheck />}
-                  label="Guarantor Strategy"
-                  value="Mandatory Backing"
-                />
-                <MetricItem
-                  icon={<Users />}
-                  label="Allowed Portfolio Bounds"
-                  value={`Min: ${application?.loan_product?.min_guarantors || 0} / Max: ${application?.loan_product?.max_guarantors || 0}`}
-                />
-                <MetricItem
-                  icon={<DollarSign />}
-                  label="Policy Ceiling Gate"
-                  value={`KES ${Number(application?.loan_product?.guarantor_required_above_amount || 0).toLocaleString()}`}
-                />
-                <MetricItem
-                  icon={<Percent />}
-                  label="Collateralized Coverage"
-                  value={`${Number(application?.loan_product?.guarantor_coverage_percent ?? 0).toFixed(0)}%`}
-                />
-
-                {/* Active Co-Signers List Ledger */}
-                <div className="md:col-span-2 space-y-3.5 border-t border-slate-100 pt-5 mt-1 w-full">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block pl-0.5">
-                    Assigned Risk Backers
-                  </span>
-                  {application?.guarantors &&
-                  application.guarantors.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-                      {application.guarantors.map((g, i) => (
-                        <div
-                          key={i}
-                          className="border border-slate-200/70 p-4 rounded-2xl flex items-center justify-between bg-white hover:border-slate-300 transition-all shadow-3xs"
-                        >
-                          <div className="space-y-1 min-w-0">
-                            <p className="text-xs font-black text-slate-900 tracking-tight truncate">
-                              {g.guarantor_name}
-                            </p>
-                            <p className="text-[10px] text-slate-400 font-mono tracking-wide">
-                              {g.guarantor_mobile}
-                            </p>
-                            <p className="text-[11px] text-slate-500 font-medium pt-1">
-                              Coverage:{" "}
-                              <span className="font-bold text-slate-800 font-mono">
-                                KES{" "}
-                                {Number(
-                                  g.amount_guaranteed || 0,
-                                ).toLocaleString()}
-                              </span>
-                            </p>
-                          </div>
-                          <span className="text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-100 text-emerald-600 shrink-0 ml-2">
-                            {g.status || "Verified"}
-                          </span>
+              <div className="md:col-span-2 space-y-3.5 border-t border-slate-100 pt-5 mt-1 w-full">
+                <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block pl-0.5">
+                  Assigned Risk Backers
+                </span>
+                {application?.guarantors &&
+                application.guarantors.length > 0 ? (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                    {application.guarantors.map((g, i) => (
+                      <div
+                        key={i}
+                        className="border border-slate-200/70 p-4 rounded-2xl flex items-center justify-between bg-white hover:border-slate-300 transition-all shadow-3xs"
+                      >
+                        <div className="space-y-1 min-w-0">
+                          <p className="text-xs font-black text-slate-900 tracking-tight truncate">
+                            {g.guarantor_name}
+                          </p>
+                          <p className="text-[10px] text-slate-400 font-mono tracking-wide">
+                            {g.guarantor_mobile}
+                          </p>
+                          <p className="text-[11px] text-slate-500 font-medium pt-1">
+                            Coverage:{" "}
+                            <span className="font-bold text-slate-800 font-mono">
+                              KES{" "}
+                              {Number(
+                                g.amount_guaranteed || 0,
+                              ).toLocaleString()}
+                            </span>
+                          </p>
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="border border-dashed border-slate-200 p-6 rounded-2xl bg-slate-50/40 text-center select-none">
-                      <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">
-                        Waiting for Co-Signers
-                      </p>
-                      <p className="text-[11px] text-slate-400 font-medium mt-1">
-                        Guarantors are required for this loan type, but none
-                        have been added or linked to this file yet.
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </>
+                        <span
+                          className={`text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md border shrink-0 ml-2 transition-colors duration-150 ${getStatusStyles(g.status)}`}
+                        >
+                          {g.status || "Verified"}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="border border-dashed border-slate-200 p-6 rounded-2xl bg-slate-50/40 text-center select-none">
+                    <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">
+                      Waiting for Co-Signers
+                    </p>
+                    <p className="text-[11px] text-slate-400 font-medium mt-1">
+                      Guarantors are required for this loan type, but none have
+                      been added or linked to this file yet.
+                    </p>
+                  </div>
+                )}
+              </div>
             )}
           </ApplicationCard>
 
@@ -857,12 +856,14 @@ export default function LoanApplication() {
 
           {/* CARD 8: SYSTEM OUTBOUND DISBURSEMENT DETAILED BALANCE (FULL-WIDTH STRIP) */}
           <ApplicationCard
-            title="Outbound Vault Disbursement Parameters"
+            title="Disbursement Parameters"
             icon={<ArrowDownCircle size={15} className="text-slate-500" />}
           >
             {!application?.disbursement ? (
-              <div className="col-span-full border border-dashed border-slate-200 p-12 rounded-2xl bg-slate-50/40 text-center select-none w-full">
-                <div className="size-11 bg-white border border-slate-200/60 rounded-xl flex items-center justify-center text-slate-400 mx-auto mb-3.5 shadow-3xs">
+              /* FIXED: Stripped out the inner dashed sub-card styling and absolute container. 
+       Now centers the elements directly within the body canvas shell of the main card. */
+              <div className="col-span-full flex flex-col items-center justify-center text-center select-none w-full min-h-[320px] py-12 animate-in fade-in duration-200">
+                <div className="size-11 bg-slate-50 border border-slate-200/60 rounded-xl flex items-center justify-center text-slate-400 mb-3.5 shadow-3xs shrink-0">
                   <ArrowDownCircle size={18} className="opacity-75" />
                 </div>
                 <h4 className="text-xs font-black text-slate-700 uppercase tracking-wide">
@@ -887,7 +888,9 @@ export default function LoanApplication() {
                       KES{" "}
                       {Number(
                         application.disbursement.gross_amount || 0,
-                      ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      ).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
                     </span>
                   </div>
 
@@ -902,7 +905,9 @@ export default function LoanApplication() {
                       - KES{" "}
                       {Number(
                         application.disbursement.processing_fee_deducted || 0,
-                      ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      ).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
                     </span>
                   </div>
 
@@ -917,7 +922,9 @@ export default function LoanApplication() {
                       - KES{" "}
                       {Number(
                         application.disbursement.insurance_deducted || 0,
-                      ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      ).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
                     </span>
                   </div>
 
@@ -929,7 +936,9 @@ export default function LoanApplication() {
                       KES{" "}
                       {Number(
                         application.disbursement.net_amount || 0,
-                      ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      ).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
                     </span>
                   </div>
                 </div>

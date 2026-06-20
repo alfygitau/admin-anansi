@@ -27,6 +27,7 @@ import {
   UserCheck,
   Coins,
   Phone,
+  AlertCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -94,7 +95,29 @@ const scannedData = {
 export default function AddMember() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState({});
 
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    let errorMsg = "";
+
+    // Dynamic Verification Logic
+    if (!value || value.trim() === "") {
+      errorMsg = "This field is required";
+    } else {
+      if (name === "email" && !/\S+@\S+\.\S+/.test(value)) {
+        errorMsg = "Please enter a valid email address";
+      }
+      if (name === "mobileno" && value.length < 10) {
+        errorMsg = "Enter a complete valid phone number";
+      }
+      if (name === "kra_pin" && !/^[A-Z0-9]{11}$/i.test(value)) {
+        errorMsg = "KRA PIN must be exactly 11 characters";
+      }
+    }
+
+    setErrors((prev) => ({ ...prev, [name]: errorMsg }));
+  };
   const activeStep = REGISTRATION_STEPS[currentStepIndex];
   const isFirstStep = currentStepIndex === 0;
   const isLastStep = currentStepIndex === REGISTRATION_STEPS.length - 1;
@@ -194,6 +217,14 @@ export default function AddMember() {
     setIsSubmitting(true);
     console.log("Submitting consolidated state data to the core engine...");
     setTimeout(() => setIsSubmitting(false), 2000);
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   };
 
   return (
@@ -297,52 +328,77 @@ export default function AddMember() {
                       </p>
                     </div>
 
-                    {/* Form Fields Grid (Side-by-Side on Desktop) */}
+                    {/* Form Fields Grid */}
                     <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 pr-1">
-                      {/* ROW 1: USERNAME */}
-                      <FilterField label="Username" icon={User}>
-                        <input
-                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
-                          placeholder="e.g., jdoe_admin"
-                          value={formData.username}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              username: e.target.value,
-                            })
-                          }
-                        />
-                      </FilterField>
+                      {/* USERNAME */}
+                      <div>
+                        <FilterField label="Username" icon={User}>
+                          <input
+                            name="username"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 ${
+                              errors.username
+                                ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500/5"
+                                : "border-slate-200"
+                            }`}
+                            placeholder="e.g., jdoe_admin"
+                            value={formData.username}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                          />
+                        </FilterField>
+                        {errors.username && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                            <AlertCircle size={12} /> {errors.username}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* ROW 1: EMAIL ADDRESS */}
-                      <FilterField label="Email Address" icon={Mail}>
-                        <input
-                          type="email"
-                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
-                          placeholder="name@organization.com"
-                          value={formData.email}
-                          onChange={(e) =>
-                            setFormData({ ...formData, email: e.target.value })
-                          }
-                        />
-                      </FilterField>
+                      {/* EMAIL ADDRESS */}
+                      <div>
+                        <FilterField label="Email Address" icon={Mail}>
+                          <input
+                            type="email"
+                            name="email"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 ${
+                              errors.email
+                                ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500/5"
+                                : "border-slate-200"
+                            }`}
+                            placeholder="name@organization.com"
+                            value={formData.email}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                          />
+                        </FilterField>
+                        {errors.email && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                            <AlertCircle size={12} /> {errors.email}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* ROW 2: MOBILE NUMBER (SPANS BOTH COLUMNS FOR VISUAL BALANCE) */}
+                      {/* MOBILE NUMBER */}
                       <div className="md:col-span-2">
                         <FilterField label="Mobile Number" icon={Smartphone}>
                           <input
                             type="tel"
-                            className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
+                            name="mobileno"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 ${
+                              errors.mobileno
+                                ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500/5"
+                                : "border-slate-200"
+                            }`}
                             placeholder="+254 XXX XXX XXX"
                             value={formData.mobileno}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                mobileno: e.target.value,
-                              })
-                            }
+                            onBlur={handleBlur}
+                            onChange={handleChange}
                           />
                         </FilterField>
+                        {errors.mobileno && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in slide-in-from-top-1 duration-150">
+                            <AlertCircle size={12} /> {errors.mobileno}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -361,9 +417,8 @@ export default function AddMember() {
                       </p>
                     </div>
 
-                    {/* Main Content Area */}
                     <div className="flex-1 overflow-y-auto space-y-5 pr-1">
-                      {/* Helper Box (Stays prominent at the top) */}
+                      {/* Helper Box */}
                       <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex items-start gap-3.5 select-none animate-in fade-in duration-200">
                         <div className="space-y-2 flex-1">
                           <p className="text-xs font-bold text-[#074073]">
@@ -374,9 +429,7 @@ export default function AddMember() {
                             automated system reads the details instantly, please
                             keep the following tips in mind:
                           </p>
-
-                          {/* COMPLIANCE CHECKLIST */}
-                          <ul className="text-[11px] text-[#074073]/80 font-medium space-y-1.5 list-disc pl-4 leading-relaxed">
+                          <ul className="text-[11px] text-[#074073]/80 font-medium space-y-2 leading-relaxed">
                             <li>
                               <strong className="text-[#074073]">
                                 Full Framework View:
@@ -388,15 +441,14 @@ export default function AddMember() {
                               <strong className="text-[#074073]">
                                 Lighting & Legibility:
                               </strong>{" "}
-                              Take photos in a well-lit space. Avoid overhead
-                              phone glares, camera flashes, or dark shadows that
-                              make text hard to read.
+                              Take photos in a well-lit space. Avoid glares or
+                              dark shadows.
                             </li>
                             <li>
                               <strong className="text-[#074073]">
                                 File Restrictions:
                               </strong>{" "}
-                              Only upload sharp, high-resolution files in{" "}
+                              Only upload high-resolution files in{" "}
                               <span className="font-mono bg-blue-100/50 px-1 rounded">
                                 JPEG
                               </span>
@@ -408,28 +460,42 @@ export default function AddMember() {
                               <span className="font-mono bg-blue-100/50 px-1 rounded">
                                 PDF
                               </span>{" "}
-                              format (maximum file size: 5 MB).
+                              format (max 5 MB).
                             </li>
                           </ul>
                         </div>
                       </div>
 
-                      {/* Document Upload Fields Grid (Side-by-Side on Desktop) */}
+                      {/* Document Upload Fields Grid */}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-                        <FileUploadField
-                          label="ID Front View"
-                          id="front_view"
-                          fileKey="id_front"
-                          formData={formData}
-                          setFormData={setFormData}
-                        />
-                        <FileUploadField
-                          label="ID Back View"
-                          id="back_view"
-                          fileKey="id_back"
-                          formData={formData}
-                          setFormData={setFormData}
-                        />
+                        <div>
+                          <FileUploadField
+                            label="ID Front View"
+                            id="front_view"
+                            fileKey="id_front"
+                            formData={formData}
+                            setFormData={setFormData}
+                          />
+                          {errors.id_front && (
+                            <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                              <AlertCircle size={12} /> {errors.id_front}
+                            </p>
+                          )}
+                        </div>
+                        <div>
+                          <FileUploadField
+                            label="ID Back View"
+                            id="back_view"
+                            fileKey="id_back"
+                            formData={formData}
+                            setFormData={setFormData}
+                          />
+                          {errors.id_back && (
+                            <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                              <AlertCircle size={12} /> {errors.id_back}
+                            </p>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -439,7 +505,6 @@ export default function AddMember() {
               {activeStep.id === "review_id" && (
                 <div className="space-y-4 animate-in fade-in duration-200">
                   <motion.div className="bg-white relative w-full h-full flex flex-col">
-                    {/* Header Content Area */}
                     <div className="pb-3">
                       <h2 className="text-l font-bold text-[#074073]">
                         Scan Results
@@ -450,14 +515,11 @@ export default function AddMember() {
                       </p>
                     </div>
 
-                    {/* Main Content Area */}
                     <div className="flex-1 overflow-y-auto space-y-6 pr-1">
-                      {/* Data Category: Core Identification Fields */}
                       <div className="space-y-3.5">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
                           Extracted Legal Name
                         </p>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                           <ScannedDataField
                             label="First Name"
@@ -469,7 +531,6 @@ export default function AddMember() {
                             icon={User}
                             value={scannedData?.middlename}
                           />
-                          {/* Spans full width on desktop for visual balance with odd count */}
                           <div className="md:col-span-2">
                             <ScannedDataField
                               label="Last Name"
@@ -480,12 +541,10 @@ export default function AddMember() {
                         </div>
                       </div>
 
-                      {/* Data Category: Compliance & Telemetry */}
                       <div className="space-y-3.5 pt-5 border-t border-slate-100">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
                           Document Metrics
                         </p>
-
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
                           <ScannedDataField
                             label="Identification Type"
@@ -519,73 +578,72 @@ export default function AddMember() {
               {activeStep.id === "selfie" && (
                 <div className="space-y-4 animate-in fade-in duration-200">
                   <motion.div className="bg-white relative w-full h-full flex flex-col">
-                    {/* Header */}
                     <div className="pb-3">
                       <h2 className="text-l font-bold text-[#074073]">
                         Member Selfie
                       </h2>
                       <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-                        Upload a clear portrait. This will be used for
-                        identification.
+                        Upload a clear portrait for identification matching.
                       </p>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto space-y-8">
-                      {/* Upload Zone */}
-                      <div className="relative group border-2 border-dashed border-slate-200 rounded-3xl p-6 flex flex-col items-center justify-center bg-slate-50 hover:border-[#074073]/30 transition-all">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
-                        />
-
-                        {previewUrl ? (
-                          <div className="flex flex-col items-center gap-3">
-                            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md">
-                              <img
-                                src={previewUrl}
-                                alt="Preview"
-                                className="w-full h-full object-cover"
-                              />
+                    <div className="flex-1 overflow-y-auto space-y-6">
+                      <div>
+                        <div className="relative group border-2 border-dashed border-slate-200 rounded-3xl p-6 flex flex-col items-center justify-center bg-slate-50 hover:border-[#074073]/30 transition-all">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleFileChange}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                          />
+                          {previewUrl ? (
+                            <div className="flex flex-col items-center gap-3">
+                              <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md">
+                                <img
+                                  src={previewUrl}
+                                  alt="Preview"
+                                  className="w-full h-full object-cover"
+                                />
+                              </div>
+                              <p className="text-xs font-bold text-[#074073]">
+                                Click to change photo
+                              </p>
                             </div>
-                            <p className="text-xs font-bold text-[#074073]">
-                              Click to change photo
-                            </p>
-                          </div>
-                        ) : (
-                          <div className="text-center">
-                            <Camera
-                              className="mx-auto text-slate-400 mb-2"
-                              size={32}
-                            />
-                            <p className="text-xs font-semibold text-slate-600">
-                              Click or drag & drop
-                            </p>
-                            <p className="text-[10px] text-slate-400 mt-1">
-                              PNG, JPG up to 5MB
-                            </p>
-                          </div>
+                          ) : (
+                            <div className="text-center">
+                              <Camera
+                                className="mx-auto text-slate-400 mb-2"
+                                size={32}
+                              />
+                              <p className="text-xs font-semibold text-slate-600">
+                                Click or drag & drop
+                              </p>
+                              <p className="text-[10px] text-slate-400 mt-1">
+                                PNG, JPG up to 5MB
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                        {errors.selfie && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.selfie}
+                          </p>
                         )}
                       </div>
 
-                      {/* Photo Guidelines */}
                       <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Info size={16} className="text-[#074073]" />
-                          <h4 className="text-[11px] font-bold uppercase text-[#074073] tracking-wider">
-                            Requirements
-                          </h4>
-                        </div>
+                        <h4 className="text-[11px] font-bold uppercase text-[#074073] tracking-wider mb-2">
+                          Requirements
+                        </h4>
                         <ul className="text-[11px] text-slate-500 space-y-2 list-disc list-inside">
                           <li>
-                            Ensure your face is clearly visible and centered.
+                            Ensure your face is clearly visible, centered, and
+                            fully exposed.
                           </li>
                           <li>
-                            Use neutral lighting (avoid harsh shadows or glare).
+                            No accessories like sunglasses, hats, or heavy photo
+                            filters.
                           </li>
-                          <li>Maintain a plain background if possible.</li>
-                          <li>No sunglasses, hats, or filters.</li>
                         </ul>
                       </div>
                     </div>
@@ -596,50 +654,55 @@ export default function AddMember() {
               {activeStep.id === "address" && (
                 <div className="space-y-4 animate-in fade-in duration-200">
                   <motion.div className="bg-white relative w-full h-full flex flex-col">
-                    {/* Premium High-Density Header Setup */}
                     <div className="pb-4">
                       <h2 className="text-l font-bold text-[#074073]">
                         Physical Address
                       </h2>
                       <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-                        Map the member's legal domicile coordinates. This data
-                        handles localized operational mapping and regional
-                        compliance structures.
+                        Map the member's legal domicile coordinates for regional
+                        compliance.
                       </p>
                     </div>
 
-                    {/* Location Form Options Scroll Space */}
                     <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                      {/* Country Field */}
-                      <FilterField label="Country" icon={Globe}>
-                        <input
-                          type="text"
-                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
-                          placeholder="e.g., Kenya"
-                          value={formData.country}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              country: e.target.value,
-                            })
-                          }
-                        />
-                      </FilterField>
+                      {/* COUNTRY */}
+                      <div>
+                        <FilterField label="Country" icon={Globe}>
+                          <input
+                            type="text"
+                            name="country"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 ${
+                              errors.country
+                                ? "border-rose-400 focus:border-rose-500 focus:ring-rose-500/5"
+                                : "border-slate-200"
+                            }`}
+                            placeholder="e.g., Kenya"
+                            value={formData.country}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                          />
+                        </FilterField>
+                        {errors.country && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.country}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* County Dropdown Field */}
-                      <FilterField label="County / Region" icon={Building2}>
-                        <div className="relative w-full">
+                      {/* COUNTY DROPDOWN */}
+                      <div>
+                        <FilterField label="County / Region" icon={Building2}>
                           <button
                             type="button"
                             onClick={() => {
                               setCountyDropdownOpen(!countyDropdownOpen);
-                              setSubcountyDropdownOpen(false); // Dropdown handoff
+                              setSubcountyDropdownOpen(false);
                             }}
-                            className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
-                              countyDropdownOpen
-                                ? "bg-white border-[#074073] ring-4 ring-[#074073]/5"
-                                : ""
-                            }`}
+                            className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
+                              errors.county
+                                ? "border-rose-400"
+                                : "border-slate-200"
+                            } ${countyDropdownOpen ? "bg-white border-[#074073] ring-4 ring-[#074073]/5" : ""}`}
                           >
                             <span
                               className={
@@ -654,68 +717,31 @@ export default function AddMember() {
                             </span>
                             <ChevronDown
                               size={16}
-                              className={`text-slate-400 transition-transform duration-200 ml-2 shrink-0 ${
-                                countyDropdownOpen
-                                  ? "rotate-180 text-[#074073]"
-                                  : ""
-                              }`}
+                              className={`text-slate-400 transition-transform ml-2 shrink-0 ${countyDropdownOpen ? "rotate-180 text-[#074073]" : ""}`}
                             />
                           </button>
-                          <AnimatePresence>
-                            {countyDropdownOpen && (
-                              <>
-                                <div
-                                  className="fixed inset-0 z-30"
-                                  onClick={() => setCountyDropdownOpen(false)}
-                                />
-                                <motion.div
-                                  initial={{ opacity: 0, y: 8 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: 8 }}
-                                  transition={{ duration: 0.15 }}
-                                  className="absolute left-0 right-0 mt-2 bg-white border border-slate-200/80 rounded-2xl shadow-xl py-2 z-40 max-h-48 overflow-y-auto"
-                                >
-                                  {countyOptions.map((opt) => (
-                                    <button
-                                      key={opt.value}
-                                      type="button"
-                                      onClick={() => {
-                                        setFormData({
-                                          ...formData,
-                                          county: opt.value,
-                                        });
-                                        setCountyDropdownOpen(false);
-                                      }}
-                                      className={`w-full px-6 py-3 text-xs text-left font-semibold transition-colors cursor-pointer ${
-                                        formData.county === opt.value
-                                          ? "bg-blue-50/70 text-[#074073] font-bold"
-                                          : "text-slate-600 hover:bg-slate-50"
-                                      }`}
-                                    >
-                                      {opt.label}
-                                    </button>
-                                  ))}
-                                </motion.div>
-                              </>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </FilterField>
+                        </FilterField>
+                        {errors.county && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.county}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* Sub-County Dropdown Field */}
-                      <FilterField label="Sub-County / District" icon={Map}>
-                        <div className="relative w-full">
+                      {/* SUB-COUNTY DROPDOWN */}
+                      <div>
+                        <FilterField label="Sub-County / District" icon={Map}>
                           <button
                             type="button"
                             onClick={() => {
                               setSubcountyDropdownOpen(!subcountyDropdownOpen);
                               setCountyDropdownOpen(false);
                             }}
-                            className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
-                              subcountyDropdownOpen
-                                ? "bg-white border-[#074073] ring-4 ring-[#074073]/5"
-                                : ""
-                            }`}
+                            className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
+                              errors.subcounty
+                                ? "border-rose-400"
+                                : "border-slate-200"
+                            } ${subcountyDropdownOpen ? "bg-white border-[#074073] ring-4 ring-[#074073]/5" : ""}`}
                           >
                             <span
                               className={
@@ -730,74 +756,42 @@ export default function AddMember() {
                             </span>
                             <ChevronDown
                               size={16}
-                              className={`text-slate-400 transition-transform duration-200 ml-2 shrink-0 ${
-                                subcountyDropdownOpen
-                                  ? "rotate-180 text-[#074073]"
-                                  : ""
-                              }`}
+                              className={`text-slate-400 transition-transform ml-2 shrink-0 ${subcountyDropdownOpen ? "rotate-180 text-[#074073]" : ""}`}
                             />
                           </button>
+                        </FilterField>
+                        {errors.subcounty && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.subcounty}
+                          </p>
+                        )}
+                      </div>
 
-                          <AnimatePresence>
-                            {subcountyDropdownOpen && (
-                              <>
-                                <div
-                                  className="fixed inset-0 z-30"
-                                  onClick={() =>
-                                    setSubcountyDropdownOpen(false)
-                                  }
-                                />
-                                <motion.div
-                                  initial={{ opacity: 0, y: 8 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: 8 }}
-                                  transition={{ duration: 0.15 }}
-                                  className="absolute left-0 right-0 mt-2 bg-white border border-slate-200/80 rounded-2xl shadow-xl py-2 z-40 max-h-48 overflow-y-auto"
-                                >
-                                  {subcountyOptions.map((opt) => (
-                                    <button
-                                      key={opt.value}
-                                      type="button"
-                                      onClick={() => {
-                                        setFormData({
-                                          ...formData,
-                                          subcounty: opt.value,
-                                        });
-                                        setSubcountyDropdownOpen(false);
-                                      }}
-                                      className={`w-full px-6 py-3 text-xs text-left font-semibold transition-colors cursor-pointer ${
-                                        formData.subcounty === opt.value
-                                          ? "bg-blue-50/70 text-[#074073] font-bold"
-                                          : "text-slate-600 hover:bg-slate-50"
-                                      }`}
-                                    >
-                                      {opt.label}
-                                    </button>
-                                  ))}
-                                </motion.div>
-                              </>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </FilterField>
-
-                      {/* Physical Address Textarea/Input Field */}
-                      <FilterField
-                        label="Street / Physical Address"
-                        icon={MapPin}
-                      >
-                        <input
-                          className="w-full pl-[74px] pr-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 resize-none pt-4"
-                          placeholder="e.g., Plaza Block C, Suite 4B, Lenana Road"
-                          value={formData.physical_address}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              physical_address: e.target.value,
-                            })
-                          }
-                        />
-                      </FilterField>
+                      {/* STREET / PHYSICAL ADDRESS */}
+                      <div>
+                        <FilterField
+                          label="Street / Physical Address"
+                          icon={MapPin}
+                        >
+                          <input
+                            name="physical_address"
+                            className={`w-full pl-[74px] pr-6 py-4 bg-slate-50 border rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 h-14 ${
+                              errors.physical_address
+                                ? "border-rose-400 focus:border-rose-500"
+                                : "border-slate-200"
+                            }`}
+                            placeholder="e.g., Plaza Block C, Suite 4B, Lenana Road"
+                            value={formData.physical_address}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                          />
+                        </FilterField>
+                        {errors.physical_address && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.physical_address}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 </div>
@@ -811,29 +805,27 @@ export default function AddMember() {
                         Income & Economic Level
                       </h2>
                       <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-                        Log economic data parameters and tax clearance
-                        indicators. This underpins accurate risk evaluation
-                        profiles and credit-tier assignments.
+                        Log economic profile parameters and tax pin credentials.
                       </p>
                     </div>
 
-                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                      {/* ROW 1: EMPLOYMENT TYPE DROPDOWN */}
-                      <FilterField
-                        label="Employment Status / Field"
-                        icon={Briefcase}
-                      >
-                        <div className="relative w-full">
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-4">
+                      {/* EMPLOYMENT DROPDOWN */}
+                      <div>
+                        <FilterField
+                          label="Employment Status / Field"
+                          icon={Briefcase}
+                        >
                           <button
                             type="button"
                             onClick={() =>
                               setEmploymentDropdownOpen(!employmentDropdownOpen)
                             }
-                            className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
-                              employmentDropdownOpen
-                                ? "bg-white border-[#074073] ring-4 ring-[#074073]/5"
-                                : ""
-                            }`}
+                            className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
+                              errors.employment_type
+                                ? "border-rose-400"
+                                : "border-slate-200"
+                            } ${employmentDropdownOpen ? "bg-white border-[#074073] ring-4 ring-[#074073]/5" : ""}`}
                           >
                             <span
                               className={
@@ -848,118 +840,102 @@ export default function AddMember() {
                             </span>
                             <ChevronDown
                               size={16}
-                              className={`text-slate-400 transition-transform duration-200 ml-2 shrink-0 ${
-                                employmentDropdownOpen
-                                  ? "rotate-180 text-[#074073]"
-                                  : ""
-                              }`}
+                              className={`text-slate-400 transition-transform ml-2 shrink-0 ${employmentDropdownOpen ? "rotate-180 text-[#074073]" : ""}`}
                             />
                           </button>
+                        </FilterField>
+                        {errors.employment_type && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.employment_type}
+                          </p>
+                        )}
+                      </div>
 
-                          <AnimatePresence>
-                            {employmentDropdownOpen && (
-                              <>
-                                <div
-                                  className="fixed inset-0 z-30"
-                                  onClick={() =>
-                                    setEmploymentDropdownOpen(false)
-                                  }
-                                />
-                                <motion.div
-                                  initial={{ opacity: 0, y: 8 }}
-                                  animate={{ opacity: 1, y: 0 }}
-                                  exit={{ opacity: 0, y: 8 }}
-                                  transition={{ duration: 0.15 }}
-                                  className="absolute left-0 right-0 mt-2 bg-white border border-slate-200/80 rounded-2xl shadow-xl py-2 z-40 max-h-48 overflow-y-auto"
-                                >
-                                  {employmentOptions.map((opt) => (
-                                    <button
-                                      key={opt.value}
-                                      type="button"
-                                      onClick={() => {
-                                        setFormData({
-                                          ...formData,
-                                          employment_type: opt.value,
-                                        });
-                                        setEmploymentDropdownOpen(false);
-                                      }}
-                                      className={`w-full px-6 py-3 text-xs text-left font-semibold transition-colors cursor-pointer ${
-                                        formData.employment_type === opt.value
-                                          ? "bg-blue-50/70 text-[#074073] font-bold"
-                                          : "text-slate-600 hover:bg-slate-50"
-                                      }`}
-                                    >
-                                      {opt.label}
-                                    </button>
-                                  ))}
-                                </motion.div>
-                              </>
-                            )}
-                          </AnimatePresence>
-                        </div>
-                      </FilterField>
-
-                      {/* ROW 1: OCCUPATION TEXT INPUT */}
-                      <FilterField
-                        label="Exact Occupation / Role"
-                        icon={UserCheck}
-                      >
-                        <input
-                          type="text"
-                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
-                          placeholder="e.g., Credit Analyst, Shopkeeper"
-                          value={formData.occupation}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              occupation: e.target.value,
-                            })
-                          }
-                        />
-                      </FilterField>
-
-                      {/* ROW 2: MONTHLY INCOME NUMERICAL INPUT */}
-                      <FilterField
-                        label="Estimated Monthly Income (KES)"
-                        icon={Coins}
-                      >
-                        <div className="relative w-full">
+                      {/* EXACT OCCUPATION */}
+                      <div>
+                        <FilterField
+                          label="Exact Occupation / Role"
+                          icon={UserCheck}
+                        >
                           <input
-                            type="number"
-                            className="w-full pl-[74px] pr-14 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
-                            placeholder="0.00"
-                            value={formData.income_range}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                income_range: e.target.value,
-                              })
-                            }
+                            type="text"
+                            name="occupation"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 ${
+                              errors.occupation
+                                ? "border-rose-400 focus:border-rose-500"
+                                : "border-slate-200"
+                            }`}
+                            placeholder="e.g., Credit Analyst, Shopkeeper"
+                            value={formData.occupation}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
                           />
-                          <div className="absolute inset-y-0 right-5 flex items-center pointer-events-none">
-                            <span className="text-[10px] font-bold text-slate-400 tracking-wider">
-                              KES
-                            </span>
-                          </div>
-                        </div>
-                      </FilterField>
+                        </FilterField>
+                        {errors.occupation && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.occupation}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* ROW 2: KRA TAX PIN IDENTIFIER INPUT */}
-                      <FilterField label="KRA Tax PIN" icon={FileText}>
-                        <input
-                          type="text"
-                          maxLength={11}
-                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-mono font-bold tracking-wider uppercase text-slate-800"
-                          placeholder="e.g., A012345678W"
-                          value={formData.kra_pin || ""}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              kra_pin: e.target.value,
-                            })
-                          }
-                        />
-                      </FilterField>
+                      {/* MONTHLY INCOME */}
+                      <div>
+                        <FilterField
+                          label="Estimated Monthly Income (KES)"
+                          icon={Coins}
+                        >
+                          <div className="relative w-full">
+                            <input
+                              type="number"
+                              name="income_range"
+                              className={`w-full pl-[74px] pr-14 py-5 h-14 bg-slate-50 border rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 ${
+                                errors.income_range
+                                  ? "border-rose-400 focus:border-rose-500"
+                                  : "border-slate-200"
+                              }`}
+                              placeholder="0.00"
+                              value={formData.income_range}
+                              onBlur={handleBlur}
+                              onChange={handleChange}
+                            />
+                            <div className="absolute inset-y-0 right-5 flex items-center pointer-events-none">
+                              <span className="text-[10px] font-bold text-slate-400 tracking-wider">
+                                KES
+                              </span>
+                            </div>
+                          </div>
+                        </FilterField>
+                        {errors.income_range && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.income_range}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* KRA TAX PIN */}
+                      <div>
+                        <FilterField label="KRA Tax PIN" icon={FileText}>
+                          <input
+                            type="text"
+                            name="kra_pin"
+                            maxLength={11}
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-mono font-bold tracking-wider uppercase text-slate-800 ${
+                              errors.kra_pin
+                                ? "border-rose-400 focus:border-rose-500"
+                                : "border-slate-200"
+                            }`}
+                            placeholder="e.g., A012345678W"
+                            value={formData.kra_pin || ""}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                          />
+                        </FilterField>
+                        {errors.kra_pin && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.kra_pin}
+                          </p>
+                        )}
+                      </div>
                     </div>
                   </motion.div>
                 </div>
@@ -973,80 +949,125 @@ export default function AddMember() {
                         Next of Kin Details
                       </h2>
                       <p className="text-[11px] text-slate-400 font-medium">
-                        Add or update member's emergency contact details.
+                        Add or update member's emergency beneficiary contact
+                        details.
                       </p>
                     </div>
 
-                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                      {/* ROW 1: FULL NAME */}
-                      <FilterField label="Full Name" icon={User}>
-                        <input
-                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
-                          placeholder="e.g., Jane Doe"
-                          value={formData.fullname}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              fullname: e.target.value,
-                            })
-                          }
-                        />
-                      </FilterField>
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-4">
+                      {/* FULL NAME */}
+                      <div>
+                        <FilterField label="Full Name" icon={User}>
+                          <input
+                            name="fullname"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                              errors.fullname
+                                ? "border-rose-400 focus:border-rose-500"
+                                : "border-slate-200"
+                            }`}
+                            placeholder="e.g., Jane Doe"
+                            value={formData.fullname}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                          />
+                        </FilterField>
+                        {errors.fullname && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.fullname}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* ROW 1: PHONE NUMBER */}
-                      <FilterField label="Phone Number" icon={Phone}>
-                        <input
-                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
-                          placeholder="+254 XXX XXX XXX"
-                          value={formData.phone}
-                          onChange={(e) =>
-                            setFormData({ ...formData, phone: e.target.value })
-                          }
-                        />
-                      </FilterField>
+                      {/* PHONE NUMBER */}
+                      <div>
+                        <FilterField label="Phone Number" icon={Phone}>
+                          <input
+                            name="phone"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                              errors.phone
+                                ? "border-rose-400 focus:border-rose-500"
+                                : "border-slate-200"
+                            }`}
+                            placeholder="+254 XXX XXX XXX"
+                            value={formData.phone}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                          />
+                        </FilterField>
+                        {errors.phone && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.phone}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* ROW 2: RELATIONSHIP */}
-                      <FilterField label="Relationship" icon={Users}>
-                        <input
-                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
-                          placeholder="e.g., Spouse, Parent"
-                          value={formData.relationship}
-                          onChange={(e) =>
-                            setFormData({
-                              ...formData,
-                              relationship: e.target.value,
-                            })
-                          }
-                        />
-                      </FilterField>
+                      {/* RELATIONSHIP */}
+                      <div>
+                        <FilterField label="Relationship" icon={Users}>
+                          <input
+                            name="relationship"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                              errors.relationship
+                                ? "border-rose-400 focus:border-rose-500"
+                                : "border-slate-200"
+                            }`}
+                            placeholder="e.g., Spouse, Parent"
+                            value={formData.relationship}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                          />
+                        </FilterField>
+                        {errors.relationship && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.relationship}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* ROW 2: DATE OF BIRTH */}
-                      <FilterField label="Date of Birth" icon={Calendar}>
-                        <input
-                          type="date"
-                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
-                          value={formData.dob}
-                          onChange={(e) =>
-                            setFormData({ ...formData, dob: e.target.value })
-                          }
-                        />
-                      </FilterField>
+                      {/* DATE OF BIRTH */}
+                      <div>
+                        <FilterField label="Date of Birth" icon={Calendar}>
+                          <input
+                            type="date"
+                            name="dob"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                              errors.dob
+                                ? "border-rose-400 focus:border-rose-500"
+                                : "border-slate-200"
+                            }`}
+                            value={formData.dob}
+                            onBlur={handleBlur}
+                            onChange={handleChange}
+                          />
+                        </FilterField>
+                        {errors.dob && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.dob}
+                          </p>
+                        )}
+                      </div>
 
-                      {/* ROW 3: LOCATION (SPANS BOTH COLUMNS FOR BALANCE) */}
+                      {/* LOCATION */}
                       <div className="md:col-span-2">
                         <FilterField label="Location" icon={MapPin}>
                           <input
-                            className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
+                            name="location"
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                              errors.location
+                                ? "border-rose-400 focus:border-rose-500"
+                                : "border-slate-200"
+                            }`}
                             placeholder="e.g., Nairobi, Kenya"
                             value={formData.location}
-                            onChange={(e) =>
-                              setFormData({
-                                ...formData,
-                                location: e.target.value,
-                              })
-                            }
+                            onBlur={handleBlur}
+                            onChange={handleChange}
                           />
                         </FilterField>
+                        {errors.location && (
+                          <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1 animate-in fade-in duration-150">
+                            <AlertCircle size={12} /> {errors.location}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </motion.div>
@@ -1305,7 +1326,7 @@ export default function AddMember() {
                 className={`inline-flex items-center gap-2 h-10 px-4 rounded-xl text-xs font-bold transition-all border ${
                   isFirstStep
                     ? "opacity-0 pointer-events-none"
-                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-3xs cursor-pointer active:scale-98"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-3xs cursor-pointer active:scale-98 disabled:opacity-50 disabled:pointer-events-none"
                 }`}
               >
                 <ArrowLeft size={14} strokeWidth={2.5} />
@@ -1316,11 +1337,14 @@ export default function AddMember() {
               <button
                 type="button"
                 onClick={handleNext}
-                disabled={isSubmitting}
-                className={`inline-flex items-center gap-2 h-10 px-5 rounded-xl text-xs font-bold text-white shadow-sm transition-all cursor-pointer active:scale-98 ${
+                disabled={
+                  isSubmitting ||
+                  Object.values(errors).some((msg) => msg !== "")
+                }
+                className={`inline-flex items-center gap-2 h-10 px-5 rounded-xl text-xs font-bold text-white shadow-sm transition-all cursor-pointer active:scale-98 disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed ${
                   isLastStep
                     ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-900/10"
-                    : "bg-slate-900 hover:bg-slate-800 shadow-slate-900/10"
+                    : "bg-[#074073] hover:bg-[#053057] shadow-blue-900/10"
                 }`}
               >
                 {isSubmitting ? (

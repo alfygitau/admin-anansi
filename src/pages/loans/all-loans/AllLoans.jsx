@@ -108,9 +108,9 @@ export default function AllLoans() {
         onClose={() => setShowFilters(false)}
       />
 
-      <div className="w-full space-y-8 font-sans antialiased text-slate-800">
+      <div className="w-full space-y-5 font-sans antialiased text-slate-800">
         {/* 1. UPPER EXECUTIVE COMMAND BAR */}
-        <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-6">
+        <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-2">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">
               Loans Registry
@@ -151,24 +151,29 @@ export default function AllLoans() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* CARD 1: TOTAL DISBURSED CAPACITY */}
             <SummaryMetricCard
-              title="Total Portfolio Exposure"
+              title="Total Disbursed"
               value="KES 267,000.00"
-              desc="Aggregated book value of issued principals"
+              desc="Combined value of all issued loans"
               icon={<Layers size={18} />}
               color="text-primary bg-primary/5"
             />
+
+            {/* CARD 2: OUTSTANDING LIABILITIES */}
             <SummaryMetricCard
-              title="Outstanding Principal Book"
+              title="Outstanding Principal"
               value="KES 180,900.00"
-              desc="Remaining active liabilities across accounts"
+              desc="Unpaid balance remaining across active accounts"
               icon={<AlertTriangle size={18} />}
               color="text-warning bg-warning/5"
             />
+
+            {/* CARD 3: COLLECTED CAPITAL */}
             <SummaryMetricCard
-              title="Recovered Yield Capital"
+              title="Recovered Capital"
               value="KES 86,600.00"
-              desc="Formally liquidated amortization lines"
+              desc="Total principal successfully collected to date"
               icon={<CheckCircle2 size={18} />}
               color="text-success bg-success/5"
             />

@@ -36,3 +36,12 @@ export const getLoans = async (
     throw error?.response?.data || error;
   }
 };
+
+export const getLoan = async (id) => {
+  try {
+    const response = await loanClient.get(`/loans/${id}`);
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

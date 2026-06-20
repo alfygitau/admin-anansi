@@ -226,7 +226,7 @@ export default function LoanTransactions() {
               type="button"
               className="w-fit whitespace-nowrap flex items-center gap-2 h-9 px-4 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer active:scale-98"
             >
-              <Download size={14} /> Export Statement
+              <Download size={14} /> Export
             </button>
           </div>
         </div>

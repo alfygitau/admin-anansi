@@ -199,7 +199,7 @@ const VerifyLogin = () => {
             </div>
           </div>
 
-          <div className="relative z-10 pt-8 flex items-center justify-between">
+          <div className="relative z-10 pt-8 flex items-center justify-center">
             <span className="text-slate-400 text-[10px] uppercase font-medium tracking-tighter">
               Anansi Sacco Platform © 2026
             </span>

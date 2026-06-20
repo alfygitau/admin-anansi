@@ -514,10 +514,6 @@ export default function LoanApplicationApprovals() {
             )}
           </tbody>
         </table>
-      </div>
-
-      {/* FOOTER SYSTEM PAGINATION ROW LAYOUT */}
-      <div className="bg-white border border-slate-200/70 px-5 py-3.5 rounded-2xl shadow-3xs flex items-center justify-between gap-4 text-xs select-none">
         <Pagination
           currentPage={filters?.page}
           totalItems={totalItems}

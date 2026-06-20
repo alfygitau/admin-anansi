@@ -136,7 +136,7 @@ export default function Guarantors() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 select-none">
           {/* Metric 1: Total Guarantors */}
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-start gap-4">
+          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-center gap-4">
             <div className="p-3 bg-blue-50 text-blue-600 rounded-xl border border-blue-100/40 shrink-0">
               <Users size={18} />
             </div>
@@ -154,7 +154,7 @@ export default function Guarantors() {
           </div>
 
           {/* Metric 2: Total Amount Committed */}
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-start gap-4">
+          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-center gap-4">
             <div className="p-3 bg-purple-50 text-purple-600 rounded-xl border border-purple-100/40 shrink-0">
               <ShieldCheck size={18} />
             </div>
@@ -175,7 +175,7 @@ export default function Guarantors() {
           </div>
 
           {/* Metric 3: Active Exposure Risk */}
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-start gap-4">
+          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-center gap-4">
             <div className="p-3 bg-orange-50 text-orange-600 rounded-xl border border-orange-100/40 shrink-0">
               <AlertTriangle size={18} />
             </div>

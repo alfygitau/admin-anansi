@@ -18,6 +18,8 @@ import {
   Fingerprint,
   User,
   DollarSign,
+  Coins,
+  PieChart,
 } from "lucide-react";
 import { useQuery } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
@@ -128,9 +130,9 @@ export default function AccountTransactions() {
         filters={filters}
         setFilters={setFilters}
       />
-      <div className="w-full space-y-6 font-sans antialiased text-slate-800">
+      <div className="w-full space-y-5 antialiased text-slate-800">
         {/* HEADER SECTION */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-3 select-none">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">
               Account Transactions
@@ -139,6 +141,45 @@ export default function AccountTransactions() {
               Real-time entry monitoring, liquidity reconciliations, and instant
               cryptographic asset audit tracking.
             </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 select-none">
+          {/* CARD 1: MEMBER CONTRIBUTIONS (SHARE CAPITAL & NON-WITHDRAWABLE DEPOSITS) */}
+          {/* BOSA MEMBER EQUITY STAKE */}
+          <div className="bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-5 flex items-center gap-4">
+            <div className="size-10 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 shadow-3xs shrink-0">
+              <PieChart size={18} strokeWidth={2.5} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block truncate">
+                Share Capital
+              </span>
+              <span className="text-base font-mono font-black text-purple-900 block truncate mt-0.5">
+                KES 440,500.00
+              </span>
+              <span className="text-[11px] text-slate-400 font-medium block truncate mt-0.5">
+                Core institutional equity and member ownership stakes
+              </span>
+            </div>
+          </div>
+
+          {/* BOSA MEMBER SAVINGS POOL */}
+          <div className="bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-5 flex items-center gap-4">
+            <div className="size-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-3xs shrink-0">
+              <Coins size={18} strokeWidth={2.5} />
+            </div>
+            <div className="min-w-0 flex-1">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block truncate">
+                Non-Withdrawable Deposits
+              </span>
+              <span className="text-base font-mono font-black text-[#074073] block truncate mt-0.5">
+                KES 800,000.00
+              </span>
+              <span className="text-[11px] text-slate-400 font-medium block truncate mt-0.5">
+                Regular monthly savings backing loan multipliers
+              </span>
+            </div>
           </div>
         </div>
 

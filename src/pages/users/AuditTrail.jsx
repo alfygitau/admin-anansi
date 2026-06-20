@@ -112,7 +112,7 @@ export default function AuditTrail() {
 
       <div className="w-full space-y-6 font-sans antialiased text-slate-800">
         {/* 1. TOP PROCESS NAVIGATION HEADER CONTROL BLOCK */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200/60 pb-5 select-none w-full">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200/60 pb-2 select-none w-full">
           <div className="flex items-center gap-4">
             <button
               type="button"

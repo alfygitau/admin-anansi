@@ -100,7 +100,7 @@ const AdminLogin = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 md:p-8 sm:p-2 antialiased">
       <div className="w-full max-w-6xl grid lg:grid-cols-2 py-3 px-6 bg-white overflow-hidden">
-        {/* LEFT COLUMN: SYSTEM INFRASTRUCTURE HIGHLIGHTS */}
+        {/* LEFT COLUMN: SYSTEM FEATURES HIGHLIGHT */}
         <div className="relative bg-white sm:hidden p-6 lg:p-6 flex flex-col justify-between overflow-hidden border-r border-slate-200">
           <div className="relative z-10">
             <div className="inline-flex items-center gap-3 px-4 py-2 bg-slate-50 rounded-full border border-slate-100 mb-12">
@@ -109,11 +109,14 @@ const AdminLogin = () => {
                 ANANSI SACCO
               </span>
             </div>
+
             <h2 className="text-slate-900 text-2xl xl:text-2xl font-medium leading-[1.1] mb-8">
-              Comprehensive oversight, ledgers, and institutional{" "}
-              <span className="text-primary">liquidity controls.</span>
+              Your all-in-one platform for smooth operations, clear records, and
+              member <span className="text-primary">growth.</span>
             </h2>
+
             <div className="space-y-8">
+              {/* FEATURE 1 */}
               <div className="flex gap-5 group">
                 <div className="flex-shrink-0 w-12 h-12 bg-blue-50/60 rounded-2xl flex items-center justify-center group-hover:bg-primary transition-colors">
                   <Zap
@@ -123,14 +126,16 @@ const AdminLogin = () => {
                 </div>
                 <div>
                   <h4 className="text-slate-900 font-medium text-md">
-                    Core Ledger Control
+                    Smooth Approvals
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
-                    Manage system approvals, override restriction parameters,
-                    and execute settlement tasks instantly.
+                    Review member applications, handle exceptions, and send out
+                    loan payouts quickly.
                   </p>
                 </div>
               </div>
+
+              {/* FEATURE 2 */}
               <div className="flex gap-5 group">
                 <div className="flex-shrink-0 w-12 h-12 bg-blue-50/60 rounded-2xl flex items-center justify-center group-hover:bg-primary transition-colors">
                   <TrendingUp
@@ -140,14 +145,16 @@ const AdminLogin = () => {
                 </div>
                 <div>
                   <h4 className="text-slate-900 font-medium text-md">
-                    Portfolio Auditing
+                    Track Savings & Shares
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
-                    Track unified share capital equity pools, monitor collateral
-                    deposits, and view automated cross-reconciliations.
+                    Easily monitor member deposits, share capital pools, and
+                    account balances all in one place.
                   </p>
                 </div>
               </div>
+
+              {/* FEATURE 3 */}
               <div className="flex gap-5 group">
                 <div className="flex-shrink-0 w-12 h-12 bg-blue-50/60 rounded-2xl flex items-center justify-center group-hover:bg-primary transition-colors">
                   <Shield
@@ -157,39 +164,42 @@ const AdminLogin = () => {
                 </div>
                 <div>
                   <h4 className="text-slate-900 font-medium text-md">
-                    SASRA Governance Framework
+                    Safe and Secure
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
-                    Maintain ironclad audit trails with multi-factor privilege
-                    gating and structural mutation event logging.
+                    Keep your records fully compliant and protect member
+                    accounts with advanced staff security access.
                   </p>
                 </div>
               </div>
             </div>
           </div>
-          <div className="relative z-10 pt-8 flex items-center justify-between">
+
+          <div className="relative z-10 pt-8 flex items-center justify-center">
             <span className="text-slate-400 text-[10px] uppercase font-medium tracking-tighter">
               Anansi Sacco Systems © 2026
             </span>
           </div>
         </div>
 
-        {/* RIGHT COLUMN: INTERACTIVE FORM ENTRY */}
+        {/* RIGHT COLUMN: LOGIN FORM ENTRY */}
         <div className="p-6 lg:p-6 sm:p-2 flex items-center justify-center bg-white">
           <div className="w-full">
             <div className="mb-10">
               <h1 className="text-3xl font-medium text-slate-900 tracking-tight">
-                Administrative Portal
+                Staff Sign In
               </h1>
               <p className="text-slate-400 font-medium mt-2">
-                Authorized access terminal. Authenticate credentials below.
+                Welcome back! Please enter your credentials below to access your
+                workspace.
               </p>
             </div>
+
             <form onSubmit={handleLogin} className="space-y-6">
-              {/* Operator ID Field (Maps to existing state field tracking) */}
+              {/* Username Field */}
               <div className="space-y-2">
                 <label className="text-[11px] font-medium text-slate-400 uppercase tracking-widest ml-1">
-                  Staff Username
+                  Username
                 </label>
                 <div className="relative group">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none">
@@ -221,22 +231,22 @@ const AdminLogin = () => {
                   )}
                 </AnimatePresence>
               </div>
+
               <p className="text-[12px] font-medium text-slate-500">
-                Credentials locked? Reset system access node via{" "}
+                Locked out of your account? You can reset your access using{" "}
                 <span
                   onClick={() => navigate("/auth/otp-type")}
                   className="text-primary font-semibold cursor-pointer hover:text-blue-800 underline underline-offset-2 transition-colors"
                 >
-                  Terminal Recovery
+                  Account Recovery
                 </span>
-                .
               </p>
 
               {/* Password Field */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center px-1">
                   <label className="text-[11px] font-medium text-slate-400 uppercase tracking-widest">
-                    Operator Password
+                    Password
                   </label>
                 </div>
                 <div className="relative group">
@@ -284,17 +294,17 @@ const AdminLogin = () => {
                 type="submit"
                 disabled={!isFormValid || isLoading}
                 className={`w-full py-6 rounded-2xl font-medium uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all
-                  ${
-                    isFormValid && !isLoading
-                      ? "bg-primary text-white shadow-xl shadow-slate-900/10 hover:bg-secondary active:shadow-none"
-                      : "bg-slate-100 text-slate-400 cursor-not-allowed"
-                  }`}
+              ${
+                isFormValid && !isLoading
+                  ? "bg-primary text-white shadow-xl shadow-slate-900/10 hover:bg-secondary active:shadow-none"
+                  : "bg-slate-100 text-slate-400 cursor-not-allowed"
+              }`}
               >
                 {isLoading ? (
                   <Loader2 className="animate-spin" size={18} />
                 ) : (
                   <>
-                    Initialize Session <ArrowRight size={18} />
+                    Sign In <ArrowRight size={18} />
                   </>
                 )}
               </motion.button>
@@ -302,12 +312,12 @@ const AdminLogin = () => {
 
             <div className="mt-4 text-center">
               <p className="text-slate-400 text-[12px] font-medium">
-                Need elevated system clearance?{" "}
+                Need extra account permissions?{" "}
                 <button
                   onClick={() => navigate("/support")}
                   className="text-primary font-bold hover:underline underline-offset-4"
                 >
-                  Contact Security Admin
+                  Ask your System Administrator
                 </button>
               </p>
             </div>

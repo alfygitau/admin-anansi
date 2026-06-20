@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { FourCircles } from "../shared/Circles";
 import useAuth from "../hooks/useAuth";
+import { useStore } from "../store/store";
 
 export default function Homelayer() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -26,6 +27,7 @@ export default function Homelayer() {
   const navigate = useNavigate();
   const location = useLocation();
   const { auth } = useAuth();
+  const resetStore = useStore((state) => state.resetStore);
 
   const navigationItems = [
     {
@@ -111,7 +113,6 @@ export default function Homelayer() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -122,16 +123,13 @@ export default function Homelayer() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Real-time navigation path translation matrix
   const getPageContext = () => {
     const path = location.pathname;
 
-    // 1. SYSTEM ANALYTICS & DASHBOARD
     if (path.startsWith("/admin/dashboard")) {
       return { title: "Dashboard", category: "Homepage" };
     }
 
-    // 2. CORE MEMBERS OPERATIONS (Differentiates between registry list, dossier details, and banking accounts)
     if (path.startsWith("/admin/all-members")) {
       if (path.includes("/account/")) {
         return {
@@ -172,7 +170,6 @@ export default function Homelayer() {
       return { title: "Guarantors", category: "Loans" };
     }
 
-    // 4. SECURITY & SYSTEM ADMINISTRATORS
     if (
       path.startsWith("/admin/all-users") ||
       path.startsWith("/admin/add-admin-user") ||
@@ -184,7 +181,6 @@ export default function Homelayer() {
       };
     }
 
-    // 5. TREASURY TRANSACTIONS LEDGERS
     if (
       path.startsWith("/admin/account-transactions") ||
       path.startsWith("/admin/loan-transactions")
@@ -223,17 +219,15 @@ export default function Homelayer() {
   const getInitials = (firstname, lastname) => {
     const firstInitial = firstname?.charAt(0) || "";
     const lastInitial = lastname?.charAt(0) || "";
-    return `${firstInitial}${lastInitial}`.toUpperCase() || "GU"; // Defaults to 'GU' for Guest User
+    return `${firstInitial}${lastInitial}`.toUpperCase() || "GU";
   };
 
-  // Shared structural generator for rendering consistent item matrices across viewport drawers
   const renderNavList = (isMobile = false) => (
     <nav className="p-4 space-y-3.5">
       {navigationItems.map((item) => {
         const hasSubItems = !!item.subItems?.length;
         const isExpanded = !!expandedMenus[item.id];
 
-        // Match base layout routing paths directly or look into child nodes
         const isCurrentActive = hasSubItems
           ? item.subItems.some((sub) => sub.path === location.pathname)
           : location.pathname === item.path;
@@ -305,6 +299,12 @@ export default function Homelayer() {
       })}
     </nav>
   );
+
+  const logout = () => {
+    localStorage.removeItem("auth");
+    resetStore();
+    navigate("/");
+  };
 
   return (
     <div className="h-screen w-screen bg-slate-50 flex overflow-hidden font-sans antialiased text-slate-800">
@@ -413,7 +413,7 @@ export default function Homelayer() {
                 className="flex items-center gap-2.5 pl-4 border-l border-slate-200/80 cursor-pointer group"
               >
                 {/* Operator Avatar Circle Frame */}
-                <div className="size-9 rounded-xl bg-gradient-to-tr from-[#074073] to-blue-600 text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm group-hover:scale-[1.02] transition-transform">
+                <div className="size-9 rounded-xl bg-primary text-white flex items-center justify-center font-bold text-xs uppercase shadow-sm group-hover:scale-[1.02] transition-transform">
                   {getInitials(auth?.user?.firstname, auth?.user?.lastname)}
                 </div>
 
@@ -471,7 +471,7 @@ export default function Homelayer() {
                   <button
                     onClick={() => {
                       setIsProfileOpen(false);
-                      navigate("/auth/login");
+                      logout();
                     }}
                     className="w-full h-9 flex items-center gap-2.5 px-3 rounded-lg text-left text-xs font-bold text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
                   >

@@ -1,0 +1,1454 @@
+import React, { useState } from "react";
+import {
+  User,
+  Scan,
+  FileText,
+  Camera,
+  MapPin,
+  Briefcase,
+  Users,
+  CheckCircle2,
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  X,
+  Smartphone,
+  Mail,
+  ShieldCheck,
+  FileUp,
+  Shield,
+  Hash,
+  Calendar,
+  Info,
+  ChevronDown,
+  Globe,
+  Building2,
+  Map,
+  UserCheck,
+  Coins,
+  Phone,
+} from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+
+const REGISTRATION_STEPS = [
+  {
+    id: "profile",
+    label: "Create Profile",
+    desc: "Personal information",
+    icon: User,
+  },
+  {
+    id: "scan_id",
+    label: "Scan Identification",
+    desc: "Identity verification",
+    icon: Scan,
+  },
+  {
+    id: "review_id",
+    label: "Review ID Details",
+    desc: "OCR information check",
+    icon: FileText,
+  },
+  {
+    id: "selfie",
+    label: "Upload Selfie",
+    desc: "Biometric confirmation",
+    icon: Camera,
+  },
+  {
+    id: "address",
+    label: "Add Address Details",
+    desc: "Residential location",
+    icon: MapPin,
+  },
+  {
+    id: "income",
+    label: "Add Income Income",
+    desc: "Financial parameters",
+    icon: Briefcase,
+  },
+  {
+    id: "next_of_kin",
+    label: "Next of Kin",
+    desc: "Emergency contacts",
+    icon: Users,
+  },
+  {
+    id: "review_submit",
+    label: "Review & Confirm Details",
+    desc: "Final file compilation",
+    icon: CheckCircle2,
+  },
+];
+
+const scannedData = {
+  firstname: "John",
+  middlename: "Kipkorir",
+  lastname: "Doe",
+  identification_type: "National ID",
+  identification: "32145678",
+  gender: "Male",
+  dob: "1994-04-24",
+};
+
+export default function AddMember() {
+  const [currentStepIndex, setCurrentStepIndex] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const activeStep = REGISTRATION_STEPS[currentStepIndex];
+  const isFirstStep = currentStepIndex === 0;
+  const isLastStep = currentStepIndex === REGISTRATION_STEPS.length - 1;
+
+  const [formData, setFormData] = useState({
+    username: "Alfred",
+    email: "alfy@gmail.com",
+    mobileno: "0754360450",
+
+    firstname: "Alfred",
+    middlename: "Kariuki",
+    lastname: "Gitau",
+    identification_type: "National ID",
+    identification: "3006780",
+    gender: "Male",
+    dob: "29/12/1992",
+
+    country: "Kenya",
+    county: "Nakuru",
+    subcounty: "Bahati",
+    physical_address: "Subukia",
+
+    employment_type: "IT",
+    occupation: "Software Engineer",
+    income: "200000",
+    kra_pin: "A123456789G",
+
+    fullname: "Margret Maina",
+    relationship: "Wife",
+    location: "Bahati",
+    phone: "0780400400",
+    date_of_birth: "29/12/1990",
+  });
+  const [previewUrl, setPreviewUrl] = useState(formData.selfieUrl || null);
+  const [countyDropdownOpen, setCountyDropdownOpen] = useState(false);
+  const [subcountyDropdownOpen, setSubcountyDropdownOpen] = useState(false);
+  const countyOptions = [
+    { value: "", label: "Select county..." },
+    { value: "Nairobi", label: "Nairobi" },
+    { value: "Mombasa", label: "Mombasa" },
+    { value: "Kiambu", label: "Kiambu" },
+    { value: "Kisumu", label: "Kisumu" },
+    { value: "Nakuru", label: "Nakuru" },
+  ];
+
+  const subcountyOptions = [
+    { value: "", label: "Select sub-county..." },
+    { value: "Westlands", label: "Westlands" },
+    { value: "Dagoretti", label: "Dagoretti" },
+    { value: "Changamwe", label: "Changamwe" },
+    { value: "Thika", label: "Thika" },
+    { value: "Kisumu Central", label: "Kisumu Central" },
+  ];
+  const [employmentDropdownOpen, setEmploymentDropdownOpen] = useState(false);
+
+  // Structured occupational framework options
+  const employmentOptions = [
+    { value: "", label: "Select employment type..." },
+    { value: "Salaried", label: "Salaried / Employed" },
+    { value: "Self-Employed", label: "Self-Employed / Business Owner" },
+    { value: "Contractor", label: "Freelancer / Contractor" },
+    { value: "Unemployed", label: "Unemployed" },
+    { value: "Student", label: "Student" },
+  ];
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData({ ...formData, selfieFile: file });
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
+
+  // WORKFLOW CONTROLLERS
+  const handleNext = () => {
+    if (!isLastStep) {
+      setCurrentStepIndex((prev) => prev + 1);
+    } else {
+      handleSubmitRegistration();
+    }
+  };
+
+  const handleBack = () => {
+    if (!isFirstStep) {
+      setCurrentStepIndex((prev) => prev - 1);
+    }
+  };
+
+  const handleStepJump = (index) => {
+    if (index < currentStepIndex) {
+      setCurrentStepIndex(index);
+    }
+  };
+
+  const handleSubmitRegistration = () => {
+    setIsSubmitting(true);
+    console.log("Submitting consolidated state data to the core engine...");
+    setTimeout(() => setIsSubmitting(false), 2000);
+  };
+
+  return (
+    <div className="bg-slate-50 h-full flex flex-col text-slate-800">
+      <div className="w-full h-full flex-1 flex flex-col lg:flex-row items-stretch gap-8">
+        <div className="w-full lg:w-80 shrink-0 select-none">
+          <div className="bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-4 lg:h-full flex flex-col">
+            <div className="mb-6">
+              <h2 className="text-base font-black text-primary tracking-tight">
+                Member KYC Lifecycle
+              </h2>
+              <p className="text-[11px] text-slate-400 font-medium">
+                Complete all milestones to unlock ledger accounts.
+              </p>
+            </div>
+
+            {/* INTERACTIVE TRACK TIMELINE */}
+            <div className="relative space-y-2.5 flex-1">
+              {REGISTRATION_STEPS.map((step, idx) => {
+                const IconComponent = step.icon;
+                const isCompleted = idx < currentStepIndex;
+                const isActive = idx === currentStepIndex;
+
+                return (
+                  <div
+                    key={step.id}
+                    onClick={() => handleStepJump(idx)}
+                    className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-200 relative group ${
+                      isActive
+                        ? "bg-slate-50 border-slate-200 text-slate-900 shadow-3xs"
+                        : isCompleted
+                          ? "bg-white border-slate-100 text-slate-800 cursor-pointer hover:bg-slate-50/50"
+                          : "border-transparent opacity-40 select-none"
+                    }`}
+                  >
+                    {/* STEP ICON / BADGE */}
+                    <div
+                      className={`size-7.5 rounded-lg flex items-center justify-center shrink-0 transition-colors shadow-3xs ${
+                        isActive
+                          ? ""
+                          : isCompleted
+                            ? "bg-emerald-500 border-emerald-600 text-white"
+                            : "bg-slate-50 text-slate-400 group-hover:text-slate-600"
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <CheckCircle2 size={13} strokeWidth={3} />
+                      ) : (
+                        <IconComponent size={13} strokeWidth={2.5} />
+                      )}
+                    </div>
+
+                    {/* METADATA STRINGS */}
+                    <div className="min-w-0 flex-1 flex flex-col pl-1">
+                      <span
+                        className={`text-[11px] font-black tracking-tight leading-none ${
+                          isActive ? "text-slate-900" : "text-slate-700"
+                        }`}
+                      >
+                        {step.label}
+                      </span>
+                      <span
+                        className={`text-[9px] font-medium leading-none mt-1 truncate ${
+                          isActive ? "text-slate-500" : "text-slate-400"
+                        }`}
+                      >
+                        {step.desc}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        <div className="h-full flex-1 flex flex-col">
+          <div className="bg-white border border-slate-200/60 shadow-3xs rounded-2xl flex-1 flex flex-col overflow-hidden h-full">
+            {/* STAGE HEADER METRICS PANEL */}
+            <div className="px-6 py-4.5 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between select-none">
+              <div>
+                <h1 className="text-lg font-black text-primary tracking-tight">
+                  {activeStep.label}
+                </h1>
+              </div>
+            </div>
+
+            {/* MAIN WORKING AREA: INNER CONTENT PANELS */}
+            <div className="p-5 md:p-5 flex-1 overflow-y-auto">
+              {activeStep.id === "profile" && (
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <motion.div className="bg-white relative w-full h-full flex flex-col">
+                    {/* Header */}
+                    <div className="pb-6">
+                      <h2 className="text-l font-bold text-[#074073]">
+                        Add Member
+                      </h2>
+                      <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+                        Provide the primary contact and login credentials
+                        required to establish this member's digital profile.
+                      </p>
+                    </div>
+
+                    {/* Form Fields Grid (Side-by-Side on Desktop) */}
+                    <div className="flex-1 overflow-y-auto grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 pr-1">
+                      {/* ROW 1: USERNAME */}
+                      <FilterField label="Username" icon={User}>
+                        <input
+                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
+                          placeholder="e.g., jdoe_admin"
+                          value={formData.username}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              username: e.target.value,
+                            })
+                          }
+                        />
+                      </FilterField>
+
+                      {/* ROW 1: EMAIL ADDRESS */}
+                      <FilterField label="Email Address" icon={Mail}>
+                        <input
+                          type="email"
+                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
+                          placeholder="name@organization.com"
+                          value={formData.email}
+                          onChange={(e) =>
+                            setFormData({ ...formData, email: e.target.value })
+                          }
+                        />
+                      </FilterField>
+
+                      {/* ROW 2: MOBILE NUMBER (SPANS BOTH COLUMNS FOR VISUAL BALANCE) */}
+                      <div className="md:col-span-2">
+                        <FilterField label="Mobile Number" icon={Smartphone}>
+                          <input
+                            type="tel"
+                            className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
+                            placeholder="+254 XXX XXX XXX"
+                            value={formData.mobileno}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                mobileno: e.target.value,
+                              })
+                            }
+                          />
+                        </FilterField>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+
+              {activeStep.id === "scan_id" && (
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <motion.div className="bg-white relative w-full h-full flex flex-col">
+                    <div className="pb-5">
+                      <h2 className="text-l font-bold text-[#074073]">
+                        Verify Identity
+                      </h2>
+                      <p className="text-sm text-slate-500 font-medium">
+                        Upload Identification Documents
+                      </p>
+                    </div>
+
+                    {/* Main Content Area */}
+                    <div className="flex-1 overflow-y-auto space-y-5 pr-1">
+                      {/* Helper Box (Stays prominent at the top) */}
+                      <div className="p-4 bg-blue-50/50 border border-blue-100 rounded-2xl flex items-start gap-3.5 select-none animate-in fade-in duration-200">
+                        <div className="space-y-2 flex-1">
+                          <p className="text-xs font-bold text-[#074073]">
+                            Document Upload Requirements
+                          </p>
+                          <p className="text-[11px] text-[#074073]/90 font-medium leading-relaxed">
+                            To avoid manual verification delays and ensure our
+                            automated system reads the details instantly, please
+                            keep the following tips in mind:
+                          </p>
+
+                          {/* COMPLIANCE CHECKLIST */}
+                          <ul className="text-[11px] text-[#074073]/80 font-medium space-y-1.5 list-disc pl-4 leading-relaxed">
+                            <li>
+                              <strong className="text-[#074073]">
+                                Full Framework View:
+                              </strong>{" "}
+                              Make sure the entire card is captured and all four
+                              outer corners are clearly visible.
+                            </li>
+                            <li>
+                              <strong className="text-[#074073]">
+                                Lighting & Legibility:
+                              </strong>{" "}
+                              Take photos in a well-lit space. Avoid overhead
+                              phone glares, camera flashes, or dark shadows that
+                              make text hard to read.
+                            </li>
+                            <li>
+                              <strong className="text-[#074073]">
+                                File Restrictions:
+                              </strong>{" "}
+                              Only upload sharp, high-resolution files in{" "}
+                              <span className="font-mono bg-blue-100/50 px-1 rounded">
+                                JPEG
+                              </span>
+                              ,{" "}
+                              <span className="font-mono bg-blue-100/50 px-1 rounded">
+                                PNG
+                              </span>
+                              , or{" "}
+                              <span className="font-mono bg-blue-100/50 px-1 rounded">
+                                PDF
+                              </span>{" "}
+                              format (maximum file size: 5 MB).
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                      {/* Document Upload Fields Grid (Side-by-Side on Desktop) */}
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                        <FileUploadField
+                          label="ID Front View"
+                          id="front_view"
+                          fileKey="id_front"
+                          formData={formData}
+                          setFormData={setFormData}
+                        />
+                        <FileUploadField
+                          label="ID Back View"
+                          id="back_view"
+                          fileKey="id_back"
+                          formData={formData}
+                          setFormData={setFormData}
+                        />
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+
+              {activeStep.id === "review_id" && (
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <motion.div className="bg-white relative w-full h-full flex flex-col">
+                    {/* Header Content Area */}
+                    <div className="pb-3">
+                      <h2 className="text-l font-bold text-[#074073]">
+                        Scan Results
+                      </h2>
+                      <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+                        Review the automated text extraction metrics pulled from
+                        the uploaded identification document asset.
+                      </p>
+                    </div>
+
+                    {/* Main Content Area */}
+                    <div className="flex-1 overflow-y-auto space-y-6 pr-1">
+                      {/* Data Category: Core Identification Fields */}
+                      <div className="space-y-3.5">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                          Extracted Legal Name
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                          <ScannedDataField
+                            label="First Name"
+                            icon={User}
+                            value={scannedData?.firstname}
+                          />
+                          <ScannedDataField
+                            label="Middle Name"
+                            icon={User}
+                            value={scannedData?.middlename}
+                          />
+                          {/* Spans full width on desktop for visual balance with odd count */}
+                          <div className="md:col-span-2">
+                            <ScannedDataField
+                              label="Last Name"
+                              icon={User}
+                              value={scannedData?.lastname}
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Data Category: Compliance & Telemetry */}
+                      <div className="space-y-3.5 pt-5 border-t border-slate-100">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                          Document Metrics
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+                          <ScannedDataField
+                            label="Identification Type"
+                            icon={Shield}
+                            value={scannedData?.identification_type}
+                            isUppercase={true}
+                          />
+                          <ScannedDataField
+                            label="Document ID Number"
+                            icon={Hash}
+                            value={scannedData?.identification}
+                            isUppercase={true}
+                          />
+                          <ScannedDataField
+                            label="Gender Classification"
+                            icon={User}
+                            value={scannedData?.gender}
+                          />
+                          <ScannedDataField
+                            label="Date of Birth (DOB)"
+                            icon={Calendar}
+                            value={scannedData?.dob}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+
+              {activeStep.id === "selfie" && (
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <motion.div className="bg-white relative w-full h-full flex flex-col">
+                    {/* Header */}
+                    <div className="pb-3">
+                      <h2 className="text-l font-bold text-[#074073]">
+                        Member Selfie
+                      </h2>
+                      <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+                        Upload a clear portrait. This will be used for
+                        identification.
+                      </p>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto space-y-8">
+                      {/* Upload Zone */}
+                      <div className="relative group border-2 border-dashed border-slate-200 rounded-3xl p-6 flex flex-col items-center justify-center bg-slate-50 hover:border-[#074073]/30 transition-all">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20"
+                        />
+
+                        {previewUrl ? (
+                          <div className="flex flex-col items-center gap-3">
+                            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-white shadow-md">
+                              <img
+                                src={previewUrl}
+                                alt="Preview"
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <p className="text-xs font-bold text-[#074073]">
+                              Click to change photo
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="text-center">
+                            <Camera
+                              className="mx-auto text-slate-400 mb-2"
+                              size={32}
+                            />
+                            <p className="text-xs font-semibold text-slate-600">
+                              Click or drag & drop
+                            </p>
+                            <p className="text-[10px] text-slate-400 mt-1">
+                              PNG, JPG up to 5MB
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Photo Guidelines */}
+                      <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Info size={16} className="text-[#074073]" />
+                          <h4 className="text-[11px] font-bold uppercase text-[#074073] tracking-wider">
+                            Requirements
+                          </h4>
+                        </div>
+                        <ul className="text-[11px] text-slate-500 space-y-2 list-disc list-inside">
+                          <li>
+                            Ensure your face is clearly visible and centered.
+                          </li>
+                          <li>
+                            Use neutral lighting (avoid harsh shadows or glare).
+                          </li>
+                          <li>Maintain a plain background if possible.</li>
+                          <li>No sunglasses, hats, or filters.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+
+              {activeStep.id === "address" && (
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <motion.div className="bg-white relative w-full h-full flex flex-col">
+                    {/* Premium High-Density Header Setup */}
+                    <div className="pb-4">
+                      <h2 className="text-l font-bold text-[#074073]">
+                        Physical Address
+                      </h2>
+                      <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+                        Map the member's legal domicile coordinates. This data
+                        handles localized operational mapping and regional
+                        compliance structures.
+                      </p>
+                    </div>
+
+                    {/* Location Form Options Scroll Space */}
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                      {/* Country Field */}
+                      <FilterField label="Country" icon={Globe}>
+                        <input
+                          type="text"
+                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
+                          placeholder="e.g., Kenya"
+                          value={formData.country}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              country: e.target.value,
+                            })
+                          }
+                        />
+                      </FilterField>
+
+                      {/* County Dropdown Field */}
+                      <FilterField label="County / Region" icon={Building2}>
+                        <div className="relative w-full">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCountyDropdownOpen(!countyDropdownOpen);
+                              setSubcountyDropdownOpen(false); // Dropdown handoff
+                            }}
+                            className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
+                              countyDropdownOpen
+                                ? "bg-white border-[#074073] ring-4 ring-[#074073]/5"
+                                : ""
+                            }`}
+                          >
+                            <span
+                              className={
+                                formData.county
+                                  ? "text-slate-800 font-bold"
+                                  : "text-slate-400 font-medium"
+                              }
+                            >
+                              {countyOptions.find(
+                                (opt) => opt.value === formData.county,
+                              )?.label || "Select county..."}
+                            </span>
+                            <ChevronDown
+                              size={16}
+                              className={`text-slate-400 transition-transform duration-200 ml-2 shrink-0 ${
+                                countyDropdownOpen
+                                  ? "rotate-180 text-[#074073]"
+                                  : ""
+                              }`}
+                            />
+                          </button>
+                          <AnimatePresence>
+                            {countyDropdownOpen && (
+                              <>
+                                <div
+                                  className="fixed inset-0 z-30"
+                                  onClick={() => setCountyDropdownOpen(false)}
+                                />
+                                <motion.div
+                                  initial={{ opacity: 0, y: 8 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: 8 }}
+                                  transition={{ duration: 0.15 }}
+                                  className="absolute left-0 right-0 mt-2 bg-white border border-slate-200/80 rounded-2xl shadow-xl py-2 z-40 max-h-48 overflow-y-auto"
+                                >
+                                  {countyOptions.map((opt) => (
+                                    <button
+                                      key={opt.value}
+                                      type="button"
+                                      onClick={() => {
+                                        setFormData({
+                                          ...formData,
+                                          county: opt.value,
+                                        });
+                                        setCountyDropdownOpen(false);
+                                      }}
+                                      className={`w-full px-6 py-3 text-xs text-left font-semibold transition-colors cursor-pointer ${
+                                        formData.county === opt.value
+                                          ? "bg-blue-50/70 text-[#074073] font-bold"
+                                          : "text-slate-600 hover:bg-slate-50"
+                                      }`}
+                                    >
+                                      {opt.label}
+                                    </button>
+                                  ))}
+                                </motion.div>
+                              </>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </FilterField>
+
+                      {/* Sub-County Dropdown Field */}
+                      <FilterField label="Sub-County / District" icon={Map}>
+                        <div className="relative w-full">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSubcountyDropdownOpen(!subcountyDropdownOpen);
+                              setCountyDropdownOpen(false);
+                            }}
+                            className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
+                              subcountyDropdownOpen
+                                ? "bg-white border-[#074073] ring-4 ring-[#074073]/5"
+                                : ""
+                            }`}
+                          >
+                            <span
+                              className={
+                                formData.subcounty
+                                  ? "text-slate-800 font-bold"
+                                  : "text-slate-400 font-medium"
+                              }
+                            >
+                              {subcountyOptions.find(
+                                (opt) => opt.value === formData.subcounty,
+                              )?.label || "Select sub-county..."}
+                            </span>
+                            <ChevronDown
+                              size={16}
+                              className={`text-slate-400 transition-transform duration-200 ml-2 shrink-0 ${
+                                subcountyDropdownOpen
+                                  ? "rotate-180 text-[#074073]"
+                                  : ""
+                              }`}
+                            />
+                          </button>
+
+                          <AnimatePresence>
+                            {subcountyDropdownOpen && (
+                              <>
+                                <div
+                                  className="fixed inset-0 z-30"
+                                  onClick={() =>
+                                    setSubcountyDropdownOpen(false)
+                                  }
+                                />
+                                <motion.div
+                                  initial={{ opacity: 0, y: 8 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: 8 }}
+                                  transition={{ duration: 0.15 }}
+                                  className="absolute left-0 right-0 mt-2 bg-white border border-slate-200/80 rounded-2xl shadow-xl py-2 z-40 max-h-48 overflow-y-auto"
+                                >
+                                  {subcountyOptions.map((opt) => (
+                                    <button
+                                      key={opt.value}
+                                      type="button"
+                                      onClick={() => {
+                                        setFormData({
+                                          ...formData,
+                                          subcounty: opt.value,
+                                        });
+                                        setSubcountyDropdownOpen(false);
+                                      }}
+                                      className={`w-full px-6 py-3 text-xs text-left font-semibold transition-colors cursor-pointer ${
+                                        formData.subcounty === opt.value
+                                          ? "bg-blue-50/70 text-[#074073] font-bold"
+                                          : "text-slate-600 hover:bg-slate-50"
+                                      }`}
+                                    >
+                                      {opt.label}
+                                    </button>
+                                  ))}
+                                </motion.div>
+                              </>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </FilterField>
+
+                      {/* Physical Address Textarea/Input Field */}
+                      <FilterField
+                        label="Street / Physical Address"
+                        icon={MapPin}
+                      >
+                        <input
+                          className="w-full pl-[74px] pr-6 py-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 resize-none pt-4"
+                          placeholder="e.g., Plaza Block C, Suite 4B, Lenana Road"
+                          value={formData.physical_address}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              physical_address: e.target.value,
+                            })
+                          }
+                        />
+                      </FilterField>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+
+              {activeStep.id === "income" && (
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <motion.div className="bg-white relative w-full flex flex-col">
+                    <div>
+                      <h2 className="text-l font-bold text-[#074073]">
+                        Income & Economic Level
+                      </h2>
+                      <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+                        Log economic data parameters and tax clearance
+                        indicators. This underpins accurate risk evaluation
+                        profiles and credit-tier assignments.
+                      </p>
+                    </div>
+
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                      {/* ROW 1: EMPLOYMENT TYPE DROPDOWN */}
+                      <FilterField
+                        label="Employment Status / Field"
+                        icon={Briefcase}
+                      >
+                        <div className="relative w-full">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              setEmploymentDropdownOpen(!employmentDropdownOpen)
+                            }
+                            className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
+                              employmentDropdownOpen
+                                ? "bg-white border-[#074073] ring-4 ring-[#074073]/5"
+                                : ""
+                            }`}
+                          >
+                            <span
+                              className={
+                                formData.employment_type
+                                  ? "text-slate-800 font-bold"
+                                  : "text-slate-400 font-medium"
+                              }
+                            >
+                              {employmentOptions.find(
+                                (opt) => opt.value === formData.employment_type,
+                              )?.label || "Select employment type..."}
+                            </span>
+                            <ChevronDown
+                              size={16}
+                              className={`text-slate-400 transition-transform duration-200 ml-2 shrink-0 ${
+                                employmentDropdownOpen
+                                  ? "rotate-180 text-[#074073]"
+                                  : ""
+                              }`}
+                            />
+                          </button>
+
+                          <AnimatePresence>
+                            {employmentDropdownOpen && (
+                              <>
+                                <div
+                                  className="fixed inset-0 z-30"
+                                  onClick={() =>
+                                    setEmploymentDropdownOpen(false)
+                                  }
+                                />
+                                <motion.div
+                                  initial={{ opacity: 0, y: 8 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: 8 }}
+                                  transition={{ duration: 0.15 }}
+                                  className="absolute left-0 right-0 mt-2 bg-white border border-slate-200/80 rounded-2xl shadow-xl py-2 z-40 max-h-48 overflow-y-auto"
+                                >
+                                  {employmentOptions.map((opt) => (
+                                    <button
+                                      key={opt.value}
+                                      type="button"
+                                      onClick={() => {
+                                        setFormData({
+                                          ...formData,
+                                          employment_type: opt.value,
+                                        });
+                                        setEmploymentDropdownOpen(false);
+                                      }}
+                                      className={`w-full px-6 py-3 text-xs text-left font-semibold transition-colors cursor-pointer ${
+                                        formData.employment_type === opt.value
+                                          ? "bg-blue-50/70 text-[#074073] font-bold"
+                                          : "text-slate-600 hover:bg-slate-50"
+                                      }`}
+                                    >
+                                      {opt.label}
+                                    </button>
+                                  ))}
+                                </motion.div>
+                              </>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      </FilterField>
+
+                      {/* ROW 1: OCCUPATION TEXT INPUT */}
+                      <FilterField
+                        label="Exact Occupation / Role"
+                        icon={UserCheck}
+                      >
+                        <input
+                          type="text"
+                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
+                          placeholder="e.g., Credit Analyst, Shopkeeper"
+                          value={formData.occupation}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              occupation: e.target.value,
+                            })
+                          }
+                        />
+                      </FilterField>
+
+                      {/* ROW 2: MONTHLY INCOME NUMERICAL INPUT */}
+                      <FilterField
+                        label="Estimated Monthly Income (KES)"
+                        icon={Coins}
+                      >
+                        <div className="relative w-full">
+                          <input
+                            type="number"
+                            className="w-full pl-[74px] pr-14 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
+                            placeholder="0.00"
+                            value={formData.income_range}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                income_range: e.target.value,
+                              })
+                            }
+                          />
+                          <div className="absolute inset-y-0 right-5 flex items-center pointer-events-none">
+                            <span className="text-[10px] font-bold text-slate-400 tracking-wider">
+                              KES
+                            </span>
+                          </div>
+                        </div>
+                      </FilterField>
+
+                      {/* ROW 2: KRA TAX PIN IDENTIFIER INPUT */}
+                      <FilterField label="KRA Tax PIN" icon={FileText}>
+                        <input
+                          type="text"
+                          maxLength={11}
+                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-mono font-bold tracking-wider uppercase text-slate-800"
+                          placeholder="e.g., A012345678W"
+                          value={formData.kra_pin || ""}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              kra_pin: e.target.value,
+                            })
+                          }
+                        />
+                      </FilterField>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+
+              {activeStep.id === "next_of_kin" && (
+                <div className="space-y-4 animate-in fade-in duration-200">
+                  <motion.div className="bg-white relative w-full flex flex-col">
+                    <div>
+                      <h2 className="text-l font-bold text-[#074073]">
+                        Next of Kin Details
+                      </h2>
+                      <p className="text-[11px] text-slate-400 font-medium">
+                        Add or update member's emergency contact details.
+                      </p>
+                    </div>
+
+                    <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                      {/* ROW 1: FULL NAME */}
+                      <FilterField label="Full Name" icon={User}>
+                        <input
+                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
+                          placeholder="e.g., Jane Doe"
+                          value={formData.fullname}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              fullname: e.target.value,
+                            })
+                          }
+                        />
+                      </FilterField>
+
+                      {/* ROW 1: PHONE NUMBER */}
+                      <FilterField label="Phone Number" icon={Phone}>
+                        <input
+                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
+                          placeholder="+254 XXX XXX XXX"
+                          value={formData.phone}
+                          onChange={(e) =>
+                            setFormData({ ...formData, phone: e.target.value })
+                          }
+                        />
+                      </FilterField>
+
+                      {/* ROW 2: RELATIONSHIP */}
+                      <FilterField label="Relationship" icon={Users}>
+                        <input
+                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
+                          placeholder="e.g., Spouse, Parent"
+                          value={formData.relationship}
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              relationship: e.target.value,
+                            })
+                          }
+                        />
+                      </FilterField>
+
+                      {/* ROW 2: DATE OF BIRTH */}
+                      <FilterField label="Date of Birth" icon={Calendar}>
+                        <input
+                          type="date"
+                          className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
+                          value={formData.dob}
+                          onChange={(e) =>
+                            setFormData({ ...formData, dob: e.target.value })
+                          }
+                        />
+                      </FilterField>
+
+                      {/* ROW 3: LOCATION (SPANS BOTH COLUMNS FOR BALANCE) */}
+                      <div className="md:col-span-2">
+                        <FilterField label="Location" icon={MapPin}>
+                          <input
+                            className="w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 transition-all outline-none"
+                            placeholder="e.g., Nairobi, Kenya"
+                            value={formData.location}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                location: e.target.value,
+                              })
+                            }
+                          />
+                        </FilterField>
+                      </div>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
+
+              {activeStep.id === "review_submit" && (
+                <div className="space-y-6 animate-in fade-in duration-200 text-slate-800 pr-1">
+                  {/* TOP NOTICE BANNER */}
+                  <div className="p-4 bg-slate-50 border border-slate-200/60 rounded-2xl flex items-start gap-3 select-none">
+                    <CheckCircle2
+                      className="text-emerald-600 shrink-0 mt-0.5"
+                      size={18}
+                    />
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-bold text-slate-900">
+                        Final Verification Review
+                      </p>
+                      <p className="text-[11px] text-slate-500 leading-relaxed">
+                        Please review all input summaries, captured metrics, and
+                        attached credentials before finalizing submission.
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* SECTION 1: CORE ACCOUNT PROFILE */}
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                      1. Account Details
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 border border-slate-100 p-4 rounded-2xl bg-slate-50/20">
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Username
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.username || "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Email Address
+                        </span>
+                        <span className="text-xs font-bold text-slate-900 truncate block">
+                          {formData.email || "—"}
+                        </span>
+                      </div>
+                      <div className="md:col-span-2 space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Mobile Number
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.mobileno || "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SECTION 2: IDENTITY DOCUMENTS & OCR TELEMETRY */}
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                      2. Identity & Biometrics Verification
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 border border-slate-100 p-4 rounded-2xl bg-slate-50/20">
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Legal Name
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {[
+                            scannedData?.firstname,
+                            scannedData?.middlename,
+                            scannedData?.lastname,
+                          ]
+                            .filter(Boolean)
+                            .join(" ") || "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Identification Type
+                        </span>
+                        <span className="text-xs font-bold text-slate-900 uppercase">
+                          {scannedData?.identification_type || "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Document ID Number
+                        </span>
+                        <span className="text-xs font-bold text-slate-900 font-mono tracking-wide">
+                          {scannedData?.identification || "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Date of Birth / Gender
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {scannedData?.dob || "—"} (
+                          {scannedData?.gender || "—"})
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SECTION 3: RESIDENTIAL LOCATION */}
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                      3. Contact Location
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 border border-slate-100 p-4 rounded-2xl bg-slate-50/20">
+                      {/* COUNTRY */}
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Country
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.country || "—"}
+                        </span>
+                      </div>
+
+                      {/* COUNTY */}
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          County
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.county || "—"}
+                        </span>
+                      </div>
+
+                      {/* SUB COUNTY */}
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Sub County
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.sub_county || "—"}
+                        </span>
+                      </div>
+
+                      {/* PHYSICAL ADDRESS (Spans full width on desktop for long text strings) */}
+                      <div className="md:col-span-2 space-y-1 pt-1 border-t border-slate-100/50 md:border-t-0 md:pt-0">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Physical Address
+                        </span>
+                        <span className="text-xs font-bold text-slate-900 leading-relaxed block break-words">
+                          {formData.physical_address || "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SECTION 4: FINANCIAL & ECONOMIC PARAMETERS */}
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                      4. Employment & Financial Income Profile
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 border border-slate-100 p-4 rounded-2xl bg-slate-50/20">
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Employment Status
+                        </span>
+                        <span className="text-xs font-bold text-slate-900 capitalize">
+                          {employmentOptions.find(
+                            (opt) => opt.value === formData.employment_type,
+                          )?.label || "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Exact Occupation / Role
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.occupation || "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Estimated Monthly Income
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.income_range
+                            ? `KES ${parseFloat(formData.income_range).toLocaleString("en-KE", { minimumFractionDigits: 2 })}`
+                            : "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          KRA Tax PIN
+                        </span>
+                        <span className="text-xs font-bold text-slate-900 font-mono uppercase tracking-wider">
+                          {formData.kra_pin || "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* SECTION 5: BENEFICIARY / NEXT OF KIN REGISTRY */}
+                  <div className="space-y-3">
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
+                      5. Next of Kin Beneficiary Registry
+                    </p>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 border border-slate-100 p-4 rounded-2xl bg-slate-50/20">
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Kin Full Name
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.fullname || "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Relationship
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.relationship || "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Phone Number
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.phone || "—"}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                          Date of Birth
+                        </span>
+                        <span className="text-xs font-bold text-slate-900">
+                          {formData.dob
+                            ? new Date(formData.dob).toLocaleDateString(
+                                "en-KE",
+                                { dateStyle: "long" },
+                              )
+                            : "—"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* DYNAMIC PIPELINE NAVIGATION CONTROLLER ACTION DECK */}
+            <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between select-none">
+              {/* BACK CONTROL */}
+              <button
+                type="button"
+                onClick={handleBack}
+                disabled={isFirstStep || isSubmitting}
+                className={`inline-flex items-center gap-2 h-10 px-4 rounded-xl text-xs font-bold transition-all border ${
+                  isFirstStep
+                    ? "opacity-0 pointer-events-none"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-3xs cursor-pointer active:scale-98"
+                }`}
+              >
+                <ArrowLeft size={14} strokeWidth={2.5} />
+                <span>Previous Step</span>
+              </button>
+
+              {/* CONTINUE / SUBMIT COMMIT CONTROL */}
+              <button
+                type="button"
+                onClick={handleNext}
+                disabled={isSubmitting}
+                className={`inline-flex items-center gap-2 h-10 px-5 rounded-xl text-xs font-bold text-white shadow-sm transition-all cursor-pointer active:scale-98 ${
+                  isLastStep
+                    ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-900/10"
+                    : "bg-slate-900 hover:bg-slate-800 shadow-slate-900/10"
+                }`}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={14} className="animate-spin" />
+                    <span>Processing Submission...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>
+                      {isLastStep ? "Complete Registration" : "Save & Continue"}
+                    </span>
+                    {!isLastStep && <ArrowRight size={14} strokeWidth={2.5} />}
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const FilterField = ({ label, icon: Icon, children }) => (
+  <div className="space-y-2 w-full">
+    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+      {label}
+    </label>
+    <div className="relative group">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
+        <Icon
+          size={18}
+          className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
+        />
+        <div className="w-[1.5px] h-5 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
+      </div>
+      {children}
+    </div>
+  </div>
+);
+
+const FileUploadField = ({ label, id, fileKey, formData, setFormData }) => {
+  const previewUrl = formData[fileKey]
+    ? URL.createObjectURL(formData[fileKey])
+    : null;
+
+  return (
+    <div className="space-y-2 w-full">
+      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+        {label}
+      </label>
+
+      <div className="relative group">
+        {/* Preview State - Set to h-40 */}
+        {previewUrl ? (
+          <div className="relative w-full h-40 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner animate-in fade-in duration-200">
+            <img
+              src={previewUrl}
+              alt="Uploaded Document Preview"
+              className="w-full h-full object-cover"
+            />
+            <button
+              type="button"
+              onClick={() => setFormData({ ...formData, [fileKey]: null })}
+              className="absolute top-3 right-3 p-1.5 bg-black/60 text-white rounded-full hover:bg-black/80 transition-colors shadow-sm cursor-pointer z-10"
+            >
+              <X size={14} />
+            </button>
+          </div>
+        ) : (
+          /* Empty/Input State - Set to h-40 */
+          <div className="relative w-full h-40">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
+              <FileUp
+                size={18}
+                className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
+              />
+              {/* Balanced vertical divider matching the taller layout */}
+              <div className="w-[1.5px] h-10 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
+            </div>
+            <input
+              type="file"
+              id={id}
+              accept="image/*"
+              className="w-full pl-[74px] pr-6 h-full bg-slate-50 border border-slate-200 rounded-2xl file:hidden cursor-pointer text-xs font-semibold text-transparent flex items-center outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all"
+              onChange={(e) =>
+                setFormData({ ...formData, [fileKey]: e.target.files[0] })
+              }
+            />
+            <div className="absolute inset-0 flex items-center pl-[74px] pointer-events-none">
+              <span className="text-xs text-slate-400 font-medium truncate">
+                Upload a viable image...
+              </span>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const ScannedDataField = ({
+  label,
+  icon: Icon,
+  value,
+  isUppercase = false,
+}) => (
+  <div className="space-y-2 w-full">
+    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+      {label}
+    </label>
+    <div className="relative">
+      <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
+        <Icon size={18} className="text-[#074073]" />
+        <div className="w-[1.5px] h-5 bg-slate-200 ml-4" />
+      </div>
+      <div
+        className={`w-full pl-[74px] pr-6 py-4 min-h-14 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-900 flex items-center ${
+          isUppercase ? "uppercase tracking-wide" : ""
+        }`}
+      >
+        {value || (
+          <span className="text-slate-300 italic font-medium">
+            Extraction Failed
+          </span>
+        )}
+      </div>
+    </div>
+  </div>
+);

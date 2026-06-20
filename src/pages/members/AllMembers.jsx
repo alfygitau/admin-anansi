@@ -20,19 +20,6 @@ import { useToast } from "../../contexts/ToastProvider";
 import { getMembers } from "../../sdk/members/members";
 import Pagination from "../../components/pagination/Pagination";
 import { useNavigate } from "react-router-dom";
-import CreateProfile from "../../components/add-member/create-member/CreateProfile";
-import VerifyIdentity from "../../components/add-member/create-member/VerifyIdentity";
-import AddressProfile from "../../components/add-member/create-member/AddressProfile";
-import IncomeDetails from "../../components/add-member/create-member/IncomeDetails";
-import ReviewProfile from "../../components/add-member/create-member/ReviewProfile";
-import ReviewScannedDetails from "../../components/add-member/create-member/ReviewScanDetails";
-import EditScannedDetails from "../../components/add-member/create-member/EditScannedDetails";
-import ReviewAddressProfile from "../../components/add-member/create-member/ReviewAddress";
-import ReviewIncomeDetails from "../../components/add-member/create-member/ReviewIncomeDetails";
-import NextOfKin from "../../components/add-member/create-member/NextOfKin";
-import ReviewNextOfKin from "../../components/add-member/create-member/ReviewNextOfKin";
-import CreateMemberSuccess from "../../components/add-member/create-member/CreateMemberSuccess";
-import UploadSelfie from "../../components/add-member/create-member/UploadSelfie";
 
 export default function AllMembers() {
   const [members, setMembers] = useState([]);
@@ -177,140 +164,6 @@ export default function AllMembers() {
         setFilters={setFilters}
       />
 
-      <CreateProfile
-        isOpen={showCreateProfile}
-        onClose={() => setShowCreateProfile(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onContinue={() => {
-          setShowCreateProfile(false);
-          setShowReviewProfile(true);
-        }}
-      />
-
-      <ReviewProfile
-        isOpen={showReviewProfile}
-        onClose={() => setShowReviewProfile(false)}
-        formData={formData}
-        onSubmit={() => {
-          setShowReviewProfile(false);
-          setShowVerifyIdentity(true);
-        }}
-      />
-
-      <VerifyIdentity
-        isOpen={showVerifyIdentity}
-        onClose={() => setShowVerifyIdentity(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onContinue={() => {
-          setShowVerifyIdentity(false);
-          setShowReviewScanDetails(true);
-        }}
-      />
-
-      <ReviewScannedDetails
-        isOpen={showReviewScanDetails}
-        onClose={() => setShowReviewScanDetails(false)}
-        scannedData={{
-          firstname: "John",
-          middlename: "Kipkorir",
-          lastname: "Doe",
-          identification_type: "National ID",
-          identification: "32145678",
-          gender: "Male",
-          dob: "1994-04-24",
-        }}
-        onAccept={() => {
-          setShowReviewScanDetails(false);
-          setShowUploadSelfie(true);
-        }}
-      />
-
-      <EditScannedDetails
-        isOpen={showEditScanDetails}
-        onClose={() => setShowEditScanDetails(false)}
-        scannedData={{
-          firstname: "John",
-          middlename: "Kipkorir",
-          lastname: "Doe",
-          identification_type: "National ID",
-          identification: "32145678",
-          gender: "Male",
-          dob: "1994-04-24",
-        }}
-      />
-
-      <UploadSelfie
-        isOpen={showUploadSelfie}
-        onClose={() => setShowUploadSelfie(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onContinue={() => {
-          setShowUploadSelfie(false);
-          setShowCreateAddress(true);
-        }}
-      />
-
-      <AddressProfile
-        isOpen={showCreateAddress}
-        onClose={() => setShowCreateAddress(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={() => {
-          setShowCreateAddress(false);
-          setShowReviewAddress(true);
-        }}
-      />
-
-      <ReviewAddressProfile
-        isOpen={showReviewAddress}
-        onClose={() => setShowReviewAddress(false)}
-        formData={formData}
-        onSubmit={() => {
-          setShowReviewAddress(false);
-          setShowIncomeDetails(true);
-        }}
-      />
-
-      <IncomeDetails
-        isOpen={showIncomeDetails}
-        onClose={() => setShowIncomeDetails(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onSubmit={() => {
-          setShowIncomeDetails(false);
-          setShowReviewIncome(true);
-        }}
-      />
-
-      <ReviewIncomeDetails
-        isOpen={showReviewIncome}
-        onClose={() => setShowReviewIncome(false)}
-        formData={formData}
-        onSubmit={() => {
-          setShowReviewIncome(false);
-          setShowCreateKin(true);
-        }}
-      />
-
-      <NextOfKin
-        isOpen={showCreateKin}
-        onClose={() => setShowCreateKin(false)}
-        formData={formData}
-        setFormData={setFormData}
-        onSave={() => {
-          setShowCreateKin(false);
-          setShowReviewKin(true);
-        }}
-      />
-
-      <ReviewNextOfKin
-        isOpen={showReviewKin}
-        onClose={() => setShowReviewKin(false)}
-        formData={formData}
-      />
-
       <div className="w-full space-y-5 antialiased text-slate-800">
         {/* HEADER CONTROLS BANNER */}
         <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-2 select-none">
@@ -324,7 +177,7 @@ export default function AllMembers() {
             </p>
           </div>
           <button
-            onClick={() => setShowCreateProfile(true)}
+            onClick={() => navigate("/admin/all-members/add-member")}
             className="flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
           >
             <UserPlus size={15} />

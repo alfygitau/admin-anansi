@@ -41,6 +41,7 @@ import LoanStatements from "./pages/loans/all-loans/LoanStatements";
 import Permissions from "./pages/users/Permissions";
 import AuditTrail from "./pages/users/AuditTrail";
 import LoanApplicationApprovals from "./pages/loans/loan-applications/LoanApplicationApprovals";
+import AddMember from "./pages/members/RegisterMember";
 
 function App() {
   return (
@@ -99,6 +100,7 @@ function App() {
 
         <Route path="all-members" element={<AllMembers />} />
         <Route path="all-members/:id" element={<MemberDetails />} />
+        <Route path="all-members/add-member" element={<AddMember />} />
         <Route
           path="all-members/account/:id/:accountNumber"
           element={<AccountDetails />}

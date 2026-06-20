@@ -63,7 +63,7 @@ export default function Homelayer() {
         { label: "Loan Products", path: "/admin/loan-products" },
         {
           label: "Loan Application Approvals",
-          path: "/admin/loan-application-approvals",
+          path: "/admin/loan-applications-approvals",
         },
       ],
     },

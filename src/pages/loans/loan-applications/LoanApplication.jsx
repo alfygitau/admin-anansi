@@ -14,7 +14,6 @@ import {
   Percent,
   Clock,
   Briefcase,
-  History,
   Settings,
   Users,
   ShieldAlert,
@@ -90,125 +89,209 @@ export default function LoanApplication() {
     },
   });
 
+  // Dynamic Status Badge Mapping
+  const getStatusConfig = (status) => {
+    const raw = String(status).toLowerCase();
+    if (
+      raw.includes("approve") ||
+      raw.includes("post") ||
+      raw.includes("success")
+    ) {
+      return "bg-emerald-50/80 border-emerald-100 text-emerald-700 font-bold";
+    }
+    if (
+      raw.includes("fail") ||
+      raw.includes("cancel") ||
+      raw.includes("reject")
+    ) {
+      return "bg-rose-50/80 border-rose-100 text-rose-700 font-bold";
+    }
+    return "bg-amber-50/80 border-amber-100 text-amber-700 font-bold";
+  };
+
   return (
-    <div className="w-full space-y-5 font-sans antialiased text-slate-800">
-      {/* EXECUTIVE COMMAND TRACKER HEADER */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 pb-6 select-none">
+    <div className="w-full space-y-4 antialiased text-slate-800 bg-slate-50/30 p-1 rounded-3xl">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/70 pb-6 select-none">
         <div className="flex items-center gap-4">
-          <button className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all shadow-xs cursor-pointer">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="size-11 rounded-2xl border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs cursor-pointer active:scale-95"
+          >
             <ArrowLeft size={16} />
           </button>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
-                {application.application_number}
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="font-mono font-black text-[10px] tracking-wider uppercase px-2.5 py-1 bg-slate-900 text-white rounded-lg shadow-sm">
+                {application.application_number || "REQ-CODE"}
               </span>
-              <span className="text-[10px] font-bold tracking-wider uppercase px-2.5 py-0.5 rounded-full inline-flex items-center gap-1 bg-warning/10 text-warning">
-                <span className="size-1.5 rounded-full bg-warning" />
-                {application.status_label}
+              <span
+                className={`text-[10px] tracking-wide uppercase px-3 py-1 border rounded-full inline-flex items-center gap-1.5 shadow-3xs ${getStatusConfig(application.status_label)}`}
+              >
+                <span className="size-1.5 rounded-full bg-current animate-pulse" />
+                {application.status_label || "In Review"}
               </span>
             </div>
             <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1.5">
-              Review Loan Application
+              {application.loan_product?.product_name}
             </h1>
           </div>
         </div>
 
-        <div className="relative inline-block text-left" ref={menuRef}>
+        {/* INTERACTIVE ACTION DROPDOWN DECK CONTAINER */}
+        <div className="relative shrink-0" ref={menuRef}>
           {/* MASTER INTERACTIVE TRIGGER BUTTON */}
           <button
             type="button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className={`h-11 px-4 border rounded-xl font-sans text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2.5 cursor-pointer shadow-xs ${
+            className={`h-11 px-5 whitespace-nowrap border rounded-2xl font-sans text-xs font-black uppercase tracking-wider transition-all flex items-center justify-between gap-3 cursor-pointer shadow-3xs active:scale-98 w-full md:w-60 ${
               isMenuOpen
-                ? "border-primary bg-primary/5 text-primary ring-4 ring-primary/5"
-                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                ? "border-[#074073] bg-[#074073]/5 text-[#074073]"
+                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900"
             }`}
           >
-            <Sliders size={14} className={isMenuOpen ? "animate-pulse" : ""} />
-            <span>Manage Loan Application</span>
+            <div className="flex items-center gap-3">
+              <Sliders
+                size={14}
+                className={
+                  isMenuOpen
+                    ? "rotate-90 transition-transform"
+                    : "transition-transform"
+                }
+              />
+              <span>Manage Application</span>
+            </div>
             <ChevronDown
               size={14}
-              className={`transition-transform duration-200 ${isMenuOpen ? "rotate-180" : ""}`}
+              className={`transition-transform duration-300 ${isMenuOpen ? "rotate-180" : ""}`}
             />
           </button>
 
-          {/* CONCEALED OVERLAY DECK */}
-          {isMenuOpen && (
-            <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200/80 rounded-2xl shadow-xl p-2 z-50 origin-top-right animate-in fade-in slide-in-from-top-2 duration-150">
-              <div className="px-3 py-2 border-b border-slate-100 mb-1 select-none">
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Quick Actions
-                </p>
-              </div>
+          {/* OVERLAY DECK MATCHING TRIGGER WIDTH */}
+          {isMenuOpen &&
+            (() => {
+              // 1. Normalize the status label string for safe evaluation
+              const status = String(
+                application?.status_label || "",
+              ).toLowerCase();
 
-              <div className="space-y-1">
-                {/* ACTION 1: NOTIFY APPLICANT */}
-                <button
-                  onClick={() => {
-                    handleSendNotification();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-left cursor-pointer group"
-                >
-                  <div className="size-6 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:text-primary group-hover:bg-primary/5 group-hover:border-primary/10 transition-colors">
-                    <Bell size={13} />
-                  </div>
-                  <span>Notify Applicant</span>
-                </button>
+              // 2. Define workflow state machine flags
+              const isApproved = status.includes("approve");
+              const isDisbursed =
+                status.includes("disburse") ||
+                status.includes("paid") ||
+                status.includes("success");
+              const isCancelled =
+                status.includes("cancel") ||
+                status.includes("reject") ||
+                status.includes("fail");
+              const isPending = !isApproved && !isDisbursed && !isCancelled;
 
-                {/* ACTION 2: CANCEL APPLICATION */}
-                <button
-                  onClick={() => {
-                    handleCancel();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-semibold text-slate-600 hover:text-rose-700 hover:bg-rose-50/50 transition-colors text-left cursor-pointer group"
-                >
-                  <div className="size-6 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:text-error group-hover:bg-rose-50 group-hover:border-rose-100 transition-colors">
-                    <X size={13} />
-                  </div>
-                  <span>Cancel Application</span>
-                </button>
+              // 3. Determine action permissions
+              const canCancel = isPending;
+              const canApprove = isPending;
+              const canDisburse = isApproved && !isDisbursed;
 
-                {/* ACTION 3: APPROVE */}
-                <button
-                  onClick={() => {
-                    handleApprove();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/50 transition-colors text-left cursor-pointer group"
-                >
-                  <div className="size-6 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:text-success group-hover:bg-emerald-50 group-hover:border-emerald-100 transition-colors">
-                    <Check size={13} />
+              return (
+                <div className="absolute left-0 right-0 mt-2.5 bg-white border border-slate-200/90 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 w-full">
+                  <div className="space-y-0.5">
+                    {/* ALWAYS AVAILABLE: NOTIFY APPLICANT */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleSendNotification();
+                        setIsMenuOpen(false);
+                      }}
+                      className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-left cursor-pointer group"
+                    >
+                      <div className="size-6.5 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors shrink-0">
+                        <Bell size={13} />
+                      </div>
+                      <span className="truncate">Notify Applicant</span>
+                    </button>
+
+                    {/* CONDITIONAL: CANCEL APPLICATION (Only visible when loan file is pending review) */}
+                    {canCancel && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleCancel();
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-bold text-slate-600 hover:text-rose-700 hover:bg-rose-50/50 transition-colors text-left cursor-pointer group"
+                      >
+                        <div className="size-6.5 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:text-rose-600 group-hover:bg-rose-50 group-hover:border-rose-100 transition-colors shrink-0">
+                          <X size={13} />
+                        </div>
+                        <span className="truncate">Cancel Application</span>
+                      </button>
+                    )}
+
+                    {/* CONDITIONAL DIVIDER: Only renders if a primary workflow modification is actionable below it */}
+                    {(canApprove || canDisburse) && (
+                      <div className="border-t border-slate-100 my-1.5 pt-1" />
+                    )}
+
+                    {/* CONDITIONAL: APPROVE & SIGN OFF (Only visible when loan file is pending review) */}
+                    {canApprove && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleApprove();
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-black text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/60 transition-colors text-left cursor-pointer group"
+                      >
+                        <div className="size-6.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center transition-colors shadow-3xs shrink-0">
+                          <Check size={13} strokeWidth={3} />
+                        </div>
+                        <span className="truncate">Approve & Sign Off</span>
+                      </button>
+                    )}
+
+                    {/* CONDITIONAL: RELEASE FUNDS (Only visible after file is approved, hides completely once disbursed) */}
+                    {canDisburse && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleDisburse();
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-black text-slate-700 hover:text-blue-700 hover:bg-blue-50/60 transition-colors text-left cursor-pointer group"
+                      >
+                        <div className="size-6.5 rounded-lg bg-blue-600 text-white border border-blue-700 flex items-center justify-center transition-colors shadow-3xs shrink-0">
+                          <Upload size={13} strokeWidth={2.5} />
+                        </div>
+                        <span className="truncate">Release Funds</span>
+                      </button>
+                    )}
+
+                    {/* FALLBACK INFO: If no administrative actions can be taken on a finalized state */}
+                    {!canCancel && !canApprove && !canDisburse && (
+                      <div className="px-3 py-2 text-center select-none bg-slate-50 border border-slate-100 rounded-xl mt-1">
+                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">
+                          File Closed
+                        </p>
+                        <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                          No processing actions are available for this
+                          application state.
+                        </p>
+                      </div>
+                    )}
                   </div>
-                  <span>Approve Application</span>
-                </button>
-                <button
-                  onClick={() => {
-                    handleDisburse();
-                    setIsMenuOpen(false);
-                  }}
-                  className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-bold text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/50 transition-colors text-left cursor-pointer group"
-                >
-                  <div className="size-6 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:text-success group-hover:bg-emerald-50 group-hover:border-emerald-100 transition-colors">
-                    <Upload size={13} />
-                  </div>
-                  <span>Disburse Application</span>
-                </button>
-              </div>
-            </div>
-          )}
+                </div>
+              );
+            })()}
         </div>
       </div>
 
-      {/* SYMMETRIC WORKSPACE GRID GRID */}
+      {/* 2. SYMMETRIC CORE WORKSPACE LAYOUT CONTAINER */}
       {isFetching ? (
         <ApplicationLoader />
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-          {/* CONTAINER 1: APPLICANT IDENTITY LEDGER */}
-          <ApplicationCard title="Borrower Profile" icon={<User size={16} />}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          {/* CARD 1: BORROWER INDEPENDENT LEDGER */}
+          <ApplicationCard title="Borrower Profile" icon={<User size={15} />}>
             <MetricItem
               icon={<User />}
               label="Full Name"
@@ -221,61 +304,69 @@ export default function LoanApplication() {
             />
             <MetricItem
               icon={<Briefcase />}
-              label="Branch Code"
+              label="Sacco Branch Code"
               value={application.loan_org_code}
             />
-            <div className="md:col-span-2 space-y-2 bg-slate-50 p-4 rounded-xl border border-slate-100 mt-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-                Reason for Loan
+            <div className="md:col-span-2 space-y-2 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/50 mt-1">
+              <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                Purpose Statement
               </span>
-              <p className="text-xs text-slate-600 font-medium leading-relaxed">
+              <p className="text-xs text-slate-600 font-medium leading-relaxed italic">
                 "
                 {application.loan_purpose ||
-                  "No specific purpose provided by applicant."}
+                  "No specific purpose parameters declared inside application files."}
                 "
               </p>
             </div>
           </ApplicationCard>
 
-          {/* CONTAINER 2: REQUESTED FINANCIAL STRUCTURING */}
-          <ApplicationCard title="Loan Details" icon={<DollarSign size={16} />}>
+          {/* CARD 2: FINANCIAL REQUEST STRUCTURING FRAME */}
+          <ApplicationCard title="Loan Details" icon={<DollarSign size={15} />}>
             <MetricItem
               icon={<DollarSign />}
               label="Amount Requested"
-              value={`KES ${application.applied_amount}`}
+              value={
+                application.applied_amount
+                  ? `KES ${Number(application.applied_amount).toLocaleString()}`
+                  : "—"
+              }
+              isCrypto
             />
             <MetricItem
               icon={<Calendar />}
-              label="Loan Duration"
-              value={`${application.loan_period} Months`}
+              label="Loan Amortization Term"
+              value={`${application.loan_period || 0} Months`}
             />
             <MetricItem
               icon={<Clock />}
-              label="Payment Frequency"
+              label="Payment Interval Loop"
               value={application.loan_interval}
+              isCapitalized
             />
             <MetricItem
               icon={<Layers />}
-              label="Application Channel"
+              label="Origination Channel"
               value={application.loan_channel}
             />
             <MetricItem
               icon={<FileText />}
-              label="Loan Code"
+              label="System Token Code"
               value={application.loan_code}
             />
             <MetricItem
               icon={<ShieldCheck />}
-              label="Currency"
+              label="Settlement Currency"
               value={application.currency || "KES"}
             />
           </ApplicationCard>
 
-          {/* CONTAINER 3: ATTACHED PRODUCT BLUEPRINT */}
+          {/* CARD 3: ATTACHED PRODUCT CONFIGURATION MATRIX */}
+          {/* CARD 3: ATTACHED PRODUCT CONFIGURATION MATRIX */}
           <ApplicationCard
-            title="Product Profile"
-            icon={<Briefcase size={16} />}
+            title="Product Details"
+            icon={<Briefcase size={15} />}
           >
+            {/* Core Catalog Identifiers */}
             <MetricItem
               icon={<Briefcase />}
               label="Product Name"
@@ -286,177 +377,253 @@ export default function LoanApplication() {
               label="Product Code"
               value={application?.loan_product?.product_code}
             />
+
+            {/* Threshold Limitations */}
             <MetricItem
-              icon={<Percent />}
-              label="Interest Rate"
-              value={`${parseFloat(application?.loan_product?.interest_rate)?.toFixed(2)}% p.m.`}
+              icon={<DollarSign />}
+              label="Allowed Amount Bounds"
+              value={
+                application?.loan_product?.min_amount
+                  ? `KES ${Number(application.loan_product.min_amount).toLocaleString()} - KES ${Number(application.loan_product.max_amount).toLocaleString()}`
+                  : "—"
+              }
             />
             <MetricItem
-              icon={<Settings />}
-              label="Interest Calculation Method"
+              icon={<Calendar />}
+              label="Allowed Term Range"
+              value={
+                application?.loan_product?.min_period
+                  ? `${application.loan_product.min_period} to ${application.loan_product.max_period} Months`
+                  : "—"
+              }
+            />
+
+            {/* Interest Model Framework */}
+            <MetricItem
+              icon={<Percent />}
+              label="Assigned Interest Rate"
+              value={
+                application?.loan_product?.interest_rate
+                  ? `${parseFloat(application.loan_product.interest_rate).toFixed(2)}% p.m.`
+                  : "—"
+              }
+            />
+            <MetricItem
+              icon={<Layers />}
+              label="Interest Accrual Method"
               value={application?.loan_product?.interest_method?.replace(
-                "_",
+                /_/g,
                 " ",
               )}
               isCapitalized
             />
-            <MetricItem
-              icon={<Users />}
-              label="Required Committee Approvals"
-              value={`${application?.loan_product?.committee_approvals_required || 0} Votes Needed`}
-            />
-            <MetricItem
-              icon={<Users />}
-              label="Approvals Received"
-              value={`${application?.committee_approvals_received || 0} Votes Cast`}
-            />
-          </ApplicationCard>
 
-          {/* CONTAINER 4: GUARANTORS SECTION */}
-          <ApplicationCard
-            title="Guarantors & Co-signers"
-            icon={<Users size={16} />}
-          >
             <MetricItem
               icon={<ShieldCheck />}
-              label="Guarantor Policy"
+              label="Fee Deduction Strategy"
               value={
-                application?.loan_product?.requires_guarantor
-                  ? "Required"
-                  : "Optional"
+                application?.loan_product?.deduct_fee_from_principal !==
+                undefined
+                  ? application.loan_product.deduct_fee_from_principal
+                    ? "Withheld From Principal"
+                    : "Paid Out Of Pocket"
+                  : "—"
+              }
+            />
+
+            {/* Security & Risk Backing Requirements */}
+            <MetricItem
+              icon={<Users />}
+              label="Guarantor Requirement"
+              value={
+                application?.loan_product?.requires_guarantor !== undefined
+                  ? application.loan_product.requires_guarantor
+                    ? `Required (Min: ${application.loan_product.min_guarantors || 0})`
+                    : "Optional / Not Required"
+                  : "—"
               }
             />
             <MetricItem
-              icon={<Users />}
-              label="Guarantor Count Limits"
-              value={`Min: ${application.loan_product?.min_guarantors || 0} / Max: ${application?.loan_product?.max_guarantors || 0}`}
-            />
-            <MetricItem
-              icon={<DollarSign />}
-              label="Required for Amounts Above"
-              value={`KES ${application?.loan_product?.guarantor_required_above_amount || 0}`}
-            />
-            <MetricItem
-              icon={<Percent />}
-              label="Required Coverage"
-              value={`${Number(application?.loan_product?.guarantor_coverage_percent ?? 0).toFixed(0)}%`}
-            />
-
-            {/* Active Co-Signers List Ledger with Empty Fallback */}
-            <div className="md:col-span-2 space-y-3.5 border-t border-slate-100 pt-5 mt-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
-                Assigned Guarantors
-              </span>
-              {application?.guarantors && application.guarantors.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {application.guarantors.map((g, i) => (
-                    <div
-                      key={i}
-                      className="border border-slate-200/60 p-4 rounded-xl flex items-center justify-between bg-slate-50/50"
-                    >
-                      <div className="space-y-1 min-w-0">
-                        <p className="text-xs font-bold text-slate-900 tracking-tight truncate">
-                          {g.guarantor_name}
-                        </p>
-                        <p className="text-[11px] text-slate-400 font-medium tracking-wide">
-                          {g.guarantor_mobile}
-                        </p>
-                        <p className="text-[11px] text-slate-500 font-medium pt-1">
-                          Guaranteed:{" "}
-                          <span className="font-bold text-slate-800">
-                            KES {g.amount_guaranteed}
-                          </span>
-                        </p>
-                      </div>
-                      <span className="text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md bg-success/5 border border-success/10 text-success shrink-0 ml-2">
-                        {g.status}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                /* GUARANTOR INLINE EMPTY STATE */
-                <div className="border border-dashed border-slate-200 p-6 rounded-xl bg-slate-50/40 text-center select-none">
-                  <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">
-                    No Backing Co-Signers
-                  </p>
-                  <p className="text-[11px] text-slate-400 font-medium mt-1">
-                    This application doesn't have any peer guarantors assigned
-                    to handle the risk profile yet.
-                  </p>
-                </div>
-              )}
-            </div>
-          </ApplicationCard>
-
-          {/* CONTAINER 5: REGISTERED COLLATERAL & CHATTELS */}
-          <ApplicationCard
-            title="Collateral & Security"
-            icon={<ShieldAlert size={16} />}
-          >
-            <MetricItem
-              icon={<ShieldCheck />}
+              icon={<ShieldAlert />}
               label="Collateral Requirement"
               value={
-                application.requires_collateral
-                  ? "Asset Pledge Required"
-                  : "Not Required"
+                application?.loan_product?.requires_collateral !== undefined
+                  ? application.loan_product.requires_collateral
+                    ? "Asset Pledge Required"
+                    : "Unsecured / No Pledge"
+                  : "—"
               }
             />
-            <MetricItem
-              icon={<DollarSign />}
-              label="Total Asset Value"
-              value={`KES ${application.collateral_value || 0}`}
-            />
+          </ApplicationCard>
 
-            {/* Dynamic Check for Collateral Policy */}
-            <div className="md:col-span-2 w-full">
-              {!application.requires_collateral ? (
-                /* COLLATERAL NOT REQUIRED STATE */
-                <div className="border border-dashed border-slate-200 p-6 rounded-xl bg-slate-50/40 text-center select-none mt-1">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wide">
-                    Unsecured Product Framework
-                  </p>
-                  <p className="text-[11px] text-slate-400 font-medium mt-1">
-                    This specific loan tier is unsecured and does not require
-                    any physical assets tied down as backup security.
-                  </p>
+          {/* CARD 4: CO-SIGNER TRUST MATRIX PORTFOLIO */}
+          <ApplicationCard
+            title="Guarantors & Co-signers"
+            icon={<Users size={15} />}
+          >
+            {!application?.loan_product?.requires_guarantor ? (
+              /* 1. FULL CARD EXEMPTION EMPTY STATE (Centers perfectly with no other elements) */
+              <div className="col-span-full flex flex-col items-center justify-center py-12 text-center select-none">
+                <div className="size-12 bg-emerald-50/60 border border-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600 mb-4 shadow-3xs">
+                  <ShieldCheck size={20} strokeWidth={2.5} />
                 </div>
-              ) : (
-                <div className="space-y-4 mt-1">
-                  <div className="space-y-1 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-                      Accepted Security Types
+                <h4 className="text-xs font-black text-slate-700 uppercase tracking-wide">
+                  No Guarantors Needed
+                </h4>
+                <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
+                  This loan choice is completely unsecured! The borrower doesn't
+                  need to look for or link any peer co-signers to back this
+                  file.
+                </p>
+              </div>
+            ) : (
+              /* 2. STANDARD RUNTIME GRID LAYOUT (Only loads if required) */
+              <>
+                <MetricItem
+                  icon={<ShieldCheck />}
+                  label="Guarantor Strategy"
+                  value="Mandatory Backing"
+                />
+                <MetricItem
+                  icon={<Users />}
+                  label="Allowed Portfolio Bounds"
+                  value={`Min: ${application?.loan_product?.min_guarantors || 0} / Max: ${application?.loan_product?.max_guarantors || 0}`}
+                />
+                <MetricItem
+                  icon={<DollarSign />}
+                  label="Policy Ceiling Gate"
+                  value={`KES ${Number(application?.loan_product?.guarantor_required_above_amount || 0).toLocaleString()}`}
+                />
+                <MetricItem
+                  icon={<Percent />}
+                  label="Collateralized Coverage"
+                  value={`${Number(application?.loan_product?.guarantor_coverage_percent ?? 0).toFixed(0)}%`}
+                />
+
+                {/* Active Co-Signers List Ledger */}
+                <div className="md:col-span-2 space-y-3.5 border-t border-slate-100 pt-5 mt-1 w-full">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block pl-0.5">
+                    Assigned Risk Backers
+                  </span>
+                  {application?.guarantors &&
+                  application.guarantors.length > 0 ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      {application.guarantors.map((g, i) => (
+                        <div
+                          key={i}
+                          className="border border-slate-200/70 p-4 rounded-2xl flex items-center justify-between bg-white hover:border-slate-300 transition-all shadow-3xs"
+                        >
+                          <div className="space-y-1 min-w-0">
+                            <p className="text-xs font-black text-slate-900 tracking-tight truncate">
+                              {g.guarantor_name}
+                            </p>
+                            <p className="text-[10px] text-slate-400 font-mono tracking-wide">
+                              {g.guarantor_mobile}
+                            </p>
+                            <p className="text-[11px] text-slate-500 font-medium pt-1">
+                              Coverage:{" "}
+                              <span className="font-bold text-slate-800 font-mono">
+                                KES{" "}
+                                {Number(
+                                  g.amount_guaranteed || 0,
+                                ).toLocaleString()}
+                              </span>
+                            </p>
+                          </div>
+                          <span className="text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-100 text-emerald-600 shrink-0 ml-2">
+                            {g.status || "Verified"}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="border border-dashed border-slate-200 p-6 rounded-2xl bg-slate-50/40 text-center select-none">
+                      <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">
+                        Waiting for Co-Signers
+                      </p>
+                      <p className="text-[11px] text-slate-400 font-medium mt-1">
+                        Guarantors are required for this loan type, but none
+                        have been added or linked to this file yet.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </ApplicationCard>
+
+          {/* CARD 5: PHYSICAL SECURITY & CHATTEL LEDGER */}
+          <ApplicationCard
+            title="Collateral & Security Assets"
+            icon={<ShieldAlert size={15} />}
+          >
+            {!application.requires_collateral ? (
+              /* 1. FULL CARD EXEMPTION EMPTY STATE (Centers perfectly with no other elements) */
+              <div className="col-span-full flex flex-col items-center justify-center py-12 text-center select-none">
+                <div className="size-12 bg-blue-50/60 border border-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-4 shadow-3xs">
+                  <ShieldCheck size={20} strokeWidth={2.5} />
+                </div>
+                <h4 className="text-xs font-black text-slate-700 uppercase tracking-wide">
+                  No Collateral Needed
+                </h4>
+                <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
+                  This loan setup doesn't require any physical assets, car
+                  logbooks, or land title deeds as backup security. It's
+                  completely unsecured!
+                </p>
+              </div>
+            ) : (
+              /* 2. STANDARD RUNTIME GRID LAYOUT (Only loads if security assets are required) */
+              <>
+                <MetricItem
+                  icon={<ShieldCheck />}
+                  label="Risk Guarantee Rule"
+                  value="Asset Pledge Required"
+                />
+                <MetricItem
+                  icon={<DollarSign />}
+                  label="Combined Evaluated Worth"
+                  value={`KES ${Number(application.collateral_value || 0).toLocaleString()}`}
+                  isCrypto
+                />
+
+                <div className="md:col-span-2 w-full space-y-4 mt-1">
+                  {/* Accepted asset types brief note */}
+                  <div className="space-y-1.5 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/50">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                      Accepted Protection Templates
                     </span>
                     <p className="text-xs text-slate-600 font-medium leading-relaxed">
                       {application.collateral_description ||
-                        "Any verifiable chattel asset."}
+                        "Verifiable logbooks, land registries, or title files."}
                     </p>
                   </div>
 
-                  <div className="space-y-3.5 border-t border-slate-100 pt-5">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
-                      Asset Valuation Details
+                  {/* Asset list tracking registry section */}
+                  <div className="space-y-3.5 border-t border-slate-100 pt-4">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block pl-0.5">
+                      Asset Registry Evaluations
                     </span>
+
                     {application?.chattels &&
                     application.chattels.length > 0 ? (
-                      <div className="space-y-3">
+                      <div className="space-y-2.5">
                         {application.chattels.map((c, i) => (
                           <div
                             key={i}
-                            className="border border-slate-200/60 p-4 rounded-xl bg-slate-50/50 grid grid-cols-1 sm:grid-cols-3 gap-4 items-center"
+                            className="border border-slate-200/70 p-4 rounded-2xl bg-white grid grid-cols-1 sm:grid-cols-3 gap-4 items-center shadow-3xs"
                           >
                             <div>
                               <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                                Asset Type
+                                Security Asset Class
                               </span>
-                              <p className="text-xs font-bold text-slate-800 tracking-tight mt-0.5">
+                              <p className="text-xs font-black text-slate-800 mt-0.5">
                                 {c.type}
                               </p>
                             </div>
                             <div>
                               <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                                Details
+                                Escrow Folder Memo
                               </span>
                               <p className="text-xs text-slate-500 font-medium mt-0.5 truncate">
                                 {c.description}
@@ -465,364 +632,377 @@ export default function LoanApplication() {
                             <div className="flex items-center justify-between sm:justify-end gap-4">
                               <div className="sm:text-right">
                                 <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">
-                                  Valuation
+                                  Certified Value
                                 </span>
-                                <p className="text-xs font-bold text-primary tracking-tight mt-0.5">
-                                  KES {c.calculated_value}
+                                <p className="text-xs font-mono font-black text-[#074073] mt-0.5">
+                                  KES{" "}
+                                  {Number(
+                                    c.calculated_value || 0,
+                                  ).toLocaleString()}
                                 </p>
                               </div>
-                              <span className="text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md bg-primary/5 border border-primary/10 text-primary">
-                                {c.validation}
+                              <span className="text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md bg-blue-50 border border-blue-100 text-blue-600">
+                                {c.validation || "Cleared"}
                               </span>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      /* REQUIRED BUT MISSING ASSETS INLINE EMPTY STATE */
-                      <div className="border border-dashed border-rose-200 p-6 rounded-xl bg-rose-50/20 text-center select-none">
+                      /* REQUIRED BUT ASSETS NOT LOGGED YET STATE */
+                      <div className="border border-dashed border-rose-200 p-6 rounded-2xl bg-rose-50/20 text-center select-none">
                         <p className="text-xs font-bold text-rose-700 uppercase tracking-wide">
-                          Assets Pending Listing
+                          Assets Pending Check
                         </p>
                         <p className="text-[11px] text-rose-600/80 font-medium mt-1">
                           Collateral security is mandatory for this loan, but no
-                          specific assets have been logged or valued yet.
+                          specific assets have been logged or evaluated by our
+                          team yet.
                         </p>
                       </div>
                     )}
                   </div>
                 </div>
-              )}
-            </div>
+              </>
+            )}
           </ApplicationCard>
 
-          {/* CONTAINER 6: UNDERWRITING DOSSIER & DOCUMENTS */}
+          {/* CARD 6: UNDERWRITING DOCUMENT COMPLIANCE VAULT */}
           <ApplicationCard
-            title="Attached Documents"
-            icon={<Paperclip size={16} />}
+            title="Compliance Files Vault"
+            icon={<Paperclip size={15} />}
           >
-            <div className="md:col-span-2 space-y-1 bg-slate-50 p-4 rounded-xl border border-slate-100 mb-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-                Document Requirements
-              </span>
-              <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                Please make sure all files are clearly uploaded and verified
-                before the application is passed on for final approval.
-              </p>
-            </div>
+            {!application?.documents || application.documents.length === 0 ? (
+              /* 1. FULL CARD EXEMPTION EMPTY STATE (Centers perfectly with nothing else on the card) */
+              <div className="col-span-full flex flex-col items-center justify-center py-12 text-center select-none">
+                <div className="size-12 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 mb-4 shadow-3xs">
+                  <Paperclip size={20} strokeWidth={2.5} />
+                </div>
+                <h4 className="text-xs font-black text-slate-700 uppercase tracking-wide">
+                  No Documents Attached
+                </h4>
+                <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
+                  This files folder is completely empty! No pay slips, bank
+                  statements, or identity verification files have been uploaded
+                  for this loan yet.
+                </p>
+              </div>
+            ) : (
+              /* 2. STANDARD RUNTIME GRID LAYOUT (Only loads if files exist) */
+              <>
+                <div className="md:col-span-2 space-y-1.5 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/50 mb-1">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                    Dossier Quality Assurance
+                  </span>
+                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                    Ensure KYC document logs, physical bank records, and company
+                    statements match structural forms before triggering a pool
+                    vote.
+                  </p>
+                </div>
 
-            {/* Document Attachment Rows with Empty Fallback */}
-            <div className="md:col-span-2 space-y-3 border-t border-slate-100 pt-5 mt-1">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
-                Files Registry
-              </span>
-              {application?.documents && application.documents.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  {application.documents.map((doc, i) => (
-                    <div
-                      key={i}
-                      className="border border-slate-200/60 p-3.5 rounded-xl flex items-center justify-between bg-white hover:border-primary/30 transition-all group shadow-2xs"
-                    >
-                      <div className="flex items-center gap-2.5 min-w-0">
-                        <div className="size-8 bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 rounded-lg shrink-0 group-hover:bg-primary/5 group-hover:text-primary transition-colors">
-                          <FileText size={14} />
-                        </div>
-                        <div className="min-w-0 space-y-0.5">
-                          <p className="text-xs font-bold text-slate-800 truncate leading-tight">
-                            {doc.name}
-                          </p>
-                          <p className="text-[10px] text-slate-400 font-medium truncate uppercase tracking-wide">
-                            {doc.type}
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        className="size-7 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-900 border border-slate-100 hover:bg-slate-50 cursor-pointer shrink-0 ml-2"
-                        title={`Download ${doc.name}`}
+                <div className="md:col-span-2 space-y-3 border-t border-slate-100 pt-4 w-full">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block pl-0.5">
+                    Files Matrix Registry
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {application.documents.map((doc, i) => (
+                      <div
+                        key={i}
+                        className="border border-slate-200/70 p-3 rounded-2xl flex items-center justify-between bg-white hover:border-slate-300 transition-all group shadow-3xs"
                       >
-                        <DownloadCloud size={13} />
-                      </button>
-                    </div>
-                  ))}
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="size-8.5 bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 rounded-xl group-hover:text-[#074073] group-hover:bg-[#074073]/5 group-hover:border-[#074073]/10 transition-colors shrink-0">
+                            <FileText size={14} />
+                          </div>
+                          <div className="min-w-0 space-y-0.5">
+                            <p className="text-xs font-bold text-slate-800 truncate leading-tight">
+                              {doc.name}
+                            </p>
+                            <p className="text-[10px] text-slate-400 font-mono tracking-wide uppercase">
+                              {doc.type || "PDF"}
+                            </p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          className="size-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-900 border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer shrink-0 ml-2 transition-all shadow-3xs active:scale-90"
+                          title={`Download ${doc.name}`}
+                        >
+                          <DownloadCloud size={13} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              ) : (
-                /* DOCUMENTS INLINE EMPTY STATE */
-                <div className="border border-dashed border-slate-200 p-6 rounded-xl bg-slate-50/40 text-center select-none">
-                  <p className="text-xs font-bold text-slate-600 uppercase tracking-wide">
-                    Files Folder Empty
-                  </p>
-                  <p className="text-[11px] text-slate-400 font-medium mt-1">
-                    No digital pay slips, security photos, or identity
-                    attachments have been linked to this portfolio.
-                  </p>
-                </div>
-              )}
-            </div>
+              </>
+            )}
           </ApplicationCard>
 
-          {/* CONTAINER 7: GOVERNANCE STAGE WORKFLOW */}
-          <ApplicationCard title="Review Progress" icon={<Layers size={16} />}>
-            {/* 1. STANDARD CORE METRICS */}
-            <MetricItem
-              icon={<Layers />}
-              label="Current Review Stage"
-              value={application.current_stage_label || "Initial Vetting"}
-            />
-            <MetricItem
-              icon={<Settings />}
-              label="Workflow Rule"
-              value="Joint Committee & Manager Sign-off"
-            />
-
-            {/* NEW ADDITION: SLA TURNAROUND TRACKER */}
-            <MetricItem
-              icon={<Clock />}
-              label="Time in This Stage"
-              value={
-                application.days_in_current_stage
-                  ? `${application.days_in_current_stage} Days Elapsed`
-                  : "Entered Today"
-              }
-              className={
-                application.is_sla_breached
-                  ? "text-amber-600"
-                  : "text-slate-700"
-              }
-            />
-            <MetricItem
-              icon={<UserCheck />}
-              label="Assigned Desk"
-              value={
-                application.assigned_officer_name || "Credit Committee Queue"
-              }
-            />
-
-            {/* 2. ENHANCED VOTING PROGRESS & INDIVIDUAL VOTER REGISTER */}
-            <div className="md:col-span-2 space-y-4 bg-slate-50/70 p-4 rounded-xl border border-slate-100 mt-1">
-              <div className="flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">
-                  Committee Voting Status
-                </span>
-                {application?.loan_product?.committee_approvals_required >
-                  0 && (
-                  <span className="text-[10px] font-bold text-primary bg-primary/5 border border-primary/10 px-2 py-0.5 rounded-md">
-                    {application?.loan_product?.committee_approvals_required}{" "}
-                    Required
-                  </span>
-                )}
+          {/* CARD 7: SYSTEM CLEARANCE GOVERNANCE COMPONENT */}
+          <ApplicationCard
+            title="Review & Governance Flow"
+            icon={<Layers size={15} />}
+          >
+            {!application?.loan_product?.committee_approvals_required ||
+            application?.loan_product?.committee_approvals_required === 0 ? (
+              /* 1. FULL CARD EXEMPTION EMPTY STATE (Centers perfectly with nothing else on the card) */
+              <div className="col-span-full flex flex-col items-center justify-center py-12 text-center select-none">
+                <div className="size-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center mb-4 shadow-md">
+                  <Cpu size={20} strokeWidth={2.5} className="animate-pulse" />
+                </div>
+                <h4 className="text-xs font-black text-slate-700 uppercase tracking-wide">
+                  Direct Route Processing
+                </h4>
+                <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
+                  This loan doesn't need formal board or committee voting loops!
+                  The system checks everything using automated validation rules
+                  for super-fast direct routing.
+                </p>
               </div>
+            ) : (
+              /* 2. STANDARD RUNTIME GRID LAYOUT (Only loads if committee votes are mandatory) */
+              <>
+                <MetricItem
+                  icon={<Layers />}
+                  label="Current Workflow Node"
+                  value={
+                    application.current_stage_label || "Initial Evaluation"
+                  }
+                />
+                <MetricItem
+                  icon={<Settings />}
+                  label="Active Routing Engine"
+                  value="Joint Committee System Check"
+                />
+                <MetricItem
+                  icon={<Clock />}
+                  label="Node Aging SLA"
+                  value={
+                    application.days_in_current_stage
+                      ? `${application.days_in_current_stage} Days Active`
+                      : "Entered Today"
+                  }
+                  className={
+                    application.is_sla_breached
+                      ? "text-amber-600 font-bold"
+                      : "text-slate-700"
+                  }
+                />
+                <MetricItem
+                  icon={<UserCheck />}
+                  label="Assigned Review Queue"
+                  value={
+                    application.assigned_officer_name ||
+                    "Committee Holding Pool"
+                  }
+                />
 
-              {application?.loan_product?.committee_approvals_required > 0 ? (
-                <div className="space-y-4">
-                  {/* Progress Bar Matrix */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs font-semibold text-slate-600">
-                      <span>Overall Voting Consensus</span>
-                      <span className="font-bold text-slate-900">
+                {/* Consensus Summary Progress Section */}
+                <div className="md:col-span-2 space-y-3.5 bg-slate-50/70 p-4 rounded-xl border border-slate-200/50 mt-1 w-full">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
+                      Consensus Summary
+                    </span>
+                    <span className="text-[9px] font-black text-[#074073] bg-[#074073]/5 border border-[#074073]/10 px-2 py-0.5 rounded">
+                      {application?.loan_product?.committee_approvals_required}{" "}
+                      Votes Required
+                    </span>
+                  </div>
+
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between text-xs font-bold text-slate-600">
+                      <span>Committee Progress Panel</span>
+                      <span className="font-mono text-slate-900">
                         {application?.committee_approvals_received || 0} /{" "}
                         {
                           application?.loan_product
                             ?.committee_approvals_required
                         }{" "}
-                        Votes Cast
+                        Signed
                       </span>
                     </div>
-                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden shadow-inner">
                       <div
-                        className="bg-primary h-full transition-all duration-300"
+                        className="bg-slate-900 h-full transition-all duration-500 rounded-full"
                         style={{
-                          width: `${((application?.committee_approvals_received || 0) / application?.loan_product?.committee_approvals_required) * 100}%`,
+                          width: `${Math.min(100, ((application?.committee_approvals_received || 0) / application?.loan_product?.committee_approvals_required) * 100)}%`,
                         }}
                       />
                     </div>
                   </div>
                 </div>
-              ) : (
-                /* COMMITTEE VOTES NOT REQUIRED INLINE STATE */
-                <div className="text-center py-2 select-none">
-                  <p className="text-xs font-semibold text-slate-500">
-                    Direct Route Processing
-                  </p>
-                  <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                    This specific loan type handles automated credit assignment
-                    and bypassing formal board voting workflows.
-                  </p>
-                </div>
-              )}
-            </div>
 
-            {/* NEW ADDITION: OPERATIONAL NEXT-STEP TARGET LOG */}
-            <div className="md:col-span-2 flex items-start gap-3 bg-blue-50/40 border border-blue-100/70 p-3.5 rounded-xl text-xs">
-              <HelpCircle size={15} className="text-blue-500 shrink-0 mt-0.5" />
-              <div className="space-y-0.5">
-                <span className="font-bold text-blue-950 uppercase tracking-wide text-[10px] block">
-                  Next Action Needed
-                </span>
-                <p className="text-blue-900/90 font-medium leading-relaxed">
-                  {application?.committee_approvals_received >=
-                  application?.loan_product?.committee_approvals_required
-                    ? "All votes are in! The underwriting file is ready for final authorization and release signature."
-                    : "Waiting for remaining committee members to review disclosures and cast balance verdicts."}
-                </p>
-              </div>
-            </div>
+                {/* Dynamic Next Steps Operational Callout Box */}
+                <div className="md:col-span-2 flex items-start gap-3 bg-blue-50/50 border border-blue-100/70 p-4 rounded-2xl text-xs w-full">
+                  <HelpCircle
+                    size={15}
+                    className="text-blue-500 shrink-0 mt-0.5"
+                  />
+                  <div className="space-y-0.5 flex-1">
+                    <span className="font-black text-blue-950 uppercase tracking-wide text-[9px] block">
+                      Operational Instructions
+                    </span>
+                    <p className="text-blue-900/90 font-medium leading-relaxed">
+                      {application?.committee_approvals_received >=
+                      application?.loan_product?.committee_approvals_required
+                        ? "All required team votes are in! This file is fully backed and ready for an administrator to clear the payout."
+                        : "We're still waiting for a few more committee reviews before the system can unlock funding release options."}
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
           </ApplicationCard>
 
-          {/* CONTAINER 8: CHRONOLOGICAL STAGE AUDIT LOGS (FULL-WIDTH EXPANDED CARD) */}
+          {/* CARD 8: SYSTEM OUTBOUND DISBURSEMENT DETAILED BALANCE (FULL-WIDTH STRIP) */}
           <ApplicationCard
-            title="Disbursement Details"
-            icon={<ArrowDownCircle size={16} className="text-slate-500" />}
-            className="col-span-full"
+            title="Outbound Vault Disbursement Parameters"
+            icon={<ArrowDownCircle size={15} className="text-slate-500" />}
           >
             {!application?.disbursement ? (
-              /* DISBURSEMENT DETAILS CARD-LEVEL EMPTY STATE */
               <div className="col-span-full border border-dashed border-slate-200 p-12 rounded-2xl bg-slate-50/40 text-center select-none w-full">
                 <div className="size-11 bg-white border border-slate-200/60 rounded-xl flex items-center justify-center text-slate-400 mx-auto mb-3.5 shadow-3xs">
-                  <ArrowDownCircle size={20} className="opacity-75" />
+                  <ArrowDownCircle size={18} className="opacity-75" />
                 </div>
-                <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wide">
-                  Payout Not Initiated
+                <h4 className="text-xs font-black text-slate-700 uppercase tracking-wide">
+                  Payout Profile Inactive
                 </h4>
-                <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-1.5 leading-relaxed">
-                  Financial routing cannot be prepared yet. This application is
-                  still moving through active evaluation steps.
+                <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-1 leading-relaxed">
+                  Clearance checks must conclude successfully before outbound
+                  money transfers can generate accounting routing codes.
                 </p>
               </div>
             ) : (
               <div className="col-span-full flex flex-col gap-5 w-full">
-                {/* 1. STATUS ALERT BANNER (Handles Failed State Warmly) */}
-                {/* 2. CORE FINANCIAL BREAKDOWN LOGIC */}
-                <div className="bg-slate-50/50 border border-slate-200/50 rounded-2xl p-4 space-y-3 w-full">
+                {/* ESCROW CALCULATIONS MATRICES TABLE */}
+                <div className="bg-slate-50/70 border border-slate-200/50 rounded-2xl p-4 space-y-3 w-full shadow-3xs">
                   <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
-                    Financial Breakdown
+                    Institutional Liquidation Deductions
                   </span>
-                  <div className="flex justify-between items-center text-xs text-slate-500 font-medium">
-                    <span>Approved Gross Amount</span>
-                    <span className="font-semibold text-slate-800">
+
+                  <div className="flex justify-between items-center text-xs text-slate-600 font-medium">
+                    <span>Approved Gross Asset Capital</span>
+                    <span className="font-bold text-slate-900 font-mono">
                       KES{" "}
                       {Number(
-                        application.disbursement.gross_amount,
+                        application.disbursement.gross_amount || 0,
                       ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
+
                   <div className="flex justify-between items-center text-xs text-slate-500 font-medium">
                     <span className="flex items-center gap-1">
-                      Processing Fee{" "}
+                      Administrative Fees{" "}
                       <span className="text-[10px] text-slate-400 font-normal">
-                        (Deducted)
+                        (Withheld)
                       </span>
                     </span>
-                    <span className="font-semibold text-rose-600">
+                    <span className="font-bold text-rose-600 font-mono">
                       - KES{" "}
                       {Number(
-                        application.disbursement.processing_fee_deducted,
+                        application.disbursement.processing_fee_deducted || 0,
                       ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center text-xs text-slate-500 font-medium pb-2 border-b border-slate-200/40">
+
+                  <div className="flex justify-between items-center text-xs text-slate-500 font-medium pb-2 border-b border-slate-200/50">
                     <span className="flex items-center gap-1">
-                      Insurance Cover{" "}
+                      Risk Protection Insurance{" "}
                       <span className="text-[10px] text-slate-400 font-normal">
-                        (Deducted)
+                        (Withheld)
                       </span>
                     </span>
-                    <span className="font-semibold text-rose-600">
+                    <span className="font-bold text-rose-600 font-mono">
                       - KES{" "}
                       {Number(
-                        application.disbursement.insurance_deducted,
+                        application.disbursement.insurance_deducted || 0,
                       ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center pt-1">
-                    <span className="text-xs font-bold text-slate-900">
-                      Final Net Payout
+
+                  <div className="flex justify-between items-center pt-1.5">
+                    <span className="text-xs font-black text-slate-900 uppercase tracking-wide">
+                      Released Net Value Transfer
                     </span>
-                    <span className="text-sm font-black text-emerald-600 font-mono">
+                    <span className="text-base font-black text-emerald-600 font-mono">
                       KES{" "}
                       {Number(
-                        application.disbursement.net_amount,
+                        application.disbursement.net_amount || 0,
                       ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                     </span>
                   </div>
                 </div>
 
-                {/* 3. DESTINATION & SYSTEM ATTRIBUTION TARGETS */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs w-full">
-                  {/* Left Column: Target Recipient Destination */}
-                  <div className="space-y-2.5">
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
-                      Recipient Destination
-                    </span>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-1.5 text-slate-700 font-semibold">
-                        {application.disbursement.method === "MPESA" ? (
-                          <Smartphone size={13} className="text-slate-400" />
-                        ) : (
-                          <Building size={13} className="text-slate-400" />
-                        )}
-                        <span className="uppercase font-bold text-[10px] bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">
-                          {application.disbursement.method}
-                        </span>
-                        <span className="font-mono text-xs">
-                          {application.disbursement.recipient_phone ??
-                            application.applicant_mobile}
-                        </span>
-                      </div>
-                      <p className="text-[11px] text-slate-400 font-medium pl-1">
-                        {application.disbursement.method !== "MPESA" &&
-                          application.disbursement.bank_name}
-                        {application.disbursement.method !== "MPESA" &&
-                          application.disbursement.bank_branch}{" "}
-                        <br />
-                        Acc:{" "}
-                        {application.disbursement.bank_account_number ??
-                          application.applicant_mobile}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Right Column: Dynamic System vs. Human Audit Attribution */}
-                  <div className="space-y-2.5 md:border-l md:border-slate-100 md:pl-4">
-                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
-                      Audit Attribution
-                    </span>
-                    <div className="space-y-1 text-slate-500 font-medium">
-                      <p className="flex items-center gap-1">
-                        Ref:{" "}
-                        <span className="font-mono font-bold text-slate-800 uppercase">
-                          {application.disbursement.transaction_ref ||
-                            "vdfmxgvbdfjzgv"}
-                        </span>
-                      </p>
-
-                      {/* DYNAMIC CHECK: If automated, show an engine pill badge, otherwise show the staff member name */}
-                      <div className="flex items-center gap-1.5 py-0.5">
-                        <span>Triggered By:</span>
-                        {application?.disbursement?.disbursed_by ===
-                        "system" ? (
-                          <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-blue-50 text-blue-600 border border-blue-100/60 rounded-md text-[9px] font-black uppercase tracking-wide">
-                            <Cpu size={10} className="shrink-0" />
-                            Automated Engine
+                {/* DYNAMIC HIDE RULE: Only show the lower audit panel if it is NOT processed by the automated system engine */}
+                {application?.disbursement?.disbursed_by !== "system" && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs w-full pt-1 border-t border-slate-100/80">
+                    {/* Target Destination Profile */}
+                    <div className="space-y-2.5">
+                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
+                        Target Receiver Destination
+                      </span>
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2 text-slate-800 font-bold">
+                          {application.disbursement.method === "MPESA" ? (
+                            <Smartphone size={13} className="text-slate-400" />
+                          ) : (
+                            <Building size={13} className="text-slate-400" />
+                          )}
+                          <span className="uppercase font-black text-[9px] bg-slate-900 text-white px-2 py-0.5 rounded-md font-mono tracking-wide">
+                            {application.disbursement.method || "LEDGER"}
                           </span>
-                        ) : (
-                          <span className="font-bold text-slate-700">
+                          <span className="font-mono text-xs text-slate-900">
+                            {application.disbursement.recipient_phone ||
+                              application.applicant_mobile}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-slate-400 font-medium pl-0.5 leading-relaxed">
+                          {application.disbursement.method !== "MPESA" &&
+                            `${application.disbursement.bank_name || "Equity Bank"} • ${application.disbursement.bank_branch || "Core Branch"}`}
+                          <span className="block font-mono text-slate-500 mt-0.5">
+                            Reference Registry:{" "}
+                            {application.disbursement.bank_account_number ||
+                              application.applicant_mobile}
+                          </span>
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Verification Audit Logs */}
+                    <div className="space-y-2.5 md:border-l md:border-slate-200/60 md:pl-5">
+                      <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
+                        Verification Integrity Log
+                      </span>
+                      <div className="space-y-1.5 text-slate-500 font-medium">
+                        <p className="flex items-center gap-1.5">
+                          System Hash Index:{" "}
+                          <span className="font-mono font-bold text-slate-900 uppercase tracking-tight">
+                            {application.disbursement.transaction_ref || "—"}
+                          </span>
+                        </p>
+
+                        <div className="flex items-center gap-1.5 py-0.5">
+                          <span>Trigger Event Origin:</span>
+                          <span className="font-bold text-slate-800 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md text-[11px]">
                             {application.disbursement.disbursed_by_name}
                           </span>
-                        )}
-                      </div>
+                        </div>
 
-                      <p className="text-[10px] text-slate-400">
-                        Processed:{" "}
-                        {new Date(
-                          application.disbursement.initiated_at,
-                        ).toLocaleString("en-KE", {
-                          dateStyle: "medium",
-                          timeStyle: "short",
-                        })}
-                      </p>
+                        <p className="text-[10px] text-slate-400 font-medium">
+                          Dispatched Date Timestamp:{" "}
+                          {new Date(
+                            application.disbursement.initiated_at ||
+                              "2026-06-20",
+                          ).toLocaleString("en-KE", {
+                            dateStyle: "medium",
+                            timeStyle: "short",
+                          })}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
           </ApplicationCard>
@@ -832,35 +1012,48 @@ export default function LoanApplication() {
   );
 }
 
-const ApplicationCard = ({ title, icon, children }) => (
-  <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] overflow-hidden w-full h-full">
-    <div className="px-5 py-3 bg-slate-50/60 border-b border-slate-100 flex items-center gap-2.5 select-none">
-      <div className="size-7 rounded-lg bg-white border border-slate-200/60 flex items-center justify-center text-slate-400 shadow-2xs">
+/* PREMIUM CONTAINER PLATFORM WRAPPER BLOCK WITH INHERENT GRID AUTO-FLOW OVERRIDES */
+const ApplicationCard = ({ title, icon, children, className = "" }) => (
+  <div
+    className={`bg-white border border-slate-200/70 shadow-2xs rounded-[24px] overflow-hidden w-full h-full hover:shadow-xs transition-shadow duration-300 ${className}`}
+  >
+    <div className="px-5 py-4 bg-slate-50/40 border-b border-slate-100 flex items-center gap-2.5 select-none">
+      <div className="size-7.5 rounded-xl bg-white border border-slate-200/70 flex items-center justify-center text-slate-400 shadow-3xs">
         {icon}
       </div>
-      <h3 className="text-xs font-bold uppercase tracking-wider text-slate-700">
+      <h3 className="text-xs font-black uppercase tracking-wider text-slate-700">
         {title}
       </h3>
     </div>
-    <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4">
+    <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
       {children}
     </div>
   </div>
 );
 
-const MetricItem = ({ icon, label, value, isCapitalized = false }) => (
+/* REFINED METRIC ATOM CELL WITH ENHANCED FONT SIZING TRACKING */
+const MetricItem = ({
+  icon,
+  label,
+  value,
+  isCapitalized = false,
+  isCrypto = false,
+  className = "",
+}) => (
   <div className="flex items-start gap-3 min-w-0">
-    <div className="size-8 rounded-xl bg-slate-50 border border-slate-200/40 flex items-center justify-center text-slate-400 shrink-0 shadow-2xs mt-0.5">
-      {React.cloneElement(icon, { size: 15 })}
+    <div className="size-8.5 rounded-xl bg-slate-50 border border-slate-200/40 flex items-center justify-center text-slate-400 shrink-0 shadow-3xs mt-0.5">
+      {React.cloneElement(icon, { size: 14, strokeWidth: 2.5 })}
     </div>
-    <div className="min-w-0 flex flex-col space-y-1.5">
-      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-normal">
+    <div className="min-w-0 flex flex-col space-y-1">
+      <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 leading-normal">
         {label}
       </span>
       <span
-        className={`text-sm font-medium text-slate-800 tracking-tight leading-normal truncate ${isCapitalized ? "capitalize" : ""}`}
+        className={`text-xs font-bold tracking-tight leading-normal truncate ${
+          isCrypto ? "font-mono text-slate-900 text-[13px]" : "text-slate-800"
+        } ${isCapitalized ? "capitalize" : ""} ${className}`}
       >
-        {value}
+        {value || "—"}
       </span>
     </div>
   </div>

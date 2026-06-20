@@ -40,6 +40,7 @@ import RecordManualPayment from "./pages/loans/all-loans/RecordManualPayment";
 import LoanStatements from "./pages/loans/all-loans/LoanStatements";
 import Permissions from "./pages/users/Permissions";
 import AuditTrail from "./pages/users/AuditTrail";
+import LoanApplicationApprovals from "./pages/loans/loan-applications/LoanApplicationApprovals";
 
 function App() {
   return (
@@ -52,6 +53,10 @@ function App() {
         <Route path="loan-product/:id" element={<LoanProduct />} />
 
         <Route path="loan-applications" element={<LoanApplications />} />
+        <Route
+          path="loan-applications-approvals"
+          element={<LoanApplicationApprovals />}
+        />
         <Route path="loan-applications/:id" element={<LoanApplication />} />
         <Route
           path="loan-applications/:id/disburse"

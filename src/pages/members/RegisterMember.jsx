@@ -1399,20 +1399,26 @@ const FileUploadField = ({ label, id, fileKey, formData, setFormData }) => {
       </label>
 
       <div className="relative group">
-        {/* Preview State - Set to h-40 */}
+        {/* Preview State - Fixed to ensure the entire ID document fits cleanly without data loss */}
         {previewUrl ? (
-          <div className="relative w-full h-40 rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner animate-in fade-in duration-200">
+          <div className="relative w-full h-40 rounded-2xl overflow-hidden border border-slate-200 flex items-center justify-center shadow-inner group/preview animate-in fade-in duration-200 select-none">
             <img
               src={previewUrl}
               alt="Uploaded Document Preview"
-              className="w-full h-full object-cover"
+              className="max-w-full max-h-full object-contain pointer-events-none p-1"
             />
+
+            {/* Subtle interactive hover overlay canvas */}
+            <div className="absolute inset-0 bg-slate-950/20 opacity-0 group-hover/preview:opacity-100 transition-opacity duration-150 pointer-events-none" />
+
+            {/* Clean interactive clear button matching layout defaults */}
             <button
               type="button"
               onClick={() => setFormData({ ...formData, [fileKey]: null })}
-              className="absolute top-3 right-3 p-1.5 bg-black/60 text-white rounded-full hover:bg-black/80 transition-colors shadow-sm cursor-pointer z-10"
+              className="absolute top-2.5 right-2.5 size-7 bg-slate-900/80 hover:bg-rose-600 border border-slate-700 text-white rounded-xl transition-all duration-150 hover:scale-105 flex items-center justify-center shadow-md cursor-pointer z-10"
+              title="Remove item asset"
             >
-              <X size={14} />
+              <X size={13} strokeWidth={3} />
             </button>
           </div>
         ) : (
@@ -1423,7 +1429,6 @@ const FileUploadField = ({ label, id, fileKey, formData, setFormData }) => {
                 size={18}
                 className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
               />
-              {/* Balanced vertical divider matching the taller layout */}
               <div className="w-[1.5px] h-10 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
             </div>
             <input

@@ -31,9 +31,9 @@ import {
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
-import { getApplication } from "../../../sdk/loan-applications/loan-applications";
-import { useToast } from "../../../contexts/ToastProvider";
-import ApplicationLoader from "../../../skeletons/ApplicationLoader";
+import { getApplication } from "../../sdk/loan-applications/loan-applications";
+import { useToast } from "../../contexts/ToastProvider";
+import ApplicationLoader from "../../skeletons/ApplicationLoader";
 
 export default function LoanApplication() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);

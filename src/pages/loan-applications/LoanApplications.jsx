@@ -14,12 +14,12 @@ import {
   Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useToast } from "../../../contexts/ToastProvider";
+import { useToast } from "../../contexts/ToastProvider";
 import { useQuery } from "react-query";
-import { getLoanApplications } from "../../../sdk/loan-applications/loan-applications";
-import Pagination from "../../../components/pagination/Pagination";
-import FilterApplications from "../../../components/filters/ApplicationFilter";
-import { useFormatAmount } from "../../../hooks/useFormatAmount";
+import { getLoanApplications } from "../../sdk/loan-applications/loan-applications";
+import Pagination from "../../components/pagination/Pagination";
+import FilterApplications from "../../components/filters/ApplicationFilter";
+import { useFormatAmount } from "../../hooks/useFormatAmount";
 
 export default function LoanApplications() {
   const [activeTab, setActiveTab] = useState("all");

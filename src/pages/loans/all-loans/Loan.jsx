@@ -158,7 +158,7 @@ export default function Loan() {
                     />
                     <MenuActionButton
                       icon={<Bell size={13} />}
-                      label="Send Reminder Notification"
+                      label="Send Notification"
                       onClick={() => {
                         handleSendNotification();
                         setIsActionMenuOpen(false);

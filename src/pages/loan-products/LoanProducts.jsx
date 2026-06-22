@@ -11,9 +11,9 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
-import { getLoanProducts } from "../../../sdk/loan-products/loan-products";
-import { useToast } from "../../../contexts/ToastProvider";
-import { useFormatAmount } from "../../../hooks/useFormatAmount";
+import { getLoanProducts } from "../../sdk/loan-products/loan-products";
+import { useToast } from "../../contexts/ToastProvider";
+import { useFormatAmount } from "../../hooks/useFormatAmount";
 
 export default function LoanProducts() {
   const [activeTab, setActiveTab] = useState("active");

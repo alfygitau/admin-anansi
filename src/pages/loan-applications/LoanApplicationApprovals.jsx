@@ -18,10 +18,10 @@ import {
   Eye,
 } from "lucide-react";
 import { useQuery } from "react-query";
-import { useToast } from "../../../contexts/ToastProvider";
-import { useFormatAmount } from "../../../hooks/useFormatAmount";
-import { getAllApprovals } from "../../../sdk/loan-applications/loan-applications";
-import Pagination from "../../../components/pagination/Pagination";
+import { useToast } from "../../contexts/ToastProvider";
+import { useFormatAmount } from "../../hooks/useFormatAmount";
+import { getAllApprovals } from "../../sdk/loan-applications/loan-applications";
+import Pagination from "../../components/pagination/Pagination";
 
 export default function LoanApplicationApprovals() {
   // 1. FILTER STATED MANAGEMENT

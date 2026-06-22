@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "react-query";
-import { useToast } from "../../../contexts/ToastProvider";
+import { useToast } from "../../contexts/ToastProvider";
 
 export default function NotifyApplicant() {
   const navigate = useNavigate();

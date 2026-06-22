@@ -7,10 +7,10 @@ import {
   AlertTriangle,
   Activity,
 } from "lucide-react";
-import { useToast } from "../../../contexts/ToastProvider";
+import { useToast } from "../../contexts/ToastProvider";
 import { useQuery } from "react-query";
-import { getGuarantors } from "../../../sdk/guarantors/guarantors";
-import Pagination from "../../../components/pagination/Pagination";
+import { getGuarantors } from "../../sdk/guarantors/guarantors";
+import Pagination from "../../components/pagination/Pagination";
 
 export default function Guarantors() {
   const [guarantors, setGuarantors] = useState([]);

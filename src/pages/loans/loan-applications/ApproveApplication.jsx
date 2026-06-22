@@ -12,13 +12,91 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { useToast } from "../../../contexts/ToastProvider";
+import { useQuery } from "react-query";
+import { getApplication } from "../../../sdk/loan-applications/loan-applications";
+import { useParams } from "react-router-dom";
+
+// FIXED: All rules now default to passed: false so committee members must perform validation manually
+const INITIAL_RULES = [
+  {
+    rule: "member_active",
+    label: "Active Membership Status",
+    description: "Member account is active and not frozen or suspended.",
+    passed: false,
+  },
+  {
+    rule: "kyc_level",
+    label: "KYC Verification Levels",
+    description: "KYC level ≥ Basic.",
+    actual: "Required: Level 1, Actual: Level 2",
+    passed: false,
+  },
+  {
+    rule: "membership_duration",
+    label: "Membership Longevity Rule",
+    description: "Member for at least 6 month(s).",
+    actual: "Required: 6 months | Actual: 15 months",
+    passed: false,
+  },
+  {
+    rule: "minimum_shares",
+    label: "Minimum Shares Status",
+    description: "Shares ≥ KES 10,000.00.",
+    actual: "Required: KES 10000.00 | Actual: KES 22001",
+    passed: false,
+  },
+  {
+    rule: "minimum_savings",
+    label: "Savings Threshold Rule",
+    description: "Savings ≥ KES 20,000.00.",
+    actual: "Required: KES 20000.00 | Actual: KES 250201",
+    passed: false,
+  },
+  {
+    rule: "no_defaulted_loans",
+    label: "Clean Repayment History",
+    description: "No active defaulted loans logged against profile.",
+    passed: false,
+  },
+  {
+    rule: "not_guarantor_on_defaulted",
+    label: "Guarantor Exposure Check",
+    description: "Not a guarantor on any defaulted loan profile.",
+    passed: false,
+  },
+  {
+    rule: "max_active_loans_of_type",
+    label: "Product Concurrent Caps",
+    description: "Open Development Loan applications/loans < 1.",
+    reason:
+      "Member already has 1 active Development Loan loan(s) and 0 in-flight application(s). Maximum is 1.",
+    actual: "Active loans: 1 | In-flight applications: 0 | Max: 1",
+    passed: false,
+  },
+  {
+    rule: "max_total_active_loans",
+    label: "Aggregate Active Loan Limits",
+    description: "Total active loans < 2.",
+    reason: "Member has 2 total active loan(s). Maximum is 2.",
+    actual: "Active loans: 2 | Max: 2",
+    passed: false,
+  },
+  {
+    rule: "blocked_concurrent_types",
+    label: "Incompatible Loan Conflicts",
+    description: "No blocked concurrent loan types (Development_loan).",
+    reason:
+      "Member has active Development_loan loan(s) which cannot coexist with Development Loan.",
+    passed: false,
+  },
+];
 
 const ApproveApplication = ({
   applicationData,
   onDecisionSubmit,
   onItemDetailView,
 }) => {
-  const { toast } = useToast();
+  const { showToast } = useToast();
   const app = applicationData || {
     id: "APP-2026-8942",
     applicant: "Jane S. Moraa",
@@ -27,18 +105,10 @@ const ApproveApplication = ({
     product: "Premium Development Loan",
     submissionDate: "2026-06-15",
   };
-
-  // Checklist State Management
-  const [checklist, setChecklist] = useState({
-    membershipActive: true,
-    minSharesMet: false,
-    savingsThreshold: false,
-    guarantorsVerified: false,
-    collateralAppraised: false,
-    docsAuthenticated: false,
-    repaymentHistoryClear: true,
-  });
-
+  const [application, setApplication] = useState({});
+  // Checklist state initialized from backend payload format
+  const [checklist, setChecklist] = useState(INITIAL_RULES);
+  const { id } = useParams();
   // Decision States
   const [decision, setDecision] = useState(null); // 'approve' | 'reject' | null
   const [recommendedAmount, setRecommendedAmount] = useState(
@@ -47,11 +117,15 @@ const ApproveApplication = ({
   const [approvalConditions, setApprovalConditions] = useState("");
   const [decisionReason, setDecisionReason] = useState("");
 
-  const toggleCheckItem = (key) => {
-    setChecklist((prev) => ({ ...prev, [key]: !prev[key] }));
+  const toggleCheckItem = (ruleKey) => {
+    setChecklist((prev) =>
+      prev.map((item) =>
+        item.rule === ruleKey ? { ...item, passed: !item.passed } : item,
+      ),
+    );
   };
 
-  const isAllVerified = Object.values(checklist).every(Boolean);
+  const isAllVerified = checklist.every((item) => item.passed);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -75,51 +149,63 @@ const ApproveApplication = ({
     }
   };
 
+  const membershipRules = checklist.filter((r) =>
+    ["member_active", "kyc_level", "membership_duration"].includes(r.rule),
+  );
+  const savingsRules = checklist.filter((r) =>
+    ["minimum_shares", "minimum_savings"].includes(r.rule),
+  );
+  const safetySecurityRules = checklist.filter((r) =>
+    ["no_defaulted_loans", "not_guarantor_on_defaulted"].includes(r.rule),
+  );
+  const operationalLimitRules = checklist.filter((r) =>
+    [
+      "max_active_loans_of_type",
+      "max_total_active_loans",
+      "blocked_concurrent_types",
+    ].includes(r.rule),
+  );
+
+  const { isFetching } = useQuery({
+    queryKey: ["get loan application", id],
+    queryFn: async () => {
+      const response = await getApplication(id);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setApplication(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Transactions processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
   return (
-    <div className="w-full space-y-8 antialiased text-slate-800">
+    <div className="w-full space-y-5 antialiased text-slate-800">
       {/* 1. APPLICATION OVERVIEW HEADER (Frameless) */}
-      <div className="flex flex-col lg:flex-row justify-between gap-4 border-b border-slate-200/60 pb-6 select-none">
+      <div className="flex flex-col lg:flex-row justify-between gap-4 border-b border-slate-200/60 pb-3 select-none">
         <div className="space-y-1">
           <h2 className="text-xl font-black text-slate-900 tracking-tight">
             Approve Loan Application
           </h2>
-          <p>{app.applicant}</p>
+          <p className="text-sm font-bold text-slate-700">{application.applicant_name}</p>
           <p className="text-xs text-slate-500">
-            {app.product} • Submitted on{" "}
-            {new Date(app.submissionDate).toLocaleDateString("en-KE", {
+            {application.loan_type} • Submitted on{" "}
+            {new Date(application.application_date).toLocaleDateString("en-KE", {
               dateStyle: "medium",
             })}
           </p>
-        </div>
-
-        <div className="flex items-center gap-6 bg-white border border-slate-200/60 rounded-2xl px-5 py-3 shadow-3xs">
-          <div>
-            <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400">
-              Requested Amount
-            </p>
-            <p className="text-xl font-mono font-black text-slate-900 mt-0.5">
-              <span className="text-xs font-bold text-slate-400 mr-0.5">
-                KES
-              </span>
-              {app.requestedAmount.toLocaleString()}
-            </p>
-          </div>
-          <div className="h-8 w-px bg-slate-100" />
-          <div>
-            <p className="text-[9px] uppercase font-bold tracking-widest text-slate-400">
-              Member Reference
-            </p>
-            <p className="text-sm font-bold text-slate-700 mt-1 font-mono">
-              {app.memberId}
-            </p>
-          </div>
         </div>
       </div>
 
       {/* SECTION LABEL */}
       <div className="space-y-1">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-          <ShieldCheck className="text-[#074073]" size={18} /> Requirements
           Checklist
         </h3>
         <p className="text-xs text-slate-500">
@@ -128,81 +214,84 @@ const ApproveApplication = ({
         </p>
       </div>
 
-      {/* 2. CHECKLIST TRACKS (Two-column grid layout) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch">
-        {/* BLOCK A: CORE ELIGIBILITY TIERS */}
+        {/* BLOCK A1: CORE MEMBERSHIP ELIGIBILITY */}
         <div className="bg-white rounded-2xl border border-slate-200/60 p-5 space-y-3 shadow-3xs">
           <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-2">
-            <UserCheck size={12} /> Membership & Savings
+            <UserCheck size={12} /> Membership Parameters
           </h4>
           <div className="space-y-2">
-            <CheckItem
-              label="Active Membership Status"
-              description="Confirm the member account is active and not frozen or suspended."
-              checked={checklist.membershipActive}
-              onChange={() => toggleCheckItem("membershipActive")}
-              onViewDetails={() => handleViewDetails("membershipActive")}
-            />
-            <CheckItem
-              label="Minimum Shares Status"
-              description="Verify the user holds the minimum required capital shares."
-              checked={checklist.minSharesMet}
-              onChange={() => toggleCheckItem("minSharesMet")}
-              onViewDetails={() => handleViewDetails("minSharesMet")}
-            />
-            <CheckItem
-              label="Savings Multiplier Rule"
-              description="Confirm total savings balance satisfies the request multiplier rule."
-              checked={checklist.savingsThreshold}
-              onChange={() => toggleCheckItem("savingsThreshold")}
-              onViewDetails={() => handleViewDetails("savingsThreshold")}
-            />
+            {membershipRules.map((item) => (
+              <CheckItem
+                key={item.rule}
+                label={item.label}
+                description={item.description}
+                actual={item.actual}
+                checked={item.passed}
+                onChange={() => toggleCheckItem(item.rule)}
+                onViewDetails={() => handleViewDetails(item.rule)}
+              />
+            ))}
           </div>
         </div>
 
-        {/* BLOCK B: SECURITY MATRIX */}
+        {/* BLOCK A2: SAVINGS & CAPITAL BALANCES */}
+        <div className="bg-white rounded-2xl border border-slate-200/60 p-5 space-y-3 shadow-3xs">
+          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-2">
+            <UserCheck size={12} /> Savings & Capital Shares
+          </h4>
+          <div className="space-y-2">
+            {savingsRules.map((item) => (
+              <CheckItem
+                key={item.rule}
+                label={item.label}
+                description={item.description}
+                actual={item.actual}
+                checked={item.passed}
+                onChange={() => toggleCheckItem(item.rule)}
+                onViewDetails={() => handleViewDetails(item.rule)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* BLOCK B: OPERATIONAL VERIFICATION MARGINS */}
+        <div className="bg-white rounded-2xl border border-slate-200/60 p-5 space-y-3 shadow-3xs">
+          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-2">
+            <FileCheck size={12} /> Verification & History Limits
+          </h4>
+          <div className="space-y-2">
+            {operationalLimitRules.map((item) => (
+              <CheckItem
+                key={item.rule}
+                label={item.label}
+                description={item.reason || item.description}
+                actual={item.actual}
+                checked={item.passed}
+                onChange={() => toggleCheckItem(item.rule)}
+                onViewDetails={() => handleViewDetails(item.rule)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* BLOCK C: GUARANTORS MATRIX */}
         <div className="bg-white rounded-2xl border border-slate-200/60 p-5 space-y-3 shadow-3xs">
           <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-2">
             <Users size={12} /> Guarantors & Security
           </h4>
           <div className="space-y-2">
-            <CheckItem
-              label="Guarantors Verification"
-              description="Check that all attached guarantors are enough, active, approved, and have signed off."
-              checked={checklist.guarantorsVerified}
-              onChange={() => toggleCheckItem("guarantorsVerified")}
-              onViewDetails={() => handleViewDetails("selectedGuarantor")}
-            />
-            <CheckItem
-              label="Collateral Valuation Check"
-              description="Ensure matching vehicles, titles, or fixed assets are validly evaluated."
-              checked={checklist.collateralAppraised}
-              onChange={() => toggleCheckItem("collateralAppraised")}
-              onViewDetails={() => handleViewDetails("collateralAppraised")}
-            />
-          </div>
-        </div>
-
-        {/* BLOCK C: CREDENTIALS & PERFORMANCE RECORDS (Spans full width, internally paired) */}
-        <div className="md:col-span-2 bg-white rounded-2xl border border-slate-200/60 p-5 space-y-3 shadow-3xs">
-          <h4 className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1.5 border-b border-slate-100 pb-2">
-            <FileCheck size={12} /> Verification & History
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <CheckItem
-              label="KYC & Legal Documents Framework"
-              description="Verify provided copies of ID card, tax pins, payslips, and bank statements."
-              checked={checklist.docsAuthenticated}
-              onChange={() => toggleCheckItem("docsAuthenticated")}
-              onViewDetails={() => handleViewDetails("docsAuthenticated")}
-            />
-            <CheckItem
-              label="Repayment History Check"
-              description="Confirm clean internal credit standing and a valid CRB clearance report."
-              checked={checklist.repaymentHistoryClear}
-              onChange={() => toggleCheckItem("repaymentHistoryClear")}
-              onViewDetails={() => handleViewDetails("repaymentHistoryClear")}
-            />
+            {safetySecurityRules.map((item) => (
+              <CheckItem
+                key={item.rule}
+                label={item.label}
+                description={item.description}
+                actual={item.actual}
+                checked={item.passed}
+                onChange={() => toggleCheckItem(item.rule)}
+                onViewDetails={() => handleViewDetails(item.rule)}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -371,10 +460,11 @@ const ApproveApplication = ({
   );
 };
 
-/* INTERNAL REUSABLE SUB-COMPONENT FOR MODERN LIST INTERACTION */
+/* INTERNAL REUSABLE SUB-COMPONENT */
 const CheckItem = ({
   label,
   description,
+  actual,
   checked,
   onChange,
   onViewDetails,
@@ -392,11 +482,16 @@ const CheckItem = ({
           {description}
         </p>
 
-        {/* SUB-DESCRIPTION INTERACTION LINK */}
+        {actual && (
+          <span className="text-[9px] font-mono font-bold bg-slate-50 border border-slate-100 text-slate-500 px-1.5 py-0.5 mt-1 rounded">
+            {actual}
+          </span>
+        )}
+
         <button
           type="button"
           onClick={(e) => {
-            e.stopPropagation(); // Stops parent container click from checking the item state
+            e.stopPropagation();
             onViewDetails?.();
           }}
           className="text-[10px] font-bold text-blue-600 hover:text-blue-700 hover:underline mt-1.5 transition-colors cursor-pointer"
@@ -405,16 +500,14 @@ const CheckItem = ({
         </button>
       </div>
 
-      <div className="pt-0.5">
-        <div
-          className={`size-5 rounded-md flex items-center justify-center border transition-all ${
-            checked
-              ? "bg-[#074073] border-[#074073] text-white"
-              : "border-slate-300 bg-slate-50 group-hover:border-slate-400"
-          }`}
-        >
-          {checked && <CheckCircle2 size={12} strokeWidth={3} />}
-        </div>
+      <div
+        className={`size-5 rounded-full border flex items-center justify-center transition-all mt-0.5 ${
+          checked
+            ? "bg-[#074073] border-transparent"
+            : "bg-slate-50 border-slate-300 group-hover:border-slate-400"
+        }`}
+      >
+        {checked && <div className="size-2 rounded-full bg-white" />}
       </div>
     </div>
   );

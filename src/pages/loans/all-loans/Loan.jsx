@@ -86,9 +86,12 @@ export default function Loan() {
       ) : (
         <div className="w-full space-y-5 antialiased text-slate-800">
           {/* EXECUTIVE CONTROL HEADER LAYER */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-2 select-none">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 select-none">
             <div className="flex items-center gap-4">
-              <button className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all shadow-3xs cursor-pointer">
+              <button
+                onClick={() => navigate(-1)}
+                className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all shadow-3xs cursor-pointer"
+              >
                 <ArrowLeft size={16} />
               </button>
               <div>
@@ -178,7 +181,7 @@ export default function Loan() {
           </div>
 
           {/* CORE INDUSTRIAL PARAMETERS VIEW GRID */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             {/* CONTAINER 1: DEBTOR IDENTITY & CHANNEL METADATA */}
             <LoanCard title="Borrower Details" icon={<User size={16} />}>
               <MetricItem
@@ -447,18 +450,17 @@ export default function Loan() {
               </div>
             </div>
 
-            {/* CONTAINER: DEFAULT PENALTIES & DELINQUENCY CONTROLS */}
             <LoanCard
               title="Penalties"
               icon={<ShieldAlert className="text-slate-400" size={16} />}
             >
-              {/* Dynamic Row Item Array Ledger */}
-              <div className="md:col-span-2 space-y-2.5 border-t border-slate-100 pt-5 mt-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
-                  Penalty History
-                </span>
+              {loan.penalties && loan.penalties.length > 0 ? (
+                /* RENDER ACTIVE HISTORY SECTION ONLY IF PENALTIES EXIST */
+                <div className="md:col-span-2 space-y-2.5 border-t border-slate-100 pt-5 mt-1 w-full">
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block pl-1">
+                    Penalty History
+                  </span>
 
-                {loan.penalties && loan.penalties.length > 0 ? (
                   <div className="space-y-2 max-h-[150px] overflow-y-auto pr-1">
                     {loan.penalties.map((p, i) => (
                       <div
@@ -479,22 +481,22 @@ export default function Loan() {
                       </div>
                     ))}
                   </div>
-                ) : (
-                  /* PERFECTLY CENTERED PREMIUM EMPTY STATE UI */
-                  <div className="flex flex-col items-center justify-center text-center py-8 bg-slate-50 border border-dashed border-slate-200 rounded-xl select-none">
-                    <div className="size-9 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-3xs mb-2.5">
-                      <ShieldCheck size={16} strokeWidth={2.5} />
-                    </div>
-                    <p className="text-xs font-bold text-slate-700">
-                      Account in Good Standing
-                    </p>
-                    <p className="text-[11px] text-slate-400 max-w-xs mx-auto mt-0.5 leading-relaxed">
-                      No penalties or late fees have been charged to this
-                      account.
-                    </p>
+                </div>
+              ) : (
+                /* FIXED: Stripped out the secondary wrapper and sub-headers. 
+       Mounts and centers cleanly as a direct child of the primary card shell. */
+                <div className="col-span-full flex flex-col items-center justify-center text-center w-full min-h-[220px] py-10 select-none animate-in fade-in duration-200">
+                  <div className="size-11 rounded-xl bg-emerald-50 border border-emerald-100 flex items-center justify-center text-emerald-600 shadow-3xs mb-3.5 shrink-0">
+                    <ShieldCheck size={18} strokeWidth={2.5} />
                   </div>
-                )}
-              </div>
+                  <h4 className="text-xs font-black text-slate-700 uppercase tracking-wide">
+                    Account in Good Standing
+                  </h4>
+                  <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-1 leading-relaxed">
+                    No penalties or late fees have been charged to this account.
+                  </p>
+                </div>
+              )}
             </LoanCard>
           </div>
         </div>

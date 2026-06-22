@@ -44,6 +44,12 @@ export default function Homelayer() {
       badge: "1,240",
     },
     {
+      id: "accounts",
+      label: "Portfolio Accounts",
+      path: "/admin/accounts",
+      icon: <Wallet size={18} />,
+    },
+    {
       id: "loans",
       label: "Loans",
       path: "/admin/loans",
@@ -101,12 +107,6 @@ export default function Homelayer() {
         { label: "Reports", path: "/admin/reports" },
         { label: "Analytics", path: "/admin/analytics" },
       ],
-    },
-    {
-      id: "accounts",
-      label: "Portfolio Accounts",
-      path: "/admin/accounts",
-      icon: <Wallet size={18} />,
     },
   ];
 
@@ -443,7 +443,7 @@ export default function Homelayer() {
                       Signed In As
                     </p>
                     <p className="text-xs font-bold text-slate-700 mt-0.5 truncate">
-                      a.mwangi@anansisacco.com
+                      {auth?.user?.email ?? auth?.user?.username}
                     </p>
                   </div>
 

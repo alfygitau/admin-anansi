@@ -45,3 +45,14 @@ export const getLoan = async (id) => {
     throw error?.response?.data || error;
   }
 };
+
+export const getMemberLoans = async (customerId) => {
+  try {
+    const response = await loanClient.get(
+      `/loans?loan_org_code=BA208&customer_id=${customerId}&format=full`,
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

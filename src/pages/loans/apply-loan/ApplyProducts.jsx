@@ -175,7 +175,7 @@ const ApplyProducts = ({ memberData, loanProducts, onSubmitApplication }) => {
             New Application Lifecycle
           </span>
           <h2 className="text-xl font-black text-slate-900 tracking-tight mt-1">
-            Apply Loan
+            Choose Loan Product
           </h2>
           <p>{member.name}</p>
           <p className="text-xs text-slate-500">

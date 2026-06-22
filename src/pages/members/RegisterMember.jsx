@@ -64,7 +64,7 @@ const REGISTRATION_STEPS = [
   },
   {
     id: "income",
-    label: "Add Income Income",
+    label: "Add Income Details",
     desc: "Financial parameters",
     icon: Briefcase,
   },
@@ -172,8 +172,6 @@ export default function AddMember() {
     { value: "Kisumu Central", label: "Kisumu Central" },
   ];
   const [employmentDropdownOpen, setEmploymentDropdownOpen] = useState(false);
-
-  // Structured occupational framework options
   const employmentOptions = [
     { value: "", label: "Select employment type..." },
     { value: "Salaried", label: "Salaried / Employed" },
@@ -192,7 +190,6 @@ export default function AddMember() {
     }
   };
 
-  // WORKFLOW CONTROLLERS
   const handleNext = () => {
     if (!isLastStep) {
       setCurrentStepIndex((prev) => prev + 1);

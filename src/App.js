@@ -28,7 +28,6 @@ import MemberLogin from "./pages/auth-member/MemberLogin";
 import VerifyMemberLogin from "./pages/auth-member/VerifyMemberLogin";
 import MemberCreateAccess from "./pages/auth-member/CreateAccess";
 import MemberAcceptTerms from "./pages/auth-member/AcceptTerms";
-import ApproveApplication from "./pages/loans/loan-applications/ApproveApplication";
 import ApplyProducts from "./pages/loans/apply-loan/ApplyProducts";
 import LoanEligibility from "./pages/loans/apply-loan/Eligibility";
 import LoanApplicationDetails from "./pages/loans/apply-loan/LoanApplicationDetails";
@@ -45,6 +44,7 @@ import AddMember from "./pages/members/RegisterMember";
 import AddGuarantor from "./pages/loans/apply-loan/AddGuarantor";
 import ChattelRegistry from "./pages/loans/apply-loan/Collaterals";
 import LoanDocuments from "./pages/loans/apply-loan/AddLoanDocuments";
+import ApproveApplication from "./pages/loans/loan-applications/ApproveApplication";
 
 function App() {
   return (

@@ -86,3 +86,30 @@ export const getApplication = async (id) => {
     throw error?.response?.data || error;
   }
 };
+
+export const approveApplication = async (
+  id,
+  userId,
+  name,
+  decision,
+  reason,
+  condition,
+  amount,
+) => {
+  try {
+    const response = await loanClient.post(
+      `/loan-applications/${id}/approvals/committee`,
+      {
+        approver_id: userId,
+        approver_name: name,
+        decision: decision,
+        reason: reason,
+        conditions: condition,
+        recommended_amount: amount,
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

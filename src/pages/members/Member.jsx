@@ -21,6 +21,7 @@ import {
   Coins,
   ChevronDown,
   UserCog,
+  FileSpreadsheet,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -28,14 +29,37 @@ import { getMember } from "../../sdk/members/members";
 import { useToast } from "../../contexts/ToastProvider";
 import { motion, AnimatePresence } from "framer-motion";
 import MemberLoader from "../../skeletons/MemberLoader";
+import { getMemberLoans } from "../../sdk/loans/loans";
 
-export default function MemberDetails({ onBack }) {
+// Helper utility to style loan status indicators dynamically
+const getLoanStatusStyles = (status) => {
+  const currentStatus = (status || "Active").toLowerCase();
+  switch (currentStatus) {
+    case "active":
+      return "bg-blue-50 text-blue-700 border-blue-100";
+    case "cleared":
+    case "fully_paid":
+      return "bg-emerald-50 text-emerald-700 border-emerald-100";
+    case "overdue":
+    case "defaulted":
+      return "bg-rose-50 text-rose-700 border-rose-100";
+    default:
+      return "bg-slate-50 text-slate-600 border-slate-200";
+  }
+};
+
+export default function MemberDetails() {
   const { id } = useParams();
   const [member, setMember] = useState({});
   const { showToast } = useToast();
   const [showImages, setShowImages] = useState(false);
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [memberLoans, setMemberLoans] = useState([]);
+
+  const onBack = () => {
+    navigate(-1);
+  };
 
   const toggleSuspension = () => {
     setMember((prev) => ({
@@ -53,6 +77,25 @@ export default function MemberDetails({ onBack }) {
     },
     onSuccess: (data) => {
       setMember(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Member processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { isFetching: fetchingLoans } = useQuery({
+    queryKey: ["get member loans", id],
+    queryFn: async () => {
+      const response = await getMemberLoans(id);
+      return response?.data?.data;
+    },
+    onSuccess: (data) => {
+      setMemberLoans(data?.loan_data);
     },
     onError: (error) => {
       showToast({
@@ -94,37 +137,25 @@ export default function MemberDetails({ onBack }) {
               </div>
             </div>
             <div className="relative">
-              {/* Dropdown Menu Trigger Button */}
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className="flex items-center gap-2 h-10 px-4 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 active:bg-slate-100/80 transition-all cursor-pointer shadow-2xs outline-none focus:border-slate-300 select-none"
               >
-                {/* Prefix Icon */}
-                <UserCog
-                  size={14}
-                  className="text-slate-400 group-hover:text-slate-500"
-                />
-
+                <UserCog size={14} className="text-slate-400" />
                 <span>Manage Member</span>
-
                 <ChevronDown
                   size={14}
                   className={`text-slate-400 transition-transform duration-200 ml-0.5 ${isMenuOpen ? "rotate-180" : ""}`}
                 />
               </button>
 
-              {/* Dropdown Menu Overlay Panel */}
               {isMenuOpen && (
                 <>
-                  {/* Invisible background layout layer to close menu when clicking outside */}
                   <div
                     className="fixed inset-0 z-30"
                     onClick={() => setIsMenuOpen(false)}
                   />
-
-                  {/* Menu Dropdown Actions List */}
                   <div className="absolute right-0 mt-2 w-52 bg-white border border-slate-200/80 rounded-xl shadow-lg py-1.5 z-40 origin-top-right animate-in fade-in slide-in-from-top-1 duration-150">
-                    {/* ACTION 1: APPLY A LOAN */}
                     <button
                       onClick={() => {
                         setIsMenuOpen(false);
@@ -135,11 +166,7 @@ export default function MemberDetails({ onBack }) {
                       <Coins size={14} className="text-[#074073]" />
                       <span>Apply for a Loan</span>
                     </button>
-
-                    {/* Decorative Divider Line */}
                     <div className="border-t border-slate-100 my-1 mx-2" />
-
-                    {/* ACTION 2: DYNAMIC SUSPENSION STATE CORES */}
                     <button
                       onClick={() => {
                         setIsMenuOpen(false);
@@ -266,7 +293,7 @@ export default function MemberDetails({ onBack }) {
               </div>
             </div>
 
-            {/* CARD C: FINANCIAL PROFILE (MOVED FROM MIDDLE LAYER SIDE PANEL) */}
+            {/* CARD C: FINANCIAL PROFILE */}
             <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4 h-full">
               <div className="w-full flex items-center justify-between">
                 <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
@@ -324,7 +351,7 @@ export default function MemberDetails({ onBack }) {
                       Income
                     </p>
                     <p className="text-slate-900 font-mono font-bold mt-0.5">
-                      KES {Number(member.income_range).toFixed(2)}
+                      KES {Number(member.income_range || 0).toFixed(2)}
                     </p>
                   </div>
                 </div>
@@ -343,13 +370,11 @@ export default function MemberDetails({ onBack }) {
                       <CreditCard size={14} /> Financial Accounts
                     </h3>
                   </div>
-                  <div className="border border-slate-100 rounded-xl overflow-hidden flex-1 bg-white">
-                    <table className="w-full text-left border-collapse table-auto text-xs font-medium">
+                  <div className="border border-slate-100 rounded-xl overflow-hidden flex-1 bg-white overflow-x-auto">
+                    <table className="w-full text-left border-collapse table-auto text-xs font-medium min-w-[500px]">
                       <thead>
                         <tr className="bg-slate-50/70 border-b border-slate-100 text-[10px] text-slate-400 uppercase font-bold tracking-wider">
-                          <th className="p-3.5 px-4">
-                            Account Portfolio Product
-                          </th>
+                          <th className="p-3.5 px-4">Account Portfolio</th>
                           <th className="p-3.5 px-4">Product Name</th>
                           <th className="p-3.5">Account Number</th>
                           <th className="p-3.5 text-right">Account Balance</th>
@@ -368,16 +393,16 @@ export default function MemberDetails({ onBack }) {
                             className="hover:bg-slate-50/50 transition-colors cursor-pointer"
                           >
                             <td className="p-3.5 px-4 font-bold text-slate-900">
-                              {acc.name}
+                              {`${member?.firstname || ""} ${member?.lastname || ""}`.trim()}
                             </td>
                             <td className="p-3.5 px-4 font-bold text-slate-900">
                               {acc.product?.name}
                             </td>
-                            <td className="p-3.5 cursor-pointer font-mono text-blue-500">
+                            <td className="p-3.5 font-mono text-blue-500">
                               {acc.account_number}
                             </td>
                             <td className="p-3.5 text-right font-bold text-slate-900">
-                              KES {Number(acc.balance).toFixed(2)}
+                              KES {Number(acc.balance || 0).toFixed(2)}
                             </td>
                             <td className="p-3.5 text-center">
                               <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100">
@@ -403,9 +428,7 @@ export default function MemberDetails({ onBack }) {
                 </div>
                 <div className="space-y-2.5 text-xs font-medium pt-1">
                   <div className="flex items-center justify-between border-b border-slate-50 pb-2">
-                    <span className="text-slate-500 flex items-center gap-1.5">
-                      Username
-                    </span>
+                    <span className="text-slate-500">Username</span>
                     <span className="font-mono font-bold text-slate-900">
                       {member.username}
                     </span>
@@ -454,9 +477,103 @@ export default function MemberDetails({ onBack }) {
               <div className="pt-3 mt-3 border-t border-slate-50 flex justify-between items-center text-[11px] text-slate-400">
                 <span>Last Active Login</span>
                 <span className="font-mono text-slate-700 font-semibold">
-                  {new Date(member.lastLoginAt).toLocaleTimeString("en-KE")}
+                  {member.lastLoginAt
+                    ? new Date(member.lastLoginAt).toLocaleTimeString("en-KE")
+                    : "—"}
                 </span>
               </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4">
+            <div className="w-full flex items-center justify-between">
+              <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
+                <FileSpreadsheet size={14} className="text-[#074073]" /> Member
+                Loans
+              </h3>
+            </div>
+
+            <div className="border border-slate-100 rounded-xl overflow-hidden bg-white overflow-x-auto">
+              {memberLoans.length === 0 ? (
+                <div className="p-8 text-center flex flex-col items-center justify-center space-y-2 select-none">
+                  <FileText size={18} className="text-slate-300" />
+                  <p className="text-xs font-bold text-slate-400 italic">
+                    This member has no registered loan accounts linked to their
+                    profile structure.
+                  </p>
+                </div>
+              ) : (
+                <table className="w-full text-left border-collapse table-auto text-xs font-medium">
+                  <thead>
+                    <tr className="bg-slate-50/70 border-b border-slate-100 text-[12px] text-slate-400 uppercase font-bold tracking-wider">
+                      <th className="p-3.5 px-4">Code</th>
+                      <th className="p-3.5">Loan Product</th>
+                      <th className="p-3.5 text-right">Principal Issued</th>
+                      <th className="p-3.5 text-right">Remaining Balance</th>
+                      <th className="p-3.5 text-center">Issue Date</th>
+                      <th className="p-3.5 text-center">Due Date</th>
+                      <th className="p-3.5 text-center">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {memberLoans.map((loan) => (
+                      <tr
+                        key={loan.id}
+                        onClick={() =>
+                          navigate(`/admin/all-loans/${loan.id}`)
+                        }
+                        className="hover:bg-slate-50/50 transition-colors cursor-pointer group"
+                      >
+                        <td className="p-3.5 px-4 font-bold text-blue-600 group-hover:underline">
+                          {loan.loan_code}
+                        </td>
+                        <td className="p-3.5">
+                          <span className="font-bold text-slate-900 block">
+                            {loan.loan_product?.product_name || "Flash Loan"}
+                          </span>
+                          <span className="text-[10px] text-slate-400 block mt-0.5 lowercase capitalize">
+                            Mode: {loan.loan_interval} •{" "}
+                            {loan.interest_method?.replace(/_/g, " ")}
+                          </span>
+                        </td>
+                        <td className="p-3.5 text-right font-bold text-slate-900">
+                          {loan.currency}{" "}
+                          {Number(loan.loan_amount || 0).toLocaleString(
+                            undefined,
+                            { minimumFractionDigits: 2 },
+                          )}
+                        </td>
+                        <td className="p-3.5 text-right font-black text-[#074073]">
+                          {loan.currency}{" "}
+                          {Number(loan.loan_Balance || 0).toLocaleString(
+                            undefined,
+                            { minimumFractionDigits: 2 },
+                          )}
+                        </td>
+                        <td className="p-3.5 text-center text-slate-500">
+                          {new Date(loan.loan_date).toLocaleDateString(
+                            "en-KE",
+                            { dateStyle: "medium" },
+                          )}
+                        </td>
+                        <td className="p-3.5 text-center text-slate-500">
+                          {new Date(loan.loan_due_date).toLocaleDateString(
+                            "en-KE",
+                            { dateStyle: "medium" },
+                          )}
+                        </td>
+                        <td className="p-3.5 text-center">
+                          <span
+                            className={`text-[9px] font-black uppercase tracking-wider px-2 py-0.5 rounded border ${getLoanStatusStyles(loan.loan_status)}`}
+                          >
+                            {loan.loan_status}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
 
@@ -472,12 +589,10 @@ export default function MemberDetails({ onBack }) {
                   <Edit size={14} className="text-slate-400 cursor-pointer" />
                 </div>
 
-                {/* FIXED: Removed md:grid-cols-2 so items take the full width of the panel */}
                 <div className="grid grid-cols-1 gap-3">
                   {member?.nextOfKins?.map((kin) => (
                     <div
                       key={kin.id}
-                      /* FIXED: Changed to md:grid-cols-4 so all 4 fields sit in a single straight line */
                       className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-slate-100 bg-slate-50/40 rounded-xl text-xs font-medium items-center"
                     >
                       <div>
@@ -524,7 +639,7 @@ export default function MemberDetails({ onBack }) {
               </div>
             </div>
 
-            {/* NEW CARD: LOAN GUARANTEES INFRASTRUCTURE PANEL (1 COLUMN) */}
+            {/* LOAN GUARANTEES INFRASTRUCTURE PANEL (1 COLUMN) */}
             <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 space-y-4 h-full">
               <div className="w-full flex items-center justify-between">
                 <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
@@ -534,7 +649,6 @@ export default function MemberDetails({ onBack }) {
               </div>
 
               <div className="space-y-4 pt-1 text-xs font-medium">
-                {/* 1. Total Money Pledged as Guarantees */}
                 <div className="flex items-start justify-between border-b border-slate-50 pb-3">
                   <div>
                     <p className="text-[10px] text-slate-400 uppercase tracking-wide">
@@ -553,7 +667,6 @@ export default function MemberDetails({ onBack }) {
                   </span>
                 </div>
 
-                {/* 2. Outstanding Active Risk Exposure */}
                 <div className="flex items-start justify-between border-b border-slate-50 pb-3">
                   <div>
                     <p className="text-[10px] text-slate-400 uppercase tracking-wide">
@@ -571,7 +684,6 @@ export default function MemberDetails({ onBack }) {
                   </span>
                 </div>
 
-                {/* 3. Available Leftover Guarantee Power */}
                 <div className="flex items-start justify-between pt-1">
                   <div>
                     <p className="text-[10px] text-slate-400 uppercase tracking-wide">
@@ -592,10 +704,8 @@ export default function MemberDetails({ onBack }) {
             </div>
           </div>
 
-          {/* 5. FOURTH ROW: LARGE KYC IMAGE GALLERY SYSTEM */}
           {/* 5. FOURTH ROW: EXPANDABLE KYC IMAGE GALLERY SYSTEM */}
           <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6">
-            {/* Action Header / Trigger */}
             <div
               className="w-full flex items-center justify-between cursor-pointer group select-none"
               onClick={() => setShowImages(!showImages)}
@@ -613,11 +723,7 @@ export default function MemberDetails({ onBack }) {
               </div>
 
               <button
-                className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all ${
-                  showImages
-                    ? "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                    : "bg-blue-50 text-[#074073] hover:bg-blue-100"
-                }`}
+                className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all ${showImages ? "bg-slate-100 text-slate-600 hover:bg-slate-200" : "bg-blue-50 text-[#074073] hover:bg-blue-100"}`}
               >
                 {showImages ? (
                   <>
@@ -631,7 +737,6 @@ export default function MemberDetails({ onBack }) {
               </button>
             </div>
 
-            {/* Expandable Animated Content */}
             <AnimatePresence>
               {showImages && (
                 <motion.div

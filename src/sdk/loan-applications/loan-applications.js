@@ -113,3 +113,67 @@ export const approveApplication = async (
     throw error?.response?.data || error;
   }
 };
+
+export const managerApproval = async (
+  id,
+  userId,
+  name,
+  decision,
+  reason,
+  condition,
+  amount,
+) => {
+  try {
+    const response = await loanClient.post(
+      `/loan-applications/${id}/approvals/manager`,
+      {
+        approver_id: userId,
+        approver_name: name,
+        decision: decision,
+        reason: reason,
+        conditions: condition,
+        recommended_amount: amount,
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const disburseApplication = async (
+  id,
+  userId,
+  method,
+  name,
+  disburseDate,
+  notes,
+  applicantMobile,
+  bank,
+  bankAccountNumber,
+  bankBranch,
+  reference,
+  disburseKey,
+) => {
+  try {
+    const response = await loanClient.post(
+      `/loan-applications/${id}/disburse`,
+      {
+        method: method,
+        disbursed_by: userId,
+        disbursed_by_name: name,
+        disbursement_date: disburseDate,
+        recipient_phone: applicantMobile,
+        bank_name: bank,
+        bank_account_number: bankAccountNumber,
+        bank_branch: bankBranch,
+        transaction_ref: reference,
+        notes: notes,
+        idempotency_key: disburseKey,
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

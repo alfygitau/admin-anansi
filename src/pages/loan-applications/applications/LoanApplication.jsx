@@ -31,9 +31,9 @@ import {
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
-import { getApplication } from "../../sdk/loan-applications/loan-applications";
-import { useToast } from "../../contexts/ToastProvider";
-import ApplicationLoader from "../../skeletons/ApplicationLoader";
+import { getApplication } from "../../../sdk/loan-applications/loan-applications";
+import { useToast } from "../../../contexts/ToastProvider";
+import ApplicationLoader from "../../../skeletons/ApplicationLoader";
 
 export default function LoanApplication() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -56,6 +56,10 @@ export default function LoanApplication() {
 
   const handleApprove = () => {
     navigate(`/admin/loan-applications/${application?.id}/approve`);
+  };
+
+  const handleManagerApproval = () => {
+    navigate(`/admin/loan-applications/${application?.id}/manager-approval`);
   };
 
   const handleDisburse = () => {
@@ -268,6 +272,24 @@ export default function LoanApplication() {
                           <Check size={13} strokeWidth={3} />
                         </div>
                         <span className="truncate">Approve & Sign Off</span>
+                      </button>
+                    )}
+
+                    {canApprove && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleManagerApproval();
+                          setIsMenuOpen(false);
+                        }}
+                        className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-black text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/60 transition-colors text-left cursor-pointer group"
+                      >
+                        <div className="size-6.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center transition-colors shadow-3xs shrink-0">
+                          <Check size={13} strokeWidth={3} />
+                        </div>
+                        <span className="truncate">
+                          Manager Approval & Sign Off
+                        </span>
                       </button>
                     )}
 

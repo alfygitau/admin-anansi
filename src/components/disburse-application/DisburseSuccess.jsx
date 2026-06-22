@@ -2,18 +2,16 @@ import React from "react";
 import { Check, ArrowRight, ArrowLeft, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function ApprovalSuccess({
+export default function DisburseSuccess({
   isOpen,
   onClose,
-  applicantName,
-  loanId,
-  finalAmount,
-  decision,
-  onNextReview,
-  viewApprovals
+  borrowerName,
+  transactionRef,
+  disbursedAmount,
+  payoutMethod = "MPESA",
+  onReturnToQueue,
+  viewLedger,
 }) {
-  const isApproved = decision === "approved";
-
   return (
     <AnimatePresence>
       {isOpen && (
@@ -22,11 +20,9 @@ export default function ApprovalSuccess({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={onClose} // FIXED: Triggers onClose when clicking outside
+            onClick={onClose}
             className="absolute inset-0 bg-slate-900/40"
           />
-
-          {/* CORE MODAL WINDOW */}
           <motion.div
             initial={{ scale: 0.92, opacity: 0, y: 8 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
@@ -37,7 +33,7 @@ export default function ApprovalSuccess({
             {/* Top Right Quick Dismiss Anchor */}
             <button
               type="button"
-              onClick={onClose} // FIXED: Triggers onClose when clicking 'X'
+              onClick={onClose}
               className="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-colors cursor-pointer"
             >
               <X size={16} />
@@ -53,11 +49,7 @@ export default function ApprovalSuccess({
                 damping: 15,
                 delay: 0.05,
               }}
-              className={`size-14 rounded-full border flex items-center justify-center mb-4.5 shadow-md shrink-0 ${
-                isApproved
-                  ? "bg-emerald-50 border-emerald-100 text-emerald-600 shadow-emerald-600/5"
-                  : "bg-rose-50 border-rose-100 text-rose-600 shadow-rose-600/5"
-              }`}
+              className="size-14 rounded-full border bg-emerald-50 border-emerald-100 text-emerald-600 shadow-md shadow-emerald-600/5 flex items-center justify-center mb-4.5 shrink-0"
             >
               <motion.div
                 initial={{ rotate: -45, scale: 0.5 }}
@@ -71,13 +63,11 @@ export default function ApprovalSuccess({
             {/* 2. CORE ACTION HEADER */}
             <div className="space-y-1 mb-6">
               <h2 className="text-base font-black text-slate-900 tracking-tight">
-                {isApproved
-                  ? "Decision Filed Successfully"
-                  : "Application Decline Logged"}
+                Funds Disbursed Successfully
               </h2>
               <p className="text-[11px] text-slate-400 font-medium max-w-xs mx-auto leading-relaxed">
-                The official appraisal review pass has been securely committed
-                to the core financial ledger registry.
+                The settlement has been successfully processed and logged
+                permanently onto the core sacco settlement ledger.
               </p>
             </div>
 
@@ -89,38 +79,28 @@ export default function ApprovalSuccess({
               className="w-full bg-slate-50/50 rounded-xl border border-slate-200/50 p-4 space-y-2.5 divide-y divide-slate-100 text-[11px] font-medium text-slate-600 mb-6"
             >
               <div className="flex justify-between items-center pb-0.5">
-                <span className="text-slate-400">Applicant Node</span>
-                <span className="text-slate-900 font-bold">
-                  {applicantName}
+                <span className="text-slate-400">Borrower Name</span>
+                <span className="text-slate-900 font-bold">{borrowerName}</span>
+              </div>
+              <div className="flex justify-between items-center pt-2.5">
+                <span className="text-slate-400">Transaction Reference</span>
+                <span className="font-mono font-bold text-slate-700 uppercase">
+                  {transactionRef || "—"}
                 </span>
               </div>
               <div className="flex justify-between items-center pt-2.5">
-                <span className="text-slate-400">
-                  Application Key Reference
-                </span>
-                <span className="font-mono font-bold text-slate-700">
-                  {loanId}
+                <span className="text-slate-400">Settlement Method</span>
+                <span className="text-[8px] font-black uppercase px-2 py-0.5 border rounded-md bg-blue-50 border-blue-100 text-blue-700">
+                  {payoutMethod}
                 </span>
               </div>
               <div className="flex justify-between items-center pt-2.5">
-                <span className="text-slate-400">Workflow Action Status</span>
-                <span
-                  className={`text-[8px] font-black uppercase px-2 py-0.5 border rounded-md ${
-                    isApproved
-                      ? "bg-emerald-50 border-emerald-100 text-emerald-700"
-                      : "bg-rose-50 border-rose-100 text-rose-700"
-                  }`}
-                >
-                  {isApproved ? "Approved & Authorized" : "Declined / Closed"}
-                </span>
-              </div>
-              <div className="flex justify-between items-center pt-2.5">
-                <span className="text-slate-400">Authorized Principal</span>
+                <span className="text-slate-400">Disbursed Value</span>
                 <span className="text-xs font-mono font-black text-slate-900">
                   <span className="text-[9px] font-bold text-slate-400 mr-0.5">
                     KES
                   </span>
-                  {finalAmount.toLocaleString(undefined, {
+                  {Number(disbursedAmount || 0).toLocaleString(undefined, {
                     minimumFractionDigits: 2,
                   })}
                 </span>
@@ -131,7 +111,7 @@ export default function ApprovalSuccess({
             <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full justify-center">
               <button
                 type="button"
-                onClick={onNextReview}
+                onClick={onReturnToQueue}
                 className="w-full sm:w-1/2 h-10 px-4 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-all cursor-pointer shadow-2xs"
               >
                 <ArrowLeft size={13} />
@@ -140,10 +120,10 @@ export default function ApprovalSuccess({
 
               <button
                 type="button"
-                onClick={viewApprovals}
+                onClick={viewLedger}
                 className="w-full sm:w-1/2 h-10 px-4 bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 transition-all cursor-pointer shadow-sm group"
               >
-                <span>View All Approvals</span>
+                <span>View Asset Ledger</span>
                 <ArrowRight
                   size={13}
                   className="group-hover:translate-x-0.5 transition-transform"

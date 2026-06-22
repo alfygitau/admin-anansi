@@ -6,8 +6,8 @@ import LoanProducts from "./pages/loan-products/LoanProducts";
 import AddLoanProduct from "./pages/loan-products/AddLoanProduct";
 import LoanProduct from "./pages/loan-products/LoanProduct";
 import EditLoanProduct from "./pages/loan-products/EditLoanProduct";
-import LoanApplications from "./pages/loan-applications/LoanApplications";
-import LoanApplication from "./pages/loan-applications/LoanApplication";
+import LoanApplications from "./pages/loan-applications/applications/LoanApplications";
+import LoanApplication from "./pages/loan-applications/applications/LoanApplication";
 import AllLoans from "./pages/loans/all-loans/AllLoans";
 import Loan from "./pages/loans/all-loans/Loan";
 import AllUsers from "./pages/users/AllUsers";
@@ -31,20 +31,21 @@ import MemberAcceptTerms from "./pages/auth-member/AcceptTerms";
 import ApplyProducts from "./pages/loans/apply-loan/ApplyProducts";
 import LoanEligibility from "./pages/loans/apply-loan/Eligibility";
 import LoanApplicationDetails from "./pages/loans/apply-loan/LoanApplicationDetails";
-import DisburseLoan from "./pages/loan-applications/DisburseApplication";
-import CancelApplication from "./pages/loan-applications/CancelApplication";
-import NotifyApplicant from "./pages/loan-applications/NotifyApplicant";
 import NotifyBorrower from "./pages/loans/all-loans/NotifyBorrower";
 import RecordManualPayment from "./pages/loans/all-loans/RecordManualPayment";
 import LoanStatements from "./pages/loans/all-loans/LoanStatements";
 import Permissions from "./pages/users/Permissions";
 import AuditTrail from "./pages/users/AuditTrail";
-import LoanApplicationApprovals from "./pages/loan-applications/LoanApplicationApprovals";
+import LoanApplicationApprovals from "./pages/application-approvals/LoanApplicationApprovals";
 import AddMember from "./pages/members/RegisterMember";
 import AddGuarantor from "./pages/loans/apply-loan/AddGuarantor";
 import ChattelRegistry from "./pages/loans/apply-loan/Collaterals";
 import LoanDocuments from "./pages/loans/apply-loan/AddLoanDocuments";
-import ApproveApplication from "./pages/loan-applications/ApproveApplication";
+import ApproveApplication from "./pages/loan-applications/approve-loan-application/ApproveApplication";
+import CancelApplication from "./pages/loan-applications/cancel-application/CancelApplication";
+import DisburseLoan from "./pages/loan-applications/disburse-application/DisburseApplication";
+import NotifyApplicant from "./pages/loan-applications/notify-applicant/NotifyApplicant";
+import ManagerApproval from "./pages/loan-applications/approve-loan-application/ManagerApproval";
 
 function App() {
   return (
@@ -115,6 +116,10 @@ function App() {
         <Route
           path="loan-applications/:id/approve"
           element={<ApproveApplication />}
+        />
+        <Route
+          path="loan-applications/:id/manager-approval"
+          element={<ManagerApproval />}
         />
 
         <Route path="apply-loan/products" element={<ApplyProducts />} />

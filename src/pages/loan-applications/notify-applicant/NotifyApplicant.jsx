@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation } from "react-query";
-import { useToast } from "../../contexts/ToastProvider";
+import { useToast } from "../../../contexts/ToastProvider";
 
 export default function NotifyApplicant() {
   const navigate = useNavigate();
@@ -218,13 +218,13 @@ export default function NotifyApplicant() {
               onChange={handleInputChange}
               required
             >
-              <option value="custom">Blank (Write Custom Message)</option>
-              <option value="reminder">Application Milestone Reminder</option>
-              <option value="approved">
-                Loan Approval Congratulatory Notice
+              <option value="custom">Select notification title</option>
+              <option value="Application Milestone">
+                Application Milestone
               </option>
-              <option value="missing_docs">
-                Missing Onboarding Documents Request
+              <option value="Loan Approval">Loan Approval</option>
+              <option value="Missing Application Information">
+                Missing Application Information
               </option>
             </FormSelect>
           </div>
@@ -256,7 +256,7 @@ export default function NotifyApplicant() {
               Notification Message Body <span className="text-rose-500">*</span>
             </label>
             <textarea
-              rows={5}
+              rows={8}
               name="message"
               value={formData.message}
               onChange={handleInputChange}

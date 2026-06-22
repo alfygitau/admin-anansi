@@ -12,15 +12,15 @@ import {
   ArrowUpRight,
   Coins,
 } from "lucide-react";
-import { useToast } from "../../contexts/ToastProvider";
+import { useToast } from "../../../contexts/ToastProvider";
 import { useQuery, useMutation } from "react-query";
 import {
   approveApplication,
   getApplication,
-} from "../../sdk/loan-applications/loan-applications";
+} from "../../../sdk/loan-applications/loan-applications";
 import { useNavigate, useParams } from "react-router-dom";
-import useAuth from "../../hooks/useAuth";
-import ApprovalSuccess from "../../components/approve-application/ApproveSuccess";
+import useAuth from "../../../hooks/useAuth";
+import ApprovalSuccess from "../../../components/approve-application/ApproveSuccess";
 
 const ApproveApplication = () => {
   const { showToast } = useToast();
@@ -128,6 +128,7 @@ const ApproveApplication = () => {
         finalAmount={recommendedAmount}
         decision={decision}
         onNextReview={() => navigate(`/admin/loan-applications/${id}`)}
+        viewApprovals={() => navigate(`/admin/loan-applications-approvals`)}
       />
       <div className="w-full space-y-5 antialiased text-slate-800">
         {/* 1. APPLICATION OVERVIEW HEADER (Frameless) */}

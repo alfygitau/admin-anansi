@@ -85,6 +85,7 @@ const AdminLogin = () => {
         username: formData?.memberId,
         metadata: {
           route: "/auth/login",
+          failureReason: error?.response?.data?.message || error.message,
         },
       });
       showToast({

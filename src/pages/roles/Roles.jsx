@@ -179,7 +179,7 @@ export default function RolesTable() {
         <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">
-              Authorization Roles & Permissions
+              Authorization Roles
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-1">
               Maintain cryptography claims mapping, audit platform permissions

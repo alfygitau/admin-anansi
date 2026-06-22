@@ -1,0 +1,898 @@
+{
+  "LOGIN": {
+    "category": "Authentication",
+    "sourceCode": "auth.login",
+    "page": "Login",
+    "tab": "Authentication",
+    "section": "Login",
+    "description": "Logged in"
+  },
+  "LOGIN_FAILED": {
+    "category": "Authentication",
+    "sourceCode": "auth.login",
+    "page": "Login",
+    "tab": "Authentication",
+    "section": "Login",
+    "description": "Failed login attempt"
+  },
+  "LOGOUT": {
+    "category": "Authentication",
+    "sourceCode": "auth.logout",
+    "page": "Logout",
+    "tab": "Authentication",
+    "section": "Logout",
+    "description": "Logged out"
+  },
+  "LOGOUT_FAILED": {
+    "category": "Authentication",
+    "sourceCode": "auth.logout",
+    "page": "Logout",
+    "tab": "Authentication",
+    "section": "Logout",
+    "description": "Failed logout attempt"
+  },
+  "BIOMETRIC_LOGIN": {
+    "category": "Authentication",
+    "sourceCode": "authentication.biometric_login",
+    "page": "Biometric Login",
+    "tab": "Authentication",
+    "section": "Biometric Login",
+    "description": "Logged in using biometrics"
+  },
+  "BIOMETRIC_LOGIN_FAILED": {
+    "category": "Authentication",
+    "sourceCode": "authentication.biometric_login",
+    "page": "Biometric Login",
+    "tab": "Authentication",
+    "section": "Biometric Login",
+    "description": "Failed biometric login attempt"
+  },
+  "CHANGE_PASSWORD": {
+    "category": "Authentication",
+    "sourceCode": "authentication.change_password",
+    "page": "Change Password",
+    "tab": "Authentication",
+    "section": "Change Password",
+    "description": "Changed password"
+  },
+  "CHANGE_PASSWORD_FAILED": {
+    "category": "Authentication",
+    "sourceCode": "authentication.change_password",
+    "page": "Change Password",
+    "tab": "Authentication",
+    "section": "Change Password",
+    "description": "Failed password change attempt"
+  },
+  "DISABLE_BIOMETRICS": {
+    "category": "Authentication",
+    "sourceCode": "authentication.disable_biometrics",
+    "page": "Disable Biometrics",
+    "tab": "Authentication",
+    "section": "Disable Biometrics",
+    "description": "Disabled biometric login"
+  },
+  "DISABLE_BIOMETRICS_FAILED": {
+    "category": "Authentication",
+    "sourceCode": "authentication.disable_biometrics",
+    "page": "Disable Biometrics",
+    "tab": "Authentication",
+    "section": "Disable Biometrics",
+    "description": "Failed to disable biometric login"
+  },
+  "ENABLE_BIOMETRICS": {
+    "category": "Authentication",
+    "sourceCode": "authentication.enable_biometrics",
+    "page": "Enable Biometrics",
+    "tab": "Authentication",
+    "section": "Enable Biometrics",
+    "description": "Enabled biometric login"
+  },
+  "ENABLE_BIOMETRICS_FAILED": {
+    "category": "Authentication",
+    "sourceCode": "authentication.enable_biometrics",
+    "page": "Enable Biometrics",
+    "tab": "Authentication",
+    "section": "Enable Biometrics",
+    "description": "Failed to enable biometric login"
+  },
+  "CREATE_ACCOUNT": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_account",
+    "page": "Create Account",
+    "tab": "Onboarding",
+    "section": "Create Account",
+    "description": "Created account"
+  },
+  "CREATE_ACCOUNT_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_account",
+    "page": "Create Account",
+    "tab": "Onboarding",
+    "section": "Create Account",
+    "description": "Failed account creation attempt"
+  },
+  "VERIFY_EMAIL": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_email",
+    "page": "Verify Email",
+    "tab": "Onboarding",
+    "section": "Verify Email",
+    "description": "Verified email"
+  },
+  "VERIFY_EMAIL_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_email",
+    "page": "Verify Email",
+    "tab": "Onboarding",
+    "section": "Verify Email",
+    "description": "Email verification failed"
+  },
+  "VERIFY_PHONE": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_phone",
+    "page": "Verify Phone",
+    "tab": "Onboarding",
+    "section": "Verify Phone",
+    "description": "Verified phone number"
+  },
+  "VERIFY_PHONE_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_phone",
+    "page": "Verify Phone",
+    "tab": "Onboarding",
+    "section": "Verify Phone",
+    "description": "Phone verification failed"
+  },
+  "VERIFY_IDENTITY": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_identity",
+    "page": "Verify Identity",
+    "tab": "Onboarding",
+    "section": "Verify Identity",
+    "description": "Verified identity document"
+  },
+  "VERIFY_IDENTITY_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_identity",
+    "page": "Verify Identity",
+    "tab": "Onboarding",
+    "section": "Verify Identity",
+    "description": "Identity verification check failed"
+  },
+  "VERIFY_OTP": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_otp",
+    "page": "Verify Otp",
+    "tab": "Onboarding",
+    "section": "Verify Otp",
+    "description": "Verified OTP"
+  },
+  "VERIFY_OTP_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_otp",
+    "page": "Verify Otp",
+    "tab": "Onboarding",
+    "section": "Verify Otp",
+    "description": "Invalid OTP verification verification submission"
+  },
+  "CREATE_PASSWORD": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_password",
+    "page": "Create Password",
+    "tab": "Onboarding",
+    "section": "Create Password",
+    "description": "Created password"
+  },
+  "CREATE_PASSWORD_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_password",
+    "page": "Create Password",
+    "tab": "Onboarding",
+    "section": "Create Password",
+    "description": "Failed to securely write onboarding password"
+  },
+  "VERIFY_SELFIE": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_selfie",
+    "page": "Verify Selfie",
+    "tab": "Onboarding",
+    "section": "Verify Selfie",
+    "description": "Verified selfie"
+  },
+  "VERIFY_SELFIE_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.verify_selfie",
+    "page": "Verify Selfie",
+    "tab": "Onboarding",
+    "section": "Verify Selfie",
+    "description": "Biometric selfie match confirmation failed"
+  },
+  "PROCEED_TO_ID_UPLOAD": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.proceed_to_id_upload",
+    "page": "Proceed To Id Upload",
+    "tab": "Onboarding",
+    "section": "Proceed To Id Upload",
+    "description": "Proceeded to ID upload"
+  },
+  "PROCEED_TO_ID_UPLOAD_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.proceed_to_id_upload",
+    "page": "Proceed To Id Upload",
+    "tab": "Onboarding",
+    "section": "Proceed To Id Upload",
+    "description": "Failed stepping forward onto ID file router link channel"
+  },
+  "PROCEED_TO_SELFIE_UPLOAD": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.proceed_to_selfie_upload",
+    "page": "Proceed To Selfie Upload",
+    "tab": "Onboarding",
+    "section": "Proceed To Selfie Upload",
+    "description": "Proceeded to selfie upload"
+  },
+  "PROCEED_TO_SELFIE_UPLOAD_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.proceed_to_selfie_upload",
+    "page": "Proceed To Selfie Upload",
+    "tab": "Onboarding",
+    "section": "Proceed To Selfie Upload",
+    "description": "Failed transition to portrait photo configuration step"
+  },
+  "UPLOAD_FRONT_OF_ID": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.upload_front_of_id",
+    "page": "Upload Front Of Id",
+    "tab": "Onboarding",
+    "section": "Upload Front Of Id",
+    "description": "Uploaded front of ID"
+  },
+  "UPLOAD_FRONT_OF_ID_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.upload_front_of_id",
+    "page": "Upload Front Of Id",
+    "tab": "Onboarding",
+    "section": "Upload Front Of Id",
+    "description": "Front ID document capture upload process aborted or corrupted"
+  },
+  "UPLOAD_BACK_OF_ID": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.upload_back_of_id",
+    "page": "Upload Back Of Id",
+    "tab": "Onboarding",
+    "section": "Upload Back Of Id",
+    "description": "Uploaded back of ID"
+  },
+  "UPLOAD_BACK_OF_ID_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.upload_back_of_id",
+    "page": "Upload Back Of Id",
+    "tab": "Onboarding",
+    "section": "Upload Back Of Id",
+    "description": "Back ID image asset stream storage handshake dropped"
+  },
+  "UPLOAD_PASSPORT": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.upload_passport",
+    "page": "Upload Passport",
+    "tab": "Onboarding",
+    "section": "Upload Passport",
+    "description": "Uploaded passport"
+  },
+  "UPLOAD_PASSPORT_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.upload_passport",
+    "page": "Upload Passport",
+    "tab": "Onboarding",
+    "section": "Upload Passport",
+    "description": "Passport graphic documentation parsing failed"
+  },
+  "UPLOAD_SELFIE": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.upload_selfie",
+    "page": "Upload Selfie",
+    "tab": "Onboarding",
+    "section": "Upload Selfie",
+    "description": "Uploaded selfie"
+  },
+  "UPLOAD_SELFIE_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.upload_selfie",
+    "page": "Upload Selfie",
+    "tab": "Onboarding",
+    "section": "Upload Selfie",
+    "description": "Selfie payload structure failed size constraints limits check"
+  },
+  "CREATE_ADDRESS": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_address",
+    "page": "Create Address",
+    "tab": "Onboarding",
+    "section": "Create Address",
+    "description": "Created address"
+  },
+  "CREATE_ADDRESS_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_address",
+    "page": "Create Address",
+    "tab": "Onboarding",
+    "section": "Create Address",
+    "description": "Geographic reference address persistence failure"
+  },
+  "CREATE_NEXT_OF_KIN": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_next_of_kin",
+    "page": "Create Next Of Kin",
+    "tab": "Onboarding",
+    "section": "Create Next Of Kin",
+    "description": "Created next of kin"
+  },
+  "CREATE_NEXT_OF_KIN_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_next_of_kin",
+    "page": "Create Next Of Kin",
+    "tab": "Onboarding",
+    "section": "Create Next Of Kin",
+    "description": "Failed assigning proxy validation records for emergency contact lines"
+  },
+  "CREATE_EMPLOYMENT_DETAILS": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_employment_details",
+    "page": "Create Employment Details",
+    "tab": "Onboarding",
+    "section": "Create Employment Details",
+    "description": "Created employment details"
+  },
+  "CREATE_EMPLOYMENT_DETAILS_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.create_employment_details",
+    "page": "Create Employment Details",
+    "tab": "Onboarding",
+    "section": "Create Employment Details",
+    "description": "Failed verification commitment logging on profile underwriting sector"
+  },
+  "ACCEPTED_TERMS": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.accepted_terms",
+    "page": "Accepted Terms",
+    "tab": "Onboarding",
+    "section": "Accepted Terms",
+    "description": "Accepted terms and conditions"
+  },
+  "ACCEPTED_TERMS_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.accepted_terms",
+    "page": "Accepted Terms",
+    "tab": "Onboarding",
+    "section": "Accepted Terms",
+    "description": "Agreement declaration checkpoint confirmation dropped out"
+  },
+  "PAID_MEMBERSHIP_FEE": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.paid_membership_fee",
+    "page": "Paid Membership Fee",
+    "tab": "Onboarding",
+    "section": "Paid Membership Fee",
+    "description": "Paid membership fee"
+  },
+  "PAID_MEMBERSHIP_FEE_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.paid_membership_fee",
+    "page": "Paid Membership Fee",
+    "tab": "Onboarding",
+    "section": "Paid Membership Fee",
+    "description": "Membership processing premium fee collection failed validation confirmation"
+  },
+  "COMPLETED_ONBOARDING": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.completed_onboarding",
+    "page": "Completed Onboarding",
+    "tab": "Onboarding",
+    "section": "Completed Onboarding",
+    "description": "Completed onboarding"
+  },
+  "COMPLETED_ONBOARDING_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.completed_onboarding",
+    "page": "Completed Onboarding",
+    "tab": "Onboarding",
+    "section": "Completed Onboarding",
+    "description": "Master confirmation signature handshake tracking initialization error"
+  },
+  "MANUAL_ENTRY": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.manual_id_entry",
+    "page": "Manual Id Entry",
+    "tab": "Onboarding",
+    "section": "Manual Id Entry",
+    "description": "Manual Id entry"
+  },
+  "MANUAL_ENTRY_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.manual_id_entry",
+    "page": "Manual Id Entry",
+    "tab": "Onboarding",
+    "section": "Manual Id Entry",
+    "description": "Failed writing direct input strings for documentation override keys"
+  },
+  "VIEW_DASHBOARD": {
+    "category": "Dashboard",
+    "sourceCode": "dashboard.view_dashboard",
+    "page": "View Dashboard",
+    "tab": "Dashboard",
+    "section": "View Dashboard",
+    "description": "Viewed dashboard"
+  },
+  "VIEW_DASHBOARD_FAILED": {
+    "category": "Dashboard",
+    "sourceCode": "dashboard.view_dashboard",
+    "page": "View Dashboard",
+    "tab": "Dashboard",
+    "section": "View Dashboard",
+    "description": "Failed pulling metric feeds for default analytics track panel"
+  },
+  "VIEW_LOANS_DASHBOARD": {
+    "category": "Dashboard",
+    "sourceCode": "dashboard.view_loans_dashboard",
+    "page": "View Loans Dashboard",
+    "tab": "Dashboard",
+    "section": "View Loans Dashboard",
+    "description": "Viewed loans dashboard"
+  },
+  "VIEW_LOANS_DASHBOARD_FAILED": {
+    "category": "Dashboard",
+    "sourceCode": "dashboard.view_loans_dashboard",
+    "page": "View Loans Dashboard",
+    "tab": "Dashboard",
+    "section": "View Loans Dashboard",
+    "description": "Credit amortization tables matrix component query failed"
+  },
+  "VIEW_SAVINGS_DASHBOARD": {
+    "category": "Dashboard",
+    "sourceCode": "dashboard.view_savings_dashboard",
+    "page": "View Savings Dashboard",
+    "tab": "Dashboard",
+    "section": "View Savings Dashboard",
+    "description": "Viewed savings dashboard"
+  },
+  "VIEW_SAVINGS_DASHBOARD_FAILED": {
+    "category": "Dashboard",
+    "sourceCode": "dashboard.view_savings_dashboard",
+    "page": "View Savings Dashboard",
+    "tab": "Dashboard",
+    "section": "View Savings Dashboard",
+    "description": "Deposit list graph components trace error"
+  },
+  "VIEW_SHARES_DASHBOARD": {
+    "category": "Dashboard",
+    "sourceCode": "dashboard.view_shares_dashboard",
+    "page": "View Shares Dashboard",
+    "tab": "Dashboard",
+    "section": "View Shares Dashboard",
+    "description": "Viewed shares dashboard"
+  },
+  "VIEW_SHARES_DASHBOARD_FAILED": {
+    "category": "Dashboard",
+    "sourceCode": "dashboard.view_shares_dashboard",
+    "page": "View Shares Dashboard",
+    "tab": "Dashboard",
+    "section": "View Shares Dashboard",
+    "description": "Core equity capital balance trace compilation aborted"
+  },
+  "VIEW_PROFILE": {
+    "category": "Profile",
+    "sourceCode": "profile.view_profile",
+    "page": "View Profile",
+    "tab": "Profile",
+    "section": "View Profile",
+    "description": "Viewed profile"
+  },
+  "VIEW_PROFILE_FAILED": {
+    "category": "Profile",
+    "sourceCode": "profile.view_profile",
+    "page": "View Profile",
+    "tab": "Profile",
+    "section": "View Profile",
+    "description": "Secure identity card details component presentation dropped out"
+  },
+  "UPDATE_PROFILE": {
+    "category": "Profile",
+    "sourceCode": "profile.update_profile",
+    "page": "Update Profile",
+    "tab": "Profile",
+    "section": "Update Profile",
+    "description": "Updated profile picture"
+  },
+  "UPDATE_PROFILE_FAILED": {
+    "category": "Profile",
+    "sourceCode": "profile.update_profile",
+    "page": "Update Profile",
+    "tab": "Profile",
+    "section": "Update Profile",
+    "description": "Profile picture storage bucket confirmation upload rejected"
+  },
+  "UPDATE_ADDRESS": {
+    "category": "MemberManagement",
+    "sourceCode": "membermanagement.update_address",
+    "page": "Update Address",
+    "tab": "MemberManagement",
+    "section": "Update Address",
+    "description": "Updated address"
+  },
+  "UPDATE_ADDRESS_FAILED": {
+    "category": "MemberManagement",
+    "sourceCode": "membermanagement.update_address",
+    "page": "Update Address",
+    "tab": "MemberManagement",
+    "section": "Update Address",
+    "description": "Failed updating address location registry metrics"
+  },
+  "UPDATE_NEXT_OF_KIN": {
+    "category": "MemberManagement",
+    "sourceCode": "membermanagement.update_next_of_kin",
+    "page": "Update Next Of Kin",
+    "tab": "MemberManagement",
+    "section": "Update Next Of Kin",
+    "description": "Updated next of kin"
+  },
+  "UPDATE_NEXT_OF_KIN_FAILED": {
+    "category": "MemberManagement",
+    "sourceCode": "membermanagement.update_next_of_kin",
+    "page": "Update Next Of Kin",
+    "tab": "MemberManagement",
+    "section": "Update Next Of Kin",
+    "description": "Emergency proxy record line revision failed"
+  },
+  "UPDATE_EMPLOYMENT_DETAILS": {
+    "category": "MemberManagement",
+    "sourceCode": "membermanagement.update_employment_details",
+    "page": "Update Employment Details",
+    "tab": "MemberManagement",
+    "section": "Update Employment Details",
+    "description": "Updated employment details"
+  },
+  "UPDATE_EMPLOYMENT_DETAILS_FAILED": {
+    "category": "MemberManagement",
+    "sourceCode": "membermanagement.update_employment_details",
+    "page": "Update Employment Details",
+    "tab": "MemberManagement",
+    "section": "Update Employment Details",
+    "description": "Underwriting metrics update failed validation checks"
+  },
+  "APPLY_LOAN": {
+    "category": "Loans",
+    "sourceCode": "loans.apply_loan",
+    "page": "Apply Loan",
+    "tab": "Loans",
+    "section": "Apply Loan",
+    "description": "Applied loan"
+  },
+  "APPLY_LOAN_FAILED": {
+    "category": "Loans",
+    "sourceCode": "loans.apply_loan",
+    "page": "Apply Loan",
+    "tab": "Loans",
+    "section": "Apply Loan",
+    "description": "Facility request creation error during validation pipeline run"
+  },
+  "ADD_LOAN_PAYMENT": {
+    "category": "Loans",
+    "sourceCode": "loans.add_loan_payment",
+    "page": "Add Loan Payment",
+    "tab": "Loans",
+    "section": "Add Loan Payment",
+    "description": "Added loan payment"
+  },
+  "ADD_LOAN_PAYMENT_FAILED": {
+    "category": "Loans",
+    "sourceCode": "loans.add_loan_payment",
+    "page": "Add Loan Payment",
+    "tab": "Loans",
+    "section": "Add Loan Payment",
+    "description": "Amortization recovery transaction log failed calculation matching"
+  },
+  "VIEW_LOAN_LIMIT": {
+    "category": "Loans",
+    "sourceCode": "loans.view_loan_limit",
+    "page": "View Loan Limit",
+    "tab": "Loans",
+    "section": "View Loan Limit",
+    "description": "Viewed loan limit"
+  },
+  "VIEW_LOAN_LIMIT_FAILED": {
+    "category": "Loans",
+    "sourceCode": "loans.view_loan_limit",
+    "page": "View Loan Limit",
+    "tab": "Loans",
+    "section": "View Loan Limit",
+    "description": "Risk profile borrowing credit score check timeout execution error"
+  },
+  "VIEW_LOAN_SCHEDULE": {
+    "category": "Loans",
+    "sourceCode": "guarantorship.view_loan_schedule",
+    "page": "View Loan Schedule",
+    "tab": "Loans",
+    "section": "View Loan Schedule",
+    "description": "Viewed loan schedule"
+  },
+  "VIEW_LOAN_SCHEDULE_FAILED": {
+    "category": "Loans",
+    "sourceCode": "guarantorship.view_loan_schedule",
+    "page": "View Loan Schedule",
+    "tab": "Loans",
+    "section": "View Loan Schedule",
+    "description": "Failed drawing recovery pipeline date blocks calendar framework"
+  },
+  "ADD_GUARANTORSHIP": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.add_guarantorship",
+    "page": "Add Guarantorship",
+    "tab": "Guarantorship",
+    "section": "Add Guarantorship",
+    "description": "Added guarantorship"
+  },
+  "ADD_GUARANTORSHIP_FAILED": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.add_guarantorship",
+    "page": "Add Guarantorship",
+    "tab": "Guarantorship",
+    "section": "Add Guarantorship",
+    "description": "Downstream liability collateral assignment attachment failed"
+  },
+  "ACCEPT_GUARANTORSHIP": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.accept_guarantorship",
+    "page": "Accept Guarantorship",
+    "tab": "Guarantorship",
+    "section": "Accept Guarantorship",
+    "description": "Accepted guarantorship request"
+  },
+  "ACCEPT_GUARANTORSHIP_FAILED": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.accept_guarantorship",
+    "page": "Accept Guarantorship",
+    "tab": "Guarantorship",
+    "section": "Accept Guarantorship",
+    "description": "Guarantorship approval commitment execution signature error"
+  },
+  "DECLINE_GUARANTORSHIP": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.decline_guarantorship",
+    "page": "Decline Guarantorship",
+    "tab": "Guarantorship",
+    "section": "Decline Guarantorship",
+    "description": "Declined guarantorship request"
+  },
+  "DECLINE_GUARANTORSHIP_FAILED": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.decline_guarantorship",
+    "page": "Decline Guarantorship",
+    "tab": "Guarantorship",
+    "section": "Decline Guarantorship",
+    "description": "Guarantorship decline route failed to dispatch drop signal"
+  },
+  "VIEW_GUARANTOR_REQUEST": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.view_guarantor_request",
+    "page": "View Guarantor Request",
+    "tab": "Guarantorship",
+    "section": "View Guarantor Request",
+    "description": "Viewed guarantor request"
+  },
+  "VIEW_GUARANTOR_REQUEST_FAILED": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.view_guarantor_request",
+    "page": "View Guarantor Request",
+    "tab": "Guarantorship",
+    "section": "View Guarantor Request",
+    "description": "Failed opening dynamic endorsement modal component block"
+  },
+  "VIEW_GUARANTORSHIP": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.view_guarantorship",
+    "page": "View Guarantorship",
+    "tab": "Guarantorship",
+    "section": "View Guarantorship",
+    "description": "View guarantorship"
+  },
+  "VIEW_GUARANTORSHIP_FAILED": {
+    "category": "Guarantorship",
+    "sourceCode": "guarantorship.view_guarantorship",
+    "page": "View Guarantorship",
+    "tab": "Guarantorship",
+    "section": "View Guarantorship",
+    "description": "Failed layout trace for linked active secondary liability list"
+  },
+  "QUICK_INVEST": {
+    "category": "QuickInvest",
+    "sourceCode": "quickinvest.quick_invest",
+    "page": "Quick Invest",
+    "tab": "QuickInvest",
+    "section": "Quick Invest",
+    "description": "Completed quick invest"
+  },
+  "QUICK_INVEST_FAILED": {
+    "category": "QuickInvest",
+    "sourceCode": "quickinvest.quick_invest",
+    "page": "Quick Invest",
+    "tab": "QuickInvest",
+    "section": "Quick Invest",
+    "description": "Asset allocation investment pipeline rejected execution trace"
+  },
+  "VIEW_SAVINGS_BALANCE": {
+    "category": "Savings",
+    "sourceCode": "savings.view_savings_balance",
+    "page": "View Savings Balance",
+    "tab": "Savings",
+    "section": "View Savings Balance",
+    "description": "Viewed savings balance"
+  },
+  "VIEW_SAVINGS_BALANCE_FAILED": {
+    "category": "Savings",
+    "sourceCode": "savings.view_savings_balance",
+    "page": "View Savings Balance",
+    "tab": "Savings",
+    "section": "View Savings Balance",
+    "description": "Core cash wallet metric rendering trace error"
+  },
+  "DEPOSIT_SAVINGS": {
+    "category": "Savings",
+    "sourceCode": "savings.deposit_savings",
+    "page": "Deposit Savings",
+    "tab": "Savings",
+    "section": "Deposit Savings",
+    "description": "Added savings deposit"
+  },
+  "DEPOSIT_SAVINGS_FAILED": {
+    "category": "Savings",
+    "sourceCode": "savings.deposit_savings",
+    "page": "Deposit Savings",
+    "tab": "Savings",
+    "section": "Deposit Savings",
+    "description": "Savings allocation funding mechanism tracking verification drop"
+  },
+  "VIEW_SHARES_BALANCE": {
+    "category": "Shares",
+    "sourceCode": "shares.view_shares_balance",
+    "page": "View Shares Balance",
+    "tab": "Shares",
+    "section": "View Shares Balance",
+    "description": "Viewed shares balance"
+  },
+  "VIEW_SHARES_BALANCE_FAILED": {
+    "category": "Shares",
+    "sourceCode": "shares.view_shares_balance",
+    "page": "View Shares Balance",
+    "tab": "Shares",
+    "section": "View Shares Balance",
+    "description": "Failed pulling non-withdrawable institutional equity metrics counters"
+  },
+  "PURCHASE_SHARES": {
+    "category": "Shares",
+    "sourceCode": "shares.purchase_shares",
+    "page": "Purchase Shares",
+    "tab": "Shares",
+    "section": "Purchase Shares",
+    "description": "Purchased shares"
+  },
+  "PURCHASE_SHARES_FAILED": {
+    "category": "Shares",
+    "sourceCode": "shares.purchase_shares",
+    "page": "Purchase Shares",
+    "tab": "Shares",
+    "section": "Purchase Shares",
+    "description": "Core capital contribution transaction request tracing failure"
+  },
+  "VIEW_TRANSACTION": {
+    "category": "Transactions",
+    "sourceCode": "transactions.view_transaction",
+    "page": "View Transaction",
+    "tab": "Transactions",
+    "section": "View Transaction",
+    "description": "Viewed transaction"
+  },
+  "VIEW_TRANSACTION_FAILED": {
+    "category": "Transactions",
+    "sourceCode": "transactions.view_transaction",
+    "page": "View Transaction",
+    "tab": "Transactions",
+    "section": "View Transaction",
+    "description": "Specific line receipt summary node layout presentation error"
+  },
+  "GENERATED_STATEMENT": {
+    "category": "Statements",
+    "sourceCode": "statements.generated_statement",
+    "page": "Generated Statement",
+    "tab": "Statements",
+    "section": "Generated Statement",
+    "description": "Generated statement"
+  },
+  "GENERATED_STATEMENT_FAILED": {
+    "category": "Statements",
+    "sourceCode": "statements.generated_statement",
+    "page": "Generated Statement",
+    "tab": "Statements",
+    "section": "Generated Statement",
+    "description": "Data engine print download file compilation asset block error"
+  },
+  "VIEW_STATEMENTS": {
+    "category": "Statements",
+    "sourceCode": "statements.view_statements",
+    "page": "View Statements",
+    "tab": "Statements",
+    "section": "View Statements",
+    "description": "Viewed statements"
+  },
+  "VIEW_STATEMENTS_FAILED": {
+    "category": "Statements",
+    "sourceCode": "statements.view_statements",
+    "page": "View Statements",
+    "tab": "Statements",
+    "section": "View Statements",
+    "description": "Historical balance record table generation query timeout"
+  },
+  "VIEW_NOTIFICATIONS": {
+    "category": "Notifications",
+    "sourceCode": "notifications.view_notifications",
+    "page": "View Notifications",
+    "tab": "Notifications",
+    "section": "View Notifications",
+    "description": "Viewed notifications"
+  },
+  "VIEW_NOTIFICATIONS_FAILED": {
+    "category": "Notifications",
+    "sourceCode": "notifications.view_notifications",
+    "page": "View Notifications",
+    "tab": "Notifications",
+    "section": "View Notifications",
+    "description": "System broadcast context list element stream handshake dropped"
+  },
+  "VIEW_PRODUCTS": {
+    "category": "ExploreProducts",
+    "sourceCode": "exploreproducts.view_products",
+    "page": "View Products",
+    "tab": "ExploreProducts",
+    "section": "View Products",
+    "description": "Viewed explore products"
+  },
+  "VIEW_PRODUCTS_FAILED": {
+    "category": "ExploreProducts",
+    "sourceCode": "exploreproducts.view_products",
+    "page": "View Products",
+    "tab": "ExploreProducts",
+    "section": "View Products",
+    "description": "Available portfolio catalog catalog configuration failed to parse"
+  },
+  "CAPTURE_SELFIE_WEBCAM": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.capture_selfie_webcam",
+    "page": "Capture Selfie Webcam",
+    "tab": "Onboarding",
+    "section": "Capture Selfie Webcam",
+    "description": "Captured selfie with a webcam"
+  },
+  "CAPTURE_SELFIE_WEBCAM_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.capture_selfie_webcam",
+    "page": "Capture Selfie Webcam",
+    "tab": "Onboarding",
+    "section": "Capture Selfie Webcam",
+    "description": "Local browser hardware video context streaming input access error"
+  },
+  "CAPTURE_SELFIE_MOBILE": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.capture_selfie_mobile",
+    "page": "Capture Selfie Mobile",
+    "tab": "Onboarding",
+    "section": "Capture Selfie Mobile",
+    "description": "Captured selfie with mobile browser"
+  },
+  "CAPTURE_SELFIE_MOBILE_FAILED": {
+    "category": "Onboarding",
+    "sourceCode": "onboarding.capture_selfie_mobile",
+    "page": "Capture Selfie Mobile",
+    "tab": "Onboarding",
+    "section": "Capture Selfie Mobile",
+    "description": "Mobile native camera media device file initialization failed"
+  }
+}

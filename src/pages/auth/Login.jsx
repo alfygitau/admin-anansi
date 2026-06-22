@@ -19,6 +19,7 @@ import { useMutation } from "react-query";
 import { useToast } from "../../contexts/ToastProvider";
 import { useStore } from "../../store/store";
 import useAuth from "../../hooks/useAuth";
+import { addTrail } from "../../sdk/trail/trail";
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -61,7 +62,13 @@ const AdminLogin = () => {
   const { mutate: loginMutate, isLoading } = useMutation({
     mutationKey: ["login"],
     mutationFn: () => loginUser(formData.memberId, formData.password),
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
+      await addTrail("LOGIN", {
+        username: formData?.memberId,
+        metadata: {
+          route: "/auth/login",
+        },
+      });
       setAuth(data?.data?.data);
       setRegisteredUser(data?.data?.data?.user);
       showToast({
@@ -73,7 +80,13 @@ const AdminLogin = () => {
       });
       handleLoginLogic(data?.data?.data);
     },
-    onError: (error) => {
+    onError: async (error) => {
+      await addTrail("LOGIN_FAILED", {
+        username: formData?.memberId,
+        metadata: {
+          route: "/auth/login",
+        },
+      });
       showToast({
         title: "Authentication Failed",
         type: "error",

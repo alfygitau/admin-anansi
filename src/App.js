@@ -123,7 +123,7 @@ function App() {
           element={<ManagerApproval />}
         />
 
-        <Route path="apply-loan/products" element={<ApplyProducts />} />
+        <Route path="apply-loan/products/:id" element={<ApplyProducts />} />
         <Route path="apply-loan/eligibility" element={<LoanEligibility />} />
         <Route
           path="apply-loan/loan-application-details"

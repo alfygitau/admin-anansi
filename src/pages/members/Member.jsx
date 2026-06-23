@@ -159,7 +159,7 @@ export default function MemberDetails() {
                     <button
                       onClick={() => {
                         setIsMenuOpen(false);
-                        alert("Redirecting to loan application form...");
+                        navigate(`/admin/apply-loan/products/${member?.id}`);
                       }}
                       className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 text-left transition-colors cursor-pointer"
                     >

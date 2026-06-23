@@ -1,5 +1,5 @@
 import { auditClient } from "../client/audit-trail-client";
-import auditRegistry from "./auditActions.json"; // 1. Import your single source of truth registry
+import auditRegistry from "../../static/actions.json"; // 1. Import your single source of truth registry
 
 const interpolateDescription = (template, data = {}) => {
   if (!template) return "";

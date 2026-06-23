@@ -519,9 +519,7 @@ export default function MemberDetails() {
                     {memberLoans.map((loan) => (
                       <tr
                         key={loan.id}
-                        onClick={() =>
-                          navigate(`/admin/all-loans/${loan.id}`)
-                        }
+                        onClick={() => navigate(`/admin/all-loans/${loan.id}`)}
                         className="hover:bg-slate-50/50 transition-colors cursor-pointer group"
                       >
                         <td className="p-3.5 px-4 font-bold text-blue-600 group-hover:underline">
@@ -759,17 +757,6 @@ export default function MemberDetails() {
                       <KYCDocLarge
                         label="System Onboarding Selfie Biometric"
                         url={member.selfie_image}
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 border-t border-slate-100 pt-5 mt-6">
-                      <KYCLabelOnlyFallback
-                        label="International Passport Secure Book"
-                        checked={member.passport_image}
-                      />
-                      <KYCLabelOnlyFallback
-                        label="National Regulatory Driving License Document"
-                        checked={member.driving_license_image}
                       />
                     </div>
                   </div>

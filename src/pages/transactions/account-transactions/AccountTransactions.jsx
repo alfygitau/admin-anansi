@@ -218,247 +218,252 @@ export default function AccountTransactions() {
 
         {/* HIGH-DENSITY LEDGER SYSTEM */}
         <div className="w-full bg-white rounded-3xl border border-slate-200/60 shadow-2xs overflow-hidden">
-          <table className="w-full text-left border-collapse font-sans table-auto">
-            <thead>
-              <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
-                <th className="py-4.5 px-6">Transaction Account & Debtor</th>
-                <th className="py-4.5 px-6">Product Framework</th>
-                <th className="py-4.5 px-6">Principal & Balances</th>
-                <th className="py-4.5 px-6">Charges & Net Value</th>
-                <th className="py-4.5 px-6">Lifecycle Status</th>
-                <th className="py-4.5 px-6 text-right pr-8">Actions</th>
-              </tr>
-            </thead>
-
-            <tbody className="divide-y divide-slate-100 text-xs tracking-tight">
-              {isFetching ? (
-                [...Array(10)].map((_, i) => (
-                  <tr
-                    key={`skeleton-${i}`}
-                    className="animate-pulse border-b border-slate-100"
-                  >
-                    {/* Col 1: Account Reference */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-2">
-                        <div className="h-3 w-20 bg-slate-200 rounded" />
-                        <div className="h-4 w-32 bg-slate-200 rounded" />
-                      </div>
-                    </td>
-
-                    {/* Col 2: Product Framework */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-2">
-                        <div className="h-4 w-24 bg-slate-200 rounded" />
-                        <div className="h-3 w-28 bg-slate-200 rounded" />
-                      </div>
-                    </td>
-
-                    {/* Col 3: Principal & Balances */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-2">
-                        <div className="h-3 w-20 bg-slate-200 rounded" />
-                        <div className="h-3 w-24 bg-slate-200 rounded" />
-                      </div>
-                    </td>
-
-                    {/* Col 4: Charges & Net */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-2">
-                        <div className="h-3 w-16 bg-slate-200 rounded" />
-                        <div className="h-3 w-20 bg-slate-200 rounded" />
-                      </div>
-                    </td>
-
-                    {/* Col 5: Lifecycle Status */}
-                    <td className="py-4 px-6">
-                      <div className="h-5 w-20 bg-slate-200 rounded-md" />
-                    </td>
-
-                    {/* Col 6: Actions Toolbar */}
-                    <td className="py-4 px-6 text-right pr-8">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <div className="size-8 rounded-xl bg-slate-200" />
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : transactions?.length > 0 ? (
-                transactions?.map((tx) => (
-                  <tr
-                    key={tx.id}
-                    className="group transition-colors hover:bg-slate-50/60"
-                  >
-                    {/* Col 1: Account Reference & Client Details */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
-                            {tx.public_id}
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
-                            Channel: {tx.platform.replace("_", " ")}
-                          </span>
-                        </div>
-                        <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors flex items-center gap-1.5">
-                          {tx.category === "credit" ? (
-                            <ArrowDownLeft
-                              size={14}
-                              className="text-success shrink-0"
-                            />
-                          ) : (
-                            <ArrowUpRight
-                              size={14}
-                              className="text-slate-400 shrink-0"
-                            />
-                          )}
-                          {tx.sender_name}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Col 2: Product Parameter Mapping */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1.5">
-                        <span className="font-semibold text-slate-800 text-sm tracking-tight">
-                          {tx.type}
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-slate-50 text-slate-500 rounded border border-slate-200/40 flex items-center gap-0.5">
-                            {tx.deposit_method}
-                          </span>
-                          <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wide">
-                            Ref: {tx.ref_number.substring(0, 8)}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Col 3: Financial Exposure Matrix */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1">
-                        <div className="text-[11px] text-slate-500 font-medium">
-                          <span
-                            className={`font-bold text-sm ${tx.category === "credit" ? "text-success" : "text-slate-900"}`}
-                          >
-                            KES {tx.category === "credit" ? "+" : "-"}
-                            {Number(tx.amount).toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="text-[11px] text-slate-500 font-medium">
-                          Running Bal:{" "}
-                          <span className="font-bold text-slate-700">
-                            {formatAmount(tx.running_balance)}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1">
-                        <div className="text-[11px] text-slate-500 font-medium">
-                          Fee:{" "}
-                          <span className="font-semibold text-slate-700">
-                            KES{" "}
-                            {Number(
-                              tx.transaction_charge || 0,
-                            ).toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
-                          Net: KES{" "}
-                          {Number(
-                            Number(tx.amount) -
-                              Number(tx.transaction_charge || 0),
-                          ).toLocaleString()}
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Col 5: Amortization Lifespan Stage */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1">
-                        <span
-                          className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${
-                            tx.status === "completed"
-                              ? "bg-success/5 border-success/10 text-success"
-                              : "bg-warning/5 border-warning/10 text-warning"
-                          }`}
-                        >
-                          <span
-                            className={`size-1 rounded-full ${tx.status === "completed" ? "bg-success" : "bg-warning"}`}
-                          />
-                          {tx.status}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-medium pt-0.5 flex items-center gap-1">
-                          <Calendar size={11} />
-                          {new Date(tx.createdAt).toLocaleDateString("en-KE", {
-                            dateStyle: "medium",
-                          })}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Col 6: Actions Toolbar */}
-                    <td className="py-4 px-6 text-right pr-8">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => setSelectedTxContext(tx)}
-                          className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
-                          title="Inspect Transaction Details"
-                        >
-                          <Eye size={14} />
-                        </button>
-                        {tx.document_url && tx.document_url !== "..." && (
-                          <a
-                            href={tx.document_url}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
-                            title="Download Ingestion Document Receipt"
-                          >
-                            <Download size={14} />
-                          </a>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td
-                    colSpan={6}
-                    className="py-36 px-6 text-center select-none"
-                  >
-                    <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-4">
-                      <div className="w-14 h-14 bg-slate-50 border border-slate-200/60 rounded-2xl flex items-center justify-center text-slate-400 shadow-3xs">
-                        <Search
-                          size={22}
-                          strokeWidth={1.75}
-                          className="text-slate-300"
-                        />
-                      </div>
-                      <div className="space-y-1">
-                        <h3 className="text-sm font-bold text-slate-900 tracking-tight">
-                          No transactions found
-                        </h3>
-                        <p className="text-xs text-slate-400 font-medium leading-relaxed">
-                          We couldn't find any transaction history or financial
-                          records matching your current search terms or advanced
-                          drawer filter parameters.
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        className="h-9 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
-                      >
-                        Clear Active Filters
-                      </button>
-                    </div>
-                  </td>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse table-auto">
+              <thead>
+                <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
+                  <th className="py-4.5 px-6">Transaction Account & Debtor</th>
+                  <th className="py-4.5 px-6">Product Framework</th>
+                  <th className="py-4.5 px-6">Principal & Balances</th>
+                  <th className="py-4.5 px-6">Charges & Net Value</th>
+                  <th className="py-4.5 px-6">Lifecycle Status</th>
+                  <th className="py-4.5 px-6 text-right pr-8">Actions</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody className="divide-y divide-slate-100 text-xs tracking-tight">
+                {isFetching ? (
+                  [...Array(10)].map((_, i) => (
+                    <tr
+                      key={`skeleton-${i}`}
+                      className="animate-pulse border-b border-slate-100"
+                    >
+                      {/* Col 1: Account Reference */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-2">
+                          <div className="h-3 w-20 bg-slate-200 rounded" />
+                          <div className="h-4 w-32 bg-slate-200 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Col 2: Product Framework */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-2">
+                          <div className="h-4 w-24 bg-slate-200 rounded" />
+                          <div className="h-3 w-28 bg-slate-200 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Col 3: Principal & Balances */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-2">
+                          <div className="h-3 w-20 bg-slate-200 rounded" />
+                          <div className="h-3 w-24 bg-slate-200 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Col 4: Charges & Net */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-2">
+                          <div className="h-3 w-16 bg-slate-200 rounded" />
+                          <div className="h-3 w-20 bg-slate-200 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Col 5: Lifecycle Status */}
+                      <td className="py-4 px-6">
+                        <div className="h-5 w-20 bg-slate-200 rounded-md" />
+                      </td>
+
+                      {/* Col 6: Actions Toolbar */}
+                      <td className="py-4 px-6 text-right pr-8">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <div className="size-8 rounded-xl bg-slate-200" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : transactions?.length > 0 ? (
+                  transactions?.map((tx) => (
+                    <tr
+                      key={tx.id}
+                      className="group transition-colors hover:bg-slate-50/60"
+                    >
+                      {/* Col 1: Account Reference & Client Details */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
+                              {tx.public_id}
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
+                              Channel: {tx.platform.replace("_", " ")}
+                            </span>
+                          </div>
+                          <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors flex items-center gap-1.5">
+                            {tx.category === "credit" ? (
+                              <ArrowDownLeft
+                                size={14}
+                                className="text-success shrink-0"
+                              />
+                            ) : (
+                              <ArrowUpRight
+                                size={14}
+                                className="text-slate-400 shrink-0"
+                              />
+                            )}
+                            {tx.sender_name}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Col 2: Product Parameter Mapping */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1.5">
+                          <span className="font-semibold text-slate-800 text-sm tracking-tight">
+                            {tx.type}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-slate-50 text-slate-500 rounded border border-slate-200/40 flex items-center gap-0.5">
+                              {tx.deposit_method}
+                            </span>
+                            <span className="text-[10px] font-mono text-slate-400 uppercase tracking-wide">
+                              Ref: {tx.ref_number.substring(0, 8)}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Col 3: Financial Exposure Matrix */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1">
+                          <div className="text-[11px] text-slate-500 font-medium">
+                            <span
+                              className={`font-bold text-sm ${tx.category === "credit" ? "text-success" : "text-slate-900"}`}
+                            >
+                              KES {tx.category === "credit" ? "+" : "-"}
+                              {Number(tx.amount).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="text-[11px] text-slate-500 font-medium">
+                            Running Bal:{" "}
+                            <span className="font-bold text-slate-700">
+                              {formatAmount(tx.running_balance)}
+                            </span>
+                          </div>
+                        </div>
+                      </td>
+
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1">
+                          <div className="text-[11px] text-slate-500 font-medium">
+                            Fee:{" "}
+                            <span className="font-semibold text-slate-700">
+                              KES{" "}
+                              {Number(
+                                tx.transaction_charge || 0,
+                              ).toLocaleString()}
+                            </span>
+                          </div>
+                          <div className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
+                            Net: KES{" "}
+                            {Number(
+                              Number(tx.amount) -
+                                Number(tx.transaction_charge || 0),
+                            ).toLocaleString()}
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Col 5: Amortization Lifespan Stage */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1">
+                          <span
+                            className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${
+                              tx.status === "completed"
+                                ? "bg-success/5 border-success/10 text-success"
+                                : "bg-warning/5 border-warning/10 text-warning"
+                            }`}
+                          >
+                            <span
+                              className={`size-1 rounded-full ${tx.status === "completed" ? "bg-success" : "bg-warning"}`}
+                            />
+                            {tx.status}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-medium pt-0.5 flex items-center gap-1">
+                            <Calendar size={11} />
+                            {new Date(tx.createdAt).toLocaleDateString(
+                              "en-KE",
+                              {
+                                dateStyle: "medium",
+                              },
+                            )}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Col 6: Actions Toolbar */}
+                      <td className="py-4 px-6 text-right pr-8">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => setSelectedTxContext(tx)}
+                            className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
+                            title="Inspect Transaction Details"
+                          >
+                            <Eye size={14} />
+                          </button>
+                          {tx.document_url && tx.document_url !== "..." && (
+                            <a
+                              href={tx.document_url}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
+                              title="Download Ingestion Document Receipt"
+                            >
+                              <Download size={14} />
+                            </a>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={6}
+                      className="py-36 px-6 text-center select-none"
+                    >
+                      <div className="flex flex-col items-center justify-center max-w-sm mx-auto space-y-4">
+                        <div className="w-14 h-14 bg-slate-50 border border-slate-200/60 rounded-2xl flex items-center justify-center text-slate-400 shadow-3xs">
+                          <Search
+                            size={22}
+                            strokeWidth={1.75}
+                            className="text-slate-300"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+                            No transactions found
+                          </h3>
+                          <p className="text-xs text-slate-400 font-medium leading-relaxed">
+                            We couldn't find any transaction history or
+                            financial records matching your current search terms
+                            or advanced drawer filter parameters.
+                          </p>
+                        </div>
+                        <button
+                          type="button"
+                          className="h-9 px-4 bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-bold rounded-xl transition-all active:scale-95 cursor-pointer"
+                        >
+                          Clear Active Filters
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
           <Pagination
             currentPage={filters?.page}
             totalItems={totalItems}

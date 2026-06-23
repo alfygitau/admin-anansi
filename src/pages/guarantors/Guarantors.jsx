@@ -231,170 +231,175 @@ export default function Guarantors() {
 
       {/* 2. TABLE */}
       <div className="bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
-        <table className="w-full text-left border-collapse table-auto">
-          <thead>
-            <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              <th className="py-4.5 px-6">Guarantor Details</th>
-              <th className="py-4.5 px-6">Contact Info</th>
-              <th className="py-4.5 px-6 text-right">Total Committed</th>
-              <th className="py-4.5 px-6 text-right">Available to Commit</th>
-              <th className="py-4.5 px-6 text-center">Loan Activity</th>
-              <th className="py-4.5 px-6 text-center">Release Status</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100 text-xs">
-            {isFetching ? (
-              Array(10)
-                .fill(0)
-                .map((_, index) => (
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse table-auto">
+            <thead>
+              <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                <th className="py-4.5 px-6">Guarantor Details</th>
+                <th className="py-4.5 px-6">Contact Info</th>
+                <th className="py-4.5 px-6 text-right">Total Committed</th>
+                <th className="py-4.5 px-6 text-right">Available to Commit</th>
+                <th className="py-4.5 px-6 text-center">Loan Activity</th>
+                <th className="py-4.5 px-6 text-center">Release Status</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-xs">
+              {isFetching ? (
+                Array(10)
+                  .fill(0)
+                  .map((_, index) => (
+                    <tr
+                      key={`guarantor-skeleton-${index}`}
+                      className="animate-pulse border-b border-slate-100 last:border-none"
+                    >
+                      {/* Col 1: Name and ID Profile Skeleton */}
+                      <td className="py-4 px-6">
+                        <div className="flex items-center gap-3">
+                          {/* Avatar Profile Mock */}
+                          <div className="h-8 w-8 rounded-full bg-slate-200 shrink-0" />
+                          <div className="space-y-1.5 flex-1">
+                            <div className="h-4 w-32 bg-slate-200 rounded" />
+                            <div className="h-3 w-16 bg-slate-100 rounded" />
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Col 2: New Contact Column Skeleton */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1.5">
+                          <div className="h-4 w-24 bg-slate-200 rounded" />
+                          <div className="h-3 w-32 bg-slate-100 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Col 3: Financial Amount Guaranteed Skeleton */}
+                      <td className="py-4 px-6 text-right">
+                        <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
+                      </td>
+
+                      {/* Col 4: Financial Available Backing Skeleton */}
+                      <td className="py-4 px-6 text-right">
+                        <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
+                      </td>
+
+                      {/* Col 5: Activity & Status Flags Skeleton */}
+                      <td className="py-4 px-6">
+                        <div className="flex items-center justify-center gap-3">
+                          <div className="h-3.5 w-12 bg-slate-100 rounded" />
+                          <div className="h-3.5 w-12 bg-slate-100 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Col 6: Progress Matrix Bar Skeleton */}
+                      <td className="py-4 px-6">
+                        <div className="flex items-center justify-center gap-2">
+                          {/* Progress bar line asset */}
+                          <div className="w-16 h-1.5 bg-slate-100 rounded-full" />
+                          {/* Progress numeric metric percentage label */}
+                          <div className="h-4 w-8 bg-slate-200 rounded" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+              ) : guarantors?.length > 0 ? (
+                guarantors?.map((g) => (
                   <tr
-                    key={`guarantor-skeleton-${index}`}
-                    className="animate-pulse border-b border-slate-100 last:border-none"
+                    key={g.guarantorId}
+                    className="group hover:bg-slate-50/60 transition-colors"
                   >
-                    {/* Col 1: Name and ID Profile Skeleton */}
+                    {/* Name and ID Column */}
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
-                        {/* Avatar Profile Mock */}
-                        <div className="h-8 w-8 rounded-full bg-slate-200 shrink-0" />
-                        <div className="space-y-1.5 flex-1">
-                          <div className="h-4 w-32 bg-slate-200 rounded" />
-                          <div className="h-3 w-16 bg-slate-100 rounded" />
+                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                          <User size={14} />
+                        </div>
+                        <div>
+                          <p className="font-bold text-slate-900">
+                            {g?.guarantor?.name}
+                          </p>
+                          <p className="text-[10px] text-slate-400 font-medium">
+                            ID: {g?.guarantor?.customer_id}
+                          </p>
                         </div>
                       </div>
                     </td>
 
-                    {/* Col 2: New Contact Column Skeleton */}
+                    {/* New Contact Column */}
                     <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1.5">
-                        <div className="h-4 w-24 bg-slate-200 rounded" />
-                        <div className="h-3 w-32 bg-slate-100 rounded" />
+                      <div className="flex flex-col gap-0.5">
+                        <p className="font-semibold text-slate-700">
+                          {g?.guarantor?.mobile || "N/A"}
+                        </p>
+                        <p className="text-[10px] text-slate-400">
+                          {g.guarantor?.email || "No email"}
+                        </p>
                       </div>
                     </td>
 
-                    {/* Col 3: Financial Amount Guaranteed Skeleton */}
-                    <td className="py-4 px-6 text-right">
-                      <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
+                    {/* Financial Columns */}
+                    <td className="py-4 px-6 text-right font-semibold text-slate-900">
+                      KES{" "}
+                      {g?.amount_guaranteed?.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </td>
+                    <td className="py-4 px-6 text-right font-semibold text-success">
+                      KES{" "}
+                      {g.guarantor?.available_backing.toLocaleString(
+                        undefined,
+                        {
+                          minimumFractionDigits: 2,
+                        },
+                      )}
                     </td>
 
-                    {/* Col 4: Financial Available Backing Skeleton */}
-                    <td className="py-4 px-6 text-right">
-                      <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
-                    </td>
-
-                    {/* Col 5: Activity & Status Flags Skeleton */}
-                    <td className="py-4 px-6">
-                      <div className="flex items-center justify-center gap-3">
-                        <div className="h-3.5 w-12 bg-slate-100 rounded" />
-                        <div className="h-3.5 w-12 bg-slate-100 rounded" />
+                    {/* Activity & Status */}
+                    <td className="py-4 px-6 text-center">
+                      <div className="flex justify-center gap-4 text-[10px]">
+                        <span className="text-emerald-600 font-bold">
+                          {g.activeLoans ?? 1} Active
+                        </span>
+                        <span className="text-slate-400">
+                          {g.pendingLoans ?? 1} Pending
+                        </span>
                       </div>
                     </td>
-
-                    {/* Col 6: Progress Matrix Bar Skeleton */}
-                    <td className="py-4 px-6">
+                    <td className="py-4 px-6 text-center">
                       <div className="flex items-center justify-center gap-2">
-                        {/* Progress bar line asset */}
-                        <div className="w-16 h-1.5 bg-slate-100 rounded-full" />
-                        {/* Progress numeric metric percentage label */}
-                        <div className="h-4 w-8 bg-slate-200 rounded" />
+                        <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                          <div
+                            className="h-full bg-primary"
+                            style={{ width: `${g.releasedPct ?? 0}%` }}
+                          />
+                        </div>
+                        <span className="font-bold text-slate-700">
+                          {g.releasedPct ?? 0}%
+                        </span>
                       </div>
                     </td>
                   </tr>
                 ))
-            ) : guarantors?.length > 0 ? (
-              guarantors?.map((g) => (
-                <tr
-                  key={g.guarantorId}
-                  className="group hover:bg-slate-50/60 transition-colors"
-                >
-                  {/* Name and ID Column */}
-                  <td className="py-4 px-6">
-                    <div className="flex items-center gap-3">
-                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                        <User size={14} />
+              ) : (
+                <tr>
+                  <td colSpan={6} className="py-8 px-6">
+                    <div className="w-full bg-white border border-dashed border-slate-200 rounded-[24px] p-12 text-center select-none">
+                      <div className="size-11 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 mx-auto mb-3.5 shadow-3xs">
+                        <User size={20} className="opacity-75" />
                       </div>
-                      <div>
-                        <p className="font-bold text-slate-900">
-                          {g?.guarantor?.name}
-                        </p>
-                        <p className="text-[10px] text-slate-400 font-medium">
-                          ID: {g?.guarantor?.customer_id}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-
-                  {/* New Contact Column */}
-                  <td className="py-4 px-6">
-                    <div className="flex flex-col gap-0.5">
-                      <p className="font-semibold text-slate-700">
-                        {g?.guarantor?.mobile || "N/A"}
+                      <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider">
+                        No Guarantors Attached
+                      </h3>
+                      <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-1.5 leading-relaxed">
+                        This application does not have any peer co-signers
+                        assigned to back the requested loan amount yet.
                       </p>
-                      <p className="text-[10px] text-slate-400">
-                        {g.guarantor?.email || "No email"}
-                      </p>
-                    </div>
-                  </td>
-
-                  {/* Financial Columns */}
-                  <td className="py-4 px-6 text-right font-semibold text-slate-900">
-                    KES{" "}
-                    {g?.amount_guaranteed?.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                    })}
-                  </td>
-                  <td className="py-4 px-6 text-right font-semibold text-success">
-                    KES{" "}
-                    {g.guarantor?.available_backing.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
-                    })}
-                  </td>
-
-                  {/* Activity & Status */}
-                  <td className="py-4 px-6 text-center">
-                    <div className="flex justify-center gap-4 text-[10px]">
-                      <span className="text-emerald-600 font-bold">
-                        {g.activeLoans ?? 1} Active
-                      </span>
-                      <span className="text-slate-400">
-                        {g.pendingLoans ?? 1} Pending
-                      </span>
-                    </div>
-                  </td>
-                  <td className="py-4 px-6 text-center">
-                    <div className="flex items-center justify-center gap-2">
-                      <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary"
-                          style={{ width: `${g.releasedPct ?? 0}%` }}
-                        />
-                      </div>
-                      <span className="font-bold text-slate-700">
-                        {g.releasedPct ?? 0}%
-                      </span>
                     </div>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <tr>
-                <td colSpan={6} className="py-8 px-6">
-                  <div className="w-full bg-white border border-dashed border-slate-200 rounded-[24px] p-12 text-center select-none">
-                    <div className="size-11 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 mx-auto mb-3.5 shadow-3xs">
-                      <User size={20} className="opacity-75" />
-                    </div>
-                    <h3 className="text-xs font-black text-slate-700 uppercase tracking-wider">
-                      No Guarantors Attached
-                    </h3>
-                    <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-1.5 leading-relaxed">
-                      This application does not have any peer co-signers
-                      assigned to back the requested loan amount yet.
-                    </p>
-                  </div>
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+              )}
+            </tbody>
+          </table>
+        </div>
         <Pagination
           currentPage={filters?.page}
           totalItems={totalItems}

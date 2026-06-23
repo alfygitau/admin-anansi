@@ -222,240 +222,242 @@ export default function LoanApplications() {
         {/* 4. HIGH-DENSITY Tabular UNDERWRITING LEDGER */}
 
         <div className="w-full bg-white rounded-3xl border border-slate-200/60 shadow-xs overflow-hidden">
-          <table className="w-full text-left border-collapse font-sans table-auto">
-            <thead>
-              <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
-                <th className="py-4.5 px-6">Application & Member</th>
-                <th className="py-4.5 px-6">Lending Product</th>
-                <th className="py-4.5 px-6">Amount & Period</th>
-                <th className="py-4.5 px-6">Interest Rate Parameters</th>
-                <th className="py-4.5 px-6">Current Application Stage</th>
-                <th className="py-4.5 px-6 text-right pr-8">Actions</th>
-              </tr>
-            </thead>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse table-auto">
+              <thead>
+                <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
+                  <th className="py-4.5 px-6">Application & Member</th>
+                  <th className="py-4.5 px-6">Lending Product</th>
+                  <th className="py-4.5 px-6">Amount & Period</th>
+                  <th className="py-4.5 px-6">Interest Rate Parameters</th>
+                  <th className="py-4.5 px-6">Current Application Stage</th>
+                  <th className="py-4.5 px-6 text-right pr-8">Actions</th>
+                </tr>
+              </thead>
 
-            <tbody className="divide-y divide-slate-100 text-xs tracking-tight">
-              {isFetching ? (
-                Array(10)
-                  .fill(0)
-                  .map((_, index) => (
+              <tbody className="divide-y divide-slate-100 text-xs tracking-tight">
+                {isFetching ? (
+                  Array(10)
+                    .fill(0)
+                    .map((_, index) => (
+                      <tr
+                        key={`app-skeleton-${index}`}
+                        className="animate-pulse border-b border-slate-100 last:border-none"
+                      >
+                        {/* Col 1: Identity Profile Skeleton */}
+                        <td className="py-4 px-6">
+                          <div className="flex flex-col space-y-2">
+                            <div className="flex items-center gap-2">
+                              {/* Application Number Badge */}
+                              <div className="h-4 w-16 bg-slate-200 rounded-md" />
+                              {/* Loan Code Subtext */}
+                              <div className="h-3.5 w-14 bg-slate-100 rounded" />
+                            </div>
+                            {/* Applicant Name */}
+                            <div className="h-4 w-36 bg-slate-200 rounded" />
+                            {/* Mobile Number Row */}
+                            <div className="h-3 w-24 bg-slate-100 rounded" />
+                          </div>
+                        </td>
+
+                        {/* Col 2: Target Framework Product Skeleton */}
+                        <td className="py-4 px-6">
+                          <div className="flex flex-col space-y-2">
+                            {/* Product Name */}
+                            <div className="h-4 w-32 bg-slate-200 rounded" />
+                            {/* Product Code Badge */}
+                            <div className="h-4 w-12 bg-slate-100 rounded" />
+                          </div>
+                        </td>
+
+                        {/* Col 3: Capital Request Metrics Skeleton */}
+                        <td className="py-4 px-6">
+                          <div className="flex flex-col space-y-2">
+                            {/* Applied Amount */}
+                            <div className="h-4 w-24 bg-slate-200 rounded" />
+                            {/* Tenor and Channel Row */}
+                            <div className="flex items-center gap-2">
+                              <div className="h-3 w-16 bg-slate-100 rounded" />
+                              <div className="size-1 bg-slate-200 rounded-full" />
+                              <div className="h-4 w-10 bg-slate-100 rounded-md" />
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Col 4: Interest Rate Parameters Skeleton */}
+                        <td className="py-4 px-6">
+                          <div className="flex flex-col space-y-2">
+                            {/* Interest Rate Percentage */}
+                            <div className="h-4 w-12 bg-slate-200 rounded" />
+                            {/* Interest Amortization Method */}
+                            <div className="h-3 w-20 bg-slate-100 rounded" />
+                          </div>
+                        </td>
+
+                        {/* Col 5: Current Stage & Status Label Skeleton */}
+                        <td className="py-4 px-6">
+                          <div className="flex flex-col space-y-2">
+                            {/* Current Stage Text */}
+                            <div className="h-4 w-28 bg-slate-200 rounded" />
+                            {/* Status Label Pill */}
+                            <div className="h-5 w-16 bg-slate-100 rounded-md" />
+                          </div>
+                        </td>
+
+                        {/* Col 6: Operational Admin Controls Skeleton */}
+                        <td className="py-4 px-6 text-right pr-8 align-middle">
+                          <div className="flex items-center justify-end gap-1.5">
+                            {/* View Details Action Button */}
+                            <div className="size-8 rounded-xl bg-slate-100 border border-slate-200/30 shrink-0" />
+                            {/* Disapprove Veto Action Button */}
+                            <div className="size-8 rounded-xl bg-slate-100 border border-slate-200/30 shrink-0" />
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                ) : loanApplications?.length > 0 ? (
+                  loanApplications?.map((app) => (
                     <tr
-                      key={`app-skeleton-${index}`}
-                      className="animate-pulse border-b border-slate-100 last:border-none"
+                      key={app.id}
+                      className="group transition-colors hover:bg-slate-50/60"
                     >
-                      {/* Col 1: Identity Profile Skeleton */}
+                      {/* Col 1: Identity Profile */}
                       <td className="py-4 px-6">
-                        <div className="flex flex-col space-y-2">
+                        <div className="flex flex-col space-y-1.5">
                           <div className="flex items-center gap-2">
-                            {/* Application Number Badge */}
-                            <div className="h-4 w-16 bg-slate-200 rounded-md" />
-                            {/* Loan Code Subtext */}
-                            <div className="h-3.5 w-14 bg-slate-100 rounded" />
+                            <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
+                              {app.application_number}
+                            </span>
+                            <span className="text-[10px] text-slate-400 font-medium tracking-wide">
+                              Code: {app.loan_code}
+                            </span>
                           </div>
-                          {/* Applicant Name */}
-                          <div className="h-4 w-36 bg-slate-200 rounded" />
-                          {/* Mobile Number Row */}
-                          <div className="h-3 w-24 bg-slate-100 rounded" />
+                          <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
+                            {app.applicant_name}
+                          </span>
+                          <span className="text-[11px] text-slate-400 font-normal flex items-center gap-1">
+                            <Smartphone size={11} /> {app.applicant_mobile}
+                          </span>
                         </div>
                       </td>
 
-                      {/* Col 2: Target Framework Product Skeleton */}
+                      {/* Col 2: Target Framework Product */}
                       <td className="py-4 px-6">
-                        <div className="flex flex-col space-y-2">
-                          {/* Product Name */}
-                          <div className="h-4 w-32 bg-slate-200 rounded" />
-                          {/* Product Code Badge */}
-                          <div className="h-4 w-12 bg-slate-100 rounded" />
-                        </div>
-                      </td>
-
-                      {/* Col 3: Capital Request Metrics Skeleton */}
-                      <td className="py-4 px-6">
-                        <div className="flex flex-col space-y-2">
-                          {/* Applied Amount */}
-                          <div className="h-4 w-24 bg-slate-200 rounded" />
-                          {/* Tenor and Channel Row */}
-                          <div className="flex items-center gap-2">
-                            <div className="h-3 w-16 bg-slate-100 rounded" />
-                            <div className="size-1 bg-slate-200 rounded-full" />
-                            <div className="h-4 w-10 bg-slate-100 rounded-md" />
+                        <div className="flex flex-col space-y-1.5">
+                          <span className="font-semibold text-slate-800 text-sm tracking-tight">
+                            {app.product.product_name}
+                          </span>
+                          <div className="flex items-center gap-1.5">
+                            <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-slate-50 text-slate-400 rounded border border-slate-200/40">
+                              {app.product.product_code}
+                            </span>
                           </div>
                         </div>
                       </td>
 
-                      {/* Col 4: Interest Rate Parameters Skeleton */}
+                      {/* Col 3: Capital Request Metrics */}
                       <td className="py-4 px-6">
-                        <div className="flex flex-col space-y-2">
-                          {/* Interest Rate Percentage */}
-                          <div className="h-4 w-12 bg-slate-200 rounded" />
-                          {/* Interest Amortization Method */}
-                          <div className="h-3 w-20 bg-slate-100 rounded" />
+                        <div className="flex flex-col space-y-1.5">
+                          <span className="font-semibold text-slate-900 text-sm tracking-tight">
+                            {formatAmount(app.applied_amount)}
+                          </span>
+                          <div className="text-[11px] text-slate-400 font-medium flex items-center gap-2">
+                            <span>
+                              Tenor:{" "}
+                              <span className="text-slate-700 font-semibold">
+                                {app.loan_period} Months
+                              </span>
+                            </span>
+                            <span className="size-1 bg-slate-200 rounded-full" />
+                            <span className="text-primary font-bold text-[9px] bg-primary/5 px-1.5 py-0.5 rounded uppercase">
+                              {app.loan_channel}
+                            </span>
+                          </div>
                         </div>
                       </td>
 
-                      {/* Col 5: Current Stage & Status Label Skeleton */}
+                      {/* NEW Col 4: Interest Rate Parameters */}
                       <td className="py-4 px-6">
-                        <div className="flex flex-col space-y-2">
-                          {/* Current Stage Text */}
-                          <div className="h-4 w-28 bg-slate-200 rounded" />
-                          {/* Status Label Pill */}
-                          <div className="h-5 w-16 bg-slate-100 rounded-md" />
+                        <div className="flex flex-col space-y-1">
+                          <span className="font-semibold text-slate-900 text-sm tracking-tight">
+                            {parseFloat(
+                              app?.product?.interest_rate ?? 2.0,
+                            )?.toFixed(1)}
+                            %{" "}
+                            <span className="text-[10px] text-slate-400 font-normal">
+                              p.m.
+                            </span>
+                          </span>
+                          <span className="text-[11px] text-slate-400 font-medium capitalize">
+                            {app?.product?.interest_method?.replace("_", " ") ??
+                              "Reducing Balance"}
+                          </span>
                         </div>
                       </td>
 
-                      {/* Col 6: Operational Admin Controls Skeleton */}
-                      <td className="py-4 px-6 text-right pr-8 align-middle">
+                      {/* NEW Col 5: Current Stage & Status Label */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1.5">
+                          <span className="font-semibold text-slate-800 text-sm tracking-tight">
+                            {app.current_stage_label}
+                          </span>
+                          <span
+                            className={`inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${
+                              app.status_label?.toLowerCase() === "approved"
+                                ? "bg-success/5 border-success/10 text-success"
+                                : "bg-warning/5 border-warning/10 text-warning"
+                            }`}
+                          >
+                            {app.status_label}
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Col 6: Operational Admin Controls */}
+                      <td className="py-4 px-6 text-right pr-8">
                         <div className="flex items-center justify-end gap-1.5">
-                          {/* View Details Action Button */}
-                          <div className="size-8 rounded-xl bg-slate-100 border border-slate-200/30 shrink-0" />
-                          {/* Disapprove Veto Action Button */}
-                          <div className="size-8 rounded-xl bg-slate-100 border border-slate-200/30 shrink-0" />
+                          <button
+                            onClick={() =>
+                              navigate(`/admin/loan-applications/${app?.id}`)
+                            }
+                            className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-2xs bg-white cursor-pointer"
+                            title="View Application Audit File"
+                          >
+                            <Eye size={14} />
+                          </button>
+                          {app.status !== "approved" && (
+                            <>
+                              <button
+                                className="size-8 rounded-xl border border-rose-100 flex items-center justify-center text-error hover:bg-rose-50 hover:border-rose-200 transition-all shadow-2xs bg-white cursor-pointer"
+                                title="Log Disapproval Veto"
+                              >
+                                <X size={14} />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </td>
                     </tr>
                   ))
-              ) : loanApplications?.length > 0 ? (
-                loanApplications?.map((app) => (
-                  <tr
-                    key={app.id}
-                    className="group transition-colors hover:bg-slate-50/60"
-                  >
-                    {/* Col 1: Identity Profile */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1.5">
-                        <div className="flex items-center gap-2">
-                          <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
-                            {app.application_number}
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-medium tracking-wide">
-                            Code: {app.loan_code}
-                          </span>
-                        </div>
-                        <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
-                          {app.applicant_name}
-                        </span>
-                        <span className="text-[11px] text-slate-400 font-normal flex items-center gap-1">
-                          <Smartphone size={11} /> {app.applicant_mobile}
-                        </span>
+                ) : (
+                  <td colSpan={6} className="py-8 px-6">
+                    <div className="bg-white border border-dashed border-slate-300 rounded-[28px] p-16 text-center max-w-xl mx-auto mt-6">
+                      <div className="size-12 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4">
+                        <FileText size={22} />
                       </div>
-                    </td>
-
-                    {/* Col 2: Target Framework Product */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1.5">
-                        <span className="font-semibold text-slate-800 text-sm tracking-tight">
-                          {app.product.product_name}
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                          <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-slate-50 text-slate-400 rounded border border-slate-200/40">
-                            {app.product.product_code}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Col 3: Capital Request Metrics */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1.5">
-                        <span className="font-semibold text-slate-900 text-sm tracking-tight">
-                          {formatAmount(app.applied_amount)}
-                        </span>
-                        <div className="text-[11px] text-slate-400 font-medium flex items-center gap-2">
-                          <span>
-                            Tenor:{" "}
-                            <span className="text-slate-700 font-semibold">
-                              {app.loan_period} Months
-                            </span>
-                          </span>
-                          <span className="size-1 bg-slate-200 rounded-full" />
-                          <span className="text-primary font-bold text-[9px] bg-primary/5 px-1.5 py-0.5 rounded uppercase">
-                            {app.loan_channel}
-                          </span>
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* NEW Col 4: Interest Rate Parameters */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1">
-                        <span className="font-semibold text-slate-900 text-sm tracking-tight">
-                          {parseFloat(
-                            app?.product?.interest_rate ?? 2.0,
-                          )?.toFixed(1)}
-                          %{" "}
-                          <span className="text-[10px] text-slate-400 font-normal">
-                            p.m.
-                          </span>
-                        </span>
-                        <span className="text-[11px] text-slate-400 font-medium capitalize">
-                          {app?.product?.interest_method?.replace("_", " ") ??
-                            "Reducing Balance"}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* NEW Col 5: Current Stage & Status Label */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1.5">
-                        <span className="font-semibold text-slate-800 text-sm tracking-tight">
-                          {app.current_stage_label}
-                        </span>
-                        <span
-                          className={`inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${
-                            app.status_label?.toLowerCase() === "approved"
-                              ? "bg-success/5 border-success/10 text-success"
-                              : "bg-warning/5 border-warning/10 text-warning"
-                          }`}
-                        >
-                          {app.status_label}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Col 6: Operational Admin Controls */}
-                    <td className="py-4 px-6 text-right pr-8">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() =>
-                            navigate(`/admin/loan-applications/${app?.id}`)
-                          }
-                          className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-2xs bg-white cursor-pointer"
-                          title="View Application Audit File"
-                        >
-                          <Eye size={14} />
-                        </button>
-                        {app.status !== "approved" && (
-                          <>
-                            <button
-                              className="size-8 rounded-xl border border-rose-100 flex items-center justify-center text-error hover:bg-rose-50 hover:border-rose-200 transition-all shadow-2xs bg-white cursor-pointer"
-                              title="Log Disapproval Veto"
-                            >
-                              <X size={14} />
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <td colSpan={6} className="py-8 px-6">
-                  <div className="bg-white border border-dashed border-slate-300 rounded-[28px] p-16 text-center max-w-xl mx-auto mt-6">
-                    <div className="size-12 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4">
-                      <FileText size={22} />
+                      <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
+                        No applications cataloged
+                      </h3>
+                      <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
+                        There are no active or legacy records matching "
+                        {searchQuery}" under the current filter views.
+                      </p>
                     </div>
-                    <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
-                      No applications cataloged
-                    </h3>
-                    <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
-                      There are no active or legacy records matching "
-                      {searchQuery}" under the current filter views.
-                    </p>
-                  </div>
-                </td>
-              )}
-            </tbody>
-          </table>
+                  </td>
+                )}
+              </tbody>
+            </table>
+          </div>
 
           <Pagination
             currentPage={filters?.page}

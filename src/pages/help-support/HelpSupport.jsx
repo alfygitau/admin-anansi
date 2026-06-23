@@ -126,7 +126,6 @@ export default function HelpCenterWorkspace() {
           Support Workspace
         </h1>
       </div>
-      {/* CONTACT QUICK-CARDS ROW CONTAINER */}
       <div className="flex flex-row overflow-x-auto sm:grid sm:grid-cols-3 gap-4 w-full items-stretch snap-x snap-mandatory sm:pb-0 scrollbar-thin">
         {/* CARD A: WHATSAPP */}
         <div className="bg-white border border-slate-200/60 rounded-2xl p-5 flex flex-col justify-between shadow-3xs group relative overflow-hidden snap-start shrink-0 w-[280px] sm:w-auto">

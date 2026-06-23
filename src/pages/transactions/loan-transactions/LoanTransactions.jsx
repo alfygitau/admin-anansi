@@ -233,207 +233,208 @@ export default function LoanTransactions() {
 
         {/* 3. DETAILED LEDGER TABLE */}
         <div className="bg-white rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
-          <table className="w-full text-left border-collapse table-auto">
-            <thead>
-              <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
-                <th className="py-4.5 px-6">Transaction Ref & Date</th>
-                <th className="py-4.5 px-6">Mode & Type</th>
-                <th className="py-4.5 px-6">Loan Allocation</th>
-                <th className="py-4.5 px-6 text-right">Total Paid</th>
-                <th className="py-4.5 px-6 text-center">Status</th>
-                <th className="py-4.5 px-6 text-center">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100 text-xs">
-              {isFetching ? (
-                Array(10)
-                  .fill(0)
-                  .map((_, index) => (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse table-auto">
+              <thead>
+                <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
+                  <th className="py-4.5 px-6">Transaction Ref & Date</th>
+                  <th className="py-4.5 px-6">Mode & Type</th>
+                  <th className="py-4.5 px-6">Loan Allocation</th>
+                  <th className="py-4.5 px-6 text-right">Total Paid</th>
+                  <th className="py-4.5 px-6 text-center">Status</th>
+                  <th className="py-4.5 px-6 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-xs">
+                {isFetching ? (
+                  Array(10)
+                    .fill(0)
+                    .map((_, index) => (
+                      <tr
+                        key={`tx-skeleton-${index}`}
+                        className="animate-pulse border-b border-slate-100 last:border-none"
+                      >
+                        {/* Column 1: Transaction Reference and Date Skeleton */}
+                        <td className="py-3 px-6">
+                          <div className="flex flex-col gap-1.5">
+                            {/* Reference Hash Placeholder */}
+                            <div className="h-4 w-24 bg-slate-200 rounded" />
+                            {/* Calendar Date Line */}
+                            <div className="h-3 w-16 bg-slate-100 rounded" />
+                          </div>
+                        </td>
+
+                        {/* Column 2: Payment Channel and Type Skeleton */}
+                        <td className="py-3 px-6">
+                          <div className="flex flex-col gap-1.5">
+                            {/* Channel Badge Mock */}
+                            <div className="h-4 w-14 bg-slate-200 rounded-md" />
+                            {/* Transaction Type Label */}
+                            <div className="h-3 w-16 bg-slate-100 rounded" />
+                          </div>
+                        </td>
+
+                        {/* Column 3: Target Loan Account Mapping Context Skeleton */}
+                        <td className="py-3 px-6">
+                          <div className="flex gap-8">
+                            {/* Loan Code Column Segment */}
+                            <div className="flex flex-col gap-1">
+                              <div className="h-2.5 w-12 bg-slate-100 rounded" />
+                              <div className="h-4 w-14 bg-slate-200 rounded" />
+                            </div>
+                            {/* Product Family Column Segment */}
+                            <div className="flex flex-col gap-1">
+                              <div className="h-2.5 w-16 bg-slate-100 rounded" />
+                              <div className="h-4 w-24 bg-slate-200 rounded" />
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Column 4: Sum Value Paid Skeleton */}
+                        <td className="py-3 px-6 text-right">
+                          {/* Total Amount Value Box */}
+                          <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
+                        </td>
+
+                        {/* Column 5: Structural Processing State Status Skeleton */}
+                        <td className="py-3 px-6 text-center">
+                          {/* Rounded Pill Status Tag Shell */}
+                          <div className="h-6 w-16 bg-slate-100 rounded-full mx-auto" />
+                        </td>
+
+                        {/* Column 6: Deep-Link Action Redirect Skeleton */}
+                        <td className="py-3 px-6 text-center align-middle">
+                          {/* Action Button Circular Box Icon Shell */}
+                          <div className="size-6 bg-slate-50 border border-slate-200/30 rounded-lg mx-auto" />
+                        </td>
+                      </tr>
+                    ))
+                ) : loanTransactions?.length > 0 ? (
+                  loanTransactions?.map((tx) => (
                     <tr
-                      key={`tx-skeleton-${index}`}
-                      className="animate-pulse border-b border-slate-100 last:border-none"
+                      key={tx.id}
+                      className="group hover:bg-slate-50/60 transition-colors"
                     >
-                      {/* Column 1: Transaction Reference and Date Skeleton */}
                       <td className="py-3 px-6">
-                        <div className="flex flex-col gap-1.5">
-                          {/* Reference Hash Placeholder */}
-                          <div className="h-4 w-24 bg-slate-200 rounded" />
-                          {/* Calendar Date Line */}
-                          <div className="h-3 w-16 bg-slate-100 rounded" />
+                        <div className="flex flex-col">
+                          <span className="font-bold text-slate-900">
+                            {tx.reference || "—"}
+                          </span>
+                          <span className="text-[10px] text-slate-400">
+                            {tx.transaction_date
+                              ? new Date(
+                                  tx.transaction_date,
+                                ).toLocaleDateString("en-KE", {
+                                  dateStyle: "medium",
+                                })
+                              : "—"}
+                          </span>
                         </div>
                       </td>
 
-                      {/* Column 2: Payment Channel and Type Skeleton */}
+                      {/* Column 2: Payment Channel and Type */}
                       <td className="py-3 px-6">
-                        <div className="flex flex-col gap-1.5">
-                          {/* Channel Badge Mock */}
-                          <div className="h-4 w-14 bg-slate-200 rounded-md" />
-                          {/* Transaction Type Label */}
-                          <div className="h-3 w-16 bg-slate-100 rounded" />
+                        <div className="flex flex-col gap-1">
+                          <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[9px] font-bold uppercase tracking-wide w-fit">
+                            {tx.channel || "Manual"}
+                          </span>
+                          <span className="text-[9px] font-medium text-slate-500 uppercase tracking-wide">
+                            {tx.transaction_type?.replace(/_/g, " ") ||
+                              "Repayment"}
+                          </span>
                         </div>
                       </td>
 
-                      {/* Column 3: Target Loan Account Mapping Context Skeleton */}
+                      {/* Column 3: Target Loan Account Mapping Context */}
                       <td className="py-3 px-6">
                         <div className="flex gap-8">
-                          {/* Loan Code Column Segment */}
-                          <div className="flex flex-col gap-1">
-                            <div className="h-2.5 w-12 bg-slate-100 rounded" />
-                            <div className="h-4 w-14 bg-slate-200 rounded" />
+                          <div className="flex flex-col">
+                            <span className="text-[9px] text-slate-400 uppercase tracking-wider">
+                              Loan Code
+                            </span>
+                            <span className="font-mono font-bold text-slate-700 mt-0.5">
+                              {tx.loan_code || "—"}
+                            </span>
                           </div>
-                          {/* Product Family Column Segment */}
-                          <div className="flex flex-col gap-1">
-                            <div className="h-2.5 w-16 bg-slate-100 rounded" />
-                            <div className="h-4 w-24 bg-slate-200 rounded" />
+                          <div className="flex flex-col">
+                            <span className="text-[9px] text-slate-400 uppercase tracking-wider">
+                              Product Family
+                            </span>
+                            <span className="font-semibold text-slate-600 capitalize mt-0.5">
+                              {tx.loan_type?.replace(/_/g, " ") || "—"}
+                            </span>
                           </div>
                         </div>
                       </td>
 
-                      {/* Column 4: Sum Value Paid Skeleton */}
-                      <td className="py-3 px-6 text-right">
-                        {/* Total Amount Value Box */}
-                        <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
+                      {/* Column 4: Sum Value Paid */}
+                      <td className="py-3 px-6 text-right font-bold text-slate-900">
+                        {formatAmount
+                          ? formatAmount(tx.amount)
+                          : `KES ${Number(tx.amount || 0).toLocaleString()}`}
                       </td>
 
-                      {/* Column 5: Structural Processing State Status Skeleton */}
+                      {/* Column 5: Structural Processing State Status */}
                       <td className="py-3 px-6 text-center">
-                        {/* Rounded Pill Status Tag Shell */}
-                        <div className="h-6 w-16 bg-slate-100 rounded-full mx-auto" />
+                        <span
+                          className={`inline-flex items-center gap-1.5 text-[9px] font-bold uppercase px-2.5 py-1 rounded-full ${
+                            tx.status?.toLowerCase() === "posted" ||
+                            tx.status?.toLowerCase() === "success"
+                              ? "bg-emerald-50 text-emerald-600"
+                              : tx.status?.toLowerCase() === "reversed"
+                                ? "bg-rose-50 text-rose-600"
+                                : "bg-amber-50 text-amber-600"
+                          }`}
+                        >
+                          {tx.status?.toLowerCase() === "reversed" ? (
+                            <AlertCircle size={10} />
+                          ) : (
+                            <CheckCircle2 size={10} />
+                          )}
+                          {tx.status || "Pending"}
+                        </span>
                       </td>
 
-                      {/* Column 6: Deep-Link Action Redirect Skeleton */}
-                      <td className="py-3 px-6 text-center align-middle">
-                        {/* Action Button Circular Box Icon Shell */}
-                        <div className="size-6 bg-slate-50 border border-slate-200/30 rounded-lg mx-auto" />
+                      {/* Column 6: Deep-Link Action Redirect */}
+                      <td className="py-3 px-6 text-center">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate?.(`/admin/transactions/${tx.id}`)
+                          }
+                          className="text-slate-400 hover:text-[#074073] transition-colors cursor-pointer"
+                        >
+                          <ArrowUpRight size={16} />
+                        </button>
                       </td>
                     </tr>
                   ))
-              ) : loanTransactions?.length > 0 ? (
-                loanTransactions?.map((tx) => (
-                  <tr
-                    key={tx.id}
-                    className="group hover:bg-slate-50/60 transition-colors"
-                  >
-                    <td className="py-3 px-6">
-                      <div className="flex flex-col">
-                        <span className="font-bold text-slate-900">
-                          {tx.reference || "—"}
-                        </span>
-                        <span className="text-[10px] text-slate-400">
-                          {tx.transaction_date
-                            ? new Date(tx.transaction_date).toLocaleDateString(
-                                "en-KE",
-                                {
-                                  dateStyle: "medium",
-                                },
-                              )
-                            : "—"}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Column 2: Payment Channel and Type */}
-                    <td className="py-3 px-6">
-                      <div className="flex flex-col gap-1">
-                        <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[9px] font-bold uppercase tracking-wide w-fit">
-                          {tx.channel || "Manual"}
-                        </span>
-                        <span className="text-[9px] font-medium text-slate-500 uppercase tracking-wide">
-                          {tx.transaction_type?.replace(/_/g, " ") ||
-                            "Repayment"}
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Column 3: Target Loan Account Mapping Context */}
-                    <td className="py-3 px-6">
-                      <div className="flex gap-8">
-                        <div className="flex flex-col">
-                          <span className="text-[9px] text-slate-400 uppercase tracking-wider">
-                            Loan Code
-                          </span>
-                          <span className="font-mono font-bold text-slate-700 mt-0.5">
-                            {tx.loan_code || "—"}
-                          </span>
+                ) : (
+                  <tr>
+                    <td colSpan={6} className="py-8 px-6">
+                      <div className="w-full bg-white border border-dashed border-slate-200 rounded-[24px] p-16 text-center select-none">
+                        {/* Icon Wrapper */}
+                        <div className="size-12 bg-slate-50 border border-slate-200/60 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4 shadow-3xs">
+                          <Receipt size={22} className="opacity-80" />
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-[9px] text-slate-400 uppercase tracking-wider">
-                            Product Family
-                          </span>
-                          <span className="font-semibold text-slate-600 capitalize mt-0.5">
-                            {tx.loan_type?.replace(/_/g, " ") || "—"}
-                          </span>
-                        </div>
+
+                        {/* Primary Message */}
+                        <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
+                          No Transactions Found
+                        </h3>
+
+                        {/* Conversational Description */}
+                        <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
+                          There are no repayment records or deposit receipts
+                          logged under the current search parameters.
+                        </p>
                       </div>
-                    </td>
-
-                    {/* Column 4: Sum Value Paid */}
-                    <td className="py-3 px-6 text-right font-bold text-slate-900">
-                      {formatAmount
-                        ? formatAmount(tx.amount)
-                        : `KES ${Number(tx.amount || 0).toLocaleString()}`}
-                    </td>
-
-                    {/* Column 5: Structural Processing State Status */}
-                    <td className="py-3 px-6 text-center">
-                      <span
-                        className={`inline-flex items-center gap-1.5 text-[9px] font-bold uppercase px-2.5 py-1 rounded-full ${
-                          tx.status?.toLowerCase() === "posted" ||
-                          tx.status?.toLowerCase() === "success"
-                            ? "bg-emerald-50 text-emerald-600"
-                            : tx.status?.toLowerCase() === "reversed"
-                              ? "bg-rose-50 text-rose-600"
-                              : "bg-amber-50 text-amber-600"
-                        }`}
-                      >
-                        {tx.status?.toLowerCase() === "reversed" ? (
-                          <AlertCircle size={10} />
-                        ) : (
-                          <CheckCircle2 size={10} />
-                        )}
-                        {tx.status || "Pending"}
-                      </span>
-                    </td>
-
-                    {/* Column 6: Deep-Link Action Redirect */}
-                    <td className="py-3 px-6 text-center">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          navigate?.(`/admin/transactions/${tx.id}`)
-                        }
-                        className="text-slate-400 hover:text-[#074073] transition-colors cursor-pointer"
-                      >
-                        <ArrowUpRight size={16} />
-                      </button>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={6} className="py-8 px-6">
-                    <div className="w-full bg-white border border-dashed border-slate-200 rounded-[24px] p-16 text-center select-none">
-                      {/* Icon Wrapper */}
-                      <div className="size-12 bg-slate-50 border border-slate-200/60 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4 shadow-3xs">
-                        <Receipt size={22} className="opacity-80" />
-                      </div>
-
-                      {/* Primary Message */}
-                      <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
-                        No Transactions Found
-                      </h3>
-
-                      {/* Conversational Description */}
-                      <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
-                        There are no repayment records or deposit receipts
-                        logged under the current search parameters.
-                      </p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                )}
+              </tbody>
+            </table>
+          </div>
           <Pagination
             currentPage={filters?.page}
             totalItems={totalItems}

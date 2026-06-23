@@ -490,9 +490,6 @@ export default function AccountTransactions() {
               {/* HEADER SECTION */}
               <div className="flex justify-between items-start gap-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-bold text-[#074073] uppercase tracking-widest bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-md">
-                    Verified Record
-                  </span>
                   <h3 className="text-lg font-bold text-slate-900 tracking-tight pt-1">
                     {selectedTxContext.public_id}
                   </h3>

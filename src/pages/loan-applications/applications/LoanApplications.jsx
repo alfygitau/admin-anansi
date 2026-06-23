@@ -403,7 +403,8 @@ export default function LoanApplications() {
                           </span>
                           <span
                             className={`inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${
-                              app.status_label?.toLowerCase() === "approved"
+                              app.status_label?.toLowerCase() === "approved" ||
+                              app?.status_label?.toLowerCase() === "disbursed"
                                 ? "bg-success/5 border-success/10 text-success"
                                 : "bg-warning/5 border-warning/10 text-warning"
                             }`}
@@ -425,16 +426,18 @@ export default function LoanApplications() {
                           >
                             <Eye size={14} />
                           </button>
-                          {app.status !== "approved" && (
-                            <>
-                              <button
-                                className="size-8 rounded-xl border border-rose-100 flex items-center justify-center text-error hover:bg-rose-50 hover:border-rose-200 transition-all shadow-2xs bg-white cursor-pointer"
-                                title="Log Disapproval Veto"
-                              >
-                                <X size={14} />
-                              </button>
-                            </>
-                          )}
+                          {app.status_label?.toLowerCase() !== "approved" ||
+                            (app.status_label?.toLowerCase() !==
+                              "disbursed" && (
+                              <>
+                                <button
+                                  className="size-8 rounded-xl border border-rose-100 flex items-center justify-center text-error hover:bg-rose-50 hover:border-rose-200 transition-all shadow-2xs bg-white cursor-pointer"
+                                  title="Log Disapproval Veto"
+                                >
+                                  <X size={14} />
+                                </button>
+                              </>
+                            ))}
                         </div>
                       </td>
                     </tr>

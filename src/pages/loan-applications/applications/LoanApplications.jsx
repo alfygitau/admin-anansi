@@ -441,7 +441,7 @@ export default function LoanApplications() {
                   ))
                 ) : (
                   <td colSpan={6} className="py-8 px-6">
-                    <div className="bg-white border border-dashed border-slate-300 rounded-[28px] p-16 text-center max-w-xl mx-auto mt-6">
+                    <div className="bg-white rounded-[28px] p-16 text-center max-w-xl mx-auto mt-6">
                       <div className="size-12 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4">
                         <FileText size={22} />
                       </div>

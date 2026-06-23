@@ -327,7 +327,7 @@ export default function AuditTrail() {
                   <tr>
                     <td
                       colSpan={5}
-                      className="py-12 text-center text-slate-400 font-medium select-none"
+                      className="py-60 text-center text-slate-400 font-medium select-none"
                     >
                       <div className="flex flex-col items-center justify-center space-y-2">
                         <FileText size={24} className="text-slate-300" />

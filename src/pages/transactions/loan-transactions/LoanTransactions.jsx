@@ -412,7 +412,7 @@ export default function LoanTransactions() {
                 ) : (
                   <tr>
                     <td colSpan={6} className="py-8 px-6">
-                      <div className="w-full bg-white border border-dashed border-slate-200 rounded-[24px] p-16 text-center select-none">
+                      <div className="w-full bg-white rounded-[24px] p-16 text-center select-none">
                         {/* Icon Wrapper */}
                         <div className="size-12 bg-slate-50 border border-slate-200/60 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4 shadow-3xs">
                           <Receipt size={22} className="opacity-80" />

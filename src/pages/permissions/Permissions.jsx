@@ -370,12 +370,12 @@ export default function Permissions() {
                   <tr>
                     <td
                       colSpan={5}
-                      className="py-12 text-center text-slate-400 font-medium select-none"
+                      className="py-60 text-center text-slate-400 font-medium select-none"
                     >
                       <div className="flex flex-col items-center justify-center space-y-2">
                         <ShieldCheck size={22} className="text-slate-300" />
                         <p className="text-xs">
-                          No app modules match your search filters.
+                          No permission module match your search filters.
                         </p>
                       </div>
                     </td>

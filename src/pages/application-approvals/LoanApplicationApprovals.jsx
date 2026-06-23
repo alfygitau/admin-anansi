@@ -506,7 +506,7 @@ export default function LoanApplicationApprovals() {
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-5 py-12 text-center text-slate-400 font-medium select-none bg-slate-50/20"
+                    className="px-5 py-28 text-center text-slate-400 font-medium select-none bg-slate-50/20"
                   >
                     <div className="size-10 rounded-xl border border-dashed border-slate-200 flex items-center justify-center mx-auto mb-3 text-slate-300 bg-white">
                       <Search size={16} />

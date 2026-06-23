@@ -382,7 +382,7 @@ export default function Guarantors() {
               ) : (
                 <tr>
                   <td colSpan={6} className="py-8 px-6">
-                    <div className="w-full bg-white border border-dashed border-slate-200 rounded-[24px] p-12 text-center select-none">
+                    <div className="w-full bg-white rounded-[24px] p-24 text-center select-none">
                       <div className="size-11 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 mx-auto mb-3.5 shadow-3xs">
                         <User size={20} className="opacity-75" />
                       </div>

@@ -105,7 +105,7 @@ const ApplyProducts = () => {
   return (
     <div className="w-full h-full flex flex-col justify-start antialiased text-slate-800 p-1">
       {/* 1. MEMBER PROFILE CONTEXT BANNER */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200/60 pb-6 select-none mb-8">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200/60 pb-6 select-none mb-4">
         <div>
           <span className="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-md uppercase tracking-wider border border-slate-200/40">
             New Application Lifecycle

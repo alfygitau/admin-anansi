@@ -24,7 +24,6 @@ import { getAllApprovals } from "../../sdk/loan-applications/loan-applications";
 import Pagination from "../../components/pagination/Pagination";
 
 export default function LoanApplicationApprovals() {
-  // 1. FILTER STATED MANAGEMENT
   const [searchTerm, setSearchTerm] = useState("");
   const [decisionFilter, setDecisionFilter] = useState("all");
   const [typeFilter, setTypeFilter] = useState("all");
@@ -45,7 +44,6 @@ export default function LoanApplicationApprovals() {
   });
   const { showToast } = useToast();
   const [totalItems, setTotalItems] = useState(0);
-
   const [approvals, setApprovals] = useState([]);
 
   const stats = {
@@ -229,6 +227,18 @@ export default function LoanApplicationApprovals() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full h-10 pl-10 pr-4 rounded-xl border border-slate-200 text-xs font-medium bg-slate-50/50 focus:bg-white focus:border-[#074073] focus:outline-hidden transition-all placeholder-slate-400"
           />
+        </div>
+
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowFilters(true)}
+            className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all"
+          >
+            <Filter size={13} /> Filter
+          </button>
+          <button className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
+            <Download size={13} /> Export
+          </button>
         </div>
       </div>
 

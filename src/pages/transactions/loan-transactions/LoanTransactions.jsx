@@ -255,7 +255,7 @@ export default function LoanTransactions() {
                         className="animate-pulse border-b border-slate-100 last:border-none"
                       >
                         {/* Column 1: Transaction Reference and Date Skeleton */}
-                        <td className="py-3 px-6">
+                        <td className="py-5 px-6">
                           <div className="flex flex-col gap-1.5">
                             {/* Reference Hash Placeholder */}
                             <div className="h-4 w-24 bg-slate-200 rounded" />
@@ -265,7 +265,7 @@ export default function LoanTransactions() {
                         </td>
 
                         {/* Column 2: Payment Channel and Type Skeleton */}
-                        <td className="py-3 px-6">
+                        <td className="py-5 px-6">
                           <div className="flex flex-col gap-1.5">
                             {/* Channel Badge Mock */}
                             <div className="h-4 w-14 bg-slate-200 rounded-md" />
@@ -275,7 +275,7 @@ export default function LoanTransactions() {
                         </td>
 
                         {/* Column 3: Target Loan Account Mapping Context Skeleton */}
-                        <td className="py-3 px-6">
+                        <td className="py-5 px-6">
                           <div className="flex gap-8">
                             {/* Loan Code Column Segment */}
                             <div className="flex flex-col gap-1">
@@ -291,19 +291,19 @@ export default function LoanTransactions() {
                         </td>
 
                         {/* Column 4: Sum Value Paid Skeleton */}
-                        <td className="py-3 px-6 text-right">
+                        <td className="py-5 px-6 text-right">
                           {/* Total Amount Value Box */}
                           <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
                         </td>
 
                         {/* Column 5: Structural Processing State Status Skeleton */}
-                        <td className="py-3 px-6 text-center">
+                        <td className="py-5 px-6 text-center">
                           {/* Rounded Pill Status Tag Shell */}
                           <div className="h-6 w-16 bg-slate-100 rounded-full mx-auto" />
                         </td>
 
                         {/* Column 6: Deep-Link Action Redirect Skeleton */}
-                        <td className="py-3 px-6 text-center align-middle">
+                        <td className="py-5 px-6 text-center align-middle">
                           {/* Action Button Circular Box Icon Shell */}
                           <div className="size-6 bg-slate-50 border border-slate-200/30 rounded-lg mx-auto" />
                         </td>
@@ -315,7 +315,7 @@ export default function LoanTransactions() {
                       key={tx.id}
                       className="group hover:bg-slate-50/60 transition-colors"
                     >
-                      <td className="py-3 px-6">
+                      <td className="py-5 px-6">
                         <div className="flex flex-col">
                           <span className="font-bold text-slate-900">
                             {tx.reference || "—"}
@@ -333,7 +333,7 @@ export default function LoanTransactions() {
                       </td>
 
                       {/* Column 2: Payment Channel and Type */}
-                      <td className="py-3 px-6">
+                      <td className="py-5 px-6">
                         <div className="flex flex-col gap-1">
                           <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[9px] font-bold uppercase tracking-wide w-fit">
                             {tx.channel || "Manual"}
@@ -346,7 +346,7 @@ export default function LoanTransactions() {
                       </td>
 
                       {/* Column 3: Target Loan Account Mapping Context */}
-                      <td className="py-3 px-6">
+                      <td className="py-5 px-6">
                         <div className="flex gap-8">
                           <div className="flex flex-col">
                             <span className="text-[9px] text-slate-400 uppercase tracking-wider">
@@ -368,14 +368,14 @@ export default function LoanTransactions() {
                       </td>
 
                       {/* Column 4: Sum Value Paid */}
-                      <td className="py-3 px-6 text-right font-bold text-slate-900">
+                      <td className="py-5 px-6 text-right font-bold text-slate-900">
                         {formatAmount
                           ? formatAmount(tx.amount)
                           : `KES ${Number(tx.amount || 0).toLocaleString()}`}
                       </td>
 
                       {/* Column 5: Structural Processing State Status */}
-                      <td className="py-3 px-6 text-center">
+                      <td className="py-5 px-6 text-center">
                         <span
                           className={`inline-flex items-center gap-1.5 text-[9px] font-bold uppercase px-2.5 py-1 rounded-full ${
                             tx.status?.toLowerCase() === "posted" ||
@@ -396,7 +396,7 @@ export default function LoanTransactions() {
                       </td>
 
                       {/* Column 6: Deep-Link Action Redirect */}
-                      <td className="py-3 px-6 text-center">
+                      <td className="py-5 px-6 text-center">
                         <button
                           type="button"
                           onClick={() =>

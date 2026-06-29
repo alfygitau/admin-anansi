@@ -64,6 +64,10 @@ export default function AllUsers() {
     setActiveMenuId(null);
   };
 
+  const handleEditUser = (id) => {
+    navigate(`/admin/edit-admin-user/${id}`);
+  };
+
   const { isFetching } = useQuery({
     queryKey: [
       "get users",
@@ -420,7 +424,10 @@ export default function AllUsers() {
                                 <History size={12} />
                                 <span>View Access Logs</span>
                               </button>
-                              <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer">
+                              <button
+                                onClick={() => handleEditUser(user.id)}
+                                className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer"
+                              >
                                 <Edit size={12} />
                                 <span>Edit User</span>
                               </button>

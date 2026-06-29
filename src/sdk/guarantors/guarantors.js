@@ -39,3 +39,51 @@ export const getGuarantors = async (
     throw error?.response?.data || error;
   }
 };
+
+export const checkGuarantor = async (appId, phone, name) => {
+  try {
+    const response = await loanClient.post(
+      `/loan-applications/${appId}/guarantors`,
+      {
+        phone,
+        name,
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const removeGuarantor = async (appId, guarantorId) => {
+  try {
+    const response = await loanClient.delete(
+      `/loan-applications/${appId}/guarantors/${guarantorId}`,
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const commitGuarantors = async (appId) => {
+  try {
+    const response = await loanClient.patch(
+      `/loan-appplications/${appId}/guarantors/commit`,
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const listGuarantors = async (appId) => {
+  try {
+    const response = await loanClient.get(
+      `/loan-applications/${appId}/guarantors`,
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

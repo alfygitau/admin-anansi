@@ -108,7 +108,7 @@ export default function AllLoans() {
         onClose={() => setShowFilters(false)}
       />
 
-      <div className="w-full space-y-5 font-sans antialiased text-slate-800">
+      <div className="w-full space-y-5 antialiased text-slate-800">
         {/* 1. UPPER EXECUTIVE COMMAND BAR */}
         <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-2">
           <div>
@@ -211,7 +211,7 @@ export default function AllLoans() {
         {/* 4. HIGH-DENSITY STANDALONE PORTFOLIO LEDGER (Guaranteed non-scroll on desktop) */}
         <div className="w-full bg-white rounded-3xl border border-slate-200/60 shadow-xs overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse font-sans table-auto">
+            <table className="w-full text-left border-collapse table-auto">
               <thead>
                 <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
                   <th className="py-4.5 px-6">Loan Account & Debtor</th>
@@ -319,11 +319,8 @@ export default function AllLoans() {
                       <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1.5">
                           <div className="flex items-center gap-2">
-                            <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
+                            <span className="font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
                               {loan.loan_code}
-                            </span>
-                            <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
-                              Channel: {loan.loan_channel}
                             </span>
                           </div>
                           <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
@@ -343,7 +340,7 @@ export default function AllLoans() {
                               "Development Loan"}
                           </span>
                           <div className="flex items-center gap-1.5">
-                            <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-slate-50 text-slate-400 rounded border border-slate-200/40 flex items-center gap-0.5">
+                            <span className="font-bold text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-slate-50 text-slate-400 rounded border border-slate-200/40 flex items-center gap-0.5">
                               {parseFloat(loan?.loan_interest_per)?.toFixed(1)}%
                             </span>
                             <span className="text-[11px] text-slate-400 font-medium capitalize">

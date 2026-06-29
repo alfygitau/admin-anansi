@@ -47,6 +47,7 @@ import DisburseLoan from "./pages/loan-applications/disburse-application/Disburs
 import NotifyApplicant from "./pages/loan-applications/notify-applicant/NotifyApplicant";
 import ManagerApproval from "./pages/loan-applications/approve-loan-application/ManagerApproval";
 import HelpCenter from "./pages/help-support/HelpSupport";
+import EditAdminUser from "./pages/users/EditUser";
 
 function App() {
   return (
@@ -96,6 +97,7 @@ function App() {
         <Route path="all-users" element={<AllUsers />} />
         <Route path="all-users/:id" element={<AdminUser />} />
         <Route path="add-admin-user" element={<AddAdminUser />} />
+        <Route path="edit-admin-user/:id" element={<EditAdminUser />} />
         <Route path="roles" element={<Roles />} />
         <Route path="permissions" element={<Permissions />} />
         <Route path="audit-trail" element={<AuditTrail />} />

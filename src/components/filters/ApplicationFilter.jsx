@@ -18,32 +18,8 @@ export default function FilterApplications({
   setFilters,
   onApply,
 }) {
-  // Local state clone keeps adjustments isolated until explicit validation/submission
-  const [localFilters, setLocalFilters] = useState({
-    status: "",
-    application_number: "",
-    loan_type: "",
-    loan_product_code: "",
-    fromDate: "",
-    toDate: "",
-  });
-
-  // Hydrate local parameters smoothly whenever the filter panel drawer is toggled open
-  useEffect(() => {
-    if (isOpen && filters) {
-      setLocalFilters({
-        status: filters.status || "",
-        application_number: filters.application_number || "",
-        loan_type: filters.loan_type || "",
-        loan_product_code: filters.loan_product_code || "",
-        fromDate: filters.fromDate || "",
-        toDate: filters.toDate || "",
-      });
-    }
-  }, [isOpen, filters]);
-
   const handleInputChange = (field, value) => {
-    setLocalFilters((prev) => ({ ...prev, [field]: value }));
+    setFilters((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleClearAll = () => {
@@ -55,12 +31,12 @@ export default function FilterApplications({
       fromDate: "",
       toDate: "",
     };
-    setLocalFilters(cleared);
+    setFilters(cleared);
   };
 
   const handleApplySubmission = () => {
-    setFilters(localFilters);
-    onApply?.(localFilters);
+    setFilters(filters);
+    onApply?.(filters);
     onClose();
   };
 
@@ -124,7 +100,7 @@ export default function FilterApplications({
                   <input
                     type="text"
                     placeholder="e.g., APP-2026-8840"
-                    value={localFilters.application_number}
+                    value={filters.application_number}
                     onChange={(e) =>
                       handleInputChange("application_number", e.target.value)
                     }
@@ -136,7 +112,7 @@ export default function FilterApplications({
                   <input
                     type="text"
                     placeholder="e.g., DEV-01, EMG-04"
-                    value={localFilters.loan_product_code}
+                    value={filters.loan_product_code}
                     onChange={(e) =>
                       handleInputChange("loan_product_code", e.target.value)
                     }
@@ -153,7 +129,7 @@ export default function FilterApplications({
 
                 <FilterField label="Application Status" icon={CheckCircle2}>
                   <select
-                    value={localFilters.status}
+                    value={filters.status}
                     onChange={(e) =>
                       handleInputChange("status", e.target.value)
                     }
@@ -169,7 +145,7 @@ export default function FilterApplications({
 
                 <FilterField label="Loan Type Classification" icon={Layers}>
                   <select
-                    value={localFilters.loan_type}
+                    value={filters.loan_type}
                     onChange={(e) =>
                       handleInputChange("loan_type", e.target.value)
                     }
@@ -194,7 +170,7 @@ export default function FilterApplications({
                   <FilterField label="From Date" icon={Calendar}>
                     <input
                       type="date"
-                      value={localFilters.fromDate}
+                      value={filters.fromDate}
                       onChange={(e) =>
                         handleInputChange("fromDate", e.target.value)
                       }
@@ -205,7 +181,7 @@ export default function FilterApplications({
                   <FilterField label="To Date" icon={Calendar}>
                     <input
                       type="date"
-                      value={localFilters.toDate}
+                      value={filters.toDate}
                       onChange={(e) =>
                         handleInputChange("toDate", e.target.value)
                       }

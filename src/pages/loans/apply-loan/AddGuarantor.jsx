@@ -179,7 +179,7 @@ export default function AddGuarantor() {
                         value={searchParams.name}
                         onChange={handleInputChange}
                         placeholder="e.g., Emmanuel Kipchumba"
-                        className="w-full h-12 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
+                        className="w-full h-14 pl-12 pr-4 bg-slate-50 border border-slate-200 rounded-xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800"
                       />
                     </div>
                   </div>
@@ -201,7 +201,7 @@ export default function AddGuarantor() {
                         onChange={handleInputChange}
                         onBlur={handleBlur}
                         placeholder="e.g., +254 712 345 678"
-                        className={`w-full h-12 pl-12 pr-4 bg-slate-50 border rounded-xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 ${
+                        className={`w-full h-14 pl-12 pr-4 bg-slate-50 border rounded-xl outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all text-xs font-semibold text-slate-800 ${
                           errors.phone
                             ? "border-rose-400 focus:border-rose-500"
                             : "border-slate-200"

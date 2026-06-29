@@ -203,7 +203,7 @@ export default function LoanApplications() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search by app number or applicant name..."
-              className="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-medium outline-none transition-all focus:bg-white focus:border-secondary placeholder:text-slate-400 font-sans"
+              className="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-medium outline-none transition-all focus:bg-white focus:border-secondary placeholder:text-slate-400 "
             />
           </div>
           <div className="flex items-center gap-2">
@@ -325,11 +325,8 @@ export default function LoanApplications() {
                       <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1.5">
                           <div className="flex items-center gap-2">
-                            <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
+                            <span className="font-bold text-[9px] tracking-wider px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
                               {app.application_number}
-                            </span>
-                            <span className="text-[10px] text-slate-400 font-medium tracking-wide">
-                              Code: {app.loan_code}
                             </span>
                           </div>
                           <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
@@ -348,7 +345,7 @@ export default function LoanApplications() {
                             {app.product.product_name}
                           </span>
                           <div className="flex items-center gap-1.5">
-                            <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-slate-50 text-slate-400 rounded border border-slate-200/40">
+                            <span className=" font-bold text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-slate-50 text-slate-400 rounded border border-slate-200/40">
                               {app.product.product_code}
                             </span>
                           </div>
@@ -369,9 +366,6 @@ export default function LoanApplications() {
                               </span>
                             </span>
                             <span className="size-1 bg-slate-200 rounded-full" />
-                            <span className="text-primary font-bold text-[9px] bg-primary/5 px-1.5 py-0.5 rounded uppercase">
-                              {app.loan_channel}
-                            </span>
                           </div>
                         </div>
                       </td>

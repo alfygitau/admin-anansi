@@ -111,8 +111,7 @@ export default function LoanDocuments() {
   };
 
   const handleCompleteApplication = () => {
-    console.log("Ready to push JSON Payload to server array:", documents);
-    navigate(`/admin/dashboard`);
+    navigate(`/admin/loan-applications`);
   };
 
   return (

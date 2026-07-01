@@ -205,6 +205,7 @@ export default function LoanApplication() {
               const isApproved = status.includes("approve");
               const isDisbursed =
                 status.includes("disburse") ||
+                status.includes("disbursed") ||
                 status.includes("paid") ||
                 status.includes("success");
               const isCancelled =
@@ -216,7 +217,7 @@ export default function LoanApplication() {
               // 3. Determine action permissions
               const canCancel = isPending;
               const canApprove = isPending;
-              const canDisburse = isApproved && !isDisbursed;
+              const canDisburse = status.includes("pending disbursement");
 
               return (
                 <div className="absolute left-0 right-0 mt-2.5 bg-white border border-slate-200/90 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 w-full">
@@ -230,7 +231,7 @@ export default function LoanApplication() {
                       }}
                       className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-left cursor-pointer group"
                     >
-                      <div className="size-6.5 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors shrink-0">
+                      <div className="size-6.5 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors shrink-0">
                         <Bell size={13} />
                       </div>
                       <span className="truncate">Notify Applicant</span>
@@ -246,7 +247,7 @@ export default function LoanApplication() {
                         }}
                         className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-bold text-slate-600 hover:text-rose-700 hover:bg-rose-50/50 transition-colors text-left cursor-pointer group"
                       >
-                        <div className="size-6.5 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:text-rose-600 group-hover:bg-rose-50 group-hover:border-rose-100 transition-colors shrink-0">
+                        <div className="size-6.5 flex items-center justify-center text-slate-400 group-hover:text-rose-600 group-hover:bg-rose-50 group-hover:border-rose-100 transition-colors shrink-0">
                           <X size={13} />
                         </div>
                         <span className="truncate">Cancel Application</span>
@@ -268,7 +269,7 @@ export default function LoanApplication() {
                         }}
                         className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-black text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/60 transition-colors text-left cursor-pointer group"
                       >
-                        <div className="size-6.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center transition-colors shadow-3xs shrink-0">
+                        <div className="size-6.5 flex items-center justify-center transition-colors shadow-3xs shrink-0">
                           <Check size={13} strokeWidth={3} />
                         </div>
                         <span className="truncate">Approve & Sign Off</span>
@@ -284,7 +285,7 @@ export default function LoanApplication() {
                         }}
                         className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-black text-slate-700 hover:text-emerald-700 hover:bg-emerald-50/60 transition-colors text-left cursor-pointer group"
                       >
-                        <div className="size-6.5 rounded-lg bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center transition-colors shadow-3xs shrink-0">
+                        <div className="size-6.5 flex items-center justify-center transition-colors shadow-3xs shrink-0">
                           <Check size={13} strokeWidth={3} />
                         </div>
                         <span className="truncate">
@@ -303,7 +304,7 @@ export default function LoanApplication() {
                         }}
                         className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-black text-slate-700 hover:text-blue-700 hover:bg-blue-50/60 transition-colors text-left cursor-pointer group"
                       >
-                        <div className="size-6.5 rounded-lg bg-blue-600 text-white border border-blue-700 flex items-center justify-center transition-colors shadow-3xs shrink-0">
+                        <div className="size-6.5 flex items-center justify-center transition-colors shadow-3xs shrink-0">
                           <Upload size={13} strokeWidth={2.5} />
                         </div>
                         <span className="truncate">Release Funds</span>
@@ -378,12 +379,12 @@ export default function LoanApplication() {
             />
             <MetricItem
               icon={<Calendar />}
-              label="Loan Amortization Term"
+              label="Loan Term"
               value={`${application.loan_period || 0} Months`}
             />
             <MetricItem
               icon={<Clock />}
-              label="Payment Interval Loop"
+              label="Payment Interval"
               value={application.loan_interval}
               isCapitalized
             />
@@ -394,7 +395,7 @@ export default function LoanApplication() {
             />
             <MetricItem
               icon={<FileText />}
-              label="System Token Code"
+              label="Loan Code"
               value={application.loan_code}
             />
             <MetricItem
@@ -687,7 +688,7 @@ export default function LoanApplication() {
 
           {/* CARD 6: UNDERWRITING DOCUMENT COMPLIANCE VAULT */}
           <ApplicationCard
-            title="Compliance Files Vault"
+            title="Compliance Files"
             icon={<Paperclip size={15} />}
           >
             {!application?.documents || application.documents.length === 0 ? (

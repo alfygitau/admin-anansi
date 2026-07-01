@@ -270,8 +270,8 @@ export default function LoanProducts() {
                     {/* Column 2: Interest Parameter Models */}
                     <td className="py-4 px-6">
                       <div className="flex flex-col">
-                        <span className="font-bold text-slate-700 text-sm">
-                          {Number(product.interest_rate).toFixed(1)}
+                        <span className="font-bold font-sans text-slate-700 text-sm">
+                          {Number(product.interest_rate).toFixed(1)} p/m
                         </span>
                         <span className="text-[11px] text-slate-400 font-medium mt-0.5">
                           {formatSentenceCase(product?.interest_method)}

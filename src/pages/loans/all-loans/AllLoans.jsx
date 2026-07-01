@@ -336,7 +336,7 @@ export default function AllLoans() {
                       <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1.5">
                           <span className="font-semibold text-slate-800 text-sm tracking-tight">
-                            {loan?.loan_product?.product_name ??
+                            {loan?.loan_type ??
                               "Development Loan"}
                           </span>
                           <div className="flex items-center gap-1.5">

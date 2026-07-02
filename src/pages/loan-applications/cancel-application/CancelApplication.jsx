@@ -7,38 +7,49 @@ import {
   DollarSign,
   AlertTriangle,
   XCircle,
-  FileText,
-  HelpCircle,
   ShieldAlert,
   FileX,
   ArrowUpRight,
+  Loader2,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
+import {
+  cancelApplication,
+  getApplication,
+} from "../../../sdk/loan-applications/loan-applications";
+import useAuth from "../../../hooks/useAuth";
 
 export default function CancelApplication() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { applicationId } = useParams();
+  const { id } = useParams();
+  const [application, setApplication] = useState({});
+  const { auth } = useAuth();
+  const today = new Date().toISOString().split("T")[0];
 
-  // Active officer session data
-  const currentOfficer = {
-    uuid: "user-uuid-of-disbursing-officer",
-    name: "John Kamau",
-    currentDate: "2026-06-19",
-  };
-
-  // Mocking minimal application context for safety checks
-  const [appDetails] = useState({
-    number: "APP-00002",
-    applicant: "ALMASI ALUOCH",
-    amount: "60,000.00",
-    currentStage: "Credit Committee Review",
+  useQuery({
+    queryKey: ["get loan application", id],
+    queryFn: async () => {
+      const response = await getApplication(id);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setApplication(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Transactions processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
   });
 
   const [formData, setFormData] = useState({
-    reason_code: "", // 'applicant_request' | 'failed_checks' | 'duplicate' | 'other'
+    reason_code: "",
     notes: "",
     confirm_permanence: false,
   });
@@ -57,20 +68,13 @@ export default function CancelApplication() {
   const { mutate, isLoading } = useMutation({
     mutationKey: ["cancel-application"],
     mutationFn: async () => {
-      const finalPayload = {
-        application_id: applicationId || appDetails.number,
-        cancelled_by: currentOfficer.uuid,
-        cancelled_by_name: currentOfficer.name,
-        cancellation_date: currentOfficer.currentDate,
-        reason_code: formData.reason_code,
-        notes: formData.notes,
-        idempotency_key: `cancel-BA208-${applicationId || "APP-00002"}-20260619`,
-      };
-      console.log(
-        "Transmitting cancellation payload to system logs:",
-        finalPayload,
+      const response = await cancelApplication(
+        id,
+        auth?.user?.id,
+        `${auth?.user?.firstname} ${auth?.user?.lastname}`,
+        formData?.notes,
       );
-      // return await axios.post('/api/applications/cancel', finalPayload);
+      return response;
     },
     onSuccess: () => {
       showToast({
@@ -80,7 +84,7 @@ export default function CancelApplication() {
         description:
           "The application has been successfully closed and recorded as cancelled.",
       });
-      navigate("/admin/all-users");
+      navigate("/admin/loan-applications");
     },
     onError: (error) => {
       showToast({
@@ -93,7 +97,7 @@ export default function CancelApplication() {
     },
   });
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
     const newErrors = {};
 
@@ -110,8 +114,7 @@ export default function CancelApplication() {
       setErrors(newErrors);
       return;
     }
-
-    mutate();
+    await mutate();
   };
 
   return (
@@ -146,7 +149,7 @@ export default function CancelApplication() {
               icon={<User />}
               label="Executing Officer"
               name="officer_name"
-              value={currentOfficer.name}
+              value={`${auth?.user.firstname} ${auth?.user.lastname}`}
               disabled
               readOnly
             />
@@ -154,7 +157,7 @@ export default function CancelApplication() {
               icon={<Calendar />}
               label="Cancellation Date"
               name="cancellation_date"
-              value={currentOfficer.currentDate}
+              value={today}
               disabled
               readOnly
             />
@@ -168,7 +171,7 @@ export default function CancelApplication() {
               icon={<User />}
               label="Borrower Name"
               name="applicant_name"
-              value={appDetails.applicant}
+              value={application?.applicant_name}
               disabled
               readOnly
             />
@@ -176,7 +179,7 @@ export default function CancelApplication() {
               icon={<Layers />}
               label="Application Number"
               name="app_number"
-              value={appDetails.number}
+              value={application?.application_number}
               disabled
               readOnly
             />
@@ -192,14 +195,14 @@ export default function CancelApplication() {
             <FormInput
               icon={<DollarSign />}
               label="Loan Amount Requested"
-              value={`KES ${appDetails.amount}`}
+              value={`KES ${application?.applied_amount}`}
               disabled
               readOnly
             />
             <FormInput
               icon={<Layers />}
               label="Stopped at Evaluation Stage"
-              value={appDetails.currentStage}
+              value={application?.status_label}
               disabled
               readOnly
             />
@@ -211,13 +214,13 @@ export default function CancelApplication() {
       <div className="w-full bg-white border border-slate-200/60 rounded-[24px] p-6 space-y-6 shadow-3xs">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* UNWRAPPED DESIGN: NOTES TEXTAREA */}
-          <div className="md:col-span-2 flex flex-col space-y-2 w-full">
+          <div className="md:col-span-5 flex flex-col space-y-2 w-full">
             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block select-none">
-              Detailed Audit Explanation Notes{" "}
+              Detailed Explanation Notes{" "}
               <span className="text-rose-500">*</span>
             </label>
             <textarea
-              rows={3}
+              rows={4}
               name="notes"
               value={formData.notes}
               onChange={handleInputChange}
@@ -302,17 +305,26 @@ export default function CancelApplication() {
         <div className="bg-white rounded-[24px] border border-slate-200/60 p-4 flex items-center justify-end gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
           <button
             type="button"
+            onClick={() => navigate(-1)}
             className="h-11 px-5 border border-slate-200/80 bg-white text-slate-600 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-all cursor-pointer"
           >
             Keep Application Active
           </button>
           <button
-            onClick={() => navigate("/admin/apply-loan/eligibility")}
+            onClick={handleFormSubmit}
             type="button"
-            className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 cursor-pointer flex items-center gap-2"
+            disabled={isLoading} // Disables the button during loading
+            className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 flex items-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            <span>Confirm Permanent Cancellation</span>
-            <ArrowUpRight size={14} />
+            <span>
+              {isLoading ? "Processing..." : "Confirm Permanent Cancellation"}
+            </span>
+
+            {isLoading ? (
+              <Loader2 size={14} className="animate-spin" />
+            ) : (
+              <ArrowUpRight size={14} />
+            )}
           </button>
         </div>
       </div>
@@ -355,52 +367,5 @@ const FormInput = ({ icon, label, error, ...props }) => (
         }`}
       />
     </div>
-  </div>
-);
-
-const FormSelect = ({ icon, label, error, children, ...props }) => (
-  <div className="flex flex-col space-y-2 w-full min-w-0">
-    <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block select-none">
-      {label}{" "}
-      {props.required && (
-        <span className="text-rose-500 font-sans ml-0.5">*</span>
-      )}
-    </label>
-    <div className="relative w-full group">
-      <div className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 size-4 flex items-center justify-center pointer-events-none z-10 group-focus-within:text-rose-500 transition-colors">
-        {React.cloneElement(icon, { size: 14 })}
-      </div>
-      <div className="absolute left-10 top-1/2 -translate-y-1/2 w-px h-4 bg-slate-200/80 group-focus-within:bg-rose-500/30 transition-colors pointer-events-none z-10" />
-      <select
-        {...props}
-        className={`w-full h-11 pl-12 pr-10 bg-slate-50/60 border rounded-xl text-xs font-semibold outline-none transition-all focus:bg-white focus:ring-4 focus:ring-rose-500/5 appearance-none font-sans cursor-pointer ${
-          error
-            ? "border-rose-400 text-rose-900 focus:border-rose-500"
-            : "border-slate-200/80 text-slate-800 focus:border-rose-500"
-        }`}
-      >
-        {children}
-      </select>
-      <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="14"
-          height="14"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="m 6,9 6,6 6,-6" />
-        </svg>
-      </div>
-    </div>
-    {error && (
-      <span className="text-[11px] font-semibold text-rose-600 mt-1 ml-1 animate-in fade-in duration-150">
-        {error}
-      </span>
-    )}
   </div>
 );

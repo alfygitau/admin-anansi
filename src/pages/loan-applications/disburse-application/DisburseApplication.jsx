@@ -7,14 +7,12 @@ import {
   Hash,
   GitBranch,
   Receipt,
-  FileText,
   User,
   Calendar,
-  CheckCircle2,
   AlertTriangle,
-  ArrowRight,
   ShieldCheck,
   ArrowUpRight,
+  Loader2,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
@@ -75,7 +73,7 @@ export default function DisburseLoan() {
     return crypto.randomUUID();
   };
 
-  const { isFetching } = useQuery({
+  useQuery({
     queryKey: ["get loan application", id],
     queryFn: async () => {
       const response = await getApplication(id);
@@ -126,7 +124,9 @@ export default function DisburseLoan() {
     },
   });
 
-  const handleFormSubmit = () => {};
+  const handleFormSubmit = async () => {
+    await mutate();
+  };
 
   return (
     <>
@@ -355,18 +355,25 @@ export default function DisburseLoan() {
 
           <div className="bg-white rounded-[24px] border border-slate-200/60 p-4 flex items-center justify-end gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
             <button
+              onClick={() => navigate(-1)}
               type="button"
               className="h-11 px-5 border border-slate-200/80 bg-white text-slate-600 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-all cursor-pointer"
             >
               Cancel
             </button>
             <button
-              onClick={() => navigate("/admin/apply-loan/eligibility")}
+              onClick={handleFormSubmit}
               type="button"
-              className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 cursor-pointer flex items-center gap-2"
+              disabled={isLoading} // Prevents double-clicking while loading
+              className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 flex items-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              <span>CConfirm Payout</span>
-              <ArrowUpRight size={14} />
+              <span>{isLoading ? "Processing..." : "Confirm Payout"}</span>
+
+              {isLoading ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <ArrowUpRight size={14} />
+              )}
             </button>
           </div>
         </div>

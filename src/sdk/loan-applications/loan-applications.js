@@ -177,3 +177,16 @@ export const disburseApplication = async (
     throw error?.response?.data || error;
   }
 };
+
+export const cancelApplication = async (id, adminId, adminName, reason) => {
+  try {
+    const response = await loanClient.post(`/loan-applications/${id}/cancel`, {
+      reason: reason,
+      actor_id: adminId,
+      actor_name: adminName,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

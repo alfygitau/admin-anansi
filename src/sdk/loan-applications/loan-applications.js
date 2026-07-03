@@ -9,6 +9,7 @@ export const getLoanApplications = async (
   loan_product_code,
   startDate,
   endDate,
+  org_code = "BA208",
 ) => {
   try {
     const params = new URLSearchParams();
@@ -29,6 +30,8 @@ export const getLoanApplications = async (
     // Timeline range filters
     if (startDate) params.append("from_date", startDate);
     if (endDate) params.append("to_date", endDate);
+
+    if (org_code) params.append("loan_org_code", org_code);
 
     // Send the final request with the combined search parameters
     const response = await loanClient.get(

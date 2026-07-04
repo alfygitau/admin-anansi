@@ -339,6 +339,9 @@ export default function LoanProducts() {
                     <td className="py-4 px-6 text-right pr-8">
                       <div className="flex items-center justify-end gap-1.5">
                         <button
+                          onClick={() =>
+                            navigate(`/admin/loan-products/${product?.id}`)
+                          }
                           className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm bg-white"
                           title="View Extended Rules"
                         >

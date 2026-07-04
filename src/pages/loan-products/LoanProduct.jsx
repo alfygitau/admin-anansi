@@ -99,7 +99,7 @@ export default function LoanProduct() {
   };
 
   return (
-    <div className="w-full space-y-8 font-sans antialiased text-slate-800">
+    <div className="w-full space-y-5 antialiased text-slate-800">
       {/* EXECUTIVE COMMAND LAYER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 pb-6 select-none">
         <div className="flex items-center gap-4">

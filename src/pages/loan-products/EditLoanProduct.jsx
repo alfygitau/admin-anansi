@@ -99,7 +99,6 @@ export default function EditLoanProduct() {
     e.preventDefault();
   };
 
-  // Shared string representation configuration for stripping default chrome spinners
   const noSpinnerUtility =
     "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 

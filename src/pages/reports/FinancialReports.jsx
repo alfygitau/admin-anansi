@@ -1,24 +1,34 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import {
   FileSpreadsheet,
-  Download,
-  AlertTriangle,
   ChevronDown,
   ChevronRight,
   Search,
-  Building,
   Calendar,
-  TrendingUp,
   Printer,
   Folder,
   FileText,
 } from "lucide-react";
+import {
+  balanceSheet,
+  chartOfAccounts,
+  incomeStatement,
+  trialBalance,
+} from "../../sdk/reports/reports";
+import { useToast } from "../../contexts/ToastProvider";
+import { useQuery } from "react-query";
 
 export default function FinancialReports() {
   const [activeTab, setActiveTab] = useState("coa");
-  const [orgCode, setOrgCode] = useState("BA208");
-  const [asOfDate, setAsOfDate] = useState("2026-06-30");
   const [coaSearch, setCoaSearch] = useState("");
+  const { showToast } = useToast();
+  const todayStr = new Date().toISOString().split("T")[0];
+  const [startDate, setStartDate] = useState("2026-01-01");
+  const [endDate, setEndDate] = useState(todayStr);
+  const [myChartOfAccounts, setMyChartOfAccounts] = useState([]);
+  const [myIncomeStatement, setMyIncomeStatement] = useState({});
+  const [myBalanceSheet, setMyBalanceSheet] = useState({});
+  const [myTrialBalance, setMyTrialBalance] = useState({});
 
   const [expandedNodes, setExpandedNodes] = useState({
     1000: true,
@@ -38,66 +48,81 @@ export default function FinancialReports() {
     }).format(val);
   };
 
-  const trialBalanceData = useMemo(
-    () => ({
-      rows: [
-        {
-          account_code: "1000",
-          account_name: "Cash & Cash Equivalents (FOSA Tills)",
-          account_type: "asset",
-          debit_balance: 230000.0,
-          credit_balance: 0.0,
-        },
-        {
-          account_code: "1120",
-          account_name: "Development Loan Portfolio Subsidiary Ledger",
-          account_type: "asset",
-          debit_balance: 415000.0,
-          credit_balance: 0.0,
-        },
-        {
-          account_code: "2100",
-          account_name: "Member Overpayment Clearing Liability",
-          account_type: "liability",
-          debit_balance: 0.0,
-          credit_balance: 15000.0,
-        },
-        {
-          account_code: "2230",
-          account_name: "Member Non-Withdrawable Deposits (BOSA)",
-          account_type: "liability",
-          debit_balance: 0.0,
-          credit_balance: 610000.0,
-        },
-        {
-          account_code: "4110",
-          account_name: "Interest Revenue earned on Loan Assets",
-          account_type: "income",
-          debit_balance: 0.0,
-          credit_balance: 60000.0,
-        },
-        {
-          account_code: "5150",
-          account_name: "SASRA Regulatory Levy Expense Allocation",
-          account_type: "expense",
-          debit_balance: 25000.0,
-          credit_balance: 0.0,
-        },
-      ],
-      totals: {
-        total_debit: 670000.0,
-        total_credit: 670000.0,
-      },
-    }),
-    [],
-  );
+  useQuery({
+    queryKey: ["chart of accounts"],
+    queryFn: async () => {
+      const response = await chartOfAccounts();
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setMyChartOfAccounts(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Failed to load report templates",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
-  const variance = useMemo(() => {
-    return Math.abs(
-      trialBalanceData.totals.total_debit -
-        trialBalanceData.totals.total_credit,
-    );
-  }, [trialBalanceData]);
+  useQuery({
+    queryKey: ["trial balance", startDate, endDate],
+    queryFn: async () => {
+      const response = await trialBalance(startDate, endDate);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setMyTrialBalance(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Failed to load report templates",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  useQuery({
+    queryKey: ["balance sheet", startDate, endDate],
+    queryFn: async () => {
+      const response = await balanceSheet(startDate, endDate);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setMyBalanceSheet(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Failed to load report templates",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  useQuery({
+    queryKey: ["income statement", startDate, endDate],
+    queryFn: async () => {
+      const response = await incomeStatement(startDate, endDate);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setMyIncomeStatement(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Failed to load report templates",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
   return (
     <div className="bg-slate-50 text-slate-800 font-sans space-y-6">
@@ -145,15 +170,24 @@ export default function FinancialReports() {
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-semibold text-slate-600">
             <Calendar size={16} className="text-slate-400" />
-            <span className="text-slate-400 mr-1">As of:</span>
+            <span className="text-slate-400 mr-1">Start Date</span>
             <input
               type="date"
-              value={asOfDate}
-              onChange={(e) => setAsOfDate(e.target.value)}
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
               className="bg-transparent border-0 outline-none p-0 focus:ring-0 font-bold text-slate-800 cursor-pointer"
             />
           </div>
-
+          <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-semibold text-slate-600">
+            <Calendar size={16} className="text-slate-400" />
+            <span className="text-slate-400 mr-1">End Date</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="bg-transparent border-0 outline-none p-0 focus:ring-0 font-bold text-slate-800 cursor-pointer"
+            />
+          </div>
           <div className="flex items-center gap-1.5 border-l border-slate-200 pl-3">
             <button
               className="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-primary transition-colors shadow-sm"
@@ -171,37 +205,20 @@ export default function FinancialReports() {
         </div>
       </header>
 
-      {variance > 0 && (
-        <div className="bg-rose-50 border border-rose-200 p-4 rounded-2xl flex items-start gap-3 shadow-sm shadow-rose-900/5">
-          <AlertTriangle size={18} className="text-rose-600 shrink-0 mt-0.5" />
-          <div className="space-y-0.5">
-            <h5 className="text-[13px] font-bold text-rose-950">
-              Structural Balance Discrepancy Error
-            </h5>
-            <p className="text-[12px] text-rose-700 font-medium leading-relaxed">
-              The General Ledger architecture contains an active variance
-              payload of{" "}
-              <span className="font-bold">KES {formatCurrency(variance)}</span>.
-              Automated operational accounting reconciliations have been
-              suspended. Please check unposted journals or bridge processing
-              accounts.
-            </p>
-          </div>
-        </div>
-      )}
-
       {activeTab === "trial-balance" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+          {/* Header Block */}
           <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
             <h4 className="text-[15px] font-bold text-primary tracking-tight">
               Net Trial Balance Report
             </h4>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-              Double-entry ledger ledger checking matrix balances calculated
-              directly via transaction caches.
+              Double-entry ledger checking matrix balances calculated directly
+              via transaction caches.
             </p>
           </div>
 
+          {/* Table Workspace */}
           <div className="overflow-x-auto">
             <table className="w-full border-collapse text-left">
               <thead>
@@ -209,16 +226,12 @@ export default function FinancialReports() {
                   <th className="py-3 px-6 w-32">Account Code</th>
                   <th className="py-3 px-6">Account Ledger Description</th>
                   <th className="py-3 px-6 w-28">Element Type</th>
-                  <th className="py-3 px-6 text-right w-48">
-                    Debit Balance (KES)
-                  </th>
-                  <th className="py-3 px-6 text-right w-48">
-                    Credit Balance (KES)
-                  </th>
+                  <th className="py-3 px-6 text-right w-48">Debit (KES)</th>
+                  <th className="py-3 px-6 text-right w-48">Credit (KES)</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-[13px] font-medium">
-                {trialBalanceData.rows.map((row) => (
+                {myTrialBalance?.rows?.map((row) => (
                   <tr
                     key={row.account_code}
                     className="hover:bg-slate-50/50 transition-colors"
@@ -232,15 +245,13 @@ export default function FinancialReports() {
                     <td className="py-3.5 px-6 text-slate-400 capitalize">
                       {row.account_type}
                     </td>
+                    {/* Maps precisely to the new 'debit' API key */}
                     <td className="py-3.5 px-6 text-right font-mono font-bold text-slate-800">
-                      {row.debit_balance > 0
-                        ? formatCurrency(row.debit_balance)
-                        : "—"}
+                      {row.debit > 0 ? formatCurrency(row.debit) : "—"}
                     </td>
+                    {/* Maps precisely to the new 'credit' API key */}
                     <td className="py-3.5 px-6 text-right font-mono font-bold text-slate-800">
-                      {row.credit_balance > 0
-                        ? formatCurrency(row.credit_balance)
-                        : "—"}
+                      {row.credit > 0 ? formatCurrency(row.credit) : "—"}
                     </td>
                   </tr>
                 ))}
@@ -253,11 +264,12 @@ export default function FinancialReports() {
                   >
                     Grand Totals Balance
                   </td>
-                  <td className="py-4 px-6 text-right font-mono border-b-4 border-double border-primary">
-                    {formatCurrency(trialBalanceData.totals.total_debit)}
+                  {/* Maps precisely to root-level summary keys */}
+                  <td className="py-4 px-6 text-right font-mono border-primary text-slate-900">
+                    {formatCurrency(myTrialBalance?.total_debit || 0)}
                   </td>
-                  <td className="py-4 px-6 text-right font-mono border-b-4 border-double border-primary">
-                    {formatCurrency(trialBalanceData.totals.total_credit)}
+                  <td className="py-4 px-6 text-right font-mono border-primary text-slate-900">
+                    {formatCurrency(myTrialBalance?.total_credit || 0)}
                   </td>
                 </tr>
               </tfoot>
@@ -268,202 +280,192 @@ export default function FinancialReports() {
 
       {activeTab === "coa" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden space-y-4">
+          {/* 1. MANAGEMENT DIRECTORY SEARCH HEADER */}
           <div className="px-6 pt-5 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 bg-slate-50/40">
             <div>
               <h4 className="text-[15px] font-bold text-primary tracking-tight">
-                Structured Chart of Accounts (COA) Directory
+                Structured Chart of Accounts
               </h4>
               <p className="text-[11px] text-slate-400 font-medium mt-0.5">
                 Hierarchical structural tracking matrix containing active legal
                 asset allocation indices.
               </p>
             </div>
-            <div className="flex items-center h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl focus-within:border-slate-400 transition-colors w-full sm:w-64">
-              <Search size={16} className="text-slate-400 mr-2 shrink-0" />
-              <input
-                type="text"
-                placeholder="Search account node index..."
-                value={coaSearch}
-                onChange={(e) => setCoaSearch(e.target.value)}
-                className="bg-transparent border-0 outline-none w-full p-0 text-[13px] font-medium placeholder-slate-300 focus:ring-0 focus:shadow-none"
-              />
-            </div>
           </div>
 
-          <div className="px-6 pb-6 space-y-3 font-medium text-[13px]">
-            {/* Asset Node Header Stack */}
-            <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
-              <div
-                onClick={() => toggleNode("1000")}
-                className="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none"
-              >
-                <div className="flex items-center gap-2">
-                  {expandedNodes["1000"] ? (
-                    <ChevronDown size={16} className="text-slate-400" />
-                  ) : (
-                    <ChevronRight size={16} className="text-slate-400" />
-                  )}
-                  <Folder size={16} className="text-blue-600" />
-                  <span className="font-bold text-primary">
-                    1000 — Asset Assets Ledger Controls
-                  </span>
-                </div>
-                <span className="text-[11px] bg-slate-200/80 text-slate-600 px-2 py-0.5 rounded font-bold uppercase tracking-wide">
-                  Category Root
-                </span>
-              </div>
+          {/* 2. HIERARCHICAL TREE ENGINE WORKSPACE */}
+          <div className="px-6 pb-6 space-y-4 font-medium text-[13px]">
+            {(() => {
+              // Assume 'chartOfAccountsData' holds your raw API array response
+              const rawCoaList = myChartOfAccounts || [];
 
-              {expandedNodes["1000"] && (
-                <div className="bg-white divide-y divide-slate-50 pl-6 border-t border-slate-100">
-                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div className="flex items-center gap-2 pl-2">
-                      <FileText size={15} className="text-slate-400" />
-                      <span className="font-bold font-mono text-slate-400">
-                        1010
-                      </span>
-                      <span className="text-slate-800 font-semibold">
-                        Cash Equivalents (FOSA vault)
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-                      Subledger
-                    </span>
-                  </div>
-                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div className="flex items-center gap-2 pl-2">
-                      <FileText size={15} className="text-slate-400" />
-                      <span className="font-bold font-mono text-slate-400">
-                        1120
-                      </span>
-                      <span className="text-slate-800 font-semibold">
-                        Development Loans Portfolio Account
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-                      Subledger
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+              // Apply real-time evaluation across descriptive names or account codes
+              const filteredList = rawCoaList.filter((acc) => {
+                const matchString = coaSearch.toLowerCase();
+                return (
+                  acc.account_name?.toLowerCase().includes(matchString) ||
+                  acc.account_code?.includes(matchString)
+                );
+              });
 
-            {/* Liability Node Header Stack */}
-            <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
-              <div
-                onClick={() => toggleNode("2000")}
-                className="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none"
-              >
-                <div className="flex items-center gap-2">
-                  {expandedNodes["2000"] ? (
-                    <ChevronDown size={16} className="text-slate-400" />
-                  ) : (
-                    <ChevronRight size={16} className="text-slate-400" />
-                  )}
-                  <Folder size={16} className="text-emerald-600" />
-                  <span className="font-bold text-primary">
-                    2000 — Liability Obligations Ledger Controls
-                  </span>
-                </div>
-                <span className="text-[11px] bg-slate-200/80 text-slate-600 px-2 py-0.5 rounded font-bold uppercase tracking-wide">
-                  Category Root
-                </span>
-              </div>
+              // Separate core root nodes (no parent links) from sub-ledger elements
+              const rootNodes = filteredList.filter((acc) => !acc.parent_id);
+              const childNodes = rawCoaList.filter((acc) => acc.parent_id);
 
-              {expandedNodes["2000"] && (
-                <div className="bg-white divide-y divide-slate-50 pl-6 border-t border-slate-100">
-                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div className="flex items-center gap-2 pl-2">
-                      <FileText size={15} className="text-slate-400" />
-                      <span className="font-bold font-mono text-slate-400">
-                        2100
-                      </span>
-                      <span className="text-slate-800 font-semibold">
-                        Member Overpayment Clearing Liability
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-                      Subledger
-                    </span>
-                  </div>
-                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div className="flex items-center gap-2 pl-2">
-                      <FileText size={15} className="text-slate-400" />
-                      <span className="font-bold font-mono text-slate-400">
-                        2230
-                      </span>
-                      <span className="text-slate-800 font-semibold">
-                        Member Non-Withdrawable Deposits (BOSA)
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-                      Subledger
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+              // Map colors dynamically based on accounting classifications
+              const getTypeStyles = (type) => {
+                switch (type?.toLowerCase()) {
+                  case "asset":
+                    return {
+                      icon: "text-blue-600",
+                      badge: "bg-blue-50 text-blue-700 border-blue-100",
+                    };
+                  case "liability":
+                    return {
+                      icon: "text-emerald-600",
+                      badge:
+                        "bg-emerald-50 text-emerald-700 border-emerald-100",
+                    };
+                  case "equity":
+                    return {
+                      icon: "text-purple-600",
+                      badge: "bg-purple-50 text-purple-700 border-purple-100",
+                    };
+                  case "income":
+                    return {
+                      icon: "text-amber-600",
+                      badge: "bg-amber-50 text-amber-700 border-amber-100",
+                    };
+                  case "expense":
+                    return {
+                      icon: "text-rose-600",
+                      badge: "bg-rose-50 text-rose-700 border-rose-100",
+                    };
+                  default:
+                    return {
+                      icon: "text-slate-600",
+                      badge: "bg-slate-50 text-slate-700 border-slate-100",
+                    };
+                }
+              };
 
-            {/* Equity Node Header Stack */}
-            <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
-              <div
-                onClick={() => toggleNode("3000")}
-                className="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none"
-              >
-                <div className="flex items-center gap-2">
-                  {expandedNodes["3000"] ? (
-                    <ChevronDown size={16} className="text-slate-400" />
-                  ) : (
-                    <ChevronRight size={16} className="text-slate-400" />
-                  )}
-                  <Folder size={16} className="text-purple-600" />
-                  <span className="font-bold text-primary">
-                    3000 — Equity & Institutional Capital Reserves
-                  </span>
-                </div>
-                <span className="text-[11px] bg-slate-200/80 text-slate-600 px-2 py-0.5 rounded font-bold uppercase tracking-wide">
-                  Category Root
-                </span>
-              </div>
+              if (rootNodes.length === 0) {
+                return (
+                  <div className="text-center py-8 text-xs text-slate-400 font-semibold italic">
+                    No ledger accounts found matching "{coaSearch}"
+                  </div>
+                );
+              }
 
-              {expandedNodes["3000"] && (
-                <div className="bg-white divide-y divide-slate-50 pl-6 border-t border-slate-100">
-                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div className="flex items-center gap-2 pl-2">
-                      <FileText size={15} className="text-slate-400" />
-                      <span className="font-bold font-mono text-slate-400">
-                        3010
-                      </span>
-                      <span className="text-slate-800 font-semibold">
-                        Qualifying Share Capital Statutory Fund
-                      </span>
+              return rootNodes.map((root) => {
+                const styles = getTypeStyles(root.account_type);
+                // Query sub-ledger children belonging specifically to this master node block
+                const children = childNodes.filter(
+                  (child) => child.parent_id === root.id,
+                );
+                const isExpanded = !!expandedNodes[root.account_code];
+
+                return (
+                  <div
+                    key={root.id}
+                    className="border border-slate-200/70 rounded-xl overflow-hidden shadow-2xs bg-white"
+                  >
+                    {/* ROOT MASTER HEADER CONTROL CARD */}
+                    <div
+                      onClick={() => toggleNode(root.account_code)}
+                      className="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none transition-colors"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="shrink-0">
+                          {children.length > 0 ? (
+                            isExpanded ? (
+                              <ChevronDown
+                                size={16}
+                                className="text-slate-400"
+                              />
+                            ) : (
+                              <ChevronRight
+                                size={16}
+                                className="text-slate-400"
+                              />
+                            )
+                          ) : (
+                            <div className="w-4" />
+                          )}
+                        </div>
+                        <Folder
+                          size={16}
+                          className={`${styles.icon} shrink-0`}
+                        />
+                        <span className="font-mono font-bold text-slate-400 shrink-0">
+                          {root.account_code}
+                        </span>
+                        <span className="font-bold text-slate-900 truncate pl-1">
+                          {root.account_name}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0 ml-4">
+                        <span
+                          className={`text-[9px] border px-2 py-0.5 rounded font-black uppercase tracking-wider select-none ${styles.badge}`}
+                        >
+                          {root.account_type}
+                        </span>
+                        <span className="text-[10px] hidden sm:inline-block bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-semibold text-xs">
+                          Control Group
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-                      Subledger
-                    </span>
+
+                    {/* NESTED CHILDREN EXPANSION SHEET CONTAINER */}
+                    {isExpanded && children.length > 0 && (
+                      <div className="bg-white divide-y divide-slate-100 pl-6 border-t border-slate-100/80">
+                        {children.map((child) => (
+                          <div
+                            key={child.id}
+                            className="p-3.5 flex items-center justify-between hover:bg-slate-50/50 transition-colors"
+                          >
+                            <div className="flex items-center gap-2 pl-2 min-w-0">
+                              <FileText
+                                size={14}
+                                className="text-slate-400 shrink-0"
+                              />
+                              <span className="font-bold font-mono text-slate-400 tracking-tight shrink-0">
+                                {child.account_code}
+                              </span>
+                              <span className="text-slate-800 font-semibold truncate pl-1">
+                                {child.account_name}
+                              </span>
+                            </div>
+
+                            <div className="flex items-center gap-3 shrink-0 ml-4 select-none">
+                              {child.description && (
+                                <span className="text-[11px] max-w-xs text-slate-400 truncate hidden md:block font-normal italic">
+                                  {child.description}
+                                </span>
+                              )}
+                              <span className="text-[10px] bg-slate-50 border border-slate-200 text-slate-400 font-black px-2 py-0.5 rounded uppercase tracking-widest font-mono">
+                                {child.normal_balance}
+                              </span>
+                              <span className="text-[10px] bg-blue-50/60 text-blue-600 border border-blue-100/80 font-bold px-2 py-0.5 rounded">
+                                Posting Entry
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div className="flex items-center gap-2 pl-2">
-                      <FileText size={15} className="text-slate-400" />
-                      <span className="font-bold font-mono text-slate-400">
-                        3050
-                      </span>
-                      <span className="text-slate-800 font-semibold">
-                        Accumulated Retained Net Surplus
-                      </span>
-                    </div>
-                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
-                      Subledger
-                    </span>
-                  </div>
-                </div>
-              )}
-            </div>
+                );
+              });
+            })()}
           </div>
         </div>
       )}
 
       {activeTab === "income" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+          {/* Header Block */}
           <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
             <h4 className="text-[15px] font-bold text-primary tracking-tight">
               Statement of Comprehensive Income
@@ -475,55 +477,90 @@ export default function FinancialReports() {
           </div>
 
           <div className="p-6 space-y-6 text-[13px] font-medium text-slate-700">
+            {/* SECTION 1: REVENUE MATRIX */}
             <div className="space-y-2">
               <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-1.5">
                 Financial Revenue Portfolio
               </h5>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
-                <span>Interest Income earned on Loan Portfolio</span>
-                <span className="font-mono font-bold text-primary">
-                  60,000.00
-                </span>
-              </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
+
+              {myIncomeStatement?.income &&
+              myIncomeStatement.income.length > 0 ? (
+                myIncomeStatement.income.map((row) => (
+                  <div
+                    key={row.account_code}
+                    className="flex justify-between py-1.5 px-2 hover:bg-slate-50 rounded-lg transition-colors"
+                  >
+                    <span className="text-slate-800">{row.account_name}</span>
+                    <span className="font-mono font-bold text-primary">
+                      {formatCurrency(row.amount)}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-xs text-slate-400 italic py-1 px-2">
+                  No revenue streams recorded for this period.
+                </div>
+              )}
+
+              {/* Dynamic Total Income Summary Row */}
+              <div className="flex justify-between py-2 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
                 <span className="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Gross Revenue
                 </span>
-                <span className="font-mono">60,000.00</span>
+                <span className="font-mono">
+                  {formatCurrency(myIncomeStatement?.total_income || 0)}
+                </span>
               </div>
             </div>
 
+            {/* SECTION 2: EXPENSES MATRIX */}
             <div className="space-y-2">
               <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-1.5">
                 Less: Operational Expenses
               </h5>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
-                <span>SASRA Regulatory Levy Expense Allocation</span>
-                <span className="font-mono font-bold text-primary">
-                  25,000.00
-                </span>
-              </div>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
-                <span>Provision for Imminent Credit Impairment Asset Loss</span>
-                <span className="font-mono font-bold text-primary">—</span>
-              </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
+
+              {myIncomeStatement?.expenses &&
+              myIncomeStatement.expenses.length > 0 ? (
+                myIncomeStatement.expenses.map((row) => (
+                  <div
+                    key={row.account_code}
+                    className="flex justify-between py-1.5 px-2 hover:bg-slate-50 rounded-lg transition-colors"
+                  >
+                    <span className="text-slate-800">{row.account_name}</span>
+                    <span className="font-mono font-bold text-primary">
+                      {formatCurrency(row.amount)}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-xs text-slate-400 italic py-2 px-2">
+                  No operating expenses recorded for this period.
+                </div>
+              )}
+
+              {/* Dynamic Total Expenses Summary Row */}
+              <div className="flex justify-between py-2 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
                 <span className="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Operating Expenses
                 </span>
-                <span className="font-mono">(25,000.00)</span>
+                <span className="font-mono">
+                  ({formatCurrency(myIncomeStatement?.total_expenses || 0)})
+                </span>
               </div>
             </div>
 
+            {/* SECTION 3: NET SURPLUS FINAL TACTILE CARD */}
             <div className="pt-2 flex items-center justify-between text-[15px] font-black text-slate-950 bg-slate-100/60 p-3 rounded-xl select-none">
               <span className="uppercase tracking-wider text-[11px] text-slate-500 font-bold">
                 Net Operating Surplus for the Period
               </span>
-              <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-primary pb-0.5">
+              <div className="flex items-baseline gap-1 font-mono border-primary pb-0.5">
                 <span className="text-[11px] text-slate-400 font-bold">
                   KES
                 </span>
-                <span>35,000.00</span>
+                <span className="text-slate-900 font-black">
+                  {formatCurrency(myIncomeStatement?.net_surplus || 0)}
+                </span>
               </div>
             </div>
           </div>
@@ -532,6 +569,7 @@ export default function FinancialReports() {
 
       {activeTab === "balance-sheet" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+          {/* Header Block */}
           <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
             <h4 className="text-[15px] font-bold text-primary tracking-tight">
               Statement of Financial Position (Balance Sheet)
@@ -543,96 +581,139 @@ export default function FinancialReports() {
           </div>
 
           <div className="p-6 space-y-6 text-[13px] font-medium text-slate-700">
-            {/* ASSETS SECTOR */}
+            {/* 1. ASSETS SECTOR */}
             <div className="space-y-2">
               <h5 className="text-[11px] font-bold uppercase tracking-wider text-blue-600 border-b border-blue-100 pb-1.5 pl-1">
                 1000 — Institutional Assets
               </h5>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
-                <span>Cash &amp; Cash Equivalents (FOSA Tills)</span>
-                <span className="font-mono font-bold text-primary">
-                  230,000.00
-                </span>
-              </div>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
-                <span>Development Loan Portfolio Subsidiary Ledger</span>
-                <span className="font-mono font-bold text-primary">
-                  415,000.00
-                </span>
-              </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
-                <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
+
+              {myBalanceSheet?.assets && myBalanceSheet.assets.length > 0 ? (
+                myBalanceSheet.assets.map((row) => (
+                  <div
+                    key={row.account_code}
+                    className="flex justify-between py-1.5 px-2 hover:bg-slate-50 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[11px] text-slate-400">
+                        {row.account_code}
+                      </span>
+                      <span className="text-slate-800">{row.account_name}</span>
+                    </div>
+                    <span className="font-mono font-bold text-primary">
+                      {formatCurrency(row.amount)}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-xs text-slate-400 italic py-1 px-2">
+                  No asset balances recorded.
+                </div>
+              )}
+
+              <div className="flex justify-between py-2 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
+                <span className="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Assets
                 </span>
-                <span className="font-mono">645,000.00</span>
+                <span className="font-mono">
+                  {formatCurrency(myBalanceSheet?.total_assets || 0)}
+                </span>
               </div>
             </div>
 
-            {/* LIABILITIES SECTOR */}
+            {/* 2. LIABILITIES SECTOR */}
             <div className="space-y-2">
               <h5 className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 border-b border-emerald-100 pb-1.5 pl-1">
                 2000 — Liabilities &amp; External Obligations
               </h5>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
-                <span>Member Overpayment Clearing Liability</span>
-                <span className="font-mono font-bold text-primary">
-                  15,000.00
-                </span>
-              </div>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
-                <span>Member Non-Withdrawable Deposits (BOSA)</span>
-                <span className="font-mono font-bold text-primary">
-                  610,000.00
-                </span>
-              </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
-                <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
+
+              {myBalanceSheet?.liabilities &&
+              myBalanceSheet.liabilities.length > 0 ? (
+                myBalanceSheet.liabilities.map((row) => (
+                  <div
+                    key={row.account_code}
+                    className="flex justify-between py-1.5 px-2 hover:bg-slate-50 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[11px] text-slate-400">
+                        {row.account_code}
+                      </span>
+                      <span className="text-slate-800">{row.account_name}</span>
+                    </div>
+                    <span className="font-mono font-bold text-primary">
+                      {formatCurrency(row.amount)}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-xs text-slate-400 italic py-1 px-2">
+                  No active liabilities recorded.
+                </div>
+              )}
+
+              <div className="flex justify-between py-2 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
+                <span className="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Liabilities
                 </span>
-                <span className="font-mono">625,000.00</span>
+                <span className="font-mono">
+                  {formatCurrency(myBalanceSheet?.total_liabilities || 0)}
+                </span>
               </div>
             </div>
 
-            {/* EQUITY & RESERVES SECTOR */}
+            {/* 3. EQUITY & RESERVES SECTOR */}
             <div className="space-y-2">
               <h5 className="text-[11px] font-bold uppercase tracking-wider text-purple-600 border-b border-purple-100 pb-1.5 pl-1">
                 3000 — Equity &amp; Retained Reserves
               </h5>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
-                <span>Retained Earnings / Retained Surplus (Prior Years)</span>
-                <span className="font-mono font-bold text-primary">—</span>
-              </div>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
-                <span>Net Operating Surplus for the Period</span>
-                <span className="font-mono font-bold text-primary">
-                  35,000.00
-                </span>
-              </div>
-              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg text-slate-400 italic">
-                <span>Less: Statutory Capital Adjustment Reconciliations</span>
-                <span className="font-mono font-bold text-slate-500">
-                  (15,000.00)
-                </span>
-              </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
-                <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
+
+              {myBalanceSheet?.equity && myBalanceSheet.equity.length > 0 ? (
+                myBalanceSheet.equity.map((row) => (
+                  <div
+                    key={row.account_code}
+                    className="flex justify-between py-1.5 px-2 hover:bg-slate-50 rounded-lg transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-[11px] text-slate-400">
+                        {row.account_code === "CURRENT_PERIOD_EARNINGS"
+                          ? "—"
+                          : row.account_code}
+                      </span>
+                      <span className="text-slate-800">{row.account_name}</span>
+                    </div>
+                    <span className="font-mono font-bold text-primary">
+                      {formatCurrency(row.amount)}
+                    </span>
+                  </div>
+                ))
+              ) : (
+                <div className="text-xs text-slate-400 italic py-1 px-2">
+                  No equity allocations recorded.
+                </div>
+              )}
+
+              <div className="flex justify-between py-2 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
+                <span className="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Equity &amp; Period Reserves
                 </span>
-                <span className="font-mono">20,000.00</span>
+                <span className="font-mono">
+                  {formatCurrency(myBalanceSheet?.total_equity || 0)}
+                </span>
               </div>
             </div>
 
-            {/* BALANCE TOTAL SHEET DOUBLE UNDERLINE COMPARISON */}
+            {/* 4. BALANCE SHEET DOUBLE UNDERLINE EQUATION MATCH */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
               <div className="flex items-center justify-between text-[14px] font-black text-slate-950 bg-slate-100/60 p-3 rounded-xl select-none">
                 <span className="uppercase tracking-wider text-[10px] text-slate-500 font-bold">
                   Total Assets Base
                 </span>
-                <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-primary pb-0.5">
+                <div className="flex items-baseline gap-1 font-mono border-primary pb-0.5">
                   <span className="text-[10px] text-slate-400 font-bold font-sans">
                     KES
                   </span>
-                  <span>645,000.00</span>
+                  <span className="text-slate-900 font-black">
+                    {formatCurrency(myBalanceSheet?.total_assets || 0)}
+                  </span>
                 </div>
               </div>
 
@@ -640,11 +721,15 @@ export default function FinancialReports() {
                 <span className="uppercase tracking-wider text-[10px] text-slate-500 font-bold">
                   Total Liabilities &amp; Capital
                 </span>
-                <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-primary pb-0.5">
+                <div className="flex items-baseline gap-1 font-mono border-primary pb-0.5">
                   <span className="text-[10px] text-slate-400 font-bold font-sans">
                     KES
                   </span>
-                  <span>645,000.00</span>
+                  <span className="text-slate-900 font-black">
+                    {formatCurrency(
+                      myBalanceSheet?.liabilities_and_equity || 0,
+                    )}
+                  </span>
                 </div>
               </div>
             </div>

@@ -131,7 +131,7 @@ export default function LoanApplications() {
           </div>
           <button
             onClick={() => navigate("/admin/apply-loan/products")}
-            className="flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
+            className="sm:w-full flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
           >
             <Plus size={15} />
             <span>Add Loan Application</span>

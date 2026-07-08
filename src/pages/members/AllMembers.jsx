@@ -166,7 +166,7 @@ export default function AllMembers() {
 
       <div className="w-full space-y-5 antialiased text-slate-800">
         {/* HEADER CONTROLS BANNER */}
-        <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-2 select-none">
+        <div className="flex justify-between gap-4 sm:flex-col sm:items-start sm:justify-between border-b border-slate-200/60 pb-2 select-none">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-slate-900">
               Members Registry
@@ -178,7 +178,7 @@ export default function AllMembers() {
           </div>
           <button
             onClick={() => navigate("/admin/all-members/add-member")}
-            className="flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
+            className="sm:w-full flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
           >
             <UserPlus size={15} />
             <span>Add Member</span>

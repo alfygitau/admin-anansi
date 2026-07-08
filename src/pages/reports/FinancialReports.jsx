@@ -92,7 +92,6 @@ export default function FinancialReports() {
     [],
   );
 
-  // Compute mathematical ledger health real-time anomalies
   const variance = useMemo(() => {
     return Math.abs(
       trialBalanceData.totals.total_debit -
@@ -323,7 +322,7 @@ export default function FinancialReports() {
                         1010
                       </span>
                       <span className="text-slate-800 font-semibold">
-                        Cash Equivalents (FOSA vault vault)
+                        Cash Equivalents (FOSA vault)
                       </span>
                     </div>
                     <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">

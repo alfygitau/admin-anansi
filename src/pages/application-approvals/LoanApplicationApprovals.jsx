@@ -164,7 +164,7 @@ export default function LoanApplicationApprovals() {
           </div>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-5 select-none">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 select-none">
           {/* CARD 1: TOTAL APPROVED AMOUNT */}
           <div className="bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-4 flex items-center gap-4">
             <div className="size-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-3xs shrink-0">

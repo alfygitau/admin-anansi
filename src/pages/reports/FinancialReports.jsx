@@ -23,6 +23,7 @@ export default function FinancialReports() {
   const [expandedNodes, setExpandedNodes] = useState({
     1000: true,
     2000: true,
+    3000: true,
   });
 
   const toggleNode = (code) => {
@@ -115,7 +116,7 @@ export default function FinancialReports() {
       </div>
 
       <header className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0">
+        <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0">
           <button
             onClick={() => setActiveTab("trial-balance")}
             className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "trial-balance" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
@@ -134,29 +135,35 @@ export default function FinancialReports() {
           >
             Income Statement
           </button>
+          <button
+            onClick={() => setActiveTab("balance-sheet")}
+            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "balance-sheet" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+          >
+            Balance Sheet
+          </button>
         </div>
 
-        <div class="flex flex-wrap items-center gap-3">
-          <div class="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-semibold text-slate-600">
-            <Calendar size={16} class="text-slate-400" />
-            <span class="text-slate-400 mr-1">As of:</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-semibold text-slate-600">
+            <Calendar size={16} className="text-slate-400" />
+            <span className="text-slate-400 mr-1">As of:</span>
             <input
               type="date"
               value={asOfDate}
               onChange={(e) => setAsOfDate(e.target.value)}
-              class="bg-transparent border-0 outline-none p-0 focus:ring-0 font-bold text-slate-800 cursor-pointer"
+              className="bg-transparent border-0 outline-none p-0 focus:ring-0 font-bold text-slate-800 cursor-pointer"
             />
           </div>
 
-          <div class="flex items-center gap-1.5 border-l border-slate-200 pl-3">
+          <div className="flex items-center gap-1.5 border-l border-slate-200 pl-3">
             <button
-              class="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 transition-colors shadow-sm"
+              className="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 transition-colors shadow-sm"
               title="Export Excel Document Sheet"
             >
               <FileSpreadsheet size={16} />
             </button>
             <button
-              class="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 transition-colors shadow-sm"
+              className="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 transition-colors shadow-sm"
               title="Print Ledger Records Document"
             >
               <Printer size={16} />
@@ -167,15 +174,15 @@ export default function FinancialReports() {
 
       {variance > 0 && (
         <div className="bg-rose-50 border border-rose-200 p-4 rounded-2xl flex items-start gap-3 shadow-sm shadow-rose-900/5">
-          <AlertTriangle size={18} class="text-rose-600 shrink-0 mt-0.5" />
-          <div class="space-y-0.5">
-            <h5 class="text-[13px] font-bold text-rose-950">
+          <AlertTriangle size={18} className="text-rose-600 shrink-0 mt-0.5" />
+          <div className="space-y-0.5">
+            <h5 className="text-[13px] font-bold text-rose-950">
               Structural Balance Discrepancy Error
             </h5>
-            <p class="text-[12px] text-rose-700 font-medium leading-relaxed">
+            <p className="text-[12px] text-rose-700 font-medium leading-relaxed">
               The General Ledger architecture contains an active variance
               payload of{" "}
-              <span class="font-bold">KES {formatCurrency(variance)}</span>.
+              <span className="font-bold">KES {formatCurrency(variance)}</span>.
               Automated operational accounting reconciliations have been
               suspended. Please check unposted journals or bridge processing
               accounts.
@@ -186,50 +193,52 @@ export default function FinancialReports() {
 
       {activeTab === "trial-balance" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
-          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
-            <h4 class="text-[15px] font-bold text-slate-900 tracking-tight">
+          <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
+            <h4 className="text-[15px] font-bold text-slate-900 tracking-tight">
               Net Trial Balance Report
             </h4>
-            <p class="text-[11px] text-slate-400 font-medium mt-0.5">
+            <p className="text-[11px] text-slate-400 font-medium mt-0.5">
               Double-entry ledger ledger checking matrix balances calculated
               directly via transaction caches.
             </p>
           </div>
 
-          <div class="overflow-x-auto">
-            <table class="w-full border-collapse text-left">
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse text-left">
               <thead>
-                <tr class="bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-200 select-none">
-                  <th class="py-3 px-6 w-32">Account Code</th>
-                  <th class="py-3 px-6">Account Ledger Description</th>
-                  <th class="py-3 px-6 w-28">Element Type</th>
-                  <th class="py-3 px-6 text-right w-48">Debit Balance (KES)</th>
-                  <th class="py-3 px-6 text-right w-48">
+                <tr className="bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-200 select-none">
+                  <th className="py-3 px-6 w-32">Account Code</th>
+                  <th className="py-3 px-6">Account Ledger Description</th>
+                  <th className="py-3 px-6 w-28">Element Type</th>
+                  <th className="py-3 px-6 text-right w-48">
+                    Debit Balance (KES)
+                  </th>
+                  <th className="py-3 px-6 text-right w-48">
                     Credit Balance (KES)
                   </th>
                 </tr>
               </thead>
-              <tbody class="divide-y divide-slate-100 text-[13px] font-medium">
+              <tbody className="divide-y divide-slate-100 text-[13px] font-medium">
                 {trialBalanceData.rows.map((row) => (
                   <tr
                     key={row.account_code}
-                    class="hover:bg-slate-50/50 transition-colors"
+                    className="hover:bg-slate-50/50 transition-colors"
                   >
-                    <td class="py-3.5 px-6 font-mono font-bold text-slate-400">
+                    <td className="py-3.5 px-6 font-mono font-bold text-slate-400">
                       {row.account_code}
                     </td>
-                    <td class="py-3.5 px-6 font-bold text-slate-900">
+                    <td className="py-3.5 px-6 font-bold text-slate-900">
                       {row.account_name}
                     </td>
-                    <td class="py-3.5 px-6 text-slate-400 capitalize">
+                    <td className="py-3.5 px-6 text-slate-400 capitalize">
                       {row.account_type}
                     </td>
-                    <td class="py-3.5 px-6 text-right font-mono font-bold text-slate-800">
+                    <td className="py-3.5 px-6 text-right font-mono font-bold text-slate-800">
                       {row.debit_balance > 0
                         ? formatCurrency(row.debit_balance)
                         : "—"}
                     </td>
-                    <td class="py-3.5 px-6 text-right font-mono font-bold text-slate-800">
+                    <td className="py-3.5 px-6 text-right font-mono font-bold text-slate-800">
                       {row.credit_balance > 0
                         ? formatCurrency(row.credit_balance)
                         : "—"}
@@ -238,17 +247,17 @@ export default function FinancialReports() {
                 ))}
               </tbody>
               <tfoot>
-                <tr class="bg-slate-50/60 text-slate-950 text-[14px] font-black border-t border-slate-100 select-none">
+                <tr className="bg-slate-50/60 text-slate-950 text-[14px] font-black border-t border-slate-100 select-none">
                   <td
                     colSpan={3}
-                    class="py-4 px-6 text-right uppercase tracking-wider text-slate-400 font-bold text-[11px]"
+                    className="py-4 px-6 text-right uppercase tracking-wider text-slate-400 font-bold text-[11px]"
                   >
                     Grand Totals Balance
                   </td>
-                  <td class="py-4 px-6 text-right font-mono border-b-4 border-double border-slate-900">
+                  <td className="py-4 px-6 text-right font-mono border-b-4 border-double border-slate-900">
                     {formatCurrency(trialBalanceData.totals.total_debit)}
                   </td>
-                  <td class="py-4 px-6 text-right font-mono border-b-4 border-double border-slate-900">
+                  <td className="py-4 px-6 text-right font-mono border-b-4 border-double border-slate-900">
                     {formatCurrency(trialBalanceData.totals.total_credit)}
                   </td>
                 </tr>
@@ -260,79 +269,78 @@ export default function FinancialReports() {
 
       {activeTab === "coa" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden space-y-4">
-          <div class="px-6 pt-5 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 bg-slate-50/40">
+          <div className="px-6 pt-5 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 bg-slate-50/40">
             <div>
-              <h4 class="text-[15px] font-bold text-slate-900 tracking-tight">
+              <h4 className="text-[15px] font-bold text-slate-900 tracking-tight">
                 Structured Chart of Accounts (COA) Directory
               </h4>
-              <p class="text-[11px] text-slate-400 font-medium mt-0.5">
+              <p className="text-[11px] text-slate-400 font-medium mt-0.5">
                 Hierarchical structural tracking matrix containing active legal
                 asset allocation indices.
               </p>
             </div>
-            {/* Search Frame Indexer */}
-            <div class="flex items-center h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl focus-within:border-slate-400 transition-colors w-full sm:w-64">
-              <Search size={16} class="text-slate-400 mr-2 shrink-0" />
+            <div className="flex items-center h-10 px-3 bg-slate-50 border border-slate-200 rounded-xl focus-within:border-slate-400 transition-colors w-full sm:w-64">
+              <Search size={16} className="text-slate-400 mr-2 shrink-0" />
               <input
                 type="text"
                 placeholder="Search account node index..."
                 value={coaSearch}
                 onChange={(e) => setCoaSearch(e.target.value)}
-                class="bg-transparent border-0 outline-none w-full p-0 text-[13px] font-medium placeholder-slate-300 focus:ring-0 focus:shadow-none"
+                className="bg-transparent border-0 outline-none w-full p-0 text-[13px] font-medium placeholder-slate-300 focus:ring-0 focus:shadow-none"
               />
             </div>
           </div>
 
-          <div class="px-6 pb-6 space-y-1 font-medium text-[13px]">
+          <div className="px-6 pb-6 space-y-3 font-medium text-[13px]">
             {/* Asset Node Header Stack */}
-            <div class="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+            <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
               <div
                 onClick={() => toggleNode("1000")}
-                class="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none"
+                className="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none"
               >
-                <div class="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   {expandedNodes["1000"] ? (
-                    <ChevronDown size={16} class="text-slate-400" />
+                    <ChevronDown size={16} className="text-slate-400" />
                   ) : (
-                    <ChevronRight size={16} class="text-slate-400" />
+                    <ChevronRight size={16} className="text-slate-400" />
                   )}
-                  <Folder size={16} class="text-bluemain" />
-                  <span class="font-bold text-slate-900">
+                  <Folder size={16} className="text-blue-600" />
+                  <span className="font-bold text-slate-900">
                     1000 — Asset Assets Ledger Controls
                   </span>
                 </div>
-                <span class="text-[11px] bg-slate-200/80 text-slate-600 px-2 py-0.5 rounded font-bold uppercase tracking-wide">
+                <span className="text-[11px] bg-slate-200/80 text-slate-600 px-2 py-0.5 rounded font-bold uppercase tracking-wide">
                   Category Root
                 </span>
               </div>
 
               {expandedNodes["1000"] && (
-                <div class="bg-white divide-y divide-slate-50 pl-6 border-t border-slate-100">
-                  <div class="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div class="flex items-center gap-2 pl-2">
-                      <FileText size={15} class="text-slate-400" />
-                      <span class="font-bold font-mono text-slate-400">
+                <div className="bg-white divide-y divide-slate-50 pl-6 border-t border-slate-100">
+                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
+                    <div className="flex items-center gap-2 pl-2">
+                      <FileText size={15} className="text-slate-400" />
+                      <span className="font-bold font-mono text-slate-400">
                         1010
                       </span>
-                      <span class="text-slate-800 font-semibold">
+                      <span className="text-slate-800 font-semibold">
                         Cash Equivalents (FOSA vault vault)
                       </span>
                     </div>
-                    <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
                       Subledger
                     </span>
                   </div>
-                  <div class="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div class="flex items-center gap-2 pl-2">
-                      <FileText size={15} class="text-slate-400" />
-                      <span class="font-bold font-mono text-slate-400">
+                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
+                    <div className="flex items-center gap-2 pl-2">
+                      <FileText size={15} className="text-slate-400" />
+                      <span className="font-bold font-mono text-slate-400">
                         1120
                       </span>
-                      <span class="text-slate-800 font-semibold">
+                      <span className="text-slate-800 font-semibold">
                         Development Loans Portfolio Account
                       </span>
                     </div>
-                    <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
                       Subledger
                     </span>
                   </div>
@@ -341,54 +349,110 @@ export default function FinancialReports() {
             </div>
 
             {/* Liability Node Header Stack */}
-            <div class="border border-slate-100 rounded-xl overflow-hidden shadow-sm mt-3">
+            <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
               <div
                 onClick={() => toggleNode("2000")}
-                class="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none"
+                className="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none"
               >
-                <div class="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   {expandedNodes["2000"] ? (
-                    <ChevronDown size={16} class="text-slate-400" />
+                    <ChevronDown size={16} className="text-slate-400" />
                   ) : (
-                    <ChevronRight size={16} class="text-slate-400" />
+                    <ChevronRight size={16} className="text-slate-400" />
                   )}
-                  <Folder size={16} class="text-emerald-600" />
-                  <span class="font-bold text-slate-900">
+                  <Folder size={16} className="text-emerald-600" />
+                  <span className="font-bold text-slate-900">
                     2000 — Liability Obligations Ledger Controls
                   </span>
                 </div>
-                <span class="text-[11px] bg-slate-200/80 text-slate-600 px-2 py-0.5 rounded font-bold uppercase tracking-wide">
+                <span className="text-[11px] bg-slate-200/80 text-slate-600 px-2 py-0.5 rounded font-bold uppercase tracking-wide">
                   Category Root
                 </span>
               </div>
 
               {expandedNodes["2000"] && (
-                <div class="bg-white divide-y divide-slate-50 pl-6 border-t border-slate-100">
-                  <div class="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div class="flex items-center gap-2 pl-2">
-                      <FileText size={15} class="text-slate-400" />
-                      <span class="font-bold font-mono text-slate-400">
+                <div className="bg-white divide-y divide-slate-50 pl-6 border-t border-slate-100">
+                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
+                    <div className="flex items-center gap-2 pl-2">
+                      <FileText size={15} className="text-slate-400" />
+                      <span className="font-bold font-mono text-slate-400">
                         2100
                       </span>
-                      <span class="text-slate-800 font-semibold">
+                      <span className="text-slate-800 font-semibold">
                         Member Overpayment Clearing Liability
                       </span>
                     </div>
-                    <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
                       Subledger
                     </span>
                   </div>
-                  <div class="p-3 flex items-center justify-between hover:bg-slate-50/40">
-                    <div class="flex items-center gap-2 pl-2">
-                      <FileText size={15} class="text-slate-400" />
-                      <span class="font-bold font-mono text-slate-400">
+                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
+                    <div className="flex items-center gap-2 pl-2">
+                      <FileText size={15} className="text-slate-400" />
+                      <span className="font-bold font-mono text-slate-400">
                         2230
                       </span>
-                      <span class="text-slate-800 font-semibold">
+                      <span className="text-slate-800 font-semibold">
                         Member Non-Withdrawable Deposits (BOSA)
                       </span>
                     </div>
-                    <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+                      Subledger
+                    </span>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Equity Node Header Stack */}
+            <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+              <div
+                onClick={() => toggleNode("3000")}
+                className="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none"
+              >
+                <div className="flex items-center gap-2">
+                  {expandedNodes["3000"] ? (
+                    <ChevronDown size={16} className="text-slate-400" />
+                  ) : (
+                    <ChevronRight size={16} className="text-slate-400" />
+                  )}
+                  <Folder size={16} className="text-purple-600" />
+                  <span className="font-bold text-slate-900">
+                    3000 — Equity & Institutional Capital Reserves
+                  </span>
+                </div>
+                <span className="text-[11px] bg-slate-200/80 text-slate-600 px-2 py-0.5 rounded font-bold uppercase tracking-wide">
+                  Category Root
+                </span>
+              </div>
+
+              {expandedNodes["3000"] && (
+                <div className="bg-white divide-y divide-slate-50 pl-6 border-t border-slate-100">
+                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
+                    <div className="flex items-center gap-2 pl-2">
+                      <FileText size={15} className="text-slate-400" />
+                      <span className="font-bold font-mono text-slate-400">
+                        3010
+                      </span>
+                      <span className="text-slate-800 font-semibold">
+                        Qualifying Share Capital Statutory Fund
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
+                      Subledger
+                    </span>
+                  </div>
+                  <div className="p-3 flex items-center justify-between hover:bg-slate-50/40">
+                    <div className="flex items-center gap-2 pl-2">
+                      <FileText size={15} className="text-slate-400" />
+                      <span className="font-bold font-mono text-slate-400">
+                        3050
+                      </span>
+                      <span className="text-slate-800 font-semibold">
+                        Accumulated Retained Net Surplus
+                      </span>
+                    </div>
+                    <span className="text-[11px] text-slate-400 font-bold uppercase tracking-wider">
                       Subledger
                     </span>
                   </div>
@@ -401,67 +465,188 @@ export default function FinancialReports() {
 
       {activeTab === "income" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
-          <div class="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
-            <h4 class="text-[15px] font-bold text-slate-900 tracking-tight">
+          <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
+            <h4 className="text-[15px] font-bold text-slate-900 tracking-tight">
               Statement of Comprehensive Income
             </h4>
-            <p class="text-[11px] text-slate-400 font-medium mt-0.5">
+            <p className="text-[11px] text-slate-400 font-medium mt-0.5">
               Sequential operating performance matrix tracking net operational
               surpluses.
             </p>
           </div>
 
-          <div class="p-6 space-y-6 text-[13px] font-medium text-slate-700">
-            {/* Financial Revenue Group Section block */}
-            <div class="space-y-2">
-              <h5 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-1.5">
+          <div className="p-6 space-y-6 text-[13px] font-medium text-slate-700">
+            <div className="space-y-2">
+              <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-1.5">
                 Financial Revenue Portfolio
               </h5>
-              <div class="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Interest Income earned on Loan Portfolio</span>
-                <span class="font-mono font-bold text-slate-900">
+                <span className="font-mono font-bold text-slate-900">
                   60,000.00
                 </span>
               </div>
-              <div class="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
-                <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+                <span className="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Gross Revenue
                 </span>
-                <span class="font-mono">60,000.00</span>
+                <span className="font-mono">60,000.00</span>
               </div>
             </div>
 
-            {/* Operating Expense Group Section Block */}
-            <div class="space-y-2">
-              <h5 class="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-1.5">
+            <div className="space-y-2">
+              <h5 className="text-[11px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 pb-1.5">
                 Less: Operational Expenses
               </h5>
-              <div class="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>SASRA Regulatory Levy Expense Allocation</span>
-                <span class="font-mono font-bold text-slate-900">
+                <span className="font-mono font-bold text-slate-900">
                   25,000.00
                 </span>
               </div>
-              <div class="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Provision for Imminent Credit Impairment Asset Loss</span>
-                <span class="font-mono font-bold text-slate-900">—</span>
+                <span className="font-mono font-bold text-slate-900">—</span>
               </div>
-              <div class="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
-                <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+                <span className="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Operating Expenses
                 </span>
-                <span class="font-mono">(25,000.00)</span>
+                <span className="font-mono">(25,000.00)</span>
               </div>
             </div>
 
-            {/* Net Surplus Summary Target Row */}
-            <div class="pt-2 flex items-center justify-between text-[15px] font-black text-slate-950 bg-slate-100/60 p-3 rounded-xl select-none">
-              <span class="uppercase tracking-wider text-[11px] text-slate-500 font-bold">
+            <div className="pt-2 flex items-center justify-between text-[15px] font-black text-slate-950 bg-slate-100/60 p-3 rounded-xl select-none">
+              <span className="uppercase tracking-wider text-[11px] text-slate-500 font-bold">
                 Net Operating Surplus for the Period
               </span>
-              <div class="flex items-baseline gap-1 font-mono border-b-4 border-double border-slate-900 pb-0.5">
-                <span class="text-[11px] text-slate-400 font-bold">KES</span>
+              <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-slate-900 pb-0.5">
+                <span className="text-[11px] text-slate-400 font-bold">
+                  KES
+                </span>
                 <span>35,000.00</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {activeTab === "balance-sheet" && (
+        <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+          <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
+            <h4 className="text-[15px] font-bold text-slate-900 tracking-tight">
+              Statement of Financial Position (Balance Sheet)
+            </h4>
+            <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+              Point-in-time capitalization breakdown of institutional assets,
+              commitments, and retained reserves.
+            </p>
+          </div>
+
+          <div className="p-6 space-y-6 text-[13px] font-medium text-slate-700">
+            {/* ASSETS SECTOR */}
+            <div className="space-y-2">
+              <h5 className="text-[11px] font-bold uppercase tracking-wider text-blue-600 border-b border-blue-100 pb-1.5 pl-1">
+                1000 — Institutional Assets
+              </h5>
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
+                <span>Cash &amp; Cash Equivalents (FOSA Tills)</span>
+                <span className="font-mono font-bold text-slate-900">
+                  230,000.00
+                </span>
+              </div>
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
+                <span>Development Loan Portfolio Subsidiary Ledger</span>
+                <span className="font-mono font-bold text-slate-900">
+                  415,000.00
+                </span>
+              </div>
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+                <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
+                  Total Assets
+                </span>
+                <span className="font-mono">645,000.00</span>
+              </div>
+            </div>
+
+            {/* LIABILITIES SECTOR */}
+            <div className="space-y-2">
+              <h5 className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 border-b border-emerald-100 pb-1.5 pl-1">
+                2000 — Liabilities &amp; External Obligations
+              </h5>
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
+                <span>Member Overpayment Clearing Liability</span>
+                <span className="font-mono font-bold text-slate-900">
+                  15,000.00
+                </span>
+              </div>
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
+                <span>Member Non-Withdrawable Deposits (BOSA)</span>
+                <span className="font-mono font-bold text-slate-900">
+                  610,000.00
+                </span>
+              </div>
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+                <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
+                  Total Liabilities
+                </span>
+                <span className="font-mono">625,000.00</span>
+              </div>
+            </div>
+
+            {/* EQUITY & RESERVES SECTOR */}
+            <div className="space-y-2">
+              <h5 className="text-[11px] font-bold uppercase tracking-wider text-purple-600 border-b border-purple-100 pb-1.5 pl-1">
+                3000 — Equity &amp; Retained Reserves
+              </h5>
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
+                <span>Retained Earnings / Retained Surplus (Prior Years)</span>
+                <span className="font-mono font-bold text-slate-900">—</span>
+              </div>
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
+                <span>Net Operating Surplus for the Period</span>
+                <span className="font-mono font-bold text-slate-900">
+                  35,000.00
+                </span>
+              </div>
+              <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg text-slate-400 italic">
+                <span>Less: Statutory Capital Adjustment Reconciliations</span>
+                <span className="font-mono font-bold text-slate-500">
+                  (15,000.00)
+                </span>
+              </div>
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+                <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
+                  Total Equity &amp; Period Reserves
+                </span>
+                <span className="font-mono">20,000.00</span>
+              </div>
+            </div>
+
+            {/* BALANCE TOTAL SHEET DOUBLE UNDERLINE COMPARISON */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t-2 border-slate-900">
+              <div className="flex items-center justify-between text-[14px] font-black text-slate-950 bg-slate-100/60 p-3 rounded-xl select-none">
+                <span className="uppercase tracking-wider text-[10px] text-slate-500 font-bold">
+                  Total Assets Base
+                </span>
+                <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-slate-900 pb-0.5">
+                  <span className="text-[10px] text-slate-400 font-bold font-sans">
+                    KES
+                  </span>
+                  <span>645,000.00</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between text-[14px] font-black text-slate-950 bg-slate-100/60 p-3 rounded-xl select-none">
+                <span className="uppercase tracking-wider text-[10px] text-slate-500 font-bold">
+                  Total Liabilities &amp; Capital
+                </span>
+                <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-slate-900 pb-0.5">
+                  <span className="text-[10px] text-slate-400 font-bold font-sans">
+                    KES
+                  </span>
+                  <span>645,000.00</span>
+                </div>
               </div>
             </div>
           </div>

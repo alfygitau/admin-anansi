@@ -624,7 +624,7 @@ export default function FinancialReports() {
             </div>
 
             {/* BALANCE TOTAL SHEET DOUBLE UNDERLINE COMPARISON */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t-2 border-slate-900">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-slate-100">
               <div className="flex items-center justify-between text-[14px] font-black text-slate-950 bg-slate-100/60 p-3 rounded-xl select-none">
                 <span className="uppercase tracking-wider text-[10px] text-slate-500 font-bold">
                   Total Assets Base

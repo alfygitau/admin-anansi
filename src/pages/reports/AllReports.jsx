@@ -18,14 +18,24 @@ import { generateReports, getReportKeys } from "../../sdk/reports/reports";
 import { useToast } from "../../contexts/ToastProvider";
 
 export default function AllReports() {
+  const todayStr = new Date().toISOString().split("T")[0];
   const [template, setTemplate] = useState("");
   const [startDate, setStartDate] = useState("2026-01-01");
-  const [endDate, setEndDate] = useState("2026-05-30");
-  const [asAt, setAsAt] = useState("2026-05-30");
+  const [endDate, setEndDate] = useState(todayStr); // Defaults to today
+  const [asAt, setAsAt] = useState(todayStr);
   const [exportFormat, setExportFormat] = useState("json");
   const [reportKeys, setReportKeys] = useState([]);
   const [reportData, setReportData] = useState(null);
   const { showToast } = useToast();
+
+  const [touched, setTouched] = useState({
+    template: false,
+    startDate: false,
+    endDate: false,
+    asAt: false,
+  });
+
+  const isFormInvalid = !template || !startDate || !endDate || !asAt;
 
   useQuery({
     queryKey: ["get templates"],
@@ -179,6 +189,7 @@ export default function AllReports() {
         onSubmit={handleSubmit}
         className="w-full bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-6"
       >
+        {/* Header Section */}
         <div className="flex items-center gap-2 pb-3 border-b border-slate-100 select-none w-full">
           <SlidersHorizontal size={16} className="text-slate-400" />
           <h3 className="text-[14px] font-bold text-slate-900 tracking-tight">
@@ -186,8 +197,8 @@ export default function AllReports() {
           </h3>
         </div>
 
-        {/* 3-Column Form Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-end w-full">
+        {/* 3-Column Form Grid (Changed items-end to items-start so error text doesn't misalign boxes) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start w-full">
           {/* CELL 1: Report Selection */}
           <div className="space-y-1.5 w-full">
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
@@ -197,7 +208,14 @@ export default function AllReports() {
               <select
                 value={template}
                 onChange={(e) => setTemplate(e.target.value)}
-                className="w-full h-14 pl-3.5 pr-10 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 appearance-none cursor-pointer transition-all"
+                onBlur={() =>
+                  setTouched((prev) => ({ ...prev, template: true }))
+                }
+                className={`w-full h-14 pl-3.5 pr-10 border rounded-xl text-xs font-bold outline-none focus:ring-4 transition-all appearance-none cursor-pointer ${
+                  touched.template && !template
+                    ? "bg-rose-50/40 border-rose-200 text-rose-900 focus:border-rose-400 focus:ring-rose-900/5"
+                    : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-slate-900/5"
+                }`}
                 required
               >
                 <option value="">Choose a report type...</option>
@@ -210,9 +228,18 @@ export default function AllReports() {
               </select>
               <ChevronDown
                 size={14}
-                className="text-slate-400 absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none"
+                className={`absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none ${
+                  touched.template && !template
+                    ? "text-rose-400"
+                    : "text-slate-400"
+                }`}
               />
             </div>
+            {touched.template && !template && (
+              <p className="text-[11px] font-medium text-rose-500 pl-1 select-none animate-in fade-in duration-200">
+                Please choose a report type.
+              </p>
+            )}
           </div>
 
           {/* CELL 2: Start Date */}
@@ -220,18 +247,36 @@ export default function AllReports() {
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
               Start Date
             </label>
-            <div className="relative flex items-center">
-              <Calendar
-                size={14}
-                className="text-slate-400 absolute left-3.5 pointer-events-none z-10"
-              />
-              <input
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full h-14 pl-10 pr-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 cursor-pointer transition-all"
-                required
-              />
+            <div className="relative flex flex-col">
+              <div className="relative flex items-center">
+                <Calendar
+                  size={14}
+                  className={`absolute left-3.5 pointer-events-none z-10 ${
+                    touched.startDate && !startDate
+                      ? "text-rose-400"
+                      : "text-slate-400"
+                  }`}
+                />
+                <input
+                  type="date"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                  onBlur={() =>
+                    setTouched((prev) => ({ ...prev, startDate: true }))
+                  }
+                  className={`w-full h-14 pl-10 pr-3.5 border rounded-xl text-xs font-bold outline-none focus:ring-4 cursor-pointer transition-all ${
+                    touched.startDate && !startDate
+                      ? "bg-rose-50/40 border-rose-200 text-rose-900 focus:border-rose-400 focus:ring-rose-900/5"
+                      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-slate-900/5"
+                  }`}
+                  required
+                />
+              </div>
+              {touched.startDate && !startDate && (
+                <p className="text-[11px] font-medium text-rose-500 pl-1 mt-1.5 select-none animate-in fade-in duration-200">
+                  A starting date is required.
+                </p>
+              )}
             </div>
           </div>
 
@@ -240,18 +285,36 @@ export default function AllReports() {
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
               End Date
             </label>
-            <div className="relative flex items-center">
-              <Calendar
-                size={14}
-                className="text-slate-400 absolute left-3.5 pointer-events-none z-10"
-              />
-              <input
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full h-14 pl-10 pr-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 cursor-pointer transition-all"
-                required
-              />
+            <div className="relative flex flex-col">
+              <div className="relative flex items-center">
+                <Calendar
+                  size={14}
+                  className={`absolute left-3.5 pointer-events-none z-10 ${
+                    touched.endDate && !endDate
+                      ? "text-rose-400"
+                      : "text-slate-400"
+                  }`}
+                />
+                <input
+                  type="date"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                  onBlur={() =>
+                    setTouched((prev) => ({ ...prev, endDate: true }))
+                  }
+                  className={`w-full h-14 pl-10 pr-3.5 border rounded-xl text-xs font-bold outline-none focus:ring-4 cursor-pointer transition-all ${
+                    touched.endDate && !endDate
+                      ? "bg-rose-50/40 border-rose-200 text-rose-900 focus:border-rose-400 focus:ring-rose-900/5"
+                      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-slate-900/5"
+                  }`}
+                  required
+                />
+              </div>
+              {touched.endDate && !endDate && (
+                <p className="text-[11px] font-medium text-rose-500 pl-1 mt-1.5 select-none animate-in fade-in duration-200">
+                  An ending date is required.
+                </p>
+              )}
             </div>
           </div>
 
@@ -260,18 +323,32 @@ export default function AllReports() {
             <label className="text-[10px] font-black text-slate-400 uppercase tracking-wider block">
               As At Date (Snapshot)
             </label>
-            <div className="relative flex items-center">
-              <Calendar
-                size={14}
-                className="text-slate-400 absolute left-3.5 pointer-events-none z-10"
-              />
-              <input
-                type="date"
-                value={asAt}
-                onChange={(e) => setAsAt(e.target.value)}
-                className="w-full h-14 pl-10 pr-3.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 outline-none focus:border-slate-400 focus:ring-4 focus:ring-slate-900/5 cursor-pointer transition-all"
-                required
-              />
+            <div className="relative flex flex-col">
+              <div className="relative flex items-center">
+                <Calendar
+                  size={14}
+                  className={`absolute left-3.5 pointer-events-none z-10 ${
+                    touched.asAt && !asAt ? "text-rose-400" : "text-slate-400"
+                  }`}
+                />
+                <input
+                  type="date"
+                  value={asAt}
+                  onChange={(e) => setAsAt(e.target.value)}
+                  onBlur={() => setTouched((prev) => ({ ...prev, asAt: true }))}
+                  className={`w-full h-14 pl-10 pr-3.5 border rounded-xl text-xs font-bold outline-none focus:ring-4 cursor-pointer transition-all ${
+                    touched.asAt && !asAt
+                      ? "bg-rose-50/40 border-rose-200 text-rose-900 focus:border-rose-400 focus:ring-rose-900/5"
+                      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-slate-900/5"
+                  }`}
+                  required
+                />
+              </div>
+              {touched.asAt && !asAt && (
+                <p className="text-[11px] font-medium text-rose-500 pl-1 mt-1.5 select-none animate-in fade-in duration-200">
+                  Please select a snapshot date.
+                </p>
+              )}
             </div>
           </div>
 
@@ -282,12 +359,12 @@ export default function AllReports() {
             </span>
             <button
               type="submit"
-              disabled={isLoading}
-              className="w-full h-14 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-slate-800 transition-all shadow-sm active:scale-[0.99] disabled:opacity-50 disabled:pointer-events-none select-none cursor-pointer"
+              disabled={isLoading || isFormInvalid}
+              className="w-full h-14 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-slate-800 transition-all shadow-sm active:scale-[0.99] disabled:opacity-40 disabled:hover:bg-slate-900 disabled:bg-slate-900 disabled:scale-100 disabled:pointer-events-none select-none cursor-pointer"
             >
               {isLoading ? (
                 <>
-                  <Loader2 className="size-4 animate-spin" />
+                  <div className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                   <span>Creating Report...</span>
                 </>
               ) : (

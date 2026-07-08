@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 export default function FinancialReports() {
-  const [activeTab, setActiveTab] = useState("trial-balance");
+  const [activeTab, setActiveTab] = useState("coa");
   const [orgCode, setOrgCode] = useState("BA208");
   const [asOfDate, setAsOfDate] = useState("2026-06-30");
   const [coaSearch, setCoaSearch] = useState("");
@@ -118,16 +118,16 @@ export default function FinancialReports() {
       <header className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0">
           <button
-            onClick={() => setActiveTab("trial-balance")}
-            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "trial-balance" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
-          >
-            Trial Balance
-          </button>
-          <button
             onClick={() => setActiveTab("coa")}
             className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "coa" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
           >
             Chart of Accounts
+          </button>
+          <button
+            onClick={() => setActiveTab("trial-balance")}
+            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "trial-balance" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+          >
+            Trial Balance
           </button>
           <button
             onClick={() => setActiveTab("income")}

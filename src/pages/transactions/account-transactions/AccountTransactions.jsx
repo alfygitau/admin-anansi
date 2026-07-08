@@ -134,7 +134,7 @@ export default function AccountTransactions() {
         {/* HEADER SECTION */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-3 select-none">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-2xl font-bold tracking-tight text-primary">
               Account Transactions
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-1">
@@ -300,7 +300,7 @@ export default function AccountTransactions() {
                               Channel: {tx.platform.replace("_", " ")}
                             </span>
                           </div>
-                          <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors flex items-center gap-1.5">
+                          <span className="font-semibold text-primary text-sm tracking-tight group-hover:text-primary transition-colors flex items-center gap-1.5">
                             {tx.category === "credit" ? (
                               <ArrowDownLeft
                                 size={14}
@@ -339,7 +339,7 @@ export default function AccountTransactions() {
                         <div className="flex flex-col space-y-1">
                           <div className="text-[11px] text-slate-500 font-medium">
                             <span
-                              className={`font-bold text-sm ${tx.category === "credit" ? "text-success" : "text-slate-900"}`}
+                              className={`font-bold text-sm ${tx.category === "credit" ? "text-success" : "text-primary"}`}
                             >
                               KES {tx.category === "credit" ? "+" : "-"}
                               {Number(tx.amount).toLocaleString()}
@@ -417,7 +417,7 @@ export default function AccountTransactions() {
                               href={tx.document_url}
                               target="_blank"
                               rel="noreferrer"
-                              className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
+                              className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
                               title="Download Ingestion Document Receipt"
                             >
                               <Download size={14} />
@@ -442,7 +442,7 @@ export default function AccountTransactions() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+                          <h3 className="text-sm font-bold text-primary tracking-tight">
                             No transactions found
                           </h3>
                           <p className="text-xs text-slate-400 font-medium leading-relaxed">
@@ -490,7 +490,7 @@ export default function AccountTransactions() {
               {/* HEADER SECTION */}
               <div className="flex justify-between items-start gap-4">
                 <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-slate-900 tracking-tight pt-1">
+                  <h3 className="text-lg font-bold text-primary tracking-tight pt-1">
                     {selectedTxContext.public_id}
                   </h3>
                 </div>
@@ -531,7 +531,7 @@ export default function AccountTransactions() {
                     <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1">
                       <DollarSign size={10} /> Transaction Amount
                     </p>
-                    <p className="text-xl font-bold text-slate-900">
+                    <p className="text-xl font-bold text-primary">
                       {formatAmount(selectedTxContext.amount)}
                     </p>
                   </div>
@@ -552,7 +552,7 @@ export default function AccountTransactions() {
                     <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1">
                       <History size={10} /> Date Created
                     </p>
-                    <p className="text-xs font-bold text-slate-900">
+                    <p className="text-xs font-bold text-primary">
                       {new Date(selectedTxContext.updatedAt).toLocaleTimeString(
                         "en-KE",
                       )}
@@ -576,7 +576,7 @@ export default function AccountTransactions() {
                       <p className="text-[9px] text-slate-400 uppercase tracking-wide">
                         Sender Name
                       </p>
-                      <p className="text-slate-900 font-bold mt-0.5 flex items-center gap-1">
+                      <p className="text-primary font-bold mt-0.5 flex items-center gap-1">
                         <User size={12} className="text-slate-400" />
                         {selectedTxContext.sender_name}
                       </p>
@@ -609,7 +609,7 @@ export default function AccountTransactions() {
                       <p className="text-[9px] text-slate-400 uppercase tracking-wide">
                         Recipient Name
                       </p>
-                      <p className="text-slate-900 font-bold mt-0.5 flex items-center gap-1">
+                      <p className="text-primary font-bold mt-0.5 flex items-center gap-1">
                         <User size={12} className="text-slate-400" />
                         {selectedTxContext.receiver_name}
                       </p>

@@ -124,7 +124,7 @@ const AdminLogin = () => {
               </span>
             </div>
 
-            <h2 className="text-slate-900 text-2xl xl:text-2xl font-medium leading-[1.1] mb-8">
+            <h2 className="text-primary text-2xl xl:text-2xl font-medium leading-[1.1] mb-8">
               Your all-in-one platform for smooth operations, clear records, and
               member <span className="text-primary">growth.</span>
             </h2>
@@ -139,7 +139,7 @@ const AdminLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Smooth Approvals
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
@@ -158,7 +158,7 @@ const AdminLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Track Savings & Shares
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
@@ -177,7 +177,7 @@ const AdminLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Safe and Secure
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
@@ -200,7 +200,7 @@ const AdminLogin = () => {
         <div className="p-6 lg:p-6 sm:p-2 flex items-center justify-center bg-white">
           <div className="w-full">
             <div className="mb-10">
-              <h1 className="text-3xl font-medium text-slate-900 tracking-tight">
+              <h1 className="text-3xl font-medium text-primary tracking-tight">
                 Staff Sign In
               </h1>
               <p className="text-slate-400 font-medium mt-2">
@@ -310,7 +310,7 @@ const AdminLogin = () => {
                 className={`w-full py-6 rounded-2xl font-medium uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all
               ${
                 isFormValid && !isLoading
-                  ? "bg-primary text-white shadow-xl shadow-slate-900/10 hover:bg-secondary active:shadow-none"
+                  ? "bg-primary text-white shadow-xl shadow-primary/10 hover:bg-secondary active:shadow-none"
                   : "bg-slate-100 text-slate-400 cursor-not-allowed"
               }`}
               >

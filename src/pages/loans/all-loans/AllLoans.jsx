@@ -112,7 +112,7 @@ export default function AllLoans() {
         {/* 1. UPPER EXECUTIVE COMMAND BAR */}
         <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-2">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-2xl font-bold tracking-tight text-primary">
               Loans Registry
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-1">
@@ -323,7 +323,7 @@ export default function AllLoans() {
                               {loan.loan_code}
                             </span>
                           </div>
-                          <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
+                          <span className="font-semibold text-primary text-sm tracking-tight group-hover:text-primary transition-colors">
                             {loan.loan_name}
                           </span>
                           <span className="text-[11px] text-slate-400 font-normal flex items-center gap-1">
@@ -336,8 +336,7 @@ export default function AllLoans() {
                       <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1.5">
                           <span className="font-semibold text-slate-800 text-sm tracking-tight">
-                            {loan?.loan_type ??
-                              "Development Loan"}
+                            {loan?.loan_type ?? "Development Loan"}
                           </span>
                           <div className="flex items-center gap-1.5">
                             <span className="font-bold text-[9px] tracking-wider uppercase px-1.5 py-0.5 bg-slate-50 text-slate-400 rounded border border-slate-200/40 flex items-center gap-0.5">
@@ -358,7 +357,7 @@ export default function AllLoans() {
                         <div className="flex flex-col space-y-1">
                           <div className="text-[11px] text-slate-500 font-medium">
                             Issued:{" "}
-                            <span className="font-semibold text-slate-900">
+                            <span className="font-semibold text-primary">
                               {formatAmount(loan.loan_amount)}
                             </span>
                           </div>
@@ -381,7 +380,7 @@ export default function AllLoans() {
                                 {formatAmount(loan.loan_total_payments)}
                               </span>
                             </span>
-                            <span className="font-bold text-slate-900 pl-2">
+                            <span className="font-bold text-primary pl-2">
                               {Number(loan.repayment_progress_percent).toFixed(
                                 0,
                               )}
@@ -442,7 +441,7 @@ export default function AllLoans() {
                           </button>
                           {loan.loan_status === "Active" && (
                             <button
-                              className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
+                              className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
                               title="Log Repayment Transaction"
                             >
                               <ArrowUpRight size={14} />

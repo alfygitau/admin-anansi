@@ -110,7 +110,7 @@ const ApplyProducts = () => {
           <span className="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-md uppercase tracking-wider border border-slate-200/40">
             New Application Lifecycle
           </span>
-          <h2 className="text-xl font-black text-slate-900 tracking-tight mt-1">
+          <h2 className="text-xl font-black text-primary tracking-tight mt-1">
             Choose Loan Product
           </h2>
           <p className="text-sm font-medium text-slate-700 mt-1">
@@ -128,7 +128,7 @@ const ApplyProducts = () => {
       {/* 2. LOAN PRODUCT CHANNELS SELECTOR */}
       <div className="space-y-6">
         <div>
-          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <h3 className="text-sm font-bold text-primary flex items-center gap-2">
             <Coins className="text-[#074073]" size={16} /> Available Loan
             Products
           </h3>
@@ -225,7 +225,7 @@ const ApplyProducts = () => {
 
                     {/* Descriptions */}
                     <div className="space-y-1">
-                      <h4 className="text-sm font-bold text-slate-900">
+                      <h4 className="text-sm font-bold text-primary">
                         {product.product_name}
                       </h4>
                       <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
@@ -277,7 +277,7 @@ const ApplyProducts = () => {
                       <span className="text-[9px] uppercase font-bold text-slate-400">
                         Borrowing Limit
                       </span>
-                      <p className="text-slate-900 font-bold font-mono">
+                      <p className="text-primary font-bold font-mono">
                         Up to KES {product?.max_amount?.toLocaleString()}
                       </p>
                     </div>

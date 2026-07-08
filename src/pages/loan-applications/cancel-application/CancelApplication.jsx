@@ -125,7 +125,7 @@ export default function CancelApplication() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 shadow-3xs cursor-pointer transition-all"
+            className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-3xs cursor-pointer transition-all"
           >
             <ArrowLeft size={16} />
           </button>
@@ -133,7 +133,7 @@ export default function CancelApplication() {
             <span className="text-[10px] font-bold tracking-wider uppercase text-rose-600 bg-rose-50 px-2 py-0.5 rounded border border-rose-100">
               Critical Action Layer
             </span>
-            <h1 className="text-xl font-black tracking-tight text-slate-900 mt-1">
+            <h1 className="text-xl font-black tracking-tight text-primary mt-1">
               Cancel Loan Application
             </h1>
           </div>
@@ -246,7 +246,7 @@ export default function CancelApplication() {
           <div className="p-4 bg-slate-50 border border-slate-200/80 rounded-xl flex items-center gap-3 text-xs text-slate-600 font-medium leading-relaxed shadow-3xs">
             <XCircle size={16} className="text-rose-600 shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <p className="font-bold text-slate-900">
+              <p className="font-bold text-primary">
                 Permanent File Revocation
               </p>
               <p className="text-[11px] text-slate-500 font-medium">
@@ -265,7 +265,7 @@ export default function CancelApplication() {
               className="text-amber-600 shrink-0 mt-0.5"
             />
             <div className="space-y-1">
-              <p className="font-bold text-slate-900">
+              <p className="font-bold text-primary">
                 Applicant Notification Dispatch
               </p>
               <p className="text-[11px] text-amber-700 font-medium">

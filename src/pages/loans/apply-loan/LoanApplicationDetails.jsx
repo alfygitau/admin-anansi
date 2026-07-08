@@ -101,7 +101,7 @@ const LoanApplicationDetails = ({
       {/* 1. APPLICANT CONTEXT HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200/60 pb-6 select-none">
         <div>
-          <h2 className="text-xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-xl font-black text-primary tracking-tight">
             Configure Loan Parameters
           </h2>
 

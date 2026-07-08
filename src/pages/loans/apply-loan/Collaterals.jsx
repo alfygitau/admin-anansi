@@ -142,7 +142,7 @@ export default function ChattelRegistry() {
               <span className="font-mono text-[9px] font-black bg-blue-50 text-[#074073] px-2 py-0.5 rounded border border-blue-100 uppercase tracking-wider">
                 Asset Security Registry
               </span>
-              <h1 className="text-xl font-black text-slate-900 tracking-tight mt-1.5">
+              <h1 className="text-xl font-black text-primary tracking-tight mt-1.5">
                 Movable Chattels
               </h1>
               <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -202,7 +202,7 @@ export default function ChattelRegistry() {
 
                     {/* Core String Descriptions Info */}
                     <div>
-                      <h3 className="text-sm font-black text-slate-900 tracking-tight leading-tight block truncate">
+                      <h3 className="text-sm font-black text-primary tracking-tight leading-tight block truncate">
                         {chattel.asset_name}
                       </h3>
 
@@ -316,7 +316,7 @@ export default function ChattelRegistry() {
                     <Layers size={13} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <h2 className="text-sm font-black text-slate-900 tracking-tight">
+                    <h2 className="text-sm font-black text-primary tracking-tight">
                       Add Asset Details
                     </h2>
                     <p className="text-[10px] text-slate-400 font-medium mt-0.5">

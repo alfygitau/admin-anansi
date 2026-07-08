@@ -124,7 +124,7 @@ export default function MemberDetails() {
               </button>
               <div>
                 <div className="flex items-center gap-2">
-                  <h2 className="text-xl font-bold text-slate-900">
+                  <h2 className="text-xl font-bold text-primary">
                     {member.firstname} {member.middlename} {member.lastname}
                   </h2>
                 </div>
@@ -311,7 +311,7 @@ export default function MemberDetails() {
                     <p className="text-[10px] text-slate-400 uppercase tracking-wide">
                       Employed Type
                     </p>
-                    <p className="text-slate-900 font-bold mt-0.5">
+                    <p className="text-primary font-bold mt-0.5">
                       {member.employment_type}
                     </p>
                   </div>
@@ -325,7 +325,7 @@ export default function MemberDetails() {
                     <p className="text-[10px] text-slate-400 uppercase tracking-wide">
                       Employment
                     </p>
-                    <p className="text-slate-900 font-bold mt-0.5">
+                    <p className="text-primary font-bold mt-0.5">
                       {member.occupation}
                     </p>
                   </div>
@@ -350,7 +350,7 @@ export default function MemberDetails() {
                     <p className="text-[10px] text-slate-400 uppercase tracking-wide">
                       Income
                     </p>
-                    <p className="text-slate-900 font-mono font-bold mt-0.5">
+                    <p className="text-primary font-mono font-bold mt-0.5">
                       KES {Number(member.income_range || 0).toFixed(2)}
                     </p>
                   </div>
@@ -392,16 +392,16 @@ export default function MemberDetails() {
                             }
                             className="hover:bg-slate-50/50 transition-colors cursor-pointer"
                           >
-                            <td className="p-3.5 px-4 font-bold text-slate-900">
+                            <td className="p-3.5 px-4 font-bold text-primary">
                               {`${member?.firstname || ""} ${member?.lastname || ""}`.trim()}
                             </td>
-                            <td className="p-3.5 px-4 font-bold text-slate-900">
+                            <td className="p-3.5 px-4 font-bold text-primary">
                               {acc.product?.name}
                             </td>
                             <td className="p-3.5 font-mono text-blue-500">
                               {acc.account_number}
                             </td>
-                            <td className="p-3.5 text-right font-bold text-slate-900">
+                            <td className="p-3.5 text-right font-bold text-primary">
                               KES {Number(acc.balance || 0).toFixed(2)}
                             </td>
                             <td className="p-3.5 text-center">
@@ -429,7 +429,7 @@ export default function MemberDetails() {
                 <div className="space-y-2.5 text-xs font-medium pt-1">
                   <div className="flex items-center justify-between border-b border-slate-50 pb-2">
                     <span className="text-slate-500">Username</span>
-                    <span className="font-mono font-bold text-slate-900">
+                    <span className="font-mono font-bold text-primary">
                       {member.username}
                     </span>
                   </div>
@@ -526,7 +526,7 @@ export default function MemberDetails() {
                           {loan.loan_code}
                         </td>
                         <td className="p-3.5">
-                          <span className="font-bold text-slate-900 block">
+                          <span className="font-bold text-primary block">
                             {loan.loan_product?.product_name || "Flash Loan"}
                           </span>
                           <span className="text-[10px] text-slate-400 block mt-0.5 lowercase capitalize">
@@ -534,7 +534,7 @@ export default function MemberDetails() {
                             {loan.interest_method?.replace(/_/g, " ")}
                           </span>
                         </td>
-                        <td className="p-3.5 text-right font-bold text-slate-900">
+                        <td className="p-3.5 text-right font-bold text-primary">
                           {loan.currency}{" "}
                           {Number(loan.loan_amount || 0).toLocaleString(
                             undefined,
@@ -597,7 +597,7 @@ export default function MemberDetails() {
                         <p className="text-[10px] text-slate-400 uppercase tracking-wide">
                           Full Name
                         </p>
-                        <p className="text-slate-900 font-bold mt-0.5 truncate">
+                        <p className="text-primary font-bold mt-0.5 truncate">
                           {kin.name || "—"}
                         </p>
                       </div>
@@ -656,7 +656,7 @@ export default function MemberDetails() {
                       Total money pledged to back other members
                     </p>
                   </div>
-                  <span className="font-mono font-bold text-slate-900 text-right shrink-0">
+                  <span className="font-mono font-bold text-primary text-right shrink-0">
                     KES{" "}
                     {Number(member?.totalGuaranteed || 0).toLocaleString(
                       undefined,
@@ -793,7 +793,7 @@ const KYCDocLarge = ({ label, url }) => (
             alt={label}
             className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300 ease-out"
           />
-          <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
+          <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
             <button
               onClick={() => window.open(url, "_blank")}
               className="p-2 bg-white/90 rounded-lg text-slate-800 hover:bg-white text-xs font-bold shadow flex items-center gap-1.5 transition-transform translate-y-2 group-hover:translate-y-0 duration-300 cursor-pointer"

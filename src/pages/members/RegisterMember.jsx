@@ -251,7 +251,7 @@ export default function AddMember() {
                     onClick={() => handleStepJump(idx)}
                     className={`flex items-center gap-3 p-2.5 rounded-xl border transition-all duration-200 relative group ${
                       isActive
-                        ? "bg-slate-50 border-slate-200 text-slate-900 shadow-3xs"
+                        ? "bg-slate-50 border-slate-200 text-primary shadow-3xs"
                         : isCompleted
                           ? "bg-white border-slate-100 text-slate-800 cursor-pointer hover:bg-slate-50/50"
                           : "border-transparent opacity-40 select-none"
@@ -278,7 +278,7 @@ export default function AddMember() {
                     <div className="min-w-0 flex-1 flex flex-col pl-1">
                       <span
                         className={`text-[11px] font-black tracking-tight leading-none ${
-                          isActive ? "text-slate-900" : "text-slate-700"
+                          isActive ? "text-primary" : "text-slate-700"
                         }`}
                       >
                         {step.label}
@@ -957,7 +957,7 @@ export default function AddMember() {
                         <FilterField label="Full Name" icon={User}>
                           <input
                             name="fullname"
-                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 ${
                               errors.fullname
                                 ? "border-rose-400 focus:border-rose-500"
                                 : "border-slate-200"
@@ -980,7 +980,7 @@ export default function AddMember() {
                         <FilterField label="Phone Number" icon={Phone}>
                           <input
                             name="phone"
-                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 ${
                               errors.phone
                                 ? "border-rose-400 focus:border-rose-500"
                                 : "border-slate-200"
@@ -1003,7 +1003,7 @@ export default function AddMember() {
                         <FilterField label="Relationship" icon={Users}>
                           <input
                             name="relationship"
-                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 ${
                               errors.relationship
                                 ? "border-rose-400 focus:border-rose-500"
                                 : "border-slate-200"
@@ -1027,7 +1027,7 @@ export default function AddMember() {
                           <input
                             type="date"
                             name="dob"
-                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 ${
                               errors.dob
                                 ? "border-rose-400 focus:border-rose-500"
                                 : "border-slate-200"
@@ -1049,7 +1049,7 @@ export default function AddMember() {
                         <FilterField label="Location" icon={MapPin}>
                           <input
                             name="location"
-                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-slate-900 focus:ring-4 focus:ring-slate-900/5 ${
+                            className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 ${
                               errors.location
                                 ? "border-rose-400 focus:border-rose-500"
                                 : "border-slate-200"
@@ -1080,7 +1080,7 @@ export default function AddMember() {
                       size={18}
                     />
                     <div className="space-y-0.5">
-                      <p className="text-xs font-bold text-slate-900">
+                      <p className="text-xs font-bold text-primary">
                         Final Verification Review
                       </p>
                       <p className="text-[11px] text-slate-500 leading-relaxed">
@@ -1100,7 +1100,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Username
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.username || "—"}
                         </span>
                       </div>
@@ -1108,7 +1108,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Email Address
                         </span>
-                        <span className="text-xs font-bold text-slate-900 truncate block">
+                        <span className="text-xs font-bold text-primary truncate block">
                           {formData.email || "—"}
                         </span>
                       </div>
@@ -1116,7 +1116,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Mobile Number
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.mobileno || "—"}
                         </span>
                       </div>
@@ -1133,7 +1133,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Legal Name
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {[
                             scannedData?.firstname,
                             scannedData?.middlename,
@@ -1147,7 +1147,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Identification Type
                         </span>
-                        <span className="text-xs font-bold text-slate-900 uppercase">
+                        <span className="text-xs font-bold text-primary uppercase">
                           {scannedData?.identification_type || "—"}
                         </span>
                       </div>
@@ -1155,7 +1155,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Document ID Number
                         </span>
-                        <span className="text-xs font-bold text-slate-900 font-mono tracking-wide">
+                        <span className="text-xs font-bold text-primary font-mono tracking-wide">
                           {scannedData?.identification || "—"}
                         </span>
                       </div>
@@ -1163,7 +1163,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Date of Birth / Gender
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {scannedData?.dob || "—"} (
                           {scannedData?.gender || "—"})
                         </span>
@@ -1182,7 +1182,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Country
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.country || "—"}
                         </span>
                       </div>
@@ -1192,7 +1192,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           County
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.county || "—"}
                         </span>
                       </div>
@@ -1202,7 +1202,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Sub County
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.sub_county || "—"}
                         </span>
                       </div>
@@ -1212,7 +1212,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Physical Address
                         </span>
-                        <span className="text-xs font-bold text-slate-900 leading-relaxed block break-words">
+                        <span className="text-xs font-bold text-primary leading-relaxed block break-words">
                           {formData.physical_address || "—"}
                         </span>
                       </div>
@@ -1229,7 +1229,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Employment Status
                         </span>
-                        <span className="text-xs font-bold text-slate-900 capitalize">
+                        <span className="text-xs font-bold text-primary capitalize">
                           {employmentOptions.find(
                             (opt) => opt.value === formData.employment_type,
                           )?.label || "—"}
@@ -1239,7 +1239,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Exact Occupation / Role
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.occupation || "—"}
                         </span>
                       </div>
@@ -1247,7 +1247,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Estimated Monthly Income
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.income_range
                             ? `KES ${parseFloat(formData.income_range).toLocaleString("en-KE", { minimumFractionDigits: 2 })}`
                             : "—"}
@@ -1257,7 +1257,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           KRA Tax PIN
                         </span>
-                        <span className="text-xs font-bold text-slate-900 font-mono uppercase tracking-wider">
+                        <span className="text-xs font-bold text-primary font-mono uppercase tracking-wider">
                           {formData.kra_pin || "—"}
                         </span>
                       </div>
@@ -1274,7 +1274,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Kin Full Name
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.fullname || "—"}
                         </span>
                       </div>
@@ -1282,7 +1282,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Relationship
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.relationship || "—"}
                         </span>
                       </div>
@@ -1290,7 +1290,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Phone Number
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.phone || "—"}
                         </span>
                       </div>
@@ -1298,7 +1298,7 @@ export default function AddMember() {
                         <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
                           Date of Birth
                         </span>
-                        <span className="text-xs font-bold text-slate-900">
+                        <span className="text-xs font-bold text-primary">
                           {formData.dob
                             ? new Date(formData.dob).toLocaleDateString(
                                 "en-KE",
@@ -1323,7 +1323,7 @@ export default function AddMember() {
                 className={`inline-flex items-center gap-2 h-10 px-4 rounded-xl text-xs font-bold transition-all border ${
                   isFirstStep
                     ? "opacity-0 pointer-events-none"
-                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900 shadow-3xs cursor-pointer active:scale-98 disabled:opacity-50 disabled:pointer-events-none"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-primary shadow-3xs cursor-pointer active:scale-98 disabled:opacity-50 disabled:pointer-events-none"
                 }`}
               >
                 <ArrowLeft size={14} strokeWidth={2.5} />
@@ -1412,7 +1412,7 @@ const FileUploadField = ({ label, id, fileKey, formData, setFormData }) => {
             <button
               type="button"
               onClick={() => setFormData({ ...formData, [fileKey]: null })}
-              className="absolute top-2.5 right-2.5 size-7 bg-slate-900/80 hover:bg-rose-600 border border-slate-700 text-white rounded-xl transition-all duration-150 hover:scale-105 flex items-center justify-center shadow-md cursor-pointer z-10"
+              className="absolute top-2.5 right-2.5 size-7 bg-primary/80 hover:bg-rose-600 border border-slate-700 text-white rounded-xl transition-all duration-150 hover:scale-105 flex items-center justify-center shadow-md cursor-pointer z-10"
               title="Remove item asset"
             >
               <X size={13} strokeWidth={3} />
@@ -1465,7 +1465,7 @@ const ScannedDataField = ({
         <div className="w-[1.5px] h-5 bg-slate-200 ml-4" />
       </div>
       <div
-        className={`w-full pl-[74px] pr-6 py-4 min-h-14 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-slate-900 flex items-center ${
+        className={`w-full pl-[74px] pr-6 py-4 min-h-14 bg-slate-50 border border-slate-100 rounded-2xl text-xs font-bold text-primary flex items-center ${
           isUppercase ? "uppercase tracking-wide" : ""
         }`}
       >

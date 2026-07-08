@@ -167,7 +167,7 @@ export default function LoanStatements() {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 shadow-3xs cursor-pointer transition-all active:scale-95"
+              className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-3xs cursor-pointer transition-all active:scale-95"
             >
               <ArrowLeft size={16} />
             </button>
@@ -175,7 +175,7 @@ export default function LoanStatements() {
               <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
                 Account Documents Repository
               </span>
-              <h1 className="text-xl font-black tracking-tight text-slate-900">
+              <h1 className="text-xl font-black tracking-tight text-primary">
                 Loan Account Statements
               </h1>
             </div>
@@ -242,7 +242,7 @@ export default function LoanStatements() {
                             ID: {stmt.id}
                           </span>
                         </div>
-                        <span className="font-semibold text-slate-900 text-sm tracking-tight transition-colors">
+                        <span className="font-semibold text-primary text-sm tracking-tight transition-colors">
                           {stmt.product_name}
                         </span>
                         <span className="text-[11px] text-slate-400 font-medium">

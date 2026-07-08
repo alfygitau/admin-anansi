@@ -177,7 +177,7 @@ export default function AssignPermissions({
                   Security Protocol Matrix
                 </span>
               </div>
-              <h2 className="text-xl font-black text-slate-900 tracking-tight mt-1.5">
+              <h2 className="text-xl font-black text-primary tracking-tight mt-1.5">
                 Assign Key Permissions
               </h2>
               <p className="text-xs text-slate-400 font-medium mt-0.5">

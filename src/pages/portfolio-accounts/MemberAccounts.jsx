@@ -303,7 +303,7 @@ export default function MemberAccounts() {
       {/* HEADER ACTION DECK */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-6">
         <div>
-          <h2 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-2.5">
+          <h2 className="text-2xl font-black text-primary tracking-tight flex items-center gap-2.5">
             <Landmark className="text-[#074073]" size={24} /> Members Savings
             Account
           </h2>
@@ -389,7 +389,7 @@ export default function MemberAccounts() {
               onClick={() => setActiveTab(tab.id)}
               className={`h-9 px-4 rounded-lg text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 activeTab === tab.id
-                  ? "bg-slate-900 text-white shadow-sm"
+                  ? "bg-primary text-white shadow-sm"
                   : "text-slate-400 hover:text-slate-700 hover:bg-slate-50"
               }`}
             >
@@ -447,7 +447,7 @@ export default function MemberAccounts() {
                                   {acc.account_identity.public_id}
                                 </span>
                                 <div className="flex items-center gap-1.5">
-                                  <span className="font-bold text-slate-900 text-sm tracking-tight">
+                                  <span className="font-bold text-primary text-sm tracking-tight">
                                     {acc.account_identity.customer_name}
                                   </span>
                                 </div>
@@ -464,7 +464,7 @@ export default function MemberAccounts() {
                           {/* Col 2: Structured Account Info & Type Badges */}
                           <td className="py-4 px-6">
                             <div className="flex flex-col space-y-1">
-                              <span className="font-mono font-bold text-slate-900 tracking-tight text-xs">
+                              <span className="font-mono font-bold text-primary tracking-tight text-xs">
                                 {acc.account_identity.account_number.replace(
                                   /(\d{4})(\d{5})(\d{4})/,
                                   "$1-$2-$3",
@@ -481,7 +481,7 @@ export default function MemberAccounts() {
                           </td>
 
                           {/* Col 3: Book Balances */}
-                          <td className="py-4 px-6 text-right font-black text-slate-900 text-sm">
+                          <td className="py-4 px-6 text-right font-black text-primary text-sm">
                             {acc.account_identity.currency_code}{" "}
                             {acc.core_financial_ledger.current_balance.toLocaleString(
                               undefined,
@@ -878,7 +878,7 @@ export default function MemberAccounts() {
         {selectedAccount && (
           <div className="fixed inset-0 z-[110] flex justify-end">
             <div
-              className="absolute inset-0 bg-slate-900/10 backdrop-blur-xs"
+              className="absolute inset-0 bg-primary/10 backdrop-blur-xs"
               onClick={() => setSelectedAccount(null)}
             />
             <motion.div
@@ -894,7 +894,7 @@ export default function MemberAccounts() {
                     <span className="text-[9px] font-black tracking-widest text-[#074073] uppercase bg-blue-50 border border-blue-100 px-2 py-0.5 rounded">
                       Audit Profile Ledger
                     </span>
-                    <h3 className="text-xl font-black text-slate-900 tracking-tight pt-2">
+                    <h3 className="text-xl font-black text-primary tracking-tight pt-2">
                       {selectedAccount.account_identity.customer_name}
                     </h3>
                   </div>
@@ -918,7 +918,7 @@ export default function MemberAccounts() {
                       <span className="text-slate-400 font-sans font-semibold">
                         Total Book Balance
                       </span>
-                      <span className="font-bold text-slate-900">
+                      <span className="font-bold text-primary">
                         KES{" "}
                         {selectedAccount.core_financial_ledger.current_balance.toLocaleString()}
                       </span>
@@ -952,13 +952,13 @@ export default function MemberAccounts() {
                   <div className="p-4 bg-slate-50 border border-slate-200/60 rounded-2xl space-y-2 font-sans text-xs font-semibold text-slate-600">
                     <div className="flex justify-between">
                       <span>County Location</span>
-                      <span className="text-slate-900">
+                      <span className="text-primary">
                         {selectedAccount.account_identity.county}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>Sub-County Node</span>
-                      <span className="text-slate-900">
+                      <span className="text-primary">
                         {selectedAccount.account_identity.subcounty}
                       </span>
                     </div>
@@ -968,7 +968,7 @@ export default function MemberAccounts() {
 
               <button
                 onClick={() => setSelectedAccount(null)}
-                className="w-full h-14 bg-slate-900 text-white font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer"
+                className="w-full h-14 bg-primary text-white font-bold rounded-xl text-xs uppercase tracking-wider cursor-pointer"
               >
                 Close Audit Profile
               </button>
@@ -990,9 +990,7 @@ const StatTile = ({ icon, label, value, desc }) => (
       <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
         {label}
       </p>
-      <p className="text-xl font-black text-slate-900 tracking-tight">
-        {value}
-      </p>
+      <p className="text-xl font-black text-primary tracking-tight">{value}</p>
       <p className="text-[11px] text-slate-400 font-medium truncate">{desc}</p>
     </div>
   </div>

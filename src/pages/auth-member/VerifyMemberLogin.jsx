@@ -74,7 +74,8 @@ const VerifyMemberLogin = () => {
         title: "Token Verified",
         type: "success",
         position: "top-right",
-        description: "One-time secure challenge passed. Directing to password setup portal.",
+        description:
+          "One-time secure challenge passed. Directing to password setup portal.",
       });
       // Pushes the member to the next step of the authentication flow
       navigate("/auth/create-password");
@@ -103,7 +104,8 @@ const VerifyMemberLogin = () => {
         title: "Fresh Token Dispatched",
         type: "success",
         position: "top-right",
-        description: "A secure activation string has been sent to your registered phone line.",
+        description:
+          "A secure activation string has been sent to your registered phone line.",
       });
     },
     onError: (error) => {
@@ -128,7 +130,6 @@ const VerifyMemberLogin = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 md:p-8 sm:p-2 antialiased">
       <div className="w-full max-w-6xl grid lg:grid-cols-2 py-3 px-6 bg-white overflow-hidden">
-        
         {/* LEFT COLUMN: VISUAL BENCHMARKS & VALUE PROPS */}
         <div className="relative bg-white sm:hidden p-6 lg:p-6 flex flex-col justify-between overflow-hidden border-r border-slate-200">
           <div className="relative z-10">
@@ -138,7 +139,7 @@ const VerifyMemberLogin = () => {
                 Anansi Sacco
               </span>
             </div>
-            <h2 className="text-slate-900 text-2xl xl:text-2xl font-medium leading-[1.2] mb-8">
+            <h2 className="text-primary text-2xl xl:text-2xl font-medium leading-[1.2] mb-8">
               Insulating your capital allocations and member equity with{" "}
               <span className="text-primary">two-factor authorization.</span>
             </h2>
@@ -152,12 +153,13 @@ const VerifyMemberLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Instant SMS Authorization
                   </h4>
                   <p className="text-slate-500 text-[12px] font-medium leading-relaxed mt-1">
-                    A secure, time-sensitive 6-digit confirmation token is broadcast to your 
-                    registered mobile line to verify physical wallet ownership.
+                    A secure, time-sensitive 6-digit confirmation token is
+                    broadcast to your registered mobile line to verify physical
+                    wallet ownership.
                   </p>
                 </div>
               </div>
@@ -170,12 +172,13 @@ const VerifyMemberLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Protected Member Session
                   </h4>
                   <p className="text-slate-500 text-[12px] font-medium leading-relaxed mt-1">
-                    Verification locks down your dividend metrics, share balances, and saving 
-                    parameters against external browser interception threats.
+                    Verification locks down your dividend metrics, share
+                    balances, and saving parameters against external browser
+                    interception threats.
                   </p>
                 </div>
               </div>
@@ -188,12 +191,13 @@ const VerifyMemberLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Regulatory Asset Insulation
                   </h4>
                   <p className="text-slate-500 text-[12px] font-medium leading-relaxed mt-1">
-                    Our validation mechanisms strictly interface with SASRA digital asset governance 
-                    rules to guard contributor transparency.
+                    Our validation mechanisms strictly interface with SASRA
+                    digital asset governance rules to guard contributor
+                    transparency.
                   </p>
                 </div>
               </div>
@@ -211,11 +215,12 @@ const VerifyMemberLogin = () => {
         <div className="p-6 lg:p-6 sm:p-2 flex items-center justify-center bg-white">
           <div className="w-full">
             <div className="mb-10">
-              <h1 className="text-3xl font-medium text-slate-900 tracking-tight">
+              <h1 className="text-3xl font-medium text-primary tracking-tight">
                 Verify Member
               </h1>
               <p className="text-slate-400 font-medium mt-2 leading-relaxed text-sm">
-                Provide the unique 6-digit credential verification string dispatched to your registered device link:
+                Provide the unique 6-digit credential verification string
+                dispatched to your registered device link:
                 <span className="font-bold text-primary block mt-1.5 items-center gap-1.5 text-xs tracking-wide">
                   <Smartphone size={12} className="inline mr-1" />{" "}
                   {maskPhoneNumber(auth?.user?.mobileno)}
@@ -224,7 +229,6 @@ const VerifyMemberLogin = () => {
             </div>
 
             <form onSubmit={handleVerify} className="space-y-8">
-              
               {/* Box Input Array Target Grid */}
               <div className="space-y-2">
                 <label className="text-[11px] font-medium text-slate-400 uppercase tracking-widest ml-1">
@@ -265,7 +269,9 @@ const VerifyMemberLogin = () => {
                     size={12}
                     className={isResending ? "animate-spin" : ""}
                   />
-                  {timer > 0 ? `Resend Token in ${timer}s` : "Resend Security Code"}
+                  {timer > 0
+                    ? `Resend Token in ${timer}s`
+                    : "Resend Security Code"}
                 </button>
               </div>
 
@@ -279,7 +285,7 @@ const VerifyMemberLogin = () => {
                 className={`w-full py-6 rounded-2xl font-medium uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all cursor-pointer
                   ${
                     isFormValid && !isLoading
-                      ? "bg-primary text-white shadow-xl shadow-slate-900/10 hover:bg-secondary active:shadow-none"
+                      ? "bg-primary text-white shadow-xl shadow-primary/10 hover:bg-secondary active:shadow-none"
                       : "bg-slate-100 text-slate-400 cursor-not-allowed"
                   }`}
               >
@@ -294,7 +300,6 @@ const VerifyMemberLogin = () => {
             </form>
           </div>
         </div>
-
       </div>
     </div>
   );

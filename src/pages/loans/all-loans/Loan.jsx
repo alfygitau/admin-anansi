@@ -90,7 +90,7 @@ export default function Loan() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate(-1)}
-                className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 transition-all shadow-3xs cursor-pointer"
+                className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary transition-all shadow-3xs cursor-pointer"
               >
                 <ArrowLeft size={16} />
               </button>
@@ -112,7 +112,7 @@ export default function Loan() {
                     {loan.loan_status}
                   </span>
                 </div>
-                <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1.5">
+                <h1 className="text-2xl font-bold tracking-tight text-primary mt-1.5">
                   {loan.loan_product?.product_name}
                 </h1>
               </div>
@@ -129,7 +129,7 @@ export default function Loan() {
                 className={`h-11 px-4 border rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2.5 cursor-pointer shadow-2xs ${
                   isActionMenuOpen
                     ? "border-primary bg-primary/5 text-primary ring-4 ring-primary/5"
-                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-primary"
                 }`}
               >
                 <Sliders size={14} />
@@ -333,7 +333,7 @@ export default function Loan() {
                   <span className="flex items-center gap-1.5">
                     <History size={13} /> Overall Loan Progress
                   </span>
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold text-primary">
                     {loan.repayment_progress_percent}%
                   </span>
                 </div>
@@ -533,9 +533,9 @@ const MetricItem = ({ icon, label, value, isCapitalized = false }) => (
       <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 leading-normal">
         {label}
       </span>
-      {/* FIXED: Swapped to text-slate-900 and font-bold for a rich, crisp appearance */}
+      {/* FIXED: Swapped to text-primary and font-bold for a rich, crisp appearance */}
       <span
-        className={`text-xs font-bold text-slate-900 tracking-tight leading-normal truncate ${
+        className={`text-xs font-bold text-primary tracking-tight leading-normal truncate ${
           isCapitalized ? "capitalize" : ""
         }`}
       >
@@ -557,7 +557,7 @@ const MenuActionButton = ({
     className={`w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-semibold transition-colors text-left cursor-pointer group ${
       variant
         ? "hover:text-emerald-700 hover:bg-emerald-50/50 text-slate-700 font-bold"
-        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+        : "text-slate-600 hover:text-primary hover:bg-slate-50"
     }`}
   >
     <div

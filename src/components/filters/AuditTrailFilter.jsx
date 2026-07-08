@@ -52,7 +52,7 @@ const AuditTrailFilter = ({ isOpen, onClose, filters, setFilters }) => {
             <button
               type="button"
               onClick={onClose}
-              className="absolute top-5 right-5 z-10 flex items-center justify-center w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 rounded-full transition-all active:scale-95 shadow-sm cursor-pointer"
+              className="absolute top-5 right-5 z-10 flex items-center justify-center w-8 h-8 bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-primary rounded-full transition-all active:scale-95 shadow-sm cursor-pointer"
             >
               <X size={15} />
             </button>

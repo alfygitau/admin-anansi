@@ -132,7 +132,7 @@ export default function LoanTransactions() {
       <div className="w-full space-y-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-2xl font-bold tracking-tight text-primary">
               Loan Transactions
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-1">
@@ -224,7 +224,7 @@ export default function LoanTransactions() {
             </button>
             <button
               type="button"
-              className="w-fit whitespace-nowrap flex items-center gap-2 h-9 px-4 bg-slate-900 text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer active:scale-98"
+              className="w-fit whitespace-nowrap flex items-center gap-2 h-9 px-4 bg-primary text-white rounded-xl text-xs font-bold hover:bg-slate-800 transition-all cursor-pointer active:scale-98"
             >
               <Download size={14} /> Export
             </button>
@@ -317,7 +317,7 @@ export default function LoanTransactions() {
                     >
                       <td className="py-5 px-6">
                         <div className="flex flex-col">
-                          <span className="font-bold text-slate-900">
+                          <span className="font-bold text-primary">
                             {tx.reference || "—"}
                           </span>
                           <span className="text-[10px] text-slate-400">
@@ -368,7 +368,7 @@ export default function LoanTransactions() {
                       </td>
 
                       {/* Column 4: Sum Value Paid */}
-                      <td className="py-5 px-6 text-right font-bold text-slate-900">
+                      <td className="py-5 px-6 text-right font-bold text-primary">
                         {formatAmount
                           ? formatAmount(tx.amount)
                           : `KES ${Number(tx.amount || 0).toLocaleString()}`}

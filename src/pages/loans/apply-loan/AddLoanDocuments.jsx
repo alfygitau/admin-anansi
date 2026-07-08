@@ -121,7 +121,7 @@ export default function LoanDocuments() {
           {/* HEADER ROW BAR */}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 select-none">
             <div>
-              <h1 className="text-xl font-black text-slate-900 tracking-tight mt-1.5">
+              <h1 className="text-xl font-black text-primary tracking-tight mt-1.5">
                 Support Documents
               </h1>
               <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -175,7 +175,7 @@ export default function LoanDocuments() {
                     </div>
 
                     <div>
-                      <h3 className="text-sm font-black text-slate-900 tracking-tight leading-tight block truncate">
+                      <h3 className="text-sm font-black text-primary tracking-tight leading-tight block truncate">
                         {doc.file_name}
                       </h3>
 
@@ -277,7 +277,7 @@ export default function LoanDocuments() {
                     <FileText size={13} strokeWidth={2.5} />
                   </div>
                   <div>
-                    <h2 className="text-sm font-black text-slate-900 tracking-tight">
+                    <h2 className="text-sm font-black text-primary tracking-tight">
                       Upload Support Document
                     </h2>
                     <p className="text-[10px] text-slate-400 font-medium mt-0.5">

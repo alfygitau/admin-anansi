@@ -117,7 +117,7 @@ export default function AuditTrail() {
             <button
               type="button"
               onClick={() => navigate(-1)}
-              className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 shadow-3xs cursor-pointer transition-all active:scale-95"
+              className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-3xs cursor-pointer transition-all active:scale-95"
             >
               <ArrowLeft size={16} />
             </button>
@@ -125,7 +125,7 @@ export default function AuditTrail() {
               <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
                 Security Compliance Desk
               </span>
-              <h1 className="text-xl font-black tracking-tight text-slate-900 mt-0.5">
+              <h1 className="text-xl font-black tracking-tight text-primary mt-0.5">
                 System Audit Logs
               </h1>
             </div>
@@ -158,7 +158,7 @@ export default function AuditTrail() {
           <button
             type="button"
             onClick={() => setShowFilters(true)}
-            className="h-10 px-4 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-all shadow-3xs flex items-center justify-center gap-2 cursor-pointer select-none active:scale-98"
+            className="h-10 px-4 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 hover:text-primary transition-all shadow-3xs flex items-center justify-center gap-2 cursor-pointer select-none active:scale-98"
           >
             <Sliders size={13} className="text-slate-400" />
             <span>Filter</span>
@@ -170,7 +170,7 @@ export default function AuditTrail() {
             onClick={() =>
               console.log("Exporting search results data sheet...")
             }
-            className="h-10 px-4 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 hover:text-slate-900 transition-all shadow-3xs flex items-center justify-center gap-2 cursor-pointer select-none active:scale-98"
+            className="h-10 px-4 bg-white border border-slate-200 text-slate-600 text-[10px] font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 hover:text-primary transition-all shadow-3xs flex items-center justify-center gap-2 cursor-pointer select-none active:scale-98"
           >
             <Download size={13} className="text-slate-400" />
             <span>Export</span>
@@ -260,7 +260,7 @@ export default function AuditTrail() {
                             <User size={13} />
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-bold text-slate-900 text-sm tracking-tight transition-colors">
+                            <span className="font-bold text-primary text-sm tracking-tight transition-colors">
                               {log.username}
                             </span>
                             {log.adminUsername && (

@@ -93,7 +93,7 @@ export default function AccountDetails({ onBack }) {
                 <ArrowLeft size={16} />
               </button>
               <div>
-                <h2 className="text-xl font-bold text-slate-900">
+                <h2 className="text-xl font-bold text-primary">
                   {account?.product?.name}
                 </h2>
                 <p className="text-xs text-slate-400 mt-0.5">
@@ -166,7 +166,7 @@ export default function AccountDetails({ onBack }) {
                     <h4 className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
                       Account Type
                     </h4>
-                    <p className="text-sm font-bold text-slate-900 tracking-tight mt-0.5">
+                    <p className="text-sm font-bold text-primary tracking-tight mt-0.5">
                       {account?.product?.name}
                     </p>
                   </div>
@@ -186,7 +186,7 @@ export default function AccountDetails({ onBack }) {
                     <button
                       type="button"
                       onClick={() => handleCopyText(account?.account_number)}
-                      className="size-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-white hover:border-slate-300 transition-all cursor-pointer"
+                      className="size-7 rounded-lg bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-white hover:border-slate-300 transition-all cursor-pointer"
                       title="Copy Account Number"
                     >
                       {copied ? (
@@ -220,7 +220,7 @@ export default function AccountDetails({ onBack }) {
                 </div>
 
                 <div className="border-t border-slate-100 pt-3.5">
-                  <p className="text-2xl font-black tracking-tight text-slate-900 font-mono">
+                  <p className="text-2xl font-black tracking-tight text-primary font-mono">
                     <span className="text-sm font-bold text-slate-400 mr-0.5">
                       KES
                     </span>
@@ -285,7 +285,7 @@ export default function AccountDetails({ onBack }) {
         </div>
       )}
 
-      <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+      <h2 className="text-2xl font-bold tracking-tight text-primary">
         Account Transactions
       </h2>
       <div className="w-full bg-white rounded-3xl border border-slate-200/60 shadow-2xs overflow-hidden">
@@ -370,7 +370,7 @@ export default function AccountDetails({ onBack }) {
                           Channel: {tx.platform.replace("_", " ")}
                         </span>
                       </div>
-                      <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors flex items-center gap-1.5">
+                      <span className="font-semibold text-primary text-sm tracking-tight group-hover:text-primary transition-colors flex items-center gap-1.5">
                         {tx.category === "credit" ? (
                           <ArrowDownLeft
                             size={14}
@@ -409,7 +409,7 @@ export default function AccountDetails({ onBack }) {
                     <div className="flex flex-col space-y-1">
                       <div className="text-[11px] text-slate-500 font-medium">
                         <span
-                          className={`font-bold text-sm ${tx.category === "credit" ? "text-success" : "text-slate-900"}`}
+                          className={`font-bold text-sm ${tx.category === "credit" ? "text-success" : "text-primary"}`}
                         >
                           KES {tx.category === "credit" ? "+" : "-"}
                           {Number(tx.amount).toLocaleString()}
@@ -492,7 +492,7 @@ export default function AccountDetails({ onBack }) {
                       />
                     </div>
                     <div className="space-y-1">
-                      <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+                      <h3 className="text-sm font-bold text-primary tracking-tight">
                         No transactions found
                       </h3>
                       <p className="text-xs text-slate-400 font-medium leading-relaxed">

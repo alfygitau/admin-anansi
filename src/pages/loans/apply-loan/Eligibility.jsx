@@ -57,7 +57,7 @@ const LoanEligibility = ({ memberData, onProceedToApplication }) => {
       {/* 1. DYNAMIC HEADER TRACKING BANNER */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200/60 pb-5 select-none">
         <div>
-          <h2 className="text-xl font-black text-slate-900 tracking-tight">
+          <h2 className="text-xl font-black text-primary tracking-tight">
             Eligibility
           </h2>
           {/* Styled Member Name Line */}
@@ -217,7 +217,7 @@ const EligibilityContainer = ({
             >
               <Icon size={16} />
             </div>
-            <h4 className="text-sm font-bold text-slate-900 tracking-tight">
+            <h4 className="text-sm font-bold text-primary tracking-tight">
               {title}
             </h4>
           </div>

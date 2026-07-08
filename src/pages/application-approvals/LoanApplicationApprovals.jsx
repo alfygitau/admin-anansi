@@ -114,7 +114,7 @@ export default function LoanApplicationApprovals() {
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 pb-6 select-none">
         <div>
           {/* FIXED: Standardized text gradient utilities */}
-          <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent">
+          <h1 className="text-2xl font-black tracking-tight bg-gradient-to-r from-primary to-slate-700 bg-clip-text text-transparent">
             Approvals Ledger
           </h1>
           <p className="text-xs text-slate-500 font-medium mt-1">
@@ -189,7 +189,7 @@ export default function LoanApplicationApprovals() {
               <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block truncate">
                 Total Reviewed
               </span>
-              <span className="text-base font-black text-slate-900 block truncate">
+              <span className="text-base font-black text-primary block truncate">
                 {stats.totalCount} Loans
               </span>
             </div>
@@ -363,7 +363,7 @@ export default function LoanApplicationApprovals() {
                             <FileText size={14} strokeWidth={2.5} />
                           </div>
                           <div className="flex flex-col">
-                            <span className="font-mono font-black text-slate-900 tracking-tight text-[11px] bg-slate-100 px-1.5 py-0.5 rounded-md w-fit">
+                            <span className="font-mono font-black text-primary tracking-tight text-[11px] bg-slate-100 px-1.5 py-0.5 rounded-md w-fit">
                               {approval.application.application_number}
                             </span>
                             <span className="text-xs font-black text-slate-800 tracking-tight mt-1">
@@ -383,7 +383,7 @@ export default function LoanApplicationApprovals() {
                             <UserCheck size={13} strokeWidth={2.5} />
                           </div>
                           <div className="flex flex-col min-w-0">
-                            <span className="font-black text-slate-900 tracking-tight truncate">
+                            <span className="font-black text-primary tracking-tight truncate">
                               {approval.approver?.name || "Automated System"}
                             </span>
                             <span className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mt-0.5">
@@ -489,7 +489,7 @@ export default function LoanApplicationApprovals() {
                               approval.application_id,
                             )
                           }
-                          className="inline-flex items-center gap-1.5 h-8 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900 shadow-3xs cursor-pointer transition-all active:scale-95 ml-auto"
+                          className="inline-flex items-center gap-1.5 h-8 px-3 rounded-xl bg-white border border-slate-200 text-slate-700 text-xs font-bold hover:bg-slate-50 hover:border-slate-300 hover:text-primary shadow-3xs cursor-pointer transition-all active:scale-95 ml-auto"
                         >
                           <Eye
                             size={13}

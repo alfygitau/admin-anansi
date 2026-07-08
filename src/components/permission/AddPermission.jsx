@@ -223,7 +223,7 @@ const AddPermission = ({
                   </motion.div>
 
                   <div className="space-y-1">
-                    <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                    <h3 className="text-lg font-black text-primary tracking-tight">
                       Permission Rule Created
                     </h3>
                     <p className="text-xs text-slate-400 font-medium">

@@ -130,7 +130,7 @@ export default function AddGuarantor() {
             <span className="font-mono text-[9px] font-black bg-blue-50 text-[#074073] px-2 py-0.5 rounded border border-blue-100 uppercase tracking-wider">
               Loan Application
             </span>
-            <h1 className="text-xl font-black text-slate-900 tracking-tight mt-1.5">
+            <h1 className="text-xl font-black text-primary tracking-tight mt-1.5">
               Add Loan Guarantors
             </h1>
             <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -145,7 +145,7 @@ export default function AddGuarantor() {
           <div className="bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-5 flex flex-col justify-between h-full min-h-[520px]">
             <div className="space-y-5 flex-1 flex flex-col">
               <div>
-                <h2 className="text-sm font-black text-slate-900 tracking-tight">
+                <h2 className="text-sm font-black text-primary tracking-tight">
                   Find a Member
                 </h2>
                 <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -282,7 +282,7 @@ export default function AddGuarantor() {
               {/* RESULTS BAR HEADER METRICS */}
               <div className="px-6 py-4 bg-slate-50/50 border-b border-slate-100 flex items-center justify-between select-none shrink-0">
                 <div>
-                  <h2 className="text-xs font-black text-slate-900 tracking-tight uppercase">
+                  <h2 className="text-xs font-black text-primary tracking-tight uppercase">
                     Available Guarantors
                   </h2>
                 </div>
@@ -352,7 +352,7 @@ export default function AddGuarantor() {
                                 <span className="font-mono text-[9px] font-black tracking-wider text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/40">
                                   Member ID: {candidate.id}
                                 </span>
-                                <h3 className="text-xs font-black text-slate-900 mt-1.5 truncate">
+                                <h3 className="text-xs font-black text-primary mt-1.5 truncate">
                                   {candidate.name}
                                 </h3>
                                 <p className="text-[10px] font-medium text-slate-400 mt-0.5 truncate">

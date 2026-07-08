@@ -14,7 +14,7 @@ import {
   Calendar,
   Download,
   LogOut,
-  ExternalLink
+  ExternalLink,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
@@ -32,19 +32,21 @@ const MemberAcceptTerms = () => {
   const [showError, setShowError] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
-  
+
   const navigate = useNavigate();
   const { showToast } = useToast();
   const { auth, setAuth } = useAuth();
 
   // Simulated ledger metrics for the final print view layout
-  const generatedMemberId = auth?.user?.memberId || "MBR-2026-" + Math.floor(100000 + Math.random() * 900000);
+  const generatedMemberId =
+    auth?.user?.memberId ||
+    "MBR-2026-" + Math.floor(100000 + Math.random() * 900000);
   const registrationTimestamp = new Date().toLocaleDateString("en-KE", {
     day: "numeric",
     month: "long",
     year: "numeric",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   });
 
   const handleCopyId = () => {
@@ -60,14 +62,15 @@ const MemberAcceptTerms = () => {
       if (auth?.user) {
         setAuth({
           ...auth,
-          user: { ...auth.user, isOnboardingComplete: true }
+          user: { ...auth.user, isOnboardingComplete: true },
         });
       }
       showToast({
         title: "Bylaws Signed",
         type: "success",
         position: "top-right",
-        description: "Legal covenants committed. Your profile is now permanently activated.",
+        description:
+          "Legal covenants committed. Your profile is now permanently activated.",
       });
       setIsSuccess(true);
     },
@@ -93,7 +96,6 @@ const MemberAcceptTerms = () => {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4 md:p-8 sm:p-2 antialiased">
       <div className="w-full max-w-6xl grid lg:grid-cols-2 py-3 px-6 bg-white overflow-hidden">
-        
         {/* LEFT COLUMN: REGULATORY OVERSIGHT & BINDING STATUTES */}
         <div className="relative bg-white sm:hidden p-6 lg:p-6 flex flex-col justify-between overflow-hidden border-r border-slate-200">
           <div className="relative z-10">
@@ -103,7 +105,7 @@ const MemberAcceptTerms = () => {
                 Anansi Sacco
               </span>
             </div>
-            <h2 className="text-slate-900 text-2xl xl:text-2xl font-medium leading-[1.2] mb-8">
+            <h2 className="text-primary text-2xl xl:text-2xl font-medium leading-[1.2] mb-8">
               Reviewing the mutual covenants, operational rights, and{" "}
               <span className="text-primary">institutional safeguards.</span>
             </h2>
@@ -111,39 +113,57 @@ const MemberAcceptTerms = () => {
             <div className="space-y-8">
               <div className="flex gap-5 group">
                 <div className="flex-shrink-0 w-12 h-12 bg-blue-50/60 rounded-2xl flex items-center justify-center group-hover:bg-primary transition-colors">
-                  <Scale className="text-primary group-hover:text-white transition-colors" size={22} />
+                  <Scale
+                    className="text-primary group-hover:text-white transition-colors"
+                    size={22}
+                  />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">Bylaw Jurisdictions</h4>
+                  <h4 className="text-primary font-medium text-md">
+                    Bylaw Jurisdictions
+                  </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
-                    Your membership profiles are governed by standard SACCO structural rules, detailing 
-                    dividend payouts, capital retention protocols, and share allocations.
+                    Your membership profiles are governed by standard SACCO
+                    structural rules, detailing dividend payouts, capital
+                    retention protocols, and share allocations.
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-5 group">
                 <div className="flex-shrink-0 w-12 h-12 bg-blue-50/60 rounded-2xl flex items-center justify-center group-hover:bg-primary transition-colors">
-                  <BookOpen className="text-primary group-hover:text-white transition-colors" size={22} />
+                  <BookOpen
+                    className="text-primary group-hover:text-white transition-colors"
+                    size={22}
+                  />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">Resource Transparency</h4>
+                  <h4 className="text-primary font-medium text-md">
+                    Resource Transparency
+                  </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
-                    Clear outline disclosures of structural fees, savings lock durations, interest metrics, 
-                    and automated credit scoring underwriting parameters.
+                    Clear outline disclosures of structural fees, savings lock
+                    durations, interest metrics, and automated credit scoring
+                    underwriting parameters.
                   </p>
                 </div>
               </div>
 
               <div className="flex gap-5 group">
                 <div className="flex-shrink-0 w-12 h-12 bg-blue-50/60 rounded-2xl flex items-center justify-center group-hover:bg-primary transition-colors">
-                  <HelpCircle className="text-primary group-hover:text-white transition-colors" size={22} />
+                  <HelpCircle
+                    className="text-primary group-hover:text-white transition-colors"
+                    size={22}
+                  />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">Fiduciary Compliance</h4>
+                  <h4 className="text-primary font-medium text-md">
+                    Fiduciary Compliance
+                  </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
-                    Data storage encryption parameters, KYC evaluation guidelines, and privacy architectures 
-                    fully matching SASRA and localized Data Protection laws.
+                    Data storage encryption parameters, KYC evaluation
+                    guidelines, and privacy architectures fully matching SASRA
+                    and localized Data Protection laws.
                   </p>
                 </div>
               </div>
@@ -160,7 +180,6 @@ const MemberAcceptTerms = () => {
         {/* RIGHT COLUMN: INTERACTIVE FORM OR SUCCESS STATE SWITCH PANEL */}
         <div className="p-6 lg:p-6 sm:p-2 flex items-center justify-center bg-white">
           <div className="w-full h-full flex flex-col justify-center">
-            
             <AnimatePresence mode="wait">
               {!isSuccess ? (
                 /* VIEW STATE A: DISCLOSURE REVIEW & AGREEMENT CHECKBOX */
@@ -172,16 +191,16 @@ const MemberAcceptTerms = () => {
                   className="space-y-6"
                 >
                   <div>
-                    <h1 className="text-3xl font-medium text-slate-900 tracking-tight">
+                    <h1 className="text-3xl font-medium text-primary tracking-tight">
                       Membership Bylaws
                     </h1>
                     <p className="text-slate-400 font-medium mt-2">
-                      Review each required legal framework below to activate your profile.
+                      Review each required legal framework below to activate
+                      your profile.
                     </p>
                   </div>
 
                   <form onSubmit={handleSubmit} className="space-y-6">
-                    
                     {/* Simplified Link Matrix Section */}
                     <div className="space-y-3">
                       <label className="text-[11px] font-bold text-slate-400 uppercase tracking-widest ml-1">
@@ -190,10 +209,26 @@ const MemberAcceptTerms = () => {
 
                       <div className="grid grid-cols-1 sm:grid-cols-1 gap-2.5">
                         {[
-                          { label: "Onboarding Terms & Conditions", sub: "Core Covenants & Commitments", path: "/legal/terms" },
-                          { label: "Data Privacy Policy", sub: "Data Protection Act & Token Security", path: "/legal/privacy" },
-                          { label: "SACCO Institutional Bylaws", sub: "SASRA Capital & Reserves Framework", path: "/legal/bylaws" },
-                          { label: "Credit & Underwriting Terms", sub: "Collateral & Yield Allocation Policies", path: "/legal/credit-policy" },
+                          {
+                            label: "Onboarding Terms & Conditions",
+                            sub: "Core Covenants & Commitments",
+                            path: "/legal/terms",
+                          },
+                          {
+                            label: "Data Privacy Policy",
+                            sub: "Data Protection Act & Token Security",
+                            path: "/legal/privacy",
+                          },
+                          {
+                            label: "SACCO Institutional Bylaws",
+                            sub: "SASRA Capital & Reserves Framework",
+                            path: "/legal/bylaws",
+                          },
+                          {
+                            label: "Credit & Underwriting Terms",
+                            sub: "Collateral & Yield Allocation Policies",
+                            path: "/legal/credit-policy",
+                          },
                         ].map((doc, idx) => (
                           <a
                             key={idx}
@@ -210,29 +245,41 @@ const MemberAcceptTerms = () => {
                                 {doc.sub}
                               </span>
                             </div>
-                            <ExternalLink size={14} className="text-slate-300 group-hover:text-[#074073] shrink-0 transition-colors" />
+                            <ExternalLink
+                              size={14}
+                              className="text-slate-300 group-hover:text-[#074073] shrink-0 transition-colors"
+                            />
                           </a>
                         ))}
                       </div>
                     </div>
 
                     {/* Checkbox Interactive Panel */}
-                    <div 
+                    <div
                       onClick={() => {
                         setAgreed(!agreed);
                         setShowError(false);
                       }}
                       className={`p-4 border rounded-2xl flex items-center gap-4 cursor-pointer transition-all ${
-                        agreed ? "bg-blue-50/40 border-blue-200 text-slate-800" : "bg-slate-50/50 border-slate-200 hover:border-slate-300 text-slate-500"
+                        agreed
+                          ? "bg-blue-50/40 border-blue-200 text-slate-800"
+                          : "bg-slate-50/50 border-slate-200 hover:border-slate-300 text-slate-500"
                       }`}
                     >
                       <div className="mt-0.5 shrink-0 text-primary">
-                        {agreed ? <CheckSquare size={18} strokeWidth={2.5} /> : <Square size={18} />}
+                        {agreed ? (
+                          <CheckSquare size={18} strokeWidth={2.5} />
+                        ) : (
+                          <Square size={18} />
+                        )}
                       </div>
                       <div className="space-y-0.5">
-                        <p className="text-xs font-bold tracking-tight">I Accept the Governing Corporate Bylaws</p>
+                        <p className="text-xs font-bold tracking-tight">
+                          I Accept the Governing Corporate Bylaws
+                        </p>
                         <p className="text-[11px] font-medium text-slate-400 leading-normal">
-                          I confirm that I have opened, evaluated, and accepted the binding covenants linked above.
+                          I confirm that I have opened, evaluated, and accepted
+                          the binding covenants linked above.
                         </p>
                       </div>
                     </div>
@@ -240,9 +287,17 @@ const MemberAcceptTerms = () => {
                     {/* Validation Notification Badge */}
                     <AnimatePresence>
                       {showError && (
-                        <motion.div initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} className="p-3 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl text-[11px] font-bold flex items-center gap-2 ml-1">
+                        <motion.div
+                          initial={{ opacity: 0, y: -4 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: -4 }}
+                          className="p-3 bg-rose-50 border border-rose-100 text-rose-600 rounded-xl text-[11px] font-bold flex items-center gap-2 ml-1"
+                        >
                           <AlertCircle size={14} />
-                          <span>Please check the box above to confirm you have reviewed and accepted the terms.</span>
+                          <span>
+                            Please check the box above to confirm you have
+                            reviewed and accepted the terms.
+                          </span>
                         </motion.div>
                       )}
                     </AnimatePresence>
@@ -253,10 +308,18 @@ const MemberAcceptTerms = () => {
                       type="submit"
                       disabled={isLoading}
                       className={`w-full py-6 rounded-2xl font-medium uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all cursor-pointer ${
-                        agreed && !isLoading ? "bg-primary text-white shadow-xl shadow-slate-900/10 hover:bg-secondary" : "bg-slate-100 text-slate-400 cursor-not-allowed"
+                        agreed && !isLoading
+                          ? "bg-primary text-white shadow-xl shadow-primary/10 hover:bg-secondary"
+                          : "bg-slate-100 text-slate-400 cursor-not-allowed"
                       }`}
                     >
-                      {isLoading ? <Loader2 className="animate-spin" size={18} /> : <>Accept & Activate Membership <ArrowRight size={18} /></>}
+                      {isLoading ? (
+                        <Loader2 className="animate-spin" size={18} />
+                      ) : (
+                        <>
+                          Accept & Activate Membership <ArrowRight size={18} />
+                        </>
+                      )}
                     </motion.button>
                   </form>
                 </motion.div>
@@ -270,7 +333,7 @@ const MemberAcceptTerms = () => {
                   className="flex flex-col items-start pt-2 space-y-8 w-full text-left"
                 >
                   <div className="relative flex items-center justify-start pl-1">
-                    <motion.div 
+                    <motion.div
                       initial={{ scale: 0 }}
                       animate={{ scale: [0, 1.2, 1] }}
                       transition={{ duration: 0.4, ease: "easeOut" }}
@@ -286,9 +349,11 @@ const MemberAcceptTerms = () => {
                       Onboarding Completed
                     </h3>
                     <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
-                      The member's structural data pipeline has been securely parsed. Core credentials, 
-                      geographic mapping metrics, and financial underwriting parameters have successfully 
-                      cleared all system validation constraints and are officially committed to the secure database registry.
+                      The member's structural data pipeline has been securely
+                      parsed. Core credentials, geographic mapping metrics, and
+                      financial underwriting parameters have successfully
+                      cleared all system validation constraints and are
+                      officially committed to the secure database registry.
                     </p>
                   </div>
 
@@ -296,19 +361,27 @@ const MemberAcceptTerms = () => {
 
                   <div className="w-full border border-slate-100 bg-slate-50/50 rounded-2xl p-5 space-y-3.5 text-left">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Assigned System ID</span>
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        Assigned System ID
+                      </span>
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-mono font-black text-slate-800 tracking-wider">
                           {generatedMemberId}
                         </span>
-                        <button 
+                        <button
                           type="button"
                           onClick={handleCopyId}
                           className={`p-1.5 rounded-lg border transition-all cursor-pointer ${
-                            copied ? "bg-emerald-50 border-emerald-200 text-emerald-600" : "bg-white border-slate-200 text-slate-400 hover:text-slate-600 active:scale-95"
+                            copied
+                              ? "bg-emerald-50 border-emerald-200 text-emerald-600"
+                              : "bg-white border-slate-200 text-slate-400 hover:text-slate-600 active:scale-95"
                           }`}
                         >
-                          {copied ? <Check size={12} strokeWidth={3} /> : <Copy size={12} />}
+                          {copied ? (
+                            <Check size={12} strokeWidth={3} />
+                          ) : (
+                            <Copy size={12} />
+                          )}
                         </button>
                       </div>
                     </div>
@@ -317,7 +390,8 @@ const MemberAcceptTerms = () => {
 
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <Calendar size={12} className="text-slate-300" /> Activation Date
+                        <Calendar size={12} className="text-slate-300" />{" "}
+                        Activation Date
                       </span>
                       <span className="font-semibold text-slate-700 text-[11px]">
                         {registrationTimestamp}
@@ -326,7 +400,8 @@ const MemberAcceptTerms = () => {
 
                     <div className="flex items-center justify-between text-xs">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                        <ShieldCheck size={12} className="text-slate-300" /> Bylaw Attestation
+                        <ShieldCheck size={12} className="text-slate-300" />{" "}
+                        Bylaw Attestation
                       </span>
                       <span className="font-bold text-emerald-700 text-[10px] uppercase tracking-widest bg-emerald-50 px-2 py-0.5 border border-emerald-100/50 rounded-md">
                         Signed & Logged
@@ -356,10 +431,8 @@ const MemberAcceptTerms = () => {
                 </motion.div>
               )}
             </AnimatePresence>
-
           </div>
         </div>
-
       </div>
     </div>
   );

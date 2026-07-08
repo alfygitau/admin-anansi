@@ -122,7 +122,7 @@ export default function HelpCenterWorkspace() {
         <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400 block select-none">
           Operations Help Desk
         </span>
-        <h1 className="text-xl font-black tracking-tight text-slate-900 mt-0.5">
+        <h1 className="text-xl font-black tracking-tight text-primary mt-0.5">
           Support Workspace
         </h1>
       </div>
@@ -135,7 +135,7 @@ export default function HelpCenterWorkspace() {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-xs font-bold text-slate-900">
+                <h3 className="text-xs font-bold text-primary">
                   WhatsApp Live Chat
                 </h3>
                 <span className="flex size-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -172,7 +172,7 @@ export default function HelpCenterWorkspace() {
               <Phone size={18} />
             </div>
             <div>
-              <h3 className="text-xs font-bold text-slate-900">
+              <h3 className="text-xs font-bold text-primary">
                 Official Voice Hotline
               </h3>
               <p className="text-[11px] text-slate-400 font-medium mt-0.5 leading-normal">
@@ -201,7 +201,7 @@ export default function HelpCenterWorkspace() {
               <Mail size={18} />
             </div>
             <div>
-              <h3 className="text-xs font-bold text-slate-900">
+              <h3 className="text-xs font-bold text-primary">
                 Email Desk Service
               </h3>
               <p className="text-[11px] text-slate-400 font-medium mt-0.5 leading-normal">

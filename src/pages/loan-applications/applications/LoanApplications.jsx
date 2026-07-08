@@ -131,7 +131,7 @@ export default function LoanApplications() {
           </div>
           <button
             onClick={() => navigate("/admin/apply-loan/products")}
-            className="sm:w-full flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
+            className="sm:w-full flex items-center justify-center gap-2 h-11 px-5 w-fit bg-primary text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
           >
             <Plus size={15} />
             <span>Add Loan Application</span>
@@ -329,7 +329,7 @@ export default function LoanApplications() {
                               {app.application_number}
                             </span>
                           </div>
-                          <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
+                          <span className="font-semibold text-primary text-sm tracking-tight group-hover:text-primary transition-colors">
                             {app.applicant_name}
                           </span>
                           <span className="text-[11px] text-slate-400 font-normal flex items-center gap-1">
@@ -355,7 +355,7 @@ export default function LoanApplications() {
                       {/* Col 3: Capital Request Metrics */}
                       <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1.5">
-                          <span className="font-semibold text-slate-900 text-sm tracking-tight">
+                          <span className="font-semibold text-primary text-sm tracking-tight">
                             {formatAmount(app.applied_amount)}
                           </span>
                           <div className="text-[11px] text-slate-400 font-medium flex items-center gap-2">
@@ -373,7 +373,7 @@ export default function LoanApplications() {
                       {/* NEW Col 4: Interest Rate Parameters */}
                       <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1">
-                          <span className="font-semibold text-slate-900 text-sm tracking-tight">
+                          <span className="font-semibold text-primary text-sm tracking-tight">
                             {parseFloat(
                               app?.product?.interest_rate ?? 2.0,
                             )?.toFixed(1)}

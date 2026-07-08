@@ -61,7 +61,6 @@ export default function Permissions() {
         formData={formData}
         setFormData={setFormData}
         modulesList={modulesList}
-        
       />
       <div className="w-full space-y-6 font-sans antialiased text-slate-800">
         {/* 1. APP MODULE DIRECTORY CONTROLS HEADER */}
@@ -71,7 +70,7 @@ export default function Permissions() {
               <button
                 type="button"
                 onClick={() => navigate(-1)}
-                className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 shadow-3xs cursor-pointer transition-all active:scale-95"
+                className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-3xs cursor-pointer transition-all active:scale-95"
               >
                 <ArrowLeft size={16} />
               </button>
@@ -79,7 +78,7 @@ export default function Permissions() {
                 <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
                   Security & Access Control Center
                 </span>
-                <h1 className="text-xl font-black tracking-tight text-slate-900 mt-0.5">
+                <h1 className="text-xl font-black tracking-tight text-primary mt-0.5">
                   Permission Modules
                 </h1>
               </div>
@@ -206,7 +205,7 @@ export default function Permissions() {
                                 Code {mod.moduleCode}
                               </span>
                             </div>
-                            <span className="font-bold text-slate-900 text-sm tracking-tight block">
+                            <span className="font-bold text-primary text-sm tracking-tight block">
                               {mod.name}
                             </span>
                           </div>
@@ -282,7 +281,7 @@ export default function Permissions() {
                               className={`size-8 rounded-xl border flex items-center justify-center transition-all shadow-3xs cursor-pointer bg-white ${
                                 activeMenuId === mod.id
                                   ? "border-[#074073] text-[#074073] bg-blue-50/20 ring-4 ring-[#074073]/5"
-                                  : "border-slate-200/60 text-slate-400 hover:text-slate-900 hover:bg-slate-50"
+                                  : "border-slate-200/60 text-slate-400 hover:text-primary hover:bg-slate-50"
                               }`}
                               title="More Actions"
                             >
@@ -309,7 +308,7 @@ export default function Permissions() {
                                       );
                                       setActiveMenuId(null);
                                     }}
-                                    className="w-full h-9 px-2.5 rounded-lg flex items-center gap-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-left cursor-pointer group"
+                                    className="w-full h-9 px-2.5 rounded-lg flex items-center gap-2.5 text-xs font-semibold text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors text-left cursor-pointer group"
                                   >
                                     <Plus
                                       size={13}
@@ -328,7 +327,7 @@ export default function Permissions() {
                                       );
                                       setActiveMenuId(null);
                                     }}
-                                    className="w-full h-9 px-2.5 rounded-lg flex items-center gap-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-left cursor-pointer group"
+                                    className="w-full h-9 px-2.5 rounded-lg flex items-center gap-2.5 text-xs font-semibold text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors text-left cursor-pointer group"
                                   >
                                     <Edit
                                       size={13}

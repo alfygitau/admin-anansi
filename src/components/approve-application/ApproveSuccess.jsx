@@ -10,7 +10,7 @@ export default function ApprovalSuccess({
   finalAmount,
   decision,
   onNextReview,
-  viewApprovals
+  viewApprovals,
 }) {
   const isApproved = decision === "approved";
 
@@ -23,7 +23,7 @@ export default function ApprovalSuccess({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose} // FIXED: Triggers onClose when clicking outside
-            className="absolute inset-0 bg-slate-900/40"
+            className="absolute inset-0 bg-primary/40"
           />
 
           {/* CORE MODAL WINDOW */}
@@ -70,7 +70,7 @@ export default function ApprovalSuccess({
 
             {/* 2. CORE ACTION HEADER */}
             <div className="space-y-1 mb-6">
-              <h2 className="text-base font-black text-slate-900 tracking-tight">
+              <h2 className="text-base font-black text-primary tracking-tight">
                 {isApproved
                   ? "Decision Filed Successfully"
                   : "Application Decline Logged"}
@@ -90,9 +90,7 @@ export default function ApprovalSuccess({
             >
               <div className="flex justify-between items-center pb-0.5">
                 <span className="text-slate-400">Applicant Node</span>
-                <span className="text-slate-900 font-bold">
-                  {applicantName}
-                </span>
+                <span className="text-primary font-bold">{applicantName}</span>
               </div>
               <div className="flex justify-between items-center pt-2.5">
                 <span className="text-slate-400">
@@ -116,7 +114,7 @@ export default function ApprovalSuccess({
               </div>
               <div className="flex justify-between items-center pt-2.5">
                 <span className="text-slate-400">Authorized Principal</span>
-                <span className="text-xs font-mono font-black text-slate-900">
+                <span className="text-xs font-mono font-black text-primary">
                   <span className="text-[9px] font-bold text-slate-400 mr-0.5">
                     KES
                   </span>
@@ -141,7 +139,7 @@ export default function ApprovalSuccess({
               <button
                 type="button"
                 onClick={viewApprovals}
-                className="w-full sm:w-1/2 h-10 px-4 bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 transition-all cursor-pointer shadow-sm group"
+                className="w-full sm:w-1/2 h-10 px-4 bg-primary text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 transition-all cursor-pointer shadow-sm group"
               >
                 <span>View All Approvals</span>
                 <ArrowRight

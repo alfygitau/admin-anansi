@@ -112,7 +112,7 @@ const MemberLogin = () => {
                 ANANSI SACCO
               </span>
             </div>
-            <h2 className="text-slate-900 text-2xl xl:text-2xl font-medium leading-[1.2] mb-8">
+            <h2 className="text-primary text-2xl xl:text-2xl font-medium leading-[1.2] mb-8">
               Comprehensive wealth generation, unified savings channels, and{" "}
               <span className="text-primary">instant financial advances.</span>
             </h2>
@@ -126,7 +126,7 @@ const MemberLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Instant Credit Access
                   </h4>
                   <p className="text-slate-500 text-[12px] font-medium leading-relaxed mt-1">
@@ -145,7 +145,7 @@ const MemberLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     High-Yield Savings Vehicles
                   </h4>
                   <p className="text-slate-500 text-[12px] font-medium leading-relaxed mt-1">
@@ -164,7 +164,7 @@ const MemberLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Secured Financial Vault
                   </h4>
                   <p className="text-slate-500 text-[12px] font-medium leading-relaxed mt-1">
@@ -188,7 +188,7 @@ const MemberLogin = () => {
         <div className="p-6 lg:p-6 sm:p-2 flex items-center justify-center bg-white">
           <div className="w-full">
             <div className="mb-10">
-              <h1 className="text-3xl font-medium text-slate-900 tracking-tight">
+              <h1 className="text-3xl font-medium text-primary tracking-tight">
                 Member Portal
               </h1>
               <p className="text-slate-400 font-medium mt-2">
@@ -288,7 +288,7 @@ const MemberLogin = () => {
                 className={`w-full py-6 rounded-2xl font-medium uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all
                   ${
                     isFormValid && !isLoading
-                      ? "bg-primary text-white shadow-xl shadow-slate-900/10 hover:bg-secondary active:shadow-none"
+                      ? "bg-primary text-white shadow-xl shadow-primary/10 hover:bg-secondary active:shadow-none"
                       : "bg-slate-100 text-slate-400 cursor-not-allowed"
                   }`}
               >

@@ -243,7 +243,7 @@ export default function Homelayer() {
               className={`w-full h-11 flex items-center justify-between px-3.5 transition-all duration-150 font-semibold text-xs uppercase tracking-wider relative group ${
                 isCurrentActive
                   ? "bg-slate-100 text-[#074073]"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50/80"
+                  : "text-slate-500 hover:text-primary hover:bg-slate-50/80"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -343,7 +343,7 @@ export default function Homelayer() {
       {isMobileSidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden flex">
           <div
-            className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"
+            className="fixed inset-0 bg-primary/40 backdrop-blur-sm"
             onClick={() => setIsMobileSidebarOpen(false)}
           />
           <div className="relative w-72 max-w-sm bg-white h-full flex flex-col p-4">
@@ -377,7 +377,7 @@ export default function Homelayer() {
             {/* Mobile Sidebar Navigation Toggle Trigger */}
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="lg:hidden p-2 text-slate-500 hover:bg-slate-50 hover:text-slate-900 rounded-xl transition-all"
+              className="lg:hidden p-2 text-slate-500 hover:bg-slate-50 hover:text-primary rounded-xl transition-all"
             >
               <Menu size={20} />
             </button>
@@ -387,7 +387,7 @@ export default function Homelayer() {
               <span className="text-[10px] font-bold text-[#074073] tracking-widest uppercase opacity-60 leading-none">
                 {currentContext.category}
               </span>
-              <h1 className="text-base font-bold text-slate-900 tracking-tight mt-1.5 leading-none">
+              <h1 className="text-base font-bold text-primary tracking-tight mt-1.5 leading-none">
                 {currentContext.title}
               </h1>
             </div>
@@ -484,7 +484,7 @@ export default function Homelayer() {
             </div>
 
             {/* NOTIFICATIONS: Isolation Channel Gate */}
-            <button className="relative size-10 rounded-xl border border-slate-200/80 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 transition-all cursor-pointer">
+            <button className="relative size-10 rounded-xl border border-slate-200/80 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 transition-all cursor-pointer">
               <Bell
                 size={18}
                 className="text-slate-400 hover:text-slate-700 transition-colors"
@@ -507,7 +507,7 @@ export default function Homelayer() {
 const DropdownLinkRow = ({ icon, title, onClick }) => (
   <button
     onClick={onClick}
-    className="w-full h-9 flex items-center gap-2.5 px-3 rounded-xl text-left text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-all cursor-pointer"
+    className="w-full h-9 flex items-center gap-2.5 px-3 rounded-xl text-left text-xs font-semibold text-slate-600 hover:text-primary hover:bg-slate-50 transition-all cursor-pointer"
   >
     <span className="text-slate-400">{icon}</span>
     <span>{title}</span>

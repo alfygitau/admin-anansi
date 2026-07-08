@@ -24,7 +24,7 @@ export default function Homepage() {
     <div className="w-full space-y-8 antialiased text-slate-800">
       <div className="space-y-4">
         <div>
-          <h2 className="text-base font-black tracking-tight text-slate-900">
+          <h2 className="text-base font-black tracking-tight text-primary">
             Financial Health
           </h2>
           <p className="text-xs text-slate-400 font-medium">
@@ -40,7 +40,7 @@ export default function Homepage() {
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
                   Member Savings
                 </span>
-                <p className="text-base font-extrabold text-slate-900">
+                <p className="text-base font-extrabold text-primary">
                   KES 84.2M
                 </p>
               </div>
@@ -63,7 +63,7 @@ export default function Homepage() {
             trend="2.8x leverage ratio"
             isPositive={true}
           >
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
+            <p className="text-2xl font-black text-primary tracking-tight">
               KES 235.7M
             </p>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -78,7 +78,7 @@ export default function Homepage() {
             trend="+8.2% vs yesterday"
             isPositive={true}
           >
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
+            <p className="text-2xl font-black text-primary tracking-tight">
               KES 14.65M
             </p>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -93,7 +93,7 @@ export default function Homepage() {
             trend="3.24% default rate"
             isPositive={true}
           >
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
+            <p className="text-2xl font-black text-primary tracking-tight">
               KES 7.63M
             </p>
             <p className="text-[11px] text-emerald-600 font-semibold mt-0.5">
@@ -105,7 +105,7 @@ export default function Homepage() {
 
       <div className="space-y-4">
         <div>
-          <h2 className="text-base font-black tracking-tight text-slate-900">
+          <h2 className="text-base font-black tracking-tight text-primary">
             Membership & Growth
           </h2>
           <p className="text-xs text-slate-400 font-medium">
@@ -124,7 +124,7 @@ export default function Homepage() {
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
                   Total Members
                 </span>
-                <p className="text-xl font-black text-slate-900 tracking-tight">
+                <p className="text-xl font-black text-primary tracking-tight">
                   1,240
                 </p>
               </div>
@@ -156,7 +156,7 @@ export default function Homepage() {
             trend="+48 this month"
             isPositive={true}
           >
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
+            <p className="text-2xl font-black text-primary tracking-tight">
               +142 Members
             </p>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -171,7 +171,7 @@ export default function Homepage() {
             trend="+4.5% year-to-date"
             isPositive={true}
           >
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
+            <p className="text-2xl font-black text-primary tracking-tight">
               KES 48,500
             </p>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -184,7 +184,7 @@ export default function Homepage() {
 
       <div className="space-y-4">
         <div>
-          <h2 className="text-base font-black tracking-tight text-slate-900">
+          <h2 className="text-base font-black tracking-tight text-primary">
             Loan Application Pipeline
           </h2>
           <p className="text-xs text-slate-400 font-medium">
@@ -207,7 +207,7 @@ export default function Homepage() {
           </MetricCard>
 
           <MetricCard label="Waiting for Guarantor Approvals" icon={<Clock />}>
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
+            <p className="text-2xl font-black text-primary tracking-tight">
               19 Applications
             </p>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -232,7 +232,7 @@ export default function Homepage() {
             label="Receipts Needing Verification"
             icon={<FileCheck />}
           >
-            <p className="text-2xl font-black text-slate-900 tracking-tight">
+            <p className="text-2xl font-black text-primary tracking-tight">
               34 Receipts
             </p>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -245,7 +245,7 @@ export default function Homepage() {
 
       <div className="space-y-4">
         <div>
-          <h2 className="text-base font-black tracking-tight text-slate-900">
+          <h2 className="text-base font-black tracking-tight text-primary">
             Money Inflows & Overdue Loans
           </h2>
           <p className="text-xs text-slate-400 font-medium">
@@ -289,7 +289,7 @@ export default function Homepage() {
                 <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
                   Mobile Money (M-Pesa)
                 </span>
-                <p className="text-lg font-black text-slate-900">KES 7.80M</p>
+                <p className="text-lg font-black text-primary">KES 7.80M</p>
               </div>
               <div className="w-px h-8 bg-slate-200" />
               <div>

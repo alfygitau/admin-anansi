@@ -168,7 +168,7 @@ export default function AllUsers() {
         {/* 1. EXECUTIVE COMMAND BAR */}
         <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-2xl font-bold tracking-tight text-primary">
               Administrative Users
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-1">
@@ -325,7 +325,7 @@ export default function AllUsers() {
                               @{user.username}
                             </span>
                           </div>
-                          <span className="font-semibold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
+                          <span className="font-semibold text-primary text-sm tracking-tight group-hover:text-primary transition-colors">
                             {user.firstname} {user.lastname}
                           </span>
                         </div>
@@ -407,7 +407,7 @@ export default function AllUsers() {
                                 activeMenuId === user.id ? null : user.id,
                               )
                             }
-                            className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-slate-900 hover:bg-slate-50 transition-all bg-white cursor-pointer"
+                            className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 transition-all bg-white cursor-pointer"
                           >
                             <MoreVertical size={14} />
                           </button>
@@ -420,13 +420,13 @@ export default function AllUsers() {
                               }}
                               className="absolute right-14 mt-2 w-48 bg-white border border-slate-200/80 rounded-xl shadow-xl p-1.5 z-50 text-left animate-in fade-in slide-in-from-top-1 duration-100"
                             >
-                              <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer">
+                              <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors cursor-pointer">
                                 <History size={12} />
                                 <span>View Access Logs</span>
                               </button>
                               <button
                                 onClick={() => handleEditUser(user.id)}
-                                className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer"
+                                className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors cursor-pointer"
                               >
                                 <Edit size={12} />
                                 <span>Edit User</span>
@@ -471,7 +471,7 @@ export default function AllUsers() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+                          <h3 className="text-sm font-bold text-primary tracking-tight">
                             No users found
                           </h3>
                           <p className="text-xs text-slate-400 font-medium leading-relaxed">

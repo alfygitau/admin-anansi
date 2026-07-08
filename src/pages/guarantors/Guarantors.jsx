@@ -100,7 +100,7 @@ export default function Guarantors() {
       {/* 1. REGISTRY HEADER */}
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-lg font-bold text-slate-900">Loan Guarantors</h2>
+          <h2 className="text-lg font-bold text-primary">Loan Guarantors</h2>
           <p className="text-xs text-slate-500">
             Monitor exposure and commitment levels across all guarantors.
           </p>
@@ -144,7 +144,7 @@ export default function Guarantors() {
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
                 Active Guarantors
               </p>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">
+              <p className="text-2xl font-black text-primary tracking-tight">
                 {metrics.totalGuarantors}
               </p>
               <p className="text-[11px] text-slate-400 font-medium truncate">
@@ -162,7 +162,7 @@ export default function Guarantors() {
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
                 Total Capital Backed
               </p>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">
+              <p className="text-2xl font-black text-primary tracking-tight">
                 KES{" "}
                 {metrics?.totalCommitted?.toLocaleString(undefined, {
                   maximumFractionDigits: 0,
@@ -204,7 +204,7 @@ export default function Guarantors() {
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
                 Underwriting Loops
               </p>
-              <p className="text-2xl font-black text-slate-900 tracking-tight">
+              <p className="text-2xl font-black text-primary tracking-tight">
                 {metrics.totalActiveLoans + metrics.totalPendingLoans}
               </p>
               <p className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5 truncate">
@@ -314,7 +314,7 @@ export default function Guarantors() {
                           <User size={14} />
                         </div>
                         <div>
-                          <p className="font-bold text-slate-900">
+                          <p className="font-bold text-primary">
                             {g?.guarantor?.name}
                           </p>
                           <p className="text-[10px] text-slate-400 font-medium">
@@ -337,7 +337,7 @@ export default function Guarantors() {
                     </td>
 
                     {/* Financial Columns */}
-                    <td className="py-4 px-6 text-right font-semibold text-slate-900">
+                    <td className="py-4 px-6 text-right font-semibold text-primary">
                       KES{" "}
                       {g?.amount_guaranteed?.toLocaleString(undefined, {
                         minimumFractionDigits: 2,

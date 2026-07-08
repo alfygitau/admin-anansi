@@ -178,7 +178,7 @@ export default function RolesTable() {
         {/* EXECUTIVE COMMAND MODULE */}
         <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-2xl font-bold tracking-tight text-primary">
               Authorization Roles
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-1">
@@ -289,7 +289,7 @@ export default function RolesTable() {
                       </td>
 
                       {/* COL 2: Framework Name */}
-                      <td className="py-4 px-6 font-bold text-slate-900 text-sm tracking-tight group-hover:text-primary transition-colors">
+                      <td className="py-4 px-6 font-bold text-primary text-sm tracking-tight group-hover:text-primary transition-colors">
                         <div className="flex items-center gap-2">
                           <div className="size-5 rounded-md bg-slate-50 border border-slate-200 flex items-center justify-center text-slate-400">
                             <Key size={11} />
@@ -352,7 +352,7 @@ export default function RolesTable() {
                                 activeMenuId === role.id ? null : role.id,
                               )
                             }
-                            className="size-8 rounded-xl border border-slate-200/60 bg-white flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all shadow-3xs cursor-pointer"
+                            className="size-8 rounded-xl border border-slate-200/60 bg-white flex items-center justify-center text-slate-400 hover:text-primary transition-all shadow-3xs cursor-pointer"
                           >
                             <MoreVertical size={14} />
                           </button>
@@ -366,7 +366,7 @@ export default function RolesTable() {
                             >
                               <button
                                 onClick={() => handleSelectRole(role)}
-                                className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors cursor-pointer"
+                                className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors cursor-pointer"
                               >
                                 <History size={12} />
                                 <span>Modify Role</span>
@@ -403,7 +403,7 @@ export default function RolesTable() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+                          <h3 className="text-sm font-bold text-primary tracking-tight">
                             No roles found
                           </h3>
                           <p className="text-xs text-slate-400 font-medium leading-relaxed">
@@ -439,7 +439,7 @@ export default function RolesTable() {
                     <span className="text-[10px] font-bold text-primary uppercase tracking-widest bg-primary/5 border border-primary/10 px-2 py-0.5 rounded-md">
                       Security Account Audit Trace
                     </span>
-                    <h3 className="text-lg font-bold text-slate-900 tracking-tight pt-1">
+                    <h3 className="text-lg font-bold text-primary tracking-tight pt-1">
                       {selectedRoleContext.role.name} Framework
                     </h3>
                     <p className="text-xs text-slate-400 font-normal leading-relaxed line-clamp-2 italic pt-0.5">
@@ -511,7 +511,7 @@ export default function RolesTable() {
                           </div>
                           <div className="min-w-0 flex flex-col space-y-1 w-full">
                             <div className="flex items-center justify-between gap-2">
-                              <span className="font-bold text-slate-900 text-sm tracking-tight">
+                              <span className="font-bold text-primary text-sm tracking-tight">
                                 {user.firstname} {user.lastname}
                               </span>
                               <span className="font-mono text-[9px] font-bold bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded">

@@ -93,7 +93,7 @@ export default function AdminUser() {
       {/* EXECUTIVE IDENTITY COMMAND HEADER */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 pb-6 select-none">
         <div className="flex items-center gap-4">
-          <button className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 shadow-xs cursor-pointer">
+          <button className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-xs cursor-pointer">
             <ArrowLeft size={16} />
           </button>
           <div>
@@ -114,7 +114,7 @@ export default function AdminUser() {
                 {user.status}
               </span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1.5">
+            <h1 className="text-2xl font-bold tracking-tight text-primary mt-1.5">
               {user.firstname} {user.lastname}
             </h1>
           </div>
@@ -379,7 +379,7 @@ const MenuActionButton = ({ icon, label, onClick, variant = false }) => (
     className={`w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-semibold transition-colors text-left cursor-pointer group ${
       variant
         ? "text-error hover:bg-rose-50/50 font-bold"
-        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+        : "text-slate-600 hover:text-primary hover:bg-slate-50"
     }`}
   >
     <div

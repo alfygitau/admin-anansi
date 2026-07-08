@@ -122,7 +122,7 @@ const ManagerApproval = () => {
         {/* 1. APPLICATION OVERVIEW HEADER (Frameless) */}
         <div className="flex flex-col lg:flex-row justify-between gap-4 border-b border-slate-200/60 pb-3 select-none">
           <div className="space-y-1">
-            <h2 className="text-xl font-black text-slate-900 tracking-tight">
+            <h2 className="text-xl font-black text-primary tracking-tight">
               Approve Loan Application
             </h2>
             <p className="text-sm font-bold text-slate-700">
@@ -142,7 +142,7 @@ const ManagerApproval = () => {
 
         {/* SECTION LABEL */}
         <div className="space-y-1">
-          <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <h3 className="text-sm font-bold text-primary flex items-center gap-2">
             Checklist
           </h3>
           <p className="text-xs text-slate-500">
@@ -195,7 +195,7 @@ const ManagerApproval = () => {
           className="bg-white rounded-2xl border border-slate-200/60 p-6 space-y-6 shadow-3xs w-full"
         >
           <div>
-            <h3 className="text-sm font-bold text-slate-900">
+            <h3 className="text-sm font-bold text-primary">
               Application Decision
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
@@ -435,7 +435,7 @@ const CheckItem = ({ label, description, actual, checked, onChange }) => {
     >
       {/* Content wrapper with details layout block */}
       <div className="space-y-0.5 max-w-[85%] flex flex-col items-start">
-        <p className="text-xs font-bold text-slate-800 group-hover:text-slate-900 transition-colors">
+        <p className="text-xs font-bold text-slate-800 group-hover:text-primary transition-colors">
           {label}
         </p>
         <p className="text-[10px] text-slate-400 font-medium leading-relaxed">

@@ -103,7 +103,7 @@ export default function AddLoanProduct() {
       {/* HEADER SECTION PANEL */}
       <div className="flex items-center justify-between border-b border-slate-200/60 pb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-2xl font-bold tracking-tight text-primary">
             Create Loan Product
           </h1>
           <p className="text-xs text-slate-400 font-medium">
@@ -1126,7 +1126,7 @@ const FormCheckbox = ({ label, checked, onChange }) => (
   <button
     type="button"
     onClick={() => onChange(!checked)}
-    className="flex items-center gap-3 text-left py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 group select-none cursor-pointer"
+    className="flex items-center gap-3 text-left py-1 text-xs font-semibold text-slate-600 hover:text-primary group select-none cursor-pointer"
   >
     <div
       className={`size-5 rounded-md border flex items-center justify-center transition-all shrink-0 ${

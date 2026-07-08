@@ -232,7 +232,7 @@ export default function EditAdminUser() {
               onClick={() =>
                 isReviewing ? setIsReviewing(false) : navigate(-1)
               }
-              className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 shadow-xs cursor-pointer transition-all active:scale-95"
+              className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-xs cursor-pointer transition-all active:scale-95"
             >
               <ArrowLeft size={16} />
             </button>
@@ -244,7 +244,7 @@ export default function EditAdminUser() {
                     : "Directory Provisioning Controls"}
                 </span>
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1.5">
+              <h1 className="text-2xl font-bold tracking-tight text-primary mt-1.5">
                 {isReviewing
                   ? "Review Profile Specifications"
                   : "Edit Administrative User"}
@@ -592,7 +592,7 @@ export default function EditAdminUser() {
               </div>
 
               <div className="space-y-1 mb-6 px-2">
-                <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                <h3 className="text-lg font-black text-primary tracking-tight">
                   User Added Successfully
                 </h3>
                 <p className="text-xs text-slate-400 font-medium leading-relaxed">
@@ -726,19 +726,17 @@ export const FormSelect = ({ icon, label, error, children, ...props }) => (
 );
 
 // Reusable Component inside the Preview Spec Matrix
-  const PreviewItem = ({ label, value }) => (
-    <div className="space-y-1 py-2.5 border-b border-slate-100/80 last:border-0">
-      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block select-none">
-        {label}
-      </span>
-      <p className="text-xs font-bold text-slate-800 font-mono tracking-wide">
-        {value && value.toString().trim() !== "" ? (
-          value
-        ) : (
-          <span className="text-slate-300 font-normal italic">
-            Not Disclosed
-          </span>
-        )}
-      </p>
-    </div>
-  );
+const PreviewItem = ({ label, value }) => (
+  <div className="space-y-1 py-2.5 border-b border-slate-100/80 last:border-0">
+    <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block select-none">
+      {label}
+    </span>
+    <p className="text-xs font-bold text-slate-800 font-mono tracking-wide">
+      {value && value.toString().trim() !== "" ? (
+        value
+      ) : (
+        <span className="text-slate-300 font-normal italic">Not Disclosed</span>
+      )}
+    </p>
+  </div>
+);

@@ -110,7 +110,7 @@ export default function EditLoanProduct() {
           <span className="text-[10px] font-bold text-primary tracking-widest uppercase opacity-60">
             System Configurations
           </span>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1">
+          <h1 className="text-2xl font-bold tracking-tight text-primary mt-1">
             Modify Product
           </h1>
           <p className="text-xs text-slate-400 font-medium mt-1">
@@ -1314,7 +1314,7 @@ const FormCheckbox = ({ label, checked, onChange }) => (
   <button
     type="button"
     onClick={() => onChange(!checked)}
-    className="flex items-center gap-3 text-left py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 group select-none cursor-pointer"
+    className="flex items-center gap-3 text-left py-1 text-xs font-semibold text-slate-600 hover:text-primary group select-none cursor-pointer"
   >
     <div
       className={`size-5 rounded-md border flex items-center justify-center transition-all shrink-0 ${

@@ -153,7 +153,7 @@ export default function RecordManualPayment() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 shadow-3xs cursor-pointer transition-all"
+            className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-3xs cursor-pointer transition-all"
           >
             <ArrowLeft size={16} />
           </button>
@@ -161,7 +161,7 @@ export default function RecordManualPayment() {
             <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
               Offline Collections Workspace
             </span>
-            <h1 className="text-xl font-black tracking-tight text-slate-900 mt-0.5">
+            <h1 className="text-xl font-black tracking-tight text-primary mt-0.5">
               Record Manual Payment
             </h1>
           </div>
@@ -347,7 +347,7 @@ export default function RecordManualPayment() {
               className="text-[#074073] shrink-0 mt-0.5"
             />
             <div className="space-y-1">
-              <p className="font-bold text-slate-900">
+              <p className="font-bold text-primary">
                 Immediate Balance Adjustments
               </p>
               <p className="text-[11px] text-slate-500 font-medium">
@@ -365,9 +365,7 @@ export default function RecordManualPayment() {
               className="text-amber-600 shrink-0 mt-0.5"
             />
             <div className="space-y-1">
-              <p className="font-bold text-slate-900">
-                Audit Reference Matching
-              </p>
+              <p className="font-bold text-primary">Audit Reference Matching</p>
               <p className="text-[11px] text-amber-700 font-medium">
                 The transaction reference code is critical for internal
                 bookkeeping. Please take a moment to carefully check every

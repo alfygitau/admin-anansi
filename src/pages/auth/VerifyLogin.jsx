@@ -135,7 +135,7 @@ const VerifyLogin = () => {
                 Anansi Sacco
               </span>
             </div>
-            <h2 className="text-slate-900 text-2xl xl:text-2xl font-medium leading-[1.1] mb-8">
+            <h2 className="text-primary text-2xl xl:text-2xl font-medium leading-[1.1] mb-8">
               An extra layer of protection for your peace of{" "}
               <span className="text-primary">mind.</span>
             </h2>
@@ -149,7 +149,7 @@ const VerifyLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Instant Code Delivery
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
@@ -168,7 +168,7 @@ const VerifyLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Seamless Sessions
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
@@ -187,7 +187,7 @@ const VerifyLogin = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-slate-900 font-medium text-md">
+                  <h4 className="text-primary font-medium text-md">
                     Bank-Grade Compliance
                   </h4>
                   <p className="text-slate-500 text-sm font-medium leading-relaxed mt-1">
@@ -210,7 +210,7 @@ const VerifyLogin = () => {
         <div className="p-6 lg:p-6 sm:p-2 flex items-center justify-center bg-white">
           <div className="w-full">
             <div className="mb-10">
-              <h1 className="text-3xl font-medium text-slate-900 tracking-tight">
+              <h1 className="text-3xl font-medium text-primary tracking-tight">
                 Verify Identity
               </h1>
               <p className="text-slate-400 font-medium mt-2 leading-relaxed">
@@ -278,7 +278,7 @@ const VerifyLogin = () => {
                 className={`w-full py-6 rounded-2xl font-medium uppercase tracking-[0.2em] text-xs flex items-center justify-center gap-3 transition-all cursor-pointer
                   ${
                     isFormValid && !isLoading
-                      ? "bg-primary text-white shadow-xl shadow-slate-900/10 hover:bg-secondary active:shadow-none"
+                      ? "bg-primary text-white shadow-xl shadow-primary/10 hover:bg-secondary active:shadow-none"
                       : "bg-slate-100 text-slate-400 cursor-not-allowed"
                   }`}
               >

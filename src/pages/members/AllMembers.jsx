@@ -168,7 +168,7 @@ export default function AllMembers() {
         {/* HEADER CONTROLS BANNER */}
         <div className="flex justify-between gap-4 sm:flex-col sm:items-start sm:justify-between border-b border-slate-200/60 pb-2 select-none">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h2 className="text-2xl font-bold tracking-tight text-primary">
               Members Registry
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-1">
@@ -178,7 +178,7 @@ export default function AllMembers() {
           </div>
           <button
             onClick={() => navigate("/admin/all-members/add-member")}
-            className="sm:w-full flex items-center justify-center gap-2 h-11 px-5 w-fit bg-slate-900 text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
+            className="sm:w-full flex items-center justify-center gap-2 h-11 px-10 w-fit bg-primary text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
           >
             <UserPlus size={15} />
             <span>Add Member</span>
@@ -308,7 +308,7 @@ export default function AllMembers() {
                               {member.public_id}
                             </span>
                             <div className="flex items-center gap-1.5">
-                              <span className="font-bold text-slate-900 text-sm tracking-tight">
+                              <span className="font-bold text-primary text-sm tracking-tight">
                                 {member.firstname} {member.lastname}
                               </span>
                             </div>
@@ -438,7 +438,7 @@ export default function AllMembers() {
                           />
                         </div>
                         <div className="space-y-1">
-                          <h3 className="text-sm font-bold text-slate-900 tracking-tight">
+                          <h3 className="text-sm font-bold text-primary tracking-tight">
                             No members found
                           </h3>
                           <p className="text-xs text-slate-400 font-medium leading-relaxed">
@@ -479,7 +479,7 @@ export default function AllMembers() {
         {selectedMember && (
           <div className="fixed inset-0 z-50 flex justify-end select-none">
             <div
-              className="absolute inset-0 bg-slate-900/15 backdrop-blur-xs transition-opacity duration-200"
+              className="absolute inset-0 bg-primary/15 backdrop-blur-xs transition-opacity duration-200"
               onClick={() => setSelectedMember(null)}
             />
             <div className="fixed top-0 right-0 h-screen w-full max-w-lg bg-white shadow-2xl border-l border-slate-200/80 p-8 overflow-y-auto flex flex-col justify-between animate-in slide-in-from-right duration-200 z-50">
@@ -490,7 +490,7 @@ export default function AllMembers() {
                     <span className="text-[10px] font-bold text-primary uppercase tracking-widest bg-primary/5 border border-primary/10 px-2 py-0.5 rounded-md">
                       Compliance Profile Dossier
                     </span>
-                    <h3 className="text-lg font-bold text-slate-900 tracking-tight pt-1">
+                    <h3 className="text-lg font-bold text-primary tracking-tight pt-1">
                       {selectedMember.firstname} {selectedMember.lastname} (
                       {selectedMember.public_id})
                     </h3>

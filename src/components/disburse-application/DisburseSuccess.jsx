@@ -21,7 +21,7 @@ export default function DisburseSuccess({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="absolute inset-0 bg-slate-900/40"
+            className="absolute inset-0 bg-primary/40"
           />
           <motion.div
             initial={{ scale: 0.92, opacity: 0, y: 8 }}
@@ -62,7 +62,7 @@ export default function DisburseSuccess({
 
             {/* 2. CORE ACTION HEADER */}
             <div className="space-y-1 mb-6">
-              <h2 className="text-base font-black text-slate-900 tracking-tight">
+              <h2 className="text-base font-black text-primary tracking-tight">
                 Funds Disbursed Successfully
               </h2>
               <p className="text-[11px] text-slate-400 font-medium max-w-xs mx-auto leading-relaxed">
@@ -80,7 +80,7 @@ export default function DisburseSuccess({
             >
               <div className="flex justify-between items-center pb-0.5">
                 <span className="text-slate-400">Borrower Name</span>
-                <span className="text-slate-900 font-bold">{borrowerName}</span>
+                <span className="text-primary font-bold">{borrowerName}</span>
               </div>
               <div className="flex justify-between items-center pt-2.5">
                 <span className="text-slate-400">Transaction Reference</span>
@@ -96,7 +96,7 @@ export default function DisburseSuccess({
               </div>
               <div className="flex justify-between items-center pt-2.5">
                 <span className="text-slate-400">Disbursed Value</span>
-                <span className="text-xs font-mono font-black text-slate-900">
+                <span className="text-xs font-mono font-black text-primary">
                   <span className="text-[9px] font-bold text-slate-400 mr-0.5">
                     KES
                   </span>
@@ -121,7 +121,7 @@ export default function DisburseSuccess({
               <button
                 type="button"
                 onClick={viewLedger}
-                className="w-full sm:w-1/2 h-10 px-4 bg-slate-900 text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 transition-all cursor-pointer shadow-sm group"
+                className="w-full sm:w-1/2 h-10 px-4 bg-primary text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 transition-all cursor-pointer shadow-sm group"
               >
                 <span>View Asset Ledger</span>
                 <ArrowRight

@@ -103,7 +103,7 @@ export default function FinancialReports() {
     <div className="bg-slate-50 text-slate-800 font-sans space-y-6">
       <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-2">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+          <h2 className="text-2xl font-bold tracking-tight text-primary">
             Financial Reporting Suite
           </h2>
           <p className="text-xs text-slate-400 font-medium mt-1">
@@ -118,25 +118,25 @@ export default function FinancialReports() {
         <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl shrink-0">
           <button
             onClick={() => setActiveTab("coa")}
-            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "coa" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "coa" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
           >
             Chart of Accounts
           </button>
           <button
             onClick={() => setActiveTab("trial-balance")}
-            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "trial-balance" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "trial-balance" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
           >
             Trial Balance
           </button>
           <button
             onClick={() => setActiveTab("income")}
-            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "income" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "income" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
           >
             Income Statement
           </button>
           <button
             onClick={() => setActiveTab("balance-sheet")}
-            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "balance-sheet" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
+            className={`px-4 py-2 text-[13px] font-bold rounded-lg transition-all ${activeTab === "balance-sheet" ? "bg-white text-primary shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
           >
             Balance Sheet
           </button>
@@ -156,13 +156,13 @@ export default function FinancialReports() {
 
           <div className="flex items-center gap-1.5 border-l border-slate-200 pl-3">
             <button
-              className="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 transition-colors shadow-sm"
+              className="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-primary transition-colors shadow-sm"
               title="Export Excel Document Sheet"
             >
               <FileSpreadsheet size={16} />
             </button>
             <button
-              className="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-slate-900 transition-colors shadow-sm"
+              className="p-2 bg-white hover:bg-slate-50 border border-slate-200 rounded-xl text-slate-600 hover:text-primary transition-colors shadow-sm"
               title="Print Ledger Records Document"
             >
               <Printer size={16} />
@@ -193,7 +193,7 @@ export default function FinancialReports() {
       {activeTab === "trial-balance" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
-            <h4 className="text-[15px] font-bold text-slate-900 tracking-tight">
+            <h4 className="text-[15px] font-bold text-primary tracking-tight">
               Net Trial Balance Report
             </h4>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -226,7 +226,7 @@ export default function FinancialReports() {
                     <td className="py-3.5 px-6 font-mono font-bold text-slate-400">
                       {row.account_code}
                     </td>
-                    <td className="py-3.5 px-6 font-bold text-slate-900">
+                    <td className="py-3.5 px-6 font-bold text-primary">
                       {row.account_name}
                     </td>
                     <td className="py-3.5 px-6 text-slate-400 capitalize">
@@ -253,10 +253,10 @@ export default function FinancialReports() {
                   >
                     Grand Totals Balance
                   </td>
-                  <td className="py-4 px-6 text-right font-mono border-b-4 border-double border-slate-900">
+                  <td className="py-4 px-6 text-right font-mono border-b-4 border-double border-primary">
                     {formatCurrency(trialBalanceData.totals.total_debit)}
                   </td>
-                  <td className="py-4 px-6 text-right font-mono border-b-4 border-double border-slate-900">
+                  <td className="py-4 px-6 text-right font-mono border-b-4 border-double border-primary">
                     {formatCurrency(trialBalanceData.totals.total_credit)}
                   </td>
                 </tr>
@@ -270,7 +270,7 @@ export default function FinancialReports() {
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden space-y-4">
           <div className="px-6 pt-5 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 bg-slate-50/40">
             <div>
-              <h4 className="text-[15px] font-bold text-slate-900 tracking-tight">
+              <h4 className="text-[15px] font-bold text-primary tracking-tight">
                 Structured Chart of Accounts (COA) Directory
               </h4>
               <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -304,7 +304,7 @@ export default function FinancialReports() {
                     <ChevronRight size={16} className="text-slate-400" />
                   )}
                   <Folder size={16} className="text-blue-600" />
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold text-primary">
                     1000 — Asset Assets Ledger Controls
                   </span>
                 </div>
@@ -360,7 +360,7 @@ export default function FinancialReports() {
                     <ChevronRight size={16} className="text-slate-400" />
                   )}
                   <Folder size={16} className="text-emerald-600" />
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold text-primary">
                     2000 — Liability Obligations Ledger Controls
                   </span>
                 </div>
@@ -416,7 +416,7 @@ export default function FinancialReports() {
                     <ChevronRight size={16} className="text-slate-400" />
                   )}
                   <Folder size={16} className="text-purple-600" />
-                  <span className="font-bold text-slate-900">
+                  <span className="font-bold text-primary">
                     3000 — Equity & Institutional Capital Reserves
                   </span>
                 </div>
@@ -465,7 +465,7 @@ export default function FinancialReports() {
       {activeTab === "income" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
-            <h4 className="text-[15px] font-bold text-slate-900 tracking-tight">
+            <h4 className="text-[15px] font-bold text-primary tracking-tight">
               Statement of Comprehensive Income
             </h4>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -481,11 +481,11 @@ export default function FinancialReports() {
               </h5>
               <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Interest Income earned on Loan Portfolio</span>
-                <span className="font-mono font-bold text-slate-900">
+                <span className="font-mono font-bold text-primary">
                   60,000.00
                 </span>
               </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
                 <span className="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Gross Revenue
                 </span>
@@ -499,15 +499,15 @@ export default function FinancialReports() {
               </h5>
               <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>SASRA Regulatory Levy Expense Allocation</span>
-                <span className="font-mono font-bold text-slate-900">
+                <span className="font-mono font-bold text-primary">
                   25,000.00
                 </span>
               </div>
               <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Provision for Imminent Credit Impairment Asset Loss</span>
-                <span className="font-mono font-bold text-slate-900">—</span>
+                <span className="font-mono font-bold text-primary">—</span>
               </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
                 <span className="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Operating Expenses
                 </span>
@@ -519,7 +519,7 @@ export default function FinancialReports() {
               <span className="uppercase tracking-wider text-[11px] text-slate-500 font-bold">
                 Net Operating Surplus for the Period
               </span>
-              <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-slate-900 pb-0.5">
+              <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-primary pb-0.5">
                 <span className="text-[11px] text-slate-400 font-bold">
                   KES
                 </span>
@@ -533,7 +533,7 @@ export default function FinancialReports() {
       {activeTab === "balance-sheet" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-slate-100 bg-slate-50/40">
-            <h4 className="text-[15px] font-bold text-slate-900 tracking-tight">
+            <h4 className="text-[15px] font-bold text-primary tracking-tight">
               Statement of Financial Position (Balance Sheet)
             </h4>
             <p className="text-[11px] text-slate-400 font-medium mt-0.5">
@@ -550,17 +550,17 @@ export default function FinancialReports() {
               </h5>
               <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Cash &amp; Cash Equivalents (FOSA Tills)</span>
-                <span className="font-mono font-bold text-slate-900">
+                <span className="font-mono font-bold text-primary">
                   230,000.00
                 </span>
               </div>
               <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Development Loan Portfolio Subsidiary Ledger</span>
-                <span className="font-mono font-bold text-slate-900">
+                <span className="font-mono font-bold text-primary">
                   415,000.00
                 </span>
               </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
                 <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Assets
                 </span>
@@ -575,17 +575,17 @@ export default function FinancialReports() {
               </h5>
               <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Member Overpayment Clearing Liability</span>
-                <span className="font-mono font-bold text-slate-900">
+                <span className="font-mono font-bold text-primary">
                   15,000.00
                 </span>
               </div>
               <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Member Non-Withdrawable Deposits (BOSA)</span>
-                <span className="font-mono font-bold text-slate-900">
+                <span className="font-mono font-bold text-primary">
                   610,000.00
                 </span>
               </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
                 <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Liabilities
                 </span>
@@ -600,11 +600,11 @@ export default function FinancialReports() {
               </h5>
               <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Retained Earnings / Retained Surplus (Prior Years)</span>
-                <span className="font-mono font-bold text-slate-900">—</span>
+                <span className="font-mono font-bold text-primary">—</span>
               </div>
               <div className="flex justify-between py-1 px-2 hover:bg-slate-50 rounded-lg">
                 <span>Net Operating Surplus for the Period</span>
-                <span className="font-mono font-bold text-slate-900">
+                <span className="font-mono font-bold text-primary">
                   35,000.00
                 </span>
               </div>
@@ -614,7 +614,7 @@ export default function FinancialReports() {
                   (15,000.00)
                 </span>
               </div>
-              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-slate-900 font-bold">
+              <div className="flex justify-between py-1 px-2 border-b border-slate-200 bg-slate-50/50 rounded-lg text-primary font-bold">
                 <span class="uppercase tracking-wide text-[10px] text-slate-400 font-bold">
                   Total Equity &amp; Period Reserves
                 </span>
@@ -628,7 +628,7 @@ export default function FinancialReports() {
                 <span className="uppercase tracking-wider text-[10px] text-slate-500 font-bold">
                   Total Assets Base
                 </span>
-                <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-slate-900 pb-0.5">
+                <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-primary pb-0.5">
                   <span className="text-[10px] text-slate-400 font-bold font-sans">
                     KES
                   </span>
@@ -640,7 +640,7 @@ export default function FinancialReports() {
                 <span className="uppercase tracking-wider text-[10px] text-slate-500 font-bold">
                   Total Liabilities &amp; Capital
                 </span>
-                <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-slate-900 pb-0.5">
+                <div className="flex items-baseline gap-1 font-mono border-b-4 border-double border-primary pb-0.5">
                   <span className="text-[10px] text-slate-400 font-bold font-sans">
                     KES
                   </span>

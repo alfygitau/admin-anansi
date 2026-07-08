@@ -165,7 +165,7 @@ export default function AddAdminUser() {
         formData?.county,
         formData?.subcounty,
         formData?.address,
-        formData?.role_id
+        formData?.role_id,
       );
     },
     onSuccess: () => {
@@ -250,7 +250,7 @@ export default function AddAdminUser() {
               onClick={() =>
                 isReviewing ? setIsReviewing(false) : navigate(-1)
               }
-              className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 shadow-xs cursor-pointer transition-all active:scale-95"
+              className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-xs cursor-pointer transition-all active:scale-95"
             >
               <ArrowLeft size={16} />
             </button>
@@ -262,7 +262,7 @@ export default function AddAdminUser() {
                     : "Directory Provisioning Controls"}
                 </span>
               </div>
-              <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1.5">
+              <h1 className="text-2xl font-bold tracking-tight text-primary mt-1.5">
                 {isReviewing
                   ? "Review Profile Specifications"
                   : "Add Administrative User"}
@@ -610,7 +610,7 @@ export default function AddAdminUser() {
               </div>
 
               <div className="space-y-1 mb-6 px-2">
-                <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                <h3 className="text-lg font-black text-primary tracking-tight">
                   User Added Successfully
                 </h3>
                 <p className="text-xs text-slate-400 font-medium leading-relaxed">

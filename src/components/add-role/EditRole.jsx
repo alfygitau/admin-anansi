@@ -204,7 +204,7 @@ const EditRole = ({
                       <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
                         Updated Role Identifier
                       </span>
-                      <p className="text-base font-black text-slate-900 tracking-tight">
+                      <p className="text-base font-black text-primary tracking-tight">
                         {formData.roleName}
                       </p>
                     </div>
@@ -291,7 +291,7 @@ const EditRole = ({
                   </motion.div>
 
                   <div className="space-y-1">
-                    <h3 className="text-lg font-black text-slate-900 tracking-tight">
+                    <h3 className="text-lg font-black text-primary tracking-tight">
                       Role Updated Successfully
                     </h3>
                     <p className="text-xs text-slate-400 font-medium">

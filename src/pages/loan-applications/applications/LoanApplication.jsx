@@ -142,13 +142,13 @@ export default function LoanApplication() {
           <button
             type="button"
             onClick={() => navigate(-1)}
-            className="size-11 rounded-2xl border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs cursor-pointer active:scale-95"
+            className="size-11 rounded-2xl border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs cursor-pointer active:scale-95"
           >
             <ArrowLeft size={16} />
           </button>
           <div>
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="font-mono font-black text-[10px] tracking-wider uppercase px-2.5 py-1 bg-slate-900 text-white rounded-lg shadow-sm">
+              <span className="font-mono font-black text-[10px] tracking-wider uppercase px-2.5 py-1 bg-primary text-white rounded-lg shadow-sm">
                 {application.application_number || "REQ-CODE"}
               </span>
               <span
@@ -158,7 +158,7 @@ export default function LoanApplication() {
                 {application.status_label || "In Review"}
               </span>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1.5">
+            <h1 className="text-2xl font-bold tracking-tight text-primary mt-1.5">
               {application.loan_product?.product_name}
             </h1>
           </div>
@@ -173,7 +173,7 @@ export default function LoanApplication() {
             className={`h-11 px-5 whitespace-nowrap border rounded-2xl font-sans text-xs font-black uppercase tracking-wider transition-all flex items-center justify-between gap-3 cursor-pointer shadow-3xs active:scale-98 w-full md:w-60 ${
               isMenuOpen
                 ? "border-[#074073] bg-[#074073]/5 text-[#074073]"
-                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:text-slate-900"
+                : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:border-slate-300 hover:text-primary"
             }`}
           >
             <div className="flex items-center gap-3">
@@ -229,7 +229,7 @@ export default function LoanApplication() {
                         handleSendNotification();
                         setIsMenuOpen(false);
                       }}
-                      className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-50 transition-colors text-left cursor-pointer group"
+                      className="w-full h-10 px-3 rounded-xl flex items-center gap-3 text-xs font-bold text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors text-left cursor-pointer group"
                     >
                       <div className="size-6.5 flex items-center justify-center text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50 group-hover:border-blue-100 transition-colors shrink-0">
                         <Bell size={13} />
@@ -532,7 +532,7 @@ export default function LoanApplication() {
                         className="border border-slate-200/70 p-4 rounded-2xl flex items-center justify-between bg-white hover:border-slate-300 transition-all shadow-3xs"
                       >
                         <div className="space-y-1 min-w-0">
-                          <p className="text-xs font-black text-slate-900 tracking-tight truncate">
+                          <p className="text-xs font-black text-primary tracking-tight truncate">
                             {g.guarantor_name}
                           </p>
                           <p className="text-[10px] text-slate-400 font-mono tracking-wide">
@@ -745,7 +745,7 @@ export default function LoanApplication() {
                         </div>
                         <button
                           type="button"
-                          className="size-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-slate-900 border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer shrink-0 ml-2 transition-all shadow-3xs active:scale-90"
+                          className="size-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer shrink-0 ml-2 transition-all shadow-3xs active:scale-90"
                           title={`Download ${doc.name}`}
                         >
                           <DownloadCloud size={13} />
@@ -767,7 +767,7 @@ export default function LoanApplication() {
             application?.loan_product?.committee_approvals_required === 0 ? (
               /* 1. FULL CARD EXEMPTION EMPTY STATE (Centers perfectly with nothing else on the card) */
               <div className="col-span-full flex flex-col items-center justify-center py-12 text-center select-none">
-                <div className="size-12 bg-slate-900 text-white rounded-2xl flex items-center justify-center mb-4 shadow-md">
+                <div className="size-12 bg-primary text-white rounded-2xl flex items-center justify-center mb-4 shadow-md">
                   <Cpu size={20} strokeWidth={2.5} className="animate-pulse" />
                 </div>
                 <h4 className="text-xs font-black text-slate-700 uppercase tracking-wide">
@@ -832,7 +832,7 @@ export default function LoanApplication() {
                   <div className="space-y-2.5">
                     <div className="flex items-center justify-between text-xs font-bold text-slate-600">
                       <span>Committee Progress Panel</span>
-                      <span className="font-mono text-slate-900">
+                      <span className="font-mono text-primary">
                         {application?.committee_approvals_received || 0} /{" "}
                         {
                           application?.loan_product
@@ -843,7 +843,7 @@ export default function LoanApplication() {
                     </div>
                     <div className="w-full bg-slate-200 rounded-full h-2 overflow-hidden shadow-inner">
                       <div
-                        className="bg-slate-900 h-full transition-all duration-500 rounded-full"
+                        className="bg-primary h-full transition-all duration-500 rounded-full"
                         style={{
                           width: `${Math.min(100, ((application?.committee_approvals_received || 0) / application?.loan_product?.committee_approvals_required) * 100)}%`,
                         }}
@@ -904,7 +904,7 @@ export default function LoanApplication() {
 
                   <div className="flex justify-between items-center text-xs text-slate-600 font-medium">
                     <span>Approved Gross Asset Capital</span>
-                    <span className="font-bold text-slate-900 font-mono">
+                    <span className="font-bold text-primary font-mono">
                       KES{" "}
                       {Number(
                         application.disbursement.gross_amount || 0,
@@ -949,7 +949,7 @@ export default function LoanApplication() {
                   </div>
 
                   <div className="flex justify-between items-center pt-1.5">
-                    <span className="text-xs font-black text-slate-900 uppercase tracking-wide">
+                    <span className="text-xs font-black text-primary uppercase tracking-wide">
                       Released Net Value Transfer
                     </span>
                     <span className="text-base font-black text-emerald-600 font-mono">
@@ -978,10 +978,10 @@ export default function LoanApplication() {
                           ) : (
                             <Building size={13} className="text-slate-400" />
                           )}
-                          <span className="uppercase font-black text-[9px] bg-slate-900 text-white px-2 py-0.5 rounded-md font-mono tracking-wide">
+                          <span className="uppercase font-black text-[9px] bg-primary text-white px-2 py-0.5 rounded-md font-mono tracking-wide">
                             {application.disbursement.method || "LEDGER"}
                           </span>
-                          <span className="font-mono text-xs text-slate-900">
+                          <span className="font-mono text-xs text-primary">
                             {application.disbursement.recipient_phone ||
                               application.applicant_mobile}
                           </span>
@@ -1006,7 +1006,7 @@ export default function LoanApplication() {
                       <div className="space-y-1.5 text-slate-500 font-medium">
                         <p className="flex items-center gap-1.5">
                           System Hash Index:{" "}
-                          <span className="font-mono font-bold text-slate-900 uppercase tracking-tight">
+                          <span className="font-mono font-bold text-primary uppercase tracking-tight">
                             {application.disbursement.transaction_ref || "—"}
                           </span>
                         </p>
@@ -1079,7 +1079,7 @@ const MetricItem = ({
       </span>
       <span
         className={`text-xs font-bold tracking-tight leading-normal truncate ${
-          isCrypto ? "font-mono text-slate-900 text-[13px]" : "text-slate-800"
+          isCrypto ? "font-mono text-primary text-[13px]" : "text-slate-800"
         } ${isCapitalized ? "capitalize" : ""} ${className}`}
       >
         {value || "—"}

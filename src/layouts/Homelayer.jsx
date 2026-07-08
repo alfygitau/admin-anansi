@@ -106,6 +106,7 @@ export default function Homelayer() {
       subItems: [
         { label: "Reports", path: "/admin/reports" },
         { label: "Analytics", path: "/admin/analytics" },
+        { label: "Financial Reports", path: "/admin/financial-reports" },
       ],
     },
   ];

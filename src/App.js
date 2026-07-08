@@ -48,6 +48,7 @@ import NotifyApplicant from "./pages/loan-applications/notify-applicant/NotifyAp
 import ManagerApproval from "./pages/loan-applications/approve-loan-application/ManagerApproval";
 import HelpCenter from "./pages/help-support/HelpSupport";
 import EditAdminUser from "./pages/users/EditUser";
+import FinancialReports from "./pages/reports/FinancialReports";
 
 function App() {
   return (
@@ -135,6 +136,8 @@ function App() {
         <Route path="apply-loan/collaterals" element={<ChattelRegistry />} />
         <Route path="apply-loan/loan-documents" element={<LoanDocuments />} />
         <Route path="help-support" element={<HelpCenter />} />
+
+        <Route path="financial-reports" element={<FinancialReports />} />
       </Route>
 
       <Route path="/auth/member-login" element={<MemberLogin />} />

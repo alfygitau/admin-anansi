@@ -3,6 +3,7 @@ import axios from "axios";
 const apiUrl = process.env.REACT_APP_API_AUDIT_BASE_URL;
 export const auditClient = axios.create({
   baseURL: apiUrl,
+  withCredentials: true,
   timeout: 10000,
 });
 

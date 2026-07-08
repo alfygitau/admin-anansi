@@ -104,7 +104,7 @@ export default function FinancialReports() {
       <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-2">
         <div>
           <h2 className="text-2xl font-bold tracking-tight text-primary">
-            Financial Reporting Suite
+            Financial Reports
           </h2>
           <p className="text-xs text-slate-400 font-medium mt-1">
             Audit comprehensive double-entry general ledgers, evaluate

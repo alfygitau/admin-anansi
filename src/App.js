@@ -49,6 +49,7 @@ import ManagerApproval from "./pages/loan-applications/approve-loan-application/
 import HelpCenter from "./pages/help-support/HelpSupport";
 import EditAdminUser from "./pages/users/EditUser";
 import FinancialReports from "./pages/reports/FinancialReports";
+import AllReports from "./pages/reports/AllReports";
 
 function App() {
   return (
@@ -138,6 +139,7 @@ function App() {
         <Route path="help-support" element={<HelpCenter />} />
 
         <Route path="financial-reports" element={<FinancialReports />} />
+        <Route path="all-reports" element={<AllReports />} />
       </Route>
 
       <Route path="/auth/member-login" element={<MemberLogin />} />

@@ -104,7 +104,7 @@ export default function Homelayer() {
       path: "/admin/reports",
       icon: <BarChart3 size={18} />,
       subItems: [
-        { label: "Reports", path: "/admin/reports" },
+        { label: "Reports", path: "/admin/all-reports" },
         { label: "Analytics", path: "/admin/analytics" },
         { label: "Financial Reports", path: "/admin/financial-reports" },
       ],

@@ -383,7 +383,7 @@ export default function Homelayer() {
             </button>
 
             {/* Dynamic Structural Breadcrumb Frame */}
-            <div className="flex flex-col">
+            <div className="flex flex-col hidden lg:block">
               <span className="text-[10px] font-bold text-[#074073] tracking-widest uppercase opacity-60 leading-none">
                 {currentContext.category}
               </span>

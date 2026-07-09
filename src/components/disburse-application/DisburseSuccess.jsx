@@ -123,7 +123,7 @@ export default function DisburseSuccess({
                 onClick={viewLedger}
                 className="w-full sm:w-1/2 h-10 px-4 bg-primary text-white rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-800 transition-all cursor-pointer shadow-sm group"
               >
-                <span>View Asset Ledger</span>
+                <span>View Transaction</span>
                 <ArrowRight
                   size={13}
                   className="group-hover:translate-x-0.5 transition-transform"

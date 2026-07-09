@@ -33,6 +33,7 @@ import { getMemberLoans } from "../../sdk/loans/loans";
 import EditPersonalDetails from "../../components/edit-member/EditPersonalDetails";
 import EditAddressDetails from "../../components/edit-member/EditAddress";
 import EditFinancialDetails from "../../components/edit-member/EditFinancialDetails";
+import EditNextOfKinDetails from "../../components/edit-member/EditKin";
 
 const getLoanStatusStyles = (status) => {
   const currentStatus = (status || "Active").toLowerCase();
@@ -59,12 +60,23 @@ export default function MemberDetails() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showEditPersonalDetails, setShowEditPersonalDetails] = useState(false);
   const [showEditAddressDetails, setShowEditAddressDetails] = useState(false);
+  const [showEditKinDetails, setShowEditKinDetails] = useState(false);
   const [showEditFinancialDetails, setShowEditFinancialDetails] =
     useState(false);
   const [memberLoans, setMemberLoans] = useState([]);
   const [step, setStep] = useState("form");
   const [addressStep, setAddressStep] = useState("form");
   const [financialStep, setFinancialStep] = useState("form");
+  const [kinStep, setKinStep] = useState("form");
+
+  const [kinFormData, setKinFormData] = useState({
+    name: "",
+    relationship: "",
+    phoneNumber: "",
+    location: "",
+    dob: "",
+  });
+
   const [editFormData, setEditFormData] = useState({
     firstname: "",
     middlename: "",
@@ -110,30 +122,6 @@ export default function MemberDetails() {
     },
     onSuccess: (data) => {
       setMember(data);
-      setEditFormData({
-        firstname: data?.firstname || "",
-        middlename: data?.middlename || "",
-        lastname: data?.lastname || "",
-        idNumber: data?.identification || "",
-        email: data?.email || "",
-        mobileNumber: data?.mobileno || "",
-        dob: data?.dob || "",
-        gender: data?.gender?.toLowerCase() || "",
-      });
-
-      setEditAddressData({
-        country: data?.country_of_residence || "",
-        county: data?.addresses?.[0]?.county || "",
-        subcounty: data?.addresses?.[0]?.subcounty || "",
-        physicalAddress: data?.addresses?.[0]?.physical_address || "",
-      });
-
-      setEditFinancialData({
-        employmentType: data?.employment_type || "",
-        jobTitle: data?.occupation || "",
-        kraPin: data?.kraPin || "",
-        income: data?.income_range || "",
-      });
     },
     onError: (error) => {
       showToast({
@@ -144,6 +132,48 @@ export default function MemberDetails() {
       });
     },
   });
+
+  const showPersonalDetails = (data) => {
+    setEditFormData({
+      firstname: data?.firstname || "",
+      middlename: data?.middlename || "",
+      lastname: data?.lastname || "",
+      idNumber: data?.identification || "",
+      email: data?.email || "",
+      mobileNumber: data?.mobileno || "",
+      dob: data?.dob || "",
+      gender: data?.gender?.toLowerCase() || "",
+    });
+    setShowEditPersonalDetails(true);
+  };
+  const showAddressDetails = (data) => {
+    setEditAddressData({
+      country: data?.country_of_residence || "",
+      county: data?.addresses?.[0]?.county || "",
+      subcounty: data?.addresses?.[0]?.subcounty || "",
+      physicalAddress: data?.addresses?.[0]?.physical_address || "",
+    });
+    setShowEditAddressDetails(true);
+  };
+  const showFinancialDetails = (data) => {
+    setEditFinancialData({
+      employmentType: data?.employment_type || "",
+      jobTitle: data?.occupation || "",
+      kraPin: data?.kraPin || "",
+      income: data?.income_range || "",
+    });
+    setShowEditFinancialDetails(true);
+  };
+  const showKinDetails = (data) => {
+    setKinFormData({
+      name: data?.nextOfKins?.[0]?.name || "",
+      location: data?.nextOfKins?.[0]?.location || "",
+      phoneNumber: data?.nextOfKins?.[0]?.phoneNumber || "",
+      dob: data?.nextOfKins?.[0]?.dateOfBirth || "",
+      relationship: data?.nextOfKins?.[0]?.relationship || "",
+    });
+    setShowEditKinDetails(true);
+  };
 
   const { isFetching: fetchingLoans } = useQuery({
     queryKey: ["get member loans", id],
@@ -166,6 +196,16 @@ export default function MemberDetails() {
 
   return (
     <>
+      <EditNextOfKinDetails
+        isOpen={showEditKinDetails}
+        onClose={() => setShowEditKinDetails(false)}
+        loading={false}
+        formData={kinFormData}
+        setFormData={setKinFormData}
+        step={kinStep}
+        setStep={setKinStep}
+      />
+
       <EditFinancialDetails
         isOpen={showEditFinancialDetails}
         onClose={() => setShowEditFinancialDetails(false)}
@@ -292,7 +332,7 @@ export default function MemberDetails() {
                     <User size={14} /> Identity Parameters
                   </h3>
                   <Edit
-                    onClick={() => setShowEditPersonalDetails(true)}
+                    onClick={() => showPersonalDetails(member)}
                     size={14}
                     className="text-slate-400 cursor-pointer"
                   />
@@ -338,7 +378,7 @@ export default function MemberDetails() {
                     <MapPin size={14} /> Physical Address
                   </h3>
                   <Edit
-                    onClick={() => setShowEditAddressDetails(true)}
+                    onClick={() => showAddressDetails(member)}
                     size={14}
                     className="text-slate-400 cursor-pointer"
                   />
@@ -394,7 +434,7 @@ export default function MemberDetails() {
                   <Briefcase size={14} /> Financial Profile
                 </h3>
                 <Edit
-                  onClick={() => setShowEditFinancialDetails(true)}
+                  onClick={() => showFinancialDetails(member)}
                   size={14}
                   className="text-slate-400 cursor-pointer"
                 />
@@ -735,6 +775,7 @@ export default function MemberDetails() {
                     <Users size={14} /> Next of Kin
                   </h3>
                   <Edit
+                    onClick={() => showKinDetails(member)}
                     size={14}
                     className="text-slate-400 cursor-pointer hover:text-primary transition-colors"
                   />

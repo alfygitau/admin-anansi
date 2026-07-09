@@ -202,7 +202,7 @@ export default function LoanApplication() {
               ).toLowerCase();
 
               // 2. Define workflow state machine flags
-              const isApproved = status.includes("approve");
+              const isApproved = status.includes("approved");
               const isDisbursed =
                 status.includes("disburse") ||
                 status.includes("disbursed") ||
@@ -217,7 +217,9 @@ export default function LoanApplication() {
               // 3. Determine action permissions
               const canCancel = isPending;
               const canApprove = isPending;
-              const canDisburse = status.includes("pending disbursement");
+              const canDisburse =
+                status.includes("pending disbursement") ||
+                status.includes("approved");
 
               return (
                 <div className="absolute left-0 right-0 mt-2.5 bg-white border border-slate-200/90 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200 w-full">

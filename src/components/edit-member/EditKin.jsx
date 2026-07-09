@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import {
   X,
   User,
-  FileText,
-  Mail,
+  Heart,
   Smartphone,
+  MapPin,
   Calendar,
   Save,
   CheckCircle2,
@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const EditPersonalDetails = ({
+const EditNextOfKinDetails = ({
   isOpen,
   onClose,
   onSave,
@@ -27,31 +27,20 @@ const EditPersonalDetails = ({
 }) => {
   const [errors, setErrors] = useState({});
 
-  // Comprehensive Member Form Validation
+  // Next of Kin Fields Validation
   const validateField = (fieldName, value) => {
     let errorMessage = "";
     const sanitizedValue = value?.toString().trim();
 
-    if (!sanitizedValue && fieldName !== "middlename") {
+    if (!sanitizedValue) {
       const fieldLabels = {
-        firstname: "first name",
-        lastname: "last name",
-        idNumber: "ID number",
-        email: "email address",
-        mobileNumber: "mobile number",
-        dob: "date of birth",
-        gender: "gender specification",
+        name: "kin's full legal name",
+        relationship: "relationship status",
+        phoneNumber: "mobile number contact line",
+        location: "residential location or city",
+        dob: "date of birth tracking node",
       };
       errorMessage = `Please provide a valid ${fieldLabels[fieldName] || fieldName}.`;
-    }
-
-    // Email Pattern Validation
-    if (fieldName === "email" && sanitizedValue && !errorMessage) {
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(sanitizedValue)) {
-        errorMessage =
-          "Please enter a valid corporate or personal email address.";
-      }
     }
 
     setErrors((prev) => ({ ...prev, [fieldName]: errorMessage }));
@@ -60,16 +49,14 @@ const EditPersonalDetails = ({
 
   const handleProceedToPreview = () => {
     const fieldsToValidate = [
-      "firstname",
-      "lastname",
-      "idNumber",
-      "email",
-      "mobileNumber",
+      "name",
+      "relationship",
+      "phoneNumber",
+      "location",
       "dob",
-      "gender",
     ];
-
     let hasErrors = false;
+
     fieldsToValidate.forEach((field) => {
       const error = validateField(field, formData[field]);
       if (error) hasErrors = true;
@@ -88,14 +75,11 @@ const EditPersonalDetails = ({
     setStep("form");
     setErrors({});
     setFormData({
-      firstname: "",
-      middlename: "",
-      lastname: "",
-      idNumber: "",
-      email: "",
-      mobileNumber: "",
+      name: "",
+      relationship: "",
+      phoneNumber: "",
+      location: "",
       dob: "",
-      gender: "",
     });
   };
 
@@ -122,7 +106,7 @@ const EditPersonalDetails = ({
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
             className="bg-white relative w-full max-w-[480px] h-full shadow-2xl flex flex-col z-10 text-slate-800"
           >
-            {/* Close Button */}
+            {/* Window Close Trigger */}
             <button
               type="button"
               onClick={handleResetAndClose}
@@ -132,167 +116,70 @@ const EditPersonalDetails = ({
               <X size={16} />
             </button>
 
-            {/* STEP 1: INPUT FORM SPACE */}
+            {/* STEP 1: RESIDENCY KINSHIP REGISTRY FORM */}
             {step === "form" && (
               <>
-                <div className="px-8 pt-8 pb-6 select-none">
+                <div className="px-8 pt-5 pb-6 select-none">
                   <h2 className="text-xl font-black text-[#074073] tracking-tight">
-                    Edit Member Profile
+                    Edit Next of Kin
                   </h2>
                   <p className="text-xs text-slate-400 font-medium mt-0.5">
-                    Modify core biographical credentials and contact destination
-                    metrics.
+                    Configure legal dependency beneficiaries, relationship
+                    status, and contact routing.
                   </p>
                 </div>
                 <div className="border-b mx-8 border-slate-100"></div>
 
                 <div className="flex-1 overflow-y-auto px-8 py-6 space-y-5 custom-scrollbar">
-                  {/* Name Fields Row Container */}
+                  <FilterField
+                    label="Full Legal Name"
+                    icon={User}
+                    error={errors.name}
+                  >
+                    <input
+                      type="text"
+                      placeholder="e.g., Jane Margaret Wanjiku"
+                      value={formData.name || ""}
+                      onChange={(e) => {
+                        setFormData({ ...formData, name: e.target.value });
+                        if (errors.name) setErrors({ ...errors, name: "" });
+                      }}
+                      onBlur={(e) => validateField("name", e.target.value)}
+                      className={`w-full pl-[74px] pr-6 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all ${
+                        errors.name
+                          ? "border-rose-300 bg-rose-50/10"
+                          : "border-slate-200 focus:border-[#074073] focus:bg-white"
+                      }`}
+                    />
+                  </FilterField>
+
                   <div className="grid grid-cols-2 gap-4">
                     <FilterField
-                      label="First Name"
-                      icon={User}
-                      error={errors.firstname}
+                      label="Relationship Status"
+                      icon={Heart}
+                      error={errors.relationship}
                     >
                       <input
-                        type="text"
-                        value={formData.firstname || ""}
+                        value={formData.relationship || ""}
                         onChange={(e) => {
                           setFormData({
                             ...formData,
-                            firstname: e.target.value,
+                            relationship: e.target.value,
                           });
-                          if (errors.firstname)
-                            setErrors({ ...errors, firstname: "" });
+                          if (errors.relationship)
+                            setErrors({ ...errors, relationship: "" });
                         }}
                         onBlur={(e) =>
-                          validateField("firstname", e.target.value)
+                          validateField("relationship", e.target.value)
                         }
-                        className={`w-full pl-[74px] pr-4 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all ${
-                          errors.firstname
+                        className={`w-full pl-[74px] pr-4 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all appearance-none cursor-pointer ${
+                          errors.relationship
                             ? "border-rose-300 bg-rose-50/10"
                             : "border-slate-200 focus:border-[#074073] focus:bg-white"
                         }`}
                       />
                     </FilterField>
 
-                    <FilterField
-                      label="Middle Name (Optional)"
-                      icon={User}
-                      error={errors.middlename}
-                    >
-                      <input
-                        type="text"
-                        value={formData.middlename || ""}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            middlename: e.target.value,
-                          })
-                        }
-                        className="w-full pl-[74px] pr-4 h-14 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold outline-none transition-all focus:border-[#074073] focus:bg-white"
-                      />
-                    </FilterField>
-                  </div>
-
-                  <FilterField
-                    label="Last Name"
-                    icon={User}
-                    error={errors.lastname}
-                  >
-                    <input
-                      type="text"
-                      value={formData.lastname || ""}
-                      onChange={(e) => {
-                        setFormData({ ...formData, lastname: e.target.value });
-                        if (errors.lastname)
-                          setErrors({ ...errors, lastname: "" });
-                      }}
-                      onBlur={(e) => validateField("lastname", e.target.value)}
-                      className={`w-full pl-[74px] pr-6 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all ${
-                        errors.lastname
-                          ? "border-rose-300 bg-rose-50/10"
-                          : "border-slate-200 focus:border-[#074073] focus:bg-white"
-                      }`}
-                    />
-                  </FilterField>
-
-                  <FilterField
-                    label="National ID / Passport Number"
-                    icon={FileText}
-                    error={errors.idNumber}
-                  >
-                    <input
-                      type="text"
-                      value={formData.idNumber || ""}
-                      onChange={(e) => {
-                        setFormData({ ...formData, idNumber: e.target.value });
-                        if (errors.idNumber)
-                          setErrors({ ...errors, idNumber: "" });
-                      }}
-                      onBlur={(e) => validateField("idNumber", e.target.value)}
-                      className={`w-full pl-[74px] pr-6 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all ${
-                        errors.idNumber
-                          ? "border-rose-300 bg-rose-50/10"
-                          : "border-slate-200 focus:border-[#074073] focus:bg-white"
-                      }`}
-                    />
-                  </FilterField>
-
-                  <FilterField
-                    label="Email Address"
-                    icon={Mail}
-                    error={errors.email}
-                  >
-                    <input
-                      type="email"
-                      value={formData.email || ""}
-                      readonly
-                      disabled
-                      onChange={(e) => {
-                        setFormData({ ...formData, email: e.target.value });
-                        if (errors.email) setErrors({ ...errors, email: "" });
-                      }}
-                      onBlur={(e) => validateField("email", e.target.value)}
-                      className={`w-full pl-[74px] pr-6 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all ${
-                        errors.email
-                          ? "border-rose-300 bg-rose-50/10"
-                          : "border-slate-200 focus:border-[#074073] focus:bg-white"
-                      }`}
-                    />
-                  </FilterField>
-
-                  <FilterField
-                    label="Mobile Number"
-                    icon={Smartphone}
-                    error={errors.mobileNumber}
-                  >
-                    <input
-                      type="text"
-                      placeholder="e.g., +254..."
-                      value={formData.mobileNumber || ""}
-                      readonly
-                      disabled
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          mobileNumber: e.target.value,
-                        });
-                        if (errors.mobileNumber)
-                          setErrors({ ...errors, mobileNumber: "" });
-                      }}
-                      onBlur={(e) =>
-                        validateField("mobileNumber", e.target.value)
-                      }
-                      className={`w-full pl-[74px] pr-6 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all ${
-                        errors.mobileNumber
-                          ? "border-rose-300 bg-rose-50/10"
-                          : "border-slate-200 focus:border-[#074073] focus:bg-white"
-                      }`}
-                    />
-                  </FilterField>
-
-                  <div className="grid grid-cols-2 gap-4">
                     <FilterField
                       label="Date of Birth"
                       icon={Calendar}
@@ -313,32 +200,58 @@ const EditPersonalDetails = ({
                         }`}
                       />
                     </FilterField>
-
-                    <FilterField
-                      label="Gender"
-                      icon={User}
-                      error={errors.gender}
-                    >
-                      <select
-                        value={formData.gender || ""}
-                        onChange={(e) => {
-                          setFormData({ ...formData, gender: e.target.value });
-                          if (errors.gender)
-                            setErrors({ ...errors, gender: "" });
-                        }}
-                        onBlur={(e) => validateField("gender", e.target.value)}
-                        className={`w-full pl-[74px] pr-4 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all appearance-none cursor-pointer ${
-                          errors.gender
-                            ? "border-rose-300 bg-rose-50/10"
-                            : "border-slate-200 focus:border-[#074073] focus:bg-white"
-                        }`}
-                      >
-                        <option value="">Select...</option>
-                        <option value="male">Male</option>
-                        <option value="female">Female</option>
-                      </select>
-                    </FilterField>
                   </div>
+
+                  <FilterField
+                    label="Phone Number Contact"
+                    icon={Smartphone}
+                    error={errors.phoneNumber}
+                  >
+                    <input
+                      type="text"
+                      placeholder="e.g., +254 700 000 000"
+                      value={formData.phoneNumber || ""}
+                      onChange={(e) => {
+                        setFormData({
+                          ...formData,
+                          phoneNumber: e.target.value,
+                        });
+                        if (errors.phoneNumber)
+                          setErrors({ ...errors, phoneNumber: "" });
+                      }}
+                      onBlur={(e) =>
+                        validateField("phoneNumber", e.target.value)
+                      }
+                      className={`w-full pl-[74px] pr-6 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold font-mono tracking-wide outline-none transition-all ${
+                        errors.phoneNumber
+                          ? "border-rose-300 bg-rose-50/10"
+                          : "border-slate-200 focus:border-[#074073] focus:bg-white"
+                      }`}
+                    />
+                  </FilterField>
+
+                  <FilterField
+                    label="Residential Location / City"
+                    icon={MapPin}
+                    error={errors.location}
+                  >
+                    <input
+                      type="text"
+                      placeholder="e.g., Kilimani, Nairobi"
+                      value={formData.location || ""}
+                      onChange={(e) => {
+                        setFormData({ ...formData, location: e.target.value });
+                        if (errors.location)
+                          setErrors({ ...errors, location: "" });
+                      }}
+                      onBlur={(e) => validateField("location", e.target.value)}
+                      className={`w-full pl-[74px] pr-6 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all ${
+                        errors.location
+                          ? "border-rose-300 bg-rose-50/10"
+                          : "border-slate-200 focus:border-[#074073] focus:bg-white"
+                      }`}
+                    />
+                  </FilterField>
                 </div>
 
                 <div className="p-8 py-5 border-t border-slate-100 flex gap-3 select-none bg-white">
@@ -354,7 +267,7 @@ const EditPersonalDetails = ({
                     onClick={handleProceedToPreview}
                     className="flex-[2] h-12 font-bold text-xs bg-[#074073] text-white rounded-xl shadow-md flex items-center justify-center gap-2 hover:bg-[#052d52] transition-colors cursor-pointer active:scale-[0.98]"
                   >
-                    <span>Review Profile Changes</span>
+                    <span>Review Kin Specs</span>
                     <ArrowRight size={14} />
                   </button>
                 </div>
@@ -364,13 +277,13 @@ const EditPersonalDetails = ({
             {/* STEP 2: SUMMARY PREVIEW VERIFICATION */}
             {step === "preview" && (
               <>
-                <div className="px-8 pt-8 pb-6 select-none">
+                <div className="px-8 pt-5 pb-6 select-none">
                   <h2 className="text-xl font-black text-[#074073] tracking-tight">
-                    Verify Profile Changes
+                    Verify Kinship Records
                   </h2>
                   <p className="text-xs text-slate-400 font-medium mt-0.5">
-                    Confirm these modified parameters before saving to the
-                    central directory ledger.
+                    Confirm these beneficiary parameter updates before writing
+                    changes to the central directory ledger.
                   </p>
                 </div>
                 <div className="border-b mx-8 border-slate-100"></div>
@@ -379,48 +292,20 @@ const EditPersonalDetails = ({
                   <div className="bg-slate-50 border border-slate-200/60 rounded-2xl p-5 shadow-3xs space-y-4">
                     <div>
                       <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
-                        Full Legal Name
+                        Full Kinship Label
                       </span>
                       <p className="text-sm font-black text-primary mt-0.5">
-                        {`${formData.firstname} ${formData.middlename || ""} ${formData.lastname}`.replace(
-                          /\s+/g,
-                          " ",
-                        )}
+                        {formData.name}
                       </p>
                     </div>
 
-                    <div>
-                      <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
-                        National ID / Passport
-                      </span>
-                      <p className="text-xs font-bold text-slate-700 mt-0.5">
-                        {formData.idNumber}
-                      </p>
-                    </div>
-                    <div>
-                      <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
-                        Gender Structure
-                      </span>
-                      <p className="text-xs font-bold text-slate-700 mt-0.5">
-                        {formData.gender}
-                      </p>
-                    </div>
-
-                    <div className="border-t border-slate-200/60 pt-3 space-y-5">
+                    <div className="grid grid-cols-2 gap-4 border-t border-slate-200/60 pt-3">
                       <div>
                         <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
-                          Primary Contact Value
-                        </span>
-                        <p className="text-xs font-bold font-mono text-slate-700 mt-0.5">
-                          {formData.mobileNumber}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
-                          Digital Mail Destination
+                          Structural Relationship
                         </span>
                         <p className="text-xs font-bold text-slate-700 mt-0.5">
-                          {formData.email}
+                          {formData.relationship}
                         </p>
                       </div>
                       <div>
@@ -429,6 +314,25 @@ const EditPersonalDetails = ({
                         </span>
                         <p className="text-xs font-bold text-slate-700 mt-0.5">
                           {formData.dob}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="border-t border-slate-200/60 pt-3 space-y-2">
+                      <div>
+                        <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
+                          Primary Phone Vector
+                        </span>
+                        <p className="text-xs font-bold font-mono text-slate-700 mt-0.5">
+                          {formData.phoneNumber}
+                        </p>
+                      </div>
+                      <div>
+                        <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
+                          Residential Location Mapping
+                        </span>
+                        <p className="text-xs font-bold text-slate-700 mt-0.5">
+                          {formData.location}
                         </p>
                       </div>
                     </div>
@@ -458,12 +362,12 @@ const EditPersonalDetails = ({
                     {loading ? (
                       <>
                         <Loader2 size={13} className="animate-spin" />
-                        <span>Updating Directory...</span>
+                        <span>Updating Beneficiaries...</span>
                       </>
                     ) : (
                       <>
                         <Save size={14} />
-                        <span>Save Changes</span>
+                        <span>Save Kin Records</span>
                       </>
                     )}
                   </button>
@@ -485,33 +389,40 @@ const EditPersonalDetails = ({
 
                   <div className="space-y-1">
                     <h3 className="text-lg font-black text-primary tracking-tight">
-                      Profile Updated Successfully
+                      Next of Kin Registered
                     </h3>
                     <p className="text-xs text-slate-400 font-medium">
-                      The modified biological parameters are now live across all
-                      Sacco core data modules.
+                      Kinship link vectors and asset allocation beneficiary
+                      metrics have been successfully integrated.
                     </p>
                   </div>
 
                   <div className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-left space-y-2 mt-4 shadow-3xs text-xs">
                     <div>
                       <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
-                        Member Reference Identifier
+                        Assigned Kinship Record
                       </p>
                       <p className="font-bold text-[#074073] mt-0.5">
-                        {`${formData.firstname} ${formData.lastname}`}
+                        {formData.name} ({formData.relationship})
                       </p>
                     </div>
-                    <div className="border-t border-slate-200/50 pt-2">
-                      <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
-                        Verified Contact Parameters
-                      </p>
-                      <p className="font-medium text-slate-600 mt-0.5 font-mono">
-                        {formData.mobileNumber}
-                      </p>
-                      <p className="font-medium text-slate-600 mt-0.5">
-                        {formData.email}
-                      </p>
+                    <div className="border-t border-slate-200/50 pt-2 grid grid-cols-2 gap-2">
+                      <div>
+                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
+                          Contact Line
+                        </p>
+                        <p className="font-bold text-slate-600 font-mono mt-0.5">
+                          {formData.phoneNumber}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[9px] font-black uppercase text-slate-400 tracking-wider">
+                          Location Mapping
+                        </p>
+                        <p className="font-bold text-slate-600 mt-0.5 truncate">
+                          {formData.location}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -536,7 +447,7 @@ const EditPersonalDetails = ({
 };
 
 /* ==========================================================================
-   INPUT HOUSING WRAPPER
+   INPUT BASE FIELD DECORATOR CHASSIS
    ========================================================================== */
 const FilterField = ({ label, icon: Icon, error, children }) => (
   <div className="space-y-1.5 w-full text-left">
@@ -583,4 +494,4 @@ const FilterField = ({ label, icon: Icon, error, children }) => (
   </div>
 );
 
-export default EditPersonalDetails;
+export default EditNextOfKinDetails;

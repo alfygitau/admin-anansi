@@ -48,7 +48,7 @@ export default function FinancialReports() {
     }).format(val);
   };
 
-  useQuery({
+  const { isFetching } = useQuery({
     queryKey: ["chart of accounts"],
     queryFn: async () => {
       const response = await chartOfAccounts();
@@ -279,6 +279,7 @@ export default function FinancialReports() {
       )}
 
       {activeTab === "coa" && (
+        isFetching ? <Loader/> :
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden space-y-4">
           {/* 1. MANAGEMENT DIRECTORY SEARCH HEADER */}
           <div className="px-6 pt-5 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 bg-slate-50/40">
@@ -739,3 +740,106 @@ export default function FinancialReports() {
     </div>
   );
 }
+
+const Loader = () => {
+  return (
+    <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden space-y-4 animate-pulse select-none">
+      {/* 1. MANAGEMENT DIRECTORY SEARCH HEADER PLACEHOLDER */}
+      <div className="px-6 pt-5 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 bg-slate-50/40">
+        <div className="space-y-2">
+          <div className="h-[15px] bg-slate-200 rounded-md w-48"></div>
+          <div className="h-[11px] bg-slate-100 rounded-md w-80 max-w-full"></div>
+        </div>
+        {/* Simulates the Search Input Field Box on the Right */}
+        <div className="h-10 bg-slate-50 border border-slate-200 rounded-xl w-full sm:w-64 shrink-0"></div>
+      </div>
+
+      {/* 2. HIERARCHICAL TREE ENGINE WORKSPACE PLACEHOLDER */}
+      <div className="px-6 pb-6 space-y-4">
+        {/* NODE BLOCK 1: SIMULATED ASSET CONTROL GROUP (EXPANDED BRANCH VIEW) */}
+        <div className="border border-slate-200/70 rounded-xl overflow-hidden bg-white">
+          {/* ROOT MASTER HEADER CARD */}
+          <div className="flex items-center justify-between p-3.5 bg-slate-50/80">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              {/* Chevron icon placeholder */}
+              <div className="size-4 bg-slate-200 rounded shrink-0"></div>
+              {/* Folder icon placeholder */}
+              <div className="size-4 bg-slate-200 rounded-md shrink-0"></div>
+              {/* Account Code placeholder */}
+              <div className="h-3.5 bg-slate-200 rounded font-mono w-10 shrink-0"></div>
+              {/* Account Name description placeholder */}
+              <div className="h-3.5 bg-slate-300 rounded w-1/3 min-w-[140px] truncate"></div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0 ml-4">
+              {/* Classification badge line */}
+              <div className="h-4 bg-slate-200 rounded w-12"></div>
+              {/* Control Group classification box */}
+              <div className="h-4 bg-slate-100 rounded w-20 hidden sm:block"></div>
+            </div>
+          </div>
+
+          {/* NESTED CHILDREN EXPANSION MATRIX CONTAINER (VISIBLE BRANCH SUB-ITEMS) */}
+          <div className="bg-white divide-y divide-slate-100 pl-6 border-t border-slate-100/80">
+            {[1, 2, 3, 4, 5].map((childIndex) => (
+              <div
+                key={childIndex}
+                className="p-3.5 flex items-center justify-between"
+              >
+                <div className="flex items-center gap-2 min-w-0 flex-1 pl-2">
+                  {/* FileText entry icon placeholder */}
+                  <div className="size-3.5 bg-slate-100 rounded shrink-0"></div>
+                  {/* Subledger Account Code line */}
+                  <div className="h-3 bg-slate-200 rounded font-mono w-10 shrink-0"></div>
+                  {/* Subledger Name string identifier line */}
+                  <div className="h-3 bg-slate-200 rounded w-1/2 min-w-[160px] truncate"></div>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0 ml-4">
+                  {/* Account description tooltip text mimic (Optional hidden on small devices) */}
+                  <div className="h-3 bg-slate-50 rounded w-28 hidden md:block"></div>
+                  {/* Normal balance tag block */}
+                  <div className="h-4 bg-slate-100 rounded font-mono w-12"></div>
+                  {/* Posting entry ledger badge container */}
+                  <div className="h-4 bg-slate-200 rounded w-20"></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* NODE BLOCK 2: SIMULATED LIABILITY CONTROL GROUP (COLLAPSED BRANCH VIEW) */}
+        <div className="border border-slate-200/70 rounded-xl overflow-hidden bg-white">
+          <div className="flex items-center justify-between p-3.5 bg-slate-50/80">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className="size-4 bg-slate-200 rounded shrink-0"></div>
+              <div className="size-4 bg-slate-200 rounded-md shrink-0"></div>
+              <div className="h-3.5 bg-slate-200 rounded font-mono w-10 shrink-0"></div>
+              <div className="h-3.5 bg-slate-300 rounded w-1/4 min-w-[120px] truncate"></div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 ml-4">
+              <div className="h-4 bg-slate-200 rounded w-14"></div>
+              <div className="h-4 bg-slate-100 rounded w-20 hidden sm:block"></div>
+            </div>
+          </div>
+        </div>
+
+        {/* NODE BLOCK 3: SIMULATED EQUITY CONTROL GROUP (COLLAPSED BRANCH VIEW) */}
+        <div className="border border-slate-200/70 rounded-xl overflow-hidden bg-white">
+          <div className="flex items-center justify-between p-3.5 bg-slate-50/80">
+            <div className="flex items-center gap-2 min-w-0 flex-1">
+              <div className="size-4 bg-slate-200 rounded shrink-0"></div>
+              <div className="size-4 bg-slate-200 rounded-md shrink-0"></div>
+              <div className="h-3.5 bg-slate-200 rounded font-mono w-10 shrink-0"></div>
+              <div className="h-3.5 bg-slate-300 rounded w-1/5 min-w-[100px] truncate"></div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0 ml-4">
+              <div className="h-4 bg-slate-200 rounded w-12"></div>
+              <div className="h-4 bg-slate-100 rounded w-20 hidden sm:block"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -30,8 +30,10 @@ import { useToast } from "../../contexts/ToastProvider";
 import { motion, AnimatePresence } from "framer-motion";
 import MemberLoader from "../../skeletons/MemberLoader";
 import { getMemberLoans } from "../../sdk/loans/loans";
+import EditPersonalDetails from "../../components/edit-member/EditPersonalDetails";
+import EditAddressDetails from "../../components/edit-member/EditAddress";
+import EditFinancialDetails from "../../components/edit-member/EditFinancialDetails";
 
-// Helper utility to style loan status indicators dynamically
 const getLoanStatusStyles = (status) => {
   const currentStatus = (status || "Active").toLowerCase();
   switch (currentStatus) {
@@ -55,7 +57,38 @@ export default function MemberDetails() {
   const [showImages, setShowImages] = useState(false);
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [showEditPersonalDetails, setShowEditPersonalDetails] = useState(false);
+  const [showEditAddressDetails, setShowEditAddressDetails] = useState(false);
+  const [showEditFinancialDetails, setShowEditFinancialDetails] =
+    useState(false);
   const [memberLoans, setMemberLoans] = useState([]);
+  const [step, setStep] = useState("form");
+  const [addressStep, setAddressStep] = useState("form");
+  const [financialStep, setFinancialStep] = useState("form");
+  const [editFormData, setEditFormData] = useState({
+    firstname: "",
+    middlename: "",
+    lastname: "",
+    idNumber: "",
+    email: "",
+    mobileNumber: "",
+    dob: "",
+    gender: "",
+  });
+
+  const [editAddressData, setEditAddressData] = useState({
+    country: "",
+    physicalAddress: "",
+    county: "",
+    subcounty: "",
+  });
+
+  const [editFinancialData, setEditFinancialData] = useState({
+    employmentType: "",
+    income: "",
+    kraPin: "",
+    jobTitle: "",
+  });
 
   const onBack = () => {
     navigate(-1);
@@ -77,6 +110,30 @@ export default function MemberDetails() {
     },
     onSuccess: (data) => {
       setMember(data);
+      setEditFormData({
+        firstname: data?.firstname || "",
+        middlename: data?.middlename || "",
+        lastname: data?.lastname || "",
+        idNumber: data?.identification || "",
+        email: data?.email || "",
+        mobileNumber: data?.mobileno || "",
+        dob: data?.dob || "",
+        gender: data?.gender?.toLowerCase() || "",
+      });
+
+      setEditAddressData({
+        country: data?.country_of_residence || "",
+        county: data?.addresses?.[0]?.county || "",
+        subcounty: data?.addresses?.[0]?.subcounty || "",
+        physicalAddress: data?.addresses?.[0]?.physical_address || "",
+      });
+
+      setEditFinancialData({
+        employmentType: data?.employment_type || "",
+        jobTitle: data?.occupation || "",
+        kraPin: data?.kraPin || "",
+        income: data?.income_range || "",
+      });
     },
     onError: (error) => {
       showToast({
@@ -109,6 +166,35 @@ export default function MemberDetails() {
 
   return (
     <>
+      <EditFinancialDetails
+        isOpen={showEditFinancialDetails}
+        onClose={() => setShowEditFinancialDetails(false)}
+        loading={false}
+        formData={editFinancialData}
+        setFormData={setEditFinancialData}
+        step={financialStep}
+        setStep={setFinancialStep}
+      />
+
+      <EditAddressDetails
+        isOpen={showEditAddressDetails}
+        onClose={() => setShowEditAddressDetails(false)}
+        formData={editAddressData}
+        setFormData={setEditAddressData}
+        step={addressStep}
+        setStep={setAddressStep}
+        loading={false}
+      />
+
+      <EditPersonalDetails
+        isOpen={showEditPersonalDetails}
+        onClose={() => setShowEditPersonalDetails(false)}
+        formData={editFormData}
+        setFormData={setEditFormData}
+        loading={false}
+        step={step}
+        setStep={setStep}
+      />
       {isFetching ? (
         <MemberLoader />
       ) : (
@@ -205,7 +291,11 @@ export default function MemberDetails() {
                   <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
                     <User size={14} /> Identity Parameters
                   </h3>
-                  <Edit size={14} className="text-slate-400" />
+                  <Edit
+                    onClick={() => setShowEditPersonalDetails(true)}
+                    size={14}
+                    className="text-slate-400 cursor-pointer"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4 text-xs font-medium border-t border-slate-100 pt-3">
                   <ProfileMetaBlock
@@ -247,7 +337,11 @@ export default function MemberDetails() {
                   <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
                     <MapPin size={14} /> Physical Address
                   </h3>
-                  <Edit size={14} className="text-slate-400" />
+                  <Edit
+                    onClick={() => setShowEditAddressDetails(true)}
+                    size={14}
+                    className="text-slate-400 cursor-pointer"
+                  />
                 </div>
                 {member?.addresses?.map((addr) => (
                   <div
@@ -299,7 +393,11 @@ export default function MemberDetails() {
                 <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
                   <Briefcase size={14} /> Financial Profile
                 </h3>
-                <Edit size={14} className="text-slate-400" />
+                <Edit
+                  onClick={() => setShowEditFinancialDetails(true)}
+                  size={14}
+                  className="text-slate-400 cursor-pointer"
+                />
               </div>
               <div className="space-y-4 pt-1 text-xs font-medium">
                 <div className="flex items-start gap-2.5">
@@ -370,50 +468,88 @@ export default function MemberDetails() {
                       <CreditCard size={14} /> Financial Accounts
                     </h3>
                   </div>
-                  <div className="border border-slate-100 rounded-xl overflow-hidden flex-1 bg-white overflow-x-auto">
-                    <table className="w-full text-left border-collapse table-auto text-xs font-medium min-w-[500px]">
-                      <thead>
-                        <tr className="bg-slate-50/70 border-b border-slate-100 text-[10px] text-slate-400 uppercase font-bold tracking-wider">
-                          <th className="p-3.5 px-4">Account Portfolio</th>
-                          <th className="p-3.5 px-4">Product Name</th>
-                          <th className="p-3.5">Account Number</th>
-                          <th className="p-3.5 text-right">Account Balance</th>
-                          <th className="p-3.5 text-center">State</th>
-                        </tr>
-                      </thead>
-                      <tbody className="divide-y divide-slate-100">
-                        {member?.accounts?.map((acc) => (
-                          <tr
-                            key={acc.id}
-                            onClick={() =>
-                              navigate(
-                                `/admin/all-members/account/${acc?.id}/${acc?.account_number}`,
-                              )
-                            }
-                            className="hover:bg-slate-50/50 transition-colors cursor-pointer"
-                          >
-                            <td className="p-3.5 px-4 font-bold text-primary">
-                              {`${member?.firstname || ""} ${member?.lastname || ""}`.trim()}
-                            </td>
-                            <td className="p-3.5 px-4 font-bold text-primary">
-                              {acc.product?.name}
-                            </td>
-                            <td className="p-3.5 font-mono text-blue-500">
-                              {acc.account_number}
-                            </td>
-                            <td className="p-3.5 text-right font-bold text-primary">
-                              KES {Number(acc.balance || 0).toFixed(2)}
-                            </td>
-                            <td className="p-3.5 text-center">
-                              <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100">
-                                {acc.status}
-                              </span>
-                            </td>
+
+                  {/* CONDITION CHECK: Show table if accounts exist, otherwise show empty state */}
+                  {member?.accounts && member.accounts.length > 0 ? (
+                    <div className="border border-slate-100 rounded-xl overflow-hidden flex-1 bg-white overflow-x-auto">
+                      <table className="w-full text-left border-collapse table-auto text-xs font-medium min-w-[500px]">
+                        <thead>
+                          <tr className="bg-slate-50/70 border-b border-slate-100 text-[10px] text-slate-400 uppercase font-bold tracking-wider">
+                            <th className="p-3.5 px-4">Account Portfolio</th>
+                            <th className="p-3.5 px-4">Product Name</th>
+                            <th className="p-3.5">Account Number</th>
+                            <th className="p-3.5 text-right">
+                              Account Balance
+                            </th>
+                            <th className="p-3.5 text-center">State</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
+                        </thead>
+                        <tbody className="divide-y divide-slate-100">
+                          {member.accounts.map((acc) => (
+                            <tr
+                              key={acc.id}
+                              onClick={() =>
+                                navigate(
+                                  `/admin/all-members/account/${acc?.id}/${acc?.account_number}`,
+                                )
+                              }
+                              className="hover:bg-slate-50/50 transition-colors cursor-pointer"
+                            >
+                              <td className="p-3.5 px-4 font-bold text-primary">
+                                {`${member?.firstname || ""} ${member?.lastname || ""}`.trim()}
+                              </td>
+                              <td className="p-3.5 px-4 font-bold text-primary">
+                                {acc.product?.name}
+                              </td>
+                              <td className="p-3.5 font-mono text-blue-500">
+                                {acc.account_number}
+                              </td>
+                              <td className="p-3.5 text-right font-bold text-primary">
+                                KES {Number(acc.balance || 0).toFixed(2)}
+                              </td>
+                              <td className="p-3.5 text-center">
+                                <span className="text-[9px] font-bold tracking-wide uppercase px-2 py-0.5 rounded bg-emerald-50 text-emerald-600 border border-emerald-100">
+                                  {acc.status}
+                                </span>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    /* USER FRIENDLY EMPTY STATE */
+                    <div className="border border-dashed border-slate-200 rounded-xl p-8 flex flex-col items-center justify-center text-center bg-slate-50/30 flex-1 min-h-[320px] select-none">
+                      <div className="relative mb-4 flex items-center justify-center">
+                        <div className="absolute w-14 h-14 bg-slate-100 rounded-full animate-pulse" />
+                        <div className="relative w-12 h-12 bg-white border border-slate-200 shadow-2xs rounded-xl flex items-center justify-center text-slate-400">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth="2"
+                            stroke="currentColor"
+                            className="w-5 h-5"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      <div className="max-w-xs space-y-1">
+                        <h4 className="text-sm font-bold text-slate-800 tracking-tight">
+                          No accounts created yet
+                        </h4>
+                        <p className="text-slate-400 text-[11px] leading-relaxed font-medium">
+                          This member doesn't have any savings, shares, or loan
+                          accounts linked to their profile yet.
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -492,17 +628,31 @@ export default function MemberDetails() {
                 Loans
               </h3>
             </div>
-
             <div className="border border-slate-100 rounded-xl overflow-hidden bg-white overflow-x-auto">
               {memberLoans.length === 0 ? (
-                <div className="p-8 text-center flex flex-col items-center justify-center space-y-2 select-none">
-                  <FileText size={18} className="text-slate-300" />
-                  <p className="text-xs font-bold text-slate-400 italic">
-                    This member has no registered loan accounts linked to their
-                    profile structure.
-                  </p>
+                /* UPGRADED MODERN EMPTY STATE */
+                <div className="p-12 text-center flex flex-col items-center justify-center bg-slate-50/20 select-none min-h-[300px]">
+                  <div className="relative mb-4 flex items-center justify-center">
+                    {/* Animated outer ring */}
+                    <div className="absolute w-14 h-14 bg-slate-100 rounded-full animate-pulse" />
+                    {/* Inner solid icon shield */}
+                    <div className="relative size-12 bg-white border border-slate-200 shadow-3xs rounded-xl flex items-center justify-center text-slate-400">
+                      <FileText size={20} className="text-slate-400" />
+                    </div>
+                  </div>
+
+                  <div className="max-w-sm space-y-1">
+                    <h4 className="text-sm font-bold text-slate-800 tracking-tight">
+                      No loan history available
+                    </h4>
+                    <p className="text-slate-400 text-[11px] leading-relaxed font-medium">
+                      This member does not have any active, completed, or
+                      running loan accounts linked to their profile yet.
+                    </p>
+                  </div>
                 </div>
               ) : (
+                /* LIVE LOANS TABLE STRUCTURE */
                 <table className="w-full text-left border-collapse table-auto text-xs font-medium">
                   <thead>
                     <tr className="bg-slate-50/70 border-b border-slate-100 text-[12px] text-slate-400 uppercase font-bold tracking-wider">
@@ -574,66 +724,89 @@ export default function MemberDetails() {
               )}
             </div>
           </div>
-
           {/* 4. THIRD ROW: NEXT OF KIN & LOAN GUARANTEES PROFILE BLOCK */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
             {/* NEXT OF KIN PANEL (SPANS 2 COLUMNS) */}
             <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6 flex flex-col justify-between space-y-4 h-full">
-              <div className="space-y-4 flex-1">
-                <div className="w-full flex items-center justify-between">
+              <div className="space-y-4 flex-1 flex flex-col">
+                {/* HEADER ACTIONS */}
+                <div className="w-full flex items-center justify-between select-none">
                   <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
                     <Users size={14} /> Next of Kin
                   </h3>
-                  <Edit size={14} className="text-slate-400 cursor-pointer" />
+                  <Edit
+                    size={14}
+                    className="text-slate-400 cursor-pointer hover:text-primary transition-colors"
+                  />
                 </div>
 
-                <div className="grid grid-cols-1 gap-3">
-                  {member?.nextOfKins?.map((kin) => (
-                    <div
-                      key={kin.id}
-                      className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-slate-100 bg-slate-50/40 rounded-xl text-xs font-medium items-center"
-                    >
-                      <div>
-                        <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                          Full Name
-                        </p>
-                        <p className="text-primary font-bold mt-0.5 truncate">
-                          {kin.name || "—"}
-                        </p>
+                {/* CONDITION MATRIX CONTAINER */}
+                {member?.nextOfKins && member.nextOfKins.length > 0 ? (
+                  /* ACTIVE RECORDS GRID */
+                  <div className="grid grid-cols-1 gap-3">
+                    {member.nextOfKins.map((kin) => (
+                      <div
+                        key={kin.id}
+                        className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border border-slate-100 bg-slate-50/40 rounded-xl text-xs font-medium items-center"
+                      >
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                            Full Name
+                          </p>
+                          <p className="text-primary font-bold mt-0.5 truncate">
+                            {kin.name || "—"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                            Relationship
+                          </p>
+                          <p className="text-slate-600 capitalize mt-0.5 truncate">
+                            {kin.relationship || "—"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                            Phone Number
+                          </p>
+                          <p className="text-slate-700 font-mono mt-0.5 truncate">
+                            {kin.phoneNumber || "—"}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-slate-400 uppercase tracking-wide">
+                            Location
+                          </p>
+                          <p className="text-slate-500 mt-0.5 truncate">
+                            {kin.location || "—"}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                          Relationship
-                        </p>
-                        <p className="text-slate-600 capitalize mt-0.5 truncate">
-                          {kin.relationship || "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                          Phone Number
-                        </p>
-                        <p className="text-slate-700 font-mono mt-0.5 truncate">
-                          {kin.phoneNumber || "—"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-slate-400 uppercase tracking-wide">
-                          Location
-                        </p>
-                        <p className="text-slate-500 mt-0.5 truncate">
-                          {kin.location || "—"}
-                        </p>
+                    ))}
+                  </div>
+                ) : (
+                  /* UPGRADED PROFESSIONAL EMPTY STATE */
+                  <div className="border border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center text-center bg-slate-50/30 flex-1 min-h-[180px] select-none">
+                    <div className="relative mb-3 flex items-center justify-center">
+                      {/* Subtle pulse effect ring */}
+                      <div className="absolute w-12 h-12 bg-slate-100 rounded-full animate-pulse" />
+                      {/* Icon Badge Shield */}
+                      <div className="relative size-10 bg-white border border-slate-200 shadow-3xs rounded-xl flex items-center justify-center text-slate-400">
+                        <Users size={16} className="text-slate-400" />
                       </div>
                     </div>
-                  ))}
 
-                  {(!member?.nextOfKins || member?.nextOfKins.length === 0) && (
-                    <p className="text-xs text-slate-400 italic py-2 col-span-full">
-                      No next of kin records registered.
-                    </p>
-                  )}
-                </div>
+                    <div className="max-w-xs space-y-0.5">
+                      <h4 className="text-xs font-bold text-slate-800 tracking-tight">
+                        No family or kin added
+                      </h4>
+                      <p className="text-slate-400 text-[11px] leading-relaxed font-medium">
+                        Assign beneficiaries or emergency contacts to complete
+                        this member's portfolio structure.
+                      </p>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

@@ -10,7 +10,6 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 const TransactionsFilter = ({ isOpen, onClose, filters, setFilters }) => {
-  // Separate toggle states for each dropdown group
   const [statusDropdownOpen, setStatusDropdownOpen] = useState(false);
   const [typeDropdownOpen, setTypeDropdownOpen] = useState(false);
 

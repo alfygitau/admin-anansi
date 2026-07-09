@@ -373,14 +373,14 @@ export default function AllReports() {
       {reportData && !isLoading && (
         <div className="w-full space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
           {/* Dynamic Meta Info Control Strip */}
-          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 select-none w-full">
+          <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex sm:flex-col sm:items-start justify-between gap-4 select-none w-full">
             <div className="flex items-center gap-3">
               <div className="size-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-inner">
                 <Layers size={16} />
               </div>
               <div>
                 <h4 className="text-[13px] font-bold text-slate-900 tracking-tight leading-none">
-                  {formatReportTitle(reportData.meta?.report_key)}
+                  {`${formatReportTitle(reportData.meta?.report_key)} Report`}
                 </h4>
               </div>
             </div>

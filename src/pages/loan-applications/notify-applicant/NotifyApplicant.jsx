@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   ArrowLeft,
   User,
@@ -6,87 +6,66 @@ import {
   Mail,
   Bell,
   MessageSquare,
-  FileText,
   Layers,
-  Send,
   AlertTriangle,
   ShieldCheck,
   Type,
   ArrowUpRight,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
+import { getApplication } from "../../../sdk/loan-applications/loan-applications";
+import useAuth from "../../../hooks/useAuth";
+import { addNotification } from "../../../sdk/notifications/notifications";
 
 export default function NotifyApplicant() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { applicationId } = useParams();
-
-  // Active officer session context
-  const currentOfficer = {
-    uuid: "user-uuid-of-disbursing-officer",
-    name: "John Kamau",
-    currentDate: "2026-06-19",
-  };
-
-  // Mock applicant information
-  const [applicantDetails] = useState({
-    number: "APP-00002",
-    name: "ALMASI ALUOCH",
-    mobile: "+254765350350",
-    email: "almasi.aluoch@gmail.com",
-    product: "Development Loan",
-  });
+  const { id } = useParams();
+  const [application, setApplication] = useState({});
+  const { auth } = useAuth();
 
   const [formData, setFormData] = useState({
-    channel: "SMS", // 'SMS' | 'EMAIL' | 'BOTH'
-    template_type: "custom", // 'custom' | 'reminder' | 'approved' | 'missing_docs'
-    subject: "Update on your Loan Application",
+    template_type: "custom",
+    subject: "",
     message: "",
+    email: "",
+    mobile: "",
+    name: "",
+    applicationNumber: "",
+    channel: "sms",
   });
 
   const [errors, setErrors] = useState({});
-
-  // Dynamic template presets to speed up operations for the officer
-  const templates = {
-    custom: "",
-    reminder: `Hello ${applicantDetails.name}, this is a quick reminder regarding your application ${applicantDetails.number} for the ${applicantDetails.product}. Please check your account dashboard for upcoming steps.`,
-    approved: `Great news ${applicantDetails.name}! Your application ${applicantDetails.number} for the ${applicantDetails.product} has been successfully approved by the credit committee. We are now processing your disbursement details.`,
-    missing_docs: `Hello ${applicantDetails.name}, we noticed some missing documents on your application ${applicantDetails.number}. Please log in to your portal and upload your latest certified 3-month payslips so we can complete your review.`,
-  };
-
-  // Automatically update message body when a template option is chosen
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      message: templates[formData.template_type],
-    }));
-  }, [formData.template_type]);
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
+  const generateUUID = () => {
+    return crypto.randomUUID();
+  };
+
+  const todayInputStr = new Date().toISOString().split("T")[0];
+
   const { mutate, isLoading } = useMutation({
     mutationKey: ["send-loan-notification"],
     mutationFn: async () => {
-      const finalPayload = {
-        application_id: applicationId || applicantDetails.number,
-        sender_officer_id: currentOfficer.uuid,
-        channel: formData.channel,
-        recipient_contact:
-          formData.channel === "EMAIL"
-            ? applicantDetails.email
-            : applicantDetails.mobile,
-        subject: formData.channel !== "SMS" ? formData.subject : null,
-        message: formData.message,
-        sent_at: currentOfficer.currentDate,
-      };
-      console.log("Dispatching communication network payload:", finalPayload);
-      // return await axios.post('/api/notifications/send', finalPayload);
+      const response = await addNotification(
+        application?.customer_id,
+        formData?.name,
+        formData?.mobile,
+        formData?.email,
+        formData?.channel,
+        "manual",
+        formData?.subject,
+        formData?.message,
+        generateUUID(),
+        todayInputStr,
+        formData?.applicationNumber,
+      );
     },
     onSuccess: () => {
       showToast({
@@ -107,6 +86,31 @@ export default function NotifyApplicant() {
     },
   });
 
+  const { isFetching } = useQuery({
+    queryKey: ["get loan application", id],
+    queryFn: async () => {
+      const response = await getApplication(id);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setApplication(data);
+      setFormData((prev) => ({
+        ...prev,
+        name: data?.applicant_name ?? "",
+        mobile: data?.applicant_mobile ?? "",
+        applicationNumber: data?.application_number ?? "",
+      }));
+    },
+    onError: (error) => {
+      showToast({
+        title: "Transactions processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -122,7 +126,6 @@ export default function NotifyApplicant() {
       setErrors(newErrors);
       return;
     }
-
     mutate();
   };
 
@@ -157,14 +160,14 @@ export default function NotifyApplicant() {
             <FormInput
               icon={<User />}
               label="Applicant Name"
-              value={applicantDetails.name}
+              value={formData.name}
               disabled
               readOnly
             />
             <FormInput
               icon={<Layers />}
               label="Application Number"
-              value={applicantDetails.number}
+              value={formData?.applicationNumber}
               disabled
               readOnly
             />
@@ -180,16 +183,17 @@ export default function NotifyApplicant() {
             <FormInput
               icon={<Smartphone />}
               label="Mobile Number"
-              value={applicantDetails.mobile}
+              value={formData.mobile}
               disabled
               readOnly
             />
             <FormInput
               icon={<Mail />}
               label="Email Address"
-              value={applicantDetails.email}
-              disabled
-              readOnly
+              name="email"
+              value={formData.email}
+              onChange={handleInputChange}
+              placeholder="Enter email"
             />
           </div>
         </SectionCard>
@@ -199,15 +203,16 @@ export default function NotifyApplicant() {
           <div className="space-y-4">
             <FormSelect
               icon={<Bell />}
-              label="Send Via"
+              label="How should we send this?"
               name="channel"
               value={formData.channel}
               onChange={handleInputChange}
               required
             >
-              <option value="SMS">SMS Text Message Only</option>
-              <option value="EMAIL">Email Letter Only</option>
-              <option value="BOTH">Simultaneous (SMS & Email)</option>
+              <option value="sms">SMS Only</option>
+              <option value="email">Email Only</option>
+              <option value="in_app">In App Notification</option>
+              <option value="push">Push Notification</option>
             </FormSelect>
 
             <FormSelect
@@ -224,7 +229,7 @@ export default function NotifyApplicant() {
               </option>
               <option value="Loan Approval">Loan Approval</option>
               <option value="Missing Application Information">
-                Missing Application Information
+                Application Information
               </option>
             </FormSelect>
           </div>
@@ -234,21 +239,18 @@ export default function NotifyApplicant() {
       {/* 3. FULL WIDTH LOWER WORKSPACE: TEXT ENGINES */}
       <div className="w-full bg-white border border-slate-200/60 rounded-[24px] p-6 space-y-6 shadow-3xs">
         <div className="space-y-5">
-          {/* CONDITIONAL SUBJECT LINE (Only for Email or Both channels) */}
-          {formData.channel !== "SMS" && (
-            <div className="animate-in fade-in duration-200 max-w-xl">
-              <FormInput
-                icon={<Type />}
-                label="Email Subject Line"
-                name="subject"
-                value={formData.subject}
-                onChange={handleInputChange}
-                error={errors.subject}
-                placeholder="Enter email heading content..."
-                required
-              />
-            </div>
-          )}
+          <div className="animate-in fade-in duration-200">
+            <FormInput
+              icon={<Type />}
+              label="Email Subject Line"
+              name="subject"
+              value={formData.subject}
+              onChange={handleInputChange}
+              error={errors.subject}
+              placeholder="Enter email heading content..."
+              required
+            />
+          </div>
 
           {/* UNWRAPPED DESIGN: MESSAGE TEXTAREA */}
           <div className="flex flex-col space-y-2 w-full">

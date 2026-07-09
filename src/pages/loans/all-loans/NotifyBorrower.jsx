@@ -13,56 +13,34 @@ import {
   ShieldCheck,
   Type,
   ArrowUpRight,
+  Loader2,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
+import useAuth from "../../../hooks/useAuth";
+import { getLoan } from "../../../sdk/loans/loans";
+import { addNotification } from "../../../sdk/notifications/notifications";
 
 export default function NotifyBorrower() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { applicationId } = useParams();
-
-  // Active officer session context
-  const currentOfficer = {
-    uuid: "user-uuid-of-disbursing-officer",
-    name: "John Kamau",
-    currentDate: "2026-06-19",
-  };
-
-  // Mock applicant information
-  const [applicantDetails] = useState({
-    number: "APP-00002",
-    name: "ALMASI ALUOCH",
-    mobile: "+254765350350",
-    email: "almasi.aluoch@gmail.com",
-    product: "Development Loan",
-  });
+  const { id } = useParams();
+  const { auth } = useAuth();
+  const [loan, setLoan] = useState({});
 
   const [formData, setFormData] = useState({
-    channel: "SMS", // 'SMS' | 'EMAIL' | 'BOTH'
-    template_type: "custom", // 'custom' | 'reminder' | 'approved' | 'missing_docs'
-    subject: "Update on your Loan Application",
+    channel: "sms",
+    template_type: "custom",
+    subject: "",
     message: "",
+    email: "",
+    mobile: "",
+    name: "",
+    loanCode: "",
   });
 
   const [errors, setErrors] = useState({});
-
-  // Dynamic template presets to speed up operations for the officer
-  const templates = {
-    custom: "",
-    reminder: `Hello ${applicantDetails.name}, this is a quick reminder regarding your application ${applicantDetails.number} for the ${applicantDetails.product}. Please check your account dashboard for upcoming steps.`,
-    approved: `Great news ${applicantDetails.name}! Your application ${applicantDetails.number} for the ${applicantDetails.product} has been successfully approved by the credit committee. We are now processing your disbursement details.`,
-    missing_docs: `Hello ${applicantDetails.name}, we noticed some missing documents on your application ${applicantDetails.number}. Please log in to your portal and upload your latest certified 3-month payslips so we can complete your review.`,
-  };
-
-  // Automatically update message body when a template option is chosen
-  useEffect(() => {
-    setFormData((prev) => ({
-      ...prev,
-      message: templates[formData.template_type],
-    }));
-  }, [formData.template_type]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -70,23 +48,29 @@ export default function NotifyBorrower() {
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
+  const generateUUID = () => {
+    return crypto.randomUUID();
+  };
+
+  const todayInputStr = new Date().toISOString().split("T")[0];
+
   const { mutate, isLoading } = useMutation({
     mutationKey: ["send-loan-notification"],
     mutationFn: async () => {
-      const finalPayload = {
-        application_id: applicationId || applicantDetails.number,
-        sender_officer_id: currentOfficer.uuid,
-        channel: formData.channel,
-        recipient_contact:
-          formData.channel === "EMAIL"
-            ? applicantDetails.email
-            : applicantDetails.mobile,
-        subject: formData.channel !== "SMS" ? formData.subject : null,
-        message: formData.message,
-        sent_at: currentOfficer.currentDate,
-      };
-      console.log("Dispatching communication network payload:", finalPayload);
-      // return await axios.post('/api/notifications/send', finalPayload);
+      const response = await addNotification(
+        loan?.customer_id,
+        formData?.name,
+        formData?.mobile,
+        formData?.email,
+        formData?.channel,
+        "manual",
+        formData?.subject,
+        formData?.message,
+        generateUUID(),
+        todayInputStr,
+        formData?.loanCode,
+      );
+      return response?.data;
     },
     onSuccess: () => {
       showToast({
@@ -107,6 +91,32 @@ export default function NotifyBorrower() {
     },
   });
 
+  const { isFetching } = useQuery({
+    queryKey: ["loan", id],
+    queryFn: async () => {
+      const response = await getLoan(id);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setLoan(data);
+      setFormData((prev) => ({
+        ...prev,
+        name: data?.loan_name ?? "",
+        mobile: data?.loan_mobile ?? "",
+        loanCode: data?.loan_code ?? "",
+        email: data?.loan_email ?? "",
+      }));
+    },
+    onError: (error) => {
+      showToast({
+        title: "Transactions processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
     const newErrors = {};
@@ -122,12 +132,11 @@ export default function NotifyBorrower() {
       setErrors(newErrors);
       return;
     }
-
     mutate();
   };
 
   return (
-    <div className="w-full space-y-6 font-sans antialiased text-slate-800 p-1">
+    <div className="w-full space-y-6 antialiased text-slate-800">
       {/* 1. TOP PROCESS NAVIGATION HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200/60 pb-5 select-none">
         <div className="flex items-center gap-4">
@@ -157,16 +166,17 @@ export default function NotifyBorrower() {
             <FormInput
               icon={<User />}
               label="Applicant Name"
-              value={applicantDetails.name}
+              value={formData?.name}
               disabled
               readOnly
             />
             <FormInput
               icon={<Layers />}
-              label="Application Number"
-              value={applicantDetails.number}
+              label="Loan Code"
+              value={formData?.loanCode}
               disabled
               readOnly
+              placeholder="Enter loan code"
             />
           </div>
         </SectionCard>
@@ -180,16 +190,17 @@ export default function NotifyBorrower() {
             <FormInput
               icon={<Smartphone />}
               label="Mobile Number"
-              value={applicantDetails.mobile}
+              value={formData?.mobile}
               disabled
-              readOnly
+              placeholder="Enter mobile"
             />
             <FormInput
               icon={<Mail />}
               label="Email Address"
-              value={applicantDetails.email}
-              disabled
-              readOnly
+              name="email"
+              value={formData?.email}
+              onChange={handleInputChange}
+              placeholder="Enter email"
             />
           </div>
         </SectionCard>
@@ -197,34 +208,35 @@ export default function NotifyBorrower() {
         {/* CONTAINER 3: MESSAGE SETUP */}
         <SectionCard title="Channel Configuration" icon={<Bell size={14} />}>
           <div className="space-y-4">
+            {/* Channel Selection */}
             <FormSelect
               icon={<Bell />}
-              label="Send Via"
+              label="How should we send this?"
               name="channel"
               value={formData.channel}
               onChange={handleInputChange}
               required
             >
-              <option value="SMS">SMS Text Message Only</option>
-              <option value="EMAIL">Email Letter Only</option>
-              <option value="BOTH">Simultaneous (SMS & Email)</option>
+              <option value="sms">SMS Only</option>
+              <option value="email">Email Only</option>
+              <option value="in_app">In App Notification</option>
+              <option value="push">Push Notification</option>
             </FormSelect>
 
+            {/* Template Selection */}
             <FormSelect
               icon={<MessageSquare />}
-              label="Choose Template"
+              label="Message Template"
               name="template_type"
               value={formData.template_type}
               onChange={handleInputChange}
               required
             >
-              <option value="custom">Blank (Write Custom Message)</option>
-              <option value="reminder">Application Milestone Reminder</option>
-              <option value="approved">
-                Loan Approval Congratulatory Notice
-              </option>
+              <option value="custom">Custom Message (Write your own)</option>
+              <option value="reminder">Loan Repayment Reminder</option>
+              <option value="approved">Loan Penalty Notice</option>
               <option value="missing_docs">
-                Missing Onboarding Documents Request
+                Request for Missing Documents
               </option>
             </FormSelect>
           </div>
@@ -235,21 +247,18 @@ export default function NotifyBorrower() {
       <div className="w-full bg-white border border-slate-200/60 rounded-[24px] p-6 space-y-6 shadow-3xs">
         <div className="space-y-5">
           {/* CONDITIONAL SUBJECT LINE (Only for Email or Both channels) */}
-          {formData.channel !== "SMS" && (
-            <div className="animate-in fade-in duration-200 max-w-xl">
-              <FormInput
-                icon={<Type />}
-                label="Email Subject Line"
-                name="subject"
-                value={formData.subject}
-                onChange={handleInputChange}
-                error={errors.subject}
-                placeholder="Enter email heading content..."
-                required
-              />
-            </div>
-          )}
-
+          <div className="animate-in fade-in duration-200 w-full">
+            <FormInput
+              icon={<Type />}
+              label="Email Subject Line"
+              name="subject"
+              value={formData.subject}
+              onChange={handleInputChange}
+              error={errors.subject}
+              placeholder="Enter email heading content..."
+              required
+            />
+          </div>
           {/* UNWRAPPED DESIGN: MESSAGE TEXTAREA */}
           <div className="flex flex-col space-y-2 w-full">
             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block select-none">
@@ -319,22 +328,28 @@ export default function NotifyBorrower() {
             Cancel
           </button>
           <button
-            onClick={() => navigate("/admin/apply-loan/eligibility")}
+            onClick={handleFormSubmit}
             type="button"
-            className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 cursor-pointer flex items-center gap-2"
+            disabled={isLoading}
+            className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 disabled:opacity-50 disabled:pointer-events-none cursor-pointer flex items-center gap-2"
           >
-            <span>Send Message</span>
-            <ArrowUpRight size={14} />
+            {isLoading ? (
+              <>
+                <span>Sending...</span>
+                <Loader2 size={14} className="animate-spin" />
+              </>
+            ) : (
+              <>
+                <span>Send Message</span>
+                <ArrowUpRight size={14} />
+              </>
+            )}
           </button>
         </div>
       </div>
     </div>
   );
 }
-
-/* ==========================================================================
-   SUPPORTIVE CHILD UI HOOK CHASSIS WITH PREFIX EMBEDDING DESIGN
-   ========================================================================== */
 
 const SectionCard = ({ title, icon, children }) => (
   <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] p-5 space-y-4 flex flex-col w-full h-full justify-start">

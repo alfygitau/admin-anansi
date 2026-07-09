@@ -21,7 +21,7 @@ export default function AllReports() {
   const todayStr = new Date().toISOString().split("T")[0];
   const [template, setTemplate] = useState("");
   const [startDate, setStartDate] = useState("2026-01-01");
-  const [endDate, setEndDate] = useState(todayStr); // Defaults to today
+  const [endDate, setEndDate] = useState(todayStr);
   const [asAt, setAsAt] = useState(todayStr);
   const [exportFormat, setExportFormat] = useState("json");
   const [reportKeys, setReportKeys] = useState([]);
@@ -109,11 +109,11 @@ export default function AllReports() {
       return new Intl.NumberFormat("en-US", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
-      }).format(value); // 0 becomes "0.00"
+      }).format(value);
     }
 
     if (lowercaseKey.includes("count") || lowercaseKey.includes("total")) {
-      return value.toLocaleString(); // 0 becomes "0"
+      return value.toLocaleString();
     }
 
     return value;

@@ -50,6 +50,7 @@ import HelpCenter from "./pages/help-support/HelpSupport";
 import EditAdminUser from "./pages/users/EditUser";
 import FinancialReports from "./pages/reports/FinancialReports";
 import AllReports from "./pages/reports/AllReports";
+import Analytics from "./pages/reports/Analytics";
 
 function App() {
   return (
@@ -140,6 +141,7 @@ function App() {
 
         <Route path="financial-reports" element={<FinancialReports />} />
         <Route path="all-reports" element={<AllReports />} />
+        <Route path="analytics" element={<Analytics />} />
       </Route>
 
       <Route path="/auth/member-login" element={<MemberLogin />} />

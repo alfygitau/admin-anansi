@@ -4,7 +4,6 @@ import {
   Users,
   UserX,
   TrendingUp,
-  Percent,
   PieChart,
   ShieldAlert,
   Calendar,

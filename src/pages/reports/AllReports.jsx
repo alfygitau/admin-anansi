@@ -1,10 +1,8 @@
 import React, { useState, useMemo } from "react";
 import {
-  ShieldCheck,
   SlidersHorizontal,
   ChevronDown,
   Calendar,
-  FileCode,
   FileSpreadsheet,
   Play,
   Layers,
@@ -23,7 +21,6 @@ export default function AllReports() {
   const [startDate, setStartDate] = useState("2026-01-01");
   const [endDate, setEndDate] = useState(todayStr);
   const [asAt, setAsAt] = useState(todayStr);
-  const [exportFormat, setExportFormat] = useState("json");
   const [reportKeys, setReportKeys] = useState([]);
   const [reportData, setReportData] = useState(null);
   const { showToast } = useToast();
@@ -117,23 +114,6 @@ export default function AllReports() {
     }
 
     return value;
-  };
-
-  const getAlignmentClass = (key) => {
-    const numericKeywords = [
-      "count",
-      "balance",
-      "percent",
-      "amount",
-      "volume",
-      "total",
-    ];
-    const isNumeric = numericKeywords.some((keyword) =>
-      key.toLowerCase().includes(keyword),
-    );
-    return isNumeric
-      ? "text-right font-bold text-slate-800"
-      : "text-left font-semibold text-slate-900";
   };
 
   const columnTotals = useMemo(() => {

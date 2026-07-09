@@ -3,7 +3,6 @@ import {
   FileSpreadsheet,
   ChevronDown,
   ChevronRight,
-  Search,
   Calendar,
   Printer,
   Folder,
@@ -20,7 +19,6 @@ import { useQuery } from "react-query";
 
 export default function FinancialReports() {
   const [activeTab, setActiveTab] = useState("coa");
-  const [coaSearch, setCoaSearch] = useState("");
   const { showToast } = useToast();
   const todayStr = new Date().toISOString().split("T")[0];
   const [startDate, setStartDate] = useState("2026-01-01");
@@ -278,191 +276,182 @@ export default function FinancialReports() {
         </div>
       )}
 
-      {activeTab === "coa" && (
-        isFetching ? <Loader/> :
-        <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden space-y-4">
-          {/* 1. MANAGEMENT DIRECTORY SEARCH HEADER */}
-          <div className="px-6 pt-5 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 bg-slate-50/40">
-            <div>
-              <h4 className="text-[15px] font-bold text-primary tracking-tight">
-                Structured Chart of Accounts
-              </h4>
-              <p className="text-[11px] text-slate-400 font-medium mt-0.5">
-                Hierarchical structural tracking matrix containing active legal
-                asset allocation indices.
-              </p>
+      {activeTab === "coa" &&
+        (isFetching ? (
+          <Loader />
+        ) : (
+          <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden space-y-4">
+            {/* 1. MANAGEMENT DIRECTORY SEARCH HEADER */}
+            <div className="px-6 pt-5 pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 bg-slate-50/40">
+              <div>
+                <h4 className="text-[15px] font-bold text-primary tracking-tight">
+                  Structured Chart of Accounts
+                </h4>
+                <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                  Hierarchical structural tracking matrix containing active
+                  legal asset allocation indices.
+                </p>
+              </div>
+            </div>
+
+            {/* 2. HIERARCHICAL TREE ENGINE WORKSPACE */}
+            <div className="px-6 pb-6 space-y-4 font-medium text-[13px]">
+              {(() => {
+                const rawCoaList = myChartOfAccounts || [];
+
+                const rootNodes = rawCoaList.filter((acc) => !acc.parent_id);
+                const childNodes = rawCoaList.filter((acc) => acc.parent_id);
+
+                // Map colors dynamically based on accounting classifications
+                const getTypeStyles = (type) => {
+                  switch (type?.toLowerCase()) {
+                    case "asset":
+                      return {
+                        icon: "text-blue-600",
+                        badge: "bg-blue-50 text-blue-700 border-blue-100",
+                      };
+                    case "liability":
+                      return {
+                        icon: "text-emerald-600",
+                        badge:
+                          "bg-emerald-50 text-emerald-700 border-emerald-100",
+                      };
+                    case "equity":
+                      return {
+                        icon: "text-purple-600",
+                        badge: "bg-purple-50 text-purple-700 border-purple-100",
+                      };
+                    case "income":
+                      return {
+                        icon: "text-amber-600",
+                        badge: "bg-amber-50 text-amber-700 border-amber-100",
+                      };
+                    case "expense":
+                      return {
+                        icon: "text-rose-600",
+                        badge: "bg-rose-50 text-rose-700 border-rose-100",
+                      };
+                    default:
+                      return {
+                        icon: "text-slate-600",
+                        badge: "bg-slate-50 text-slate-700 border-slate-100",
+                      };
+                  }
+                };
+
+                if (rootNodes.length === 0) {
+                  return (
+                    <div className="text-center py-8 text-xs text-slate-400 font-semibold italic">
+                      No ledger accounts found matching search
+                    </div>
+                  );
+                }
+
+                return rootNodes.map((root) => {
+                  const styles = getTypeStyles(root.account_type);
+                  // Query sub-ledger children belonging specifically to this master node block
+                  const children = childNodes.filter(
+                    (child) => child.parent_id === root.id,
+                  );
+                  const isExpanded = !!expandedNodes[root.account_code];
+
+                  return (
+                    <div
+                      key={root.id}
+                      className="border border-slate-200/70 rounded-xl overflow-hidden shadow-2xs bg-white"
+                    >
+                      {/* ROOT MASTER HEADER CONTROL CARD */}
+                      <div
+                        onClick={() => toggleNode(root.account_code)}
+                        className="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none transition-colors"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <div className="shrink-0">
+                            {children.length > 0 ? (
+                              isExpanded ? (
+                                <ChevronDown
+                                  size={16}
+                                  className="text-slate-400"
+                                />
+                              ) : (
+                                <ChevronRight
+                                  size={16}
+                                  className="text-slate-400"
+                                />
+                              )
+                            ) : (
+                              <div className="w-4" />
+                            )}
+                          </div>
+                          <Folder
+                            size={16}
+                            className={`${styles.icon} shrink-0`}
+                          />
+                          <span className="font-mono font-bold text-slate-400 shrink-0">
+                            {root.account_code}
+                          </span>
+                          <span className="font-bold text-slate-900 truncate pl-1">
+                            {root.account_name}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0 ml-4">
+                          <span
+                            className={`text-[9px] border px-2 py-0.5 rounded font-black uppercase tracking-wider select-none ${styles.badge}`}
+                          >
+                            {root.account_type}
+                          </span>
+                          <span className="text-[10px] hidden sm:inline-block bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-semibold text-xs">
+                            Control Group
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* NESTED CHILDREN EXPANSION SHEET CONTAINER */}
+                      {isExpanded && children.length > 0 && (
+                        <div className="bg-white divide-y divide-slate-100 pl-6 border-t border-slate-100/80">
+                          {children.map((child) => (
+                            <div
+                              key={child.id}
+                              className="p-3.5 flex items-center justify-between hover:bg-slate-50/50 transition-colors"
+                            >
+                              <div className="flex items-center gap-2 pl-2 min-w-0">
+                                <FileText
+                                  size={14}
+                                  className="text-slate-400 shrink-0"
+                                />
+                                <span className="font-bold font-mono text-slate-400 tracking-tight shrink-0">
+                                  {child.account_code}
+                                </span>
+                                <span className="text-slate-800 font-semibold truncate pl-1">
+                                  {child.account_name}
+                                </span>
+                              </div>
+
+                              <div className="flex items-center gap-3 shrink-0 ml-4 select-none">
+                                {child.description && (
+                                  <span className="text-[11px] max-w-xs text-slate-400 truncate hidden md:block font-normal italic">
+                                    {child.description}
+                                  </span>
+                                )}
+                                <span className="text-[10px] bg-slate-50 border border-slate-200 text-slate-400 font-black px-2 py-0.5 rounded uppercase tracking-widest font-mono">
+                                  {child.normal_balance}
+                                </span>
+                                <span className="text-[10px] bg-blue-50/60 text-blue-600 border border-blue-100/80 font-bold px-2 py-0.5 rounded">
+                                  Posting Entry
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                });
+              })()}
             </div>
           </div>
-
-          {/* 2. HIERARCHICAL TREE ENGINE WORKSPACE */}
-          <div className="px-6 pb-6 space-y-4 font-medium text-[13px]">
-            {(() => {
-              // Assume 'chartOfAccountsData' holds your raw API array response
-              const rawCoaList = myChartOfAccounts || [];
-
-              // Apply real-time evaluation across descriptive names or account codes
-              const filteredList = rawCoaList.filter((acc) => {
-                const matchString = coaSearch.toLowerCase();
-                return (
-                  acc.account_name?.toLowerCase().includes(matchString) ||
-                  acc.account_code?.includes(matchString)
-                );
-              });
-
-              // Separate core root nodes (no parent links) from sub-ledger elements
-              const rootNodes = filteredList.filter((acc) => !acc.parent_id);
-              const childNodes = rawCoaList.filter((acc) => acc.parent_id);
-
-              // Map colors dynamically based on accounting classifications
-              const getTypeStyles = (type) => {
-                switch (type?.toLowerCase()) {
-                  case "asset":
-                    return {
-                      icon: "text-blue-600",
-                      badge: "bg-blue-50 text-blue-700 border-blue-100",
-                    };
-                  case "liability":
-                    return {
-                      icon: "text-emerald-600",
-                      badge:
-                        "bg-emerald-50 text-emerald-700 border-emerald-100",
-                    };
-                  case "equity":
-                    return {
-                      icon: "text-purple-600",
-                      badge: "bg-purple-50 text-purple-700 border-purple-100",
-                    };
-                  case "income":
-                    return {
-                      icon: "text-amber-600",
-                      badge: "bg-amber-50 text-amber-700 border-amber-100",
-                    };
-                  case "expense":
-                    return {
-                      icon: "text-rose-600",
-                      badge: "bg-rose-50 text-rose-700 border-rose-100",
-                    };
-                  default:
-                    return {
-                      icon: "text-slate-600",
-                      badge: "bg-slate-50 text-slate-700 border-slate-100",
-                    };
-                }
-              };
-
-              if (rootNodes.length === 0) {
-                return (
-                  <div className="text-center py-8 text-xs text-slate-400 font-semibold italic">
-                    No ledger accounts found matching "{coaSearch}"
-                  </div>
-                );
-              }
-
-              return rootNodes.map((root) => {
-                const styles = getTypeStyles(root.account_type);
-                // Query sub-ledger children belonging specifically to this master node block
-                const children = childNodes.filter(
-                  (child) => child.parent_id === root.id,
-                );
-                const isExpanded = !!expandedNodes[root.account_code];
-
-                return (
-                  <div
-                    key={root.id}
-                    className="border border-slate-200/70 rounded-xl overflow-hidden shadow-2xs bg-white"
-                  >
-                    {/* ROOT MASTER HEADER CONTROL CARD */}
-                    <div
-                      onClick={() => toggleNode(root.account_code)}
-                      className="flex items-center justify-between p-3.5 bg-slate-50/80 cursor-pointer hover:bg-slate-100/60 select-none transition-colors"
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="shrink-0">
-                          {children.length > 0 ? (
-                            isExpanded ? (
-                              <ChevronDown
-                                size={16}
-                                className="text-slate-400"
-                              />
-                            ) : (
-                              <ChevronRight
-                                size={16}
-                                className="text-slate-400"
-                              />
-                            )
-                          ) : (
-                            <div className="w-4" />
-                          )}
-                        </div>
-                        <Folder
-                          size={16}
-                          className={`${styles.icon} shrink-0`}
-                        />
-                        <span className="font-mono font-bold text-slate-400 shrink-0">
-                          {root.account_code}
-                        </span>
-                        <span className="font-bold text-slate-900 truncate pl-1">
-                          {root.account_name}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-2 shrink-0 ml-4">
-                        <span
-                          className={`text-[9px] border px-2 py-0.5 rounded font-black uppercase tracking-wider select-none ${styles.badge}`}
-                        >
-                          {root.account_type}
-                        </span>
-                        <span className="text-[10px] hidden sm:inline-block bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-semibold text-xs">
-                          Control Group
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* NESTED CHILDREN EXPANSION SHEET CONTAINER */}
-                    {isExpanded && children.length > 0 && (
-                      <div className="bg-white divide-y divide-slate-100 pl-6 border-t border-slate-100/80">
-                        {children.map((child) => (
-                          <div
-                            key={child.id}
-                            className="p-3.5 flex items-center justify-between hover:bg-slate-50/50 transition-colors"
-                          >
-                            <div className="flex items-center gap-2 pl-2 min-w-0">
-                              <FileText
-                                size={14}
-                                className="text-slate-400 shrink-0"
-                              />
-                              <span className="font-bold font-mono text-slate-400 tracking-tight shrink-0">
-                                {child.account_code}
-                              </span>
-                              <span className="text-slate-800 font-semibold truncate pl-1">
-                                {child.account_name}
-                              </span>
-                            </div>
-
-                            <div className="flex items-center gap-3 shrink-0 ml-4 select-none">
-                              {child.description && (
-                                <span className="text-[11px] max-w-xs text-slate-400 truncate hidden md:block font-normal italic">
-                                  {child.description}
-                                </span>
-                              )}
-                              <span className="text-[10px] bg-slate-50 border border-slate-200 text-slate-400 font-black px-2 py-0.5 rounded uppercase tracking-widest font-mono">
-                                {child.normal_balance}
-                              </span>
-                              <span className="text-[10px] bg-blue-50/60 text-blue-600 border border-blue-100/80 font-bold px-2 py-0.5 rounded">
-                                Posting Entry
-                              </span>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              });
-            })()}
-          </div>
-        </div>
-      )}
+        ))}
 
       {activeTab === "income" && (
         <div className="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">

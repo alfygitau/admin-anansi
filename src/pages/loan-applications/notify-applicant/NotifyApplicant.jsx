@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Type,
   ArrowUpRight,
+  Loader2,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
@@ -321,22 +322,28 @@ export default function NotifyApplicant() {
             Cancel
           </button>
           <button
-            onClick={() => navigate("/admin/apply-loan/eligibility")}
+            onClick={handleFormSubmit}
             type="button"
-            className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 cursor-pointer flex items-center gap-2"
+            disabled={isLoading}
+            className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 disabled:opacity-50 disabled:pointer-events-none cursor-pointer flex items-center gap-2"
           >
-            <span>Send Message</span>
-            <ArrowUpRight size={14} />
+            {isLoading ? (
+              <>
+                <span>Sending...</span>
+                <Loader2 size={14} className="animate-spin" />
+              </>
+            ) : (
+              <>
+                <span>Send Message</span>
+                <ArrowUpRight size={14} />
+              </>
+            )}
           </button>
         </div>
       </div>
     </div>
   );
 }
-
-/* ==========================================================================
-   SUPPORTIVE CHILD UI HOOK CHASSIS WITH PREFIX EMBEDDING DESIGN
-   ========================================================================== */
 
 const SectionCard = ({ title, icon, children }) => (
   <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] p-5 space-y-4 flex flex-col w-full h-full justify-start">

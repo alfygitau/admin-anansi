@@ -360,16 +360,15 @@ export default function AllReports() {
 
       {/* 3. DYNAMIC RENDERING SHEET CANVAS CANVAS AREA */}
       {isLoading && (
-        <div className="w-full bg-white border border-slate-200 rounded-3xl p-12 flex flex-col items-center justify-center space-y-3 shadow-2xs">
+        <div className="w-full bg-white border border-slate-200 rounded-3xl p-36 flex flex-col items-center justify-center space-y-3 shadow-2xs">
           <Loader2 className="animate-spin text-primary" size={28} />
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-            Compiling ledger database vectors...
+            Compiling compliance report...
           </p>
         </div>
       )}
 
       {!reportData && !isLoading && <ReportEmptyState />}
-
       {reportData && !isLoading && (
         <div className="w-full space-y-6 animate-in fade-in slide-in-from-top-4 duration-300">
           {/* Dynamic Meta Info Control Strip */}
@@ -416,7 +415,7 @@ export default function AllReports() {
                 <thead>
                   <tr className="bg-slate-50 truncate text-[11px] font-black text-slate-400 uppercase tracking-wider border-b border-slate-200 select-none">
                     {reportData.columns.map((col) => (
-                      <th key={col.key} className="py-3.5 px-6 text-left">
+                      <th key={col.key} className="py-3 px-6 text-left">
                         {String(col.label)}
                       </th>
                     ))}

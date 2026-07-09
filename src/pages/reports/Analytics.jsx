@@ -78,8 +78,8 @@ export default function Analytics() {
       {/* GLOBAL HEADER */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-4 w-full">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2 select-none">
-            <ShieldCheck className="text-slate-900 shrink-0" size={24} />
+          <h2 className="text-2xl font-bold tracking-tight text-primary flex items-center gap-2 select-none">
+            <ShieldCheck className="text-primary shrink-0" size={24} />
             Sacco Analytics
           </h2>
           <p className="text-xs text-slate-400 font-medium mt-1">
@@ -94,8 +94,8 @@ export default function Analytics() {
       </div>
 
       <div className="space-y-4">
-        <div className="border-l-4 border-slate-900 pl-3 select-none">
-          <h3 className="text-base font-black text-slate-900 uppercase tracking-wide">
+        <div className="border-l-4 border-primary pl-3 select-none">
+          <h3 className="text-base font-black text-primary uppercase tracking-wide">
             1. Member Overview
           </h3>
           <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -160,7 +160,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Total Sacco Members
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   12,450{" "}
                   <span className="text-xs text-slate-400 font-normal font-sans pl-0.5">
                     registered
@@ -178,7 +178,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Members with Active Loans
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   5,230{" "}
                   <span className="text-xs text-indigo-600 font-bold font-sans">
                     (42% of total)
@@ -196,7 +196,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   New Members
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   +245{" "}
                   <span className="text-xs text-emerald-600 font-bold font-sans">
                     this month
@@ -228,7 +228,7 @@ export default function Analytics() {
 
       <div className="space-y-4">
         <div className="border-l-4 border-emerald-600 pl-3 select-none">
-          <h3 className="text-base font-black text-slate-900 uppercase tracking-wide">
+          <h3 className="text-base font-black text-primary uppercase tracking-wide">
             2. Savings &amp; Deposits
           </h3>
           <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -297,7 +297,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Total Savings Pool
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   KES 428.5M{" "}
                   <span className="text-xs text-slate-400 font-normal font-sans block mt-0.5">
                     held in member accounts
@@ -315,7 +315,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Net Inflows This Month
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   +KES 15.5M{" "}
                   <span className="text-xs text-emerald-600 font-bold font-sans block mt-0.5">
                     more saved than withdrawn
@@ -333,7 +333,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Members Saving Regularly
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   86.4%{" "}
                   <span className="text-xs text-emerald-600 font-bold font-sans">
                     active
@@ -362,7 +362,7 @@ export default function Analytics() {
 
       <div className="space-y-4">
         <div className="border-l-4 border-purple-600 pl-3 select-none">
-          <h3 className="text-base font-black text-slate-900 uppercase tracking-wide">
+          <h3 className="text-base font-black text-primary uppercase tracking-wide">
             3. Share Capital (Sacco Strength)
           </h3>
           <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -431,7 +431,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Total Sacco Shares Pool
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   KES 85.2M{" "}
                   <span className="text-xs text-slate-400 font-normal font-sans block mt-0.5">
                     Permanent non-withdrawable equity
@@ -449,7 +449,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Sacco Net Profit (YTD)
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   KES 21.8M{" "}
                   <span className="text-xs text-purple-600 font-bold font-sans block mt-0.5">
                     Accumulated current year earnings
@@ -467,7 +467,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Sacco Financial Strength Ratio
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   12.4%{" "}
                   <span className="text-xs text-slate-400 font-medium font-sans ml-1">
                     (Target is 8%+ / SASRA Safe)
@@ -499,7 +499,7 @@ export default function Analytics() {
 
       <div className="space-y-4">
         <div className="border-l-4 border-rose-600 pl-3 select-none">
-          <h3 className="text-base font-black text-slate-900 uppercase tracking-wide">
+          <h3 className="text-base font-black text-primary uppercase tracking-wide">
             4. Loans &amp; Risk Management
           </h3>
           <p className="text-xs text-slate-400 font-medium mt-0.5">
@@ -566,7 +566,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Total Active Loan Book
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   KES 1.03B
                   <span className="text-xs text-slate-400 font-normal font-sans block mt-0.5">
                     Active circulating capital
@@ -584,7 +584,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Repayment Collection Rate
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   95.7%
                   <span className="text-xs text-emerald-600 font-bold font-sans block mt-0.5">
                     On-time repayments efficiency
@@ -602,7 +602,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Issued This Month
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   KES 33.4M
                   <span className="text-xs text-slate-400 font-normal font-sans block mt-0.5">
                     Fresh credit released to members
@@ -681,7 +681,7 @@ export default function Analytics() {
                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest block">
                   Highest Sector Risk
                 </span>
-                <span className="text-lg font-black text-slate-900 block">
+                <span className="text-lg font-black text-primary block">
                   45%
                   <span className="text-xs text-slate-400 font-normal font-sans block mt-0.5">
                     tied up in Housing/Land

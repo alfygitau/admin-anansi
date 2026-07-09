@@ -153,7 +153,7 @@ export default function AllReports() {
       {/* 1. SUITE HEADER DECK */}
       <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-4 w-full">
         <div>
-          <h2 className="text-2xl font-bold tracking-tight text-slate-900 flex items-center gap-2">
+          <h2 className="text-2xl font-bold tracking-tight text-primary flex items-center gap-2">
             Compliance Loan Reports
           </h2>
           <p className="text-xs text-slate-400 font-medium mt-1">
@@ -172,7 +172,7 @@ export default function AllReports() {
         {/* Header Section */}
         <div className="flex items-center gap-2 pb-3 border-b border-slate-100 select-none w-full">
           <SlidersHorizontal size={16} className="text-slate-400" />
-          <h3 className="text-[14px] font-bold text-slate-900 tracking-tight">
+          <h3 className="text-[14px] font-bold text-primary tracking-tight">
             Report Options
           </h3>
         </div>
@@ -194,7 +194,7 @@ export default function AllReports() {
                 className={`w-full h-14 pl-3.5 pr-10 border rounded-xl text-xs font-bold outline-none focus:ring-4 transition-all appearance-none cursor-pointer ${
                   touched.template && !template
                     ? "bg-rose-50/40 border-rose-200 text-rose-900 focus:border-rose-400 focus:ring-rose-900/5"
-                    : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-slate-900/5"
+                    : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-primary/5"
                 }`}
                 required
               >
@@ -247,7 +247,7 @@ export default function AllReports() {
                   className={`w-full h-14 pl-10 pr-3.5 border rounded-xl text-xs font-bold outline-none focus:ring-4 cursor-pointer transition-all ${
                     touched.startDate && !startDate
                       ? "bg-rose-50/40 border-rose-200 text-rose-900 focus:border-rose-400 focus:ring-rose-900/5"
-                      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-slate-900/5"
+                      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-primary/5"
                   }`}
                   required
                 />
@@ -285,7 +285,7 @@ export default function AllReports() {
                   className={`w-full h-14 pl-10 pr-3.5 border rounded-xl text-xs font-bold outline-none focus:ring-4 cursor-pointer transition-all ${
                     touched.endDate && !endDate
                       ? "bg-rose-50/40 border-rose-200 text-rose-900 focus:border-rose-400 focus:ring-rose-900/5"
-                      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-slate-900/5"
+                      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-primary/5"
                   }`}
                   required
                 />
@@ -319,7 +319,7 @@ export default function AllReports() {
                   className={`w-full h-14 pl-10 pr-3.5 border rounded-xl text-xs font-bold outline-none focus:ring-4 cursor-pointer transition-all ${
                     touched.asAt && !asAt
                       ? "bg-rose-50/40 border-rose-200 text-rose-900 focus:border-rose-400 focus:ring-rose-900/5"
-                      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-slate-900/5"
+                      : "bg-slate-50 border-slate-200 text-slate-800 focus:border-slate-400 focus:ring-primary/5"
                   }`}
                   required
                 />
@@ -340,7 +340,7 @@ export default function AllReports() {
             <button
               type="submit"
               disabled={isLoading || isFormInvalid}
-              className="w-full h-14 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-slate-800 transition-all shadow-sm active:scale-[0.99] disabled:opacity-40 disabled:hover:bg-slate-900 disabled:bg-slate-900 disabled:scale-100 disabled:pointer-events-none select-none cursor-pointer"
+              className="w-full h-14 bg-primary text-white rounded-xl text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 hover:bg-secondary transition-all shadow-sm active:scale-[0.99] disabled:opacity-40 disabled:hover:bg-primary disabled:bg-primary disabled:scale-100 disabled:pointer-events-none select-none cursor-pointer"
             >
               {isLoading ? (
                 <>
@@ -361,7 +361,7 @@ export default function AllReports() {
       {/* 3. DYNAMIC RENDERING SHEET CANVAS CANVAS AREA */}
       {isLoading && (
         <div className="w-full bg-white border border-slate-200 rounded-3xl p-12 flex flex-col items-center justify-center space-y-3 shadow-2xs">
-          <Loader2 className="animate-spin text-slate-900" size={28} />
+          <Loader2 className="animate-spin text-primary" size={28} />
           <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
             Compiling ledger database vectors...
           </p>
@@ -375,11 +375,11 @@ export default function AllReports() {
           {/* Dynamic Meta Info Control Strip */}
           <div className="bg-white border border-slate-200 p-4 rounded-2xl shadow-sm flex sm:flex-col sm:items-start justify-between gap-4 select-none w-full">
             <div className="flex items-center gap-3">
-              <div className="size-9 bg-slate-900 text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-inner">
+              <div className="size-9 bg-primary text-white rounded-xl flex items-center justify-center font-bold text-xs shadow-inner">
                 <Layers size={16} />
               </div>
               <div>
-                <h4 className="text-[13px] font-bold text-slate-900 tracking-tight leading-none">
+                <h4 className="text-[13px] font-bold text-primary tracking-tight leading-none">
                   {`${formatReportTitle(reportData.meta?.report_key)} Report`}
                 </h4>
               </div>
@@ -433,7 +433,7 @@ export default function AllReports() {
                         return (
                           <td
                             key={col.key}
-                            className="py-4 truncate px-6 text-left font-semibold text-slate-900"
+                            className="py-4 truncate px-6 text-left font-semibold text-primary"
                           >
                             {String(rawValue)}
                           </td>
@@ -487,14 +487,14 @@ const ReportEmptyState = () => {
         </div>
 
         {/* Playful indicator arrow nudging them upwards towards the form */}
-        <div className="absolute -top-1 -right-1 size-5 rounded-full bg-slate-900 border-2 border-white flex items-center justify-center text-white shadow-xs">
+        <div className="absolute -top-1 -right-1 size-5 rounded-full bg-primary border-2 border-white flex items-center justify-center text-white shadow-xs">
           <ArrowUp size={10} strokeWidth={3} />
         </div>
       </div>
 
       {/* Helper Messaging */}
       <div className="max-w-xs space-y-1">
-        <h4 className="text-[14px] font-bold text-slate-900 tracking-tight">
+        <h4 className="text-[14px] font-bold text-primary tracking-tight">
           No Report Generated Yet
         </h4>
         <p className="text-[12px] text-slate-400 font-medium leading-normal">

@@ -221,9 +221,9 @@ export default function FinancialReports() {
             <table className="w-full border-collapse text-left">
               <thead>
                 <tr className="bg-slate-50 text-[11px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-200 select-none">
-                  <th className="py-3 px-6 w-32">Account Code</th>
-                  <th className="py-3 px-6">Account Ledger Description</th>
-                  <th className="py-3 px-6 w-28">Element Type</th>
+                  <th className="py-3 px-6 w-32 truncate">Account Code</th>
+                  <th className="py-3 px-6 truncate">Account Ledger Description</th>
+                  <th className="py-3 px-6 w-28 truncate">Element Type</th>
                   <th className="py-3 px-6 text-right w-48">Debit (KES)</th>
                   <th className="py-3 px-6 text-right w-48">Credit (KES)</th>
                 </tr>
@@ -263,10 +263,10 @@ export default function FinancialReports() {
                     Grand Totals Balance
                   </td>
                   {/* Maps precisely to root-level summary keys */}
-                  <td className="py-4 px-6 text-right font-mono border-primary text-slate-900">
+                  <td className="py-4 px-6 text-right font-mono border-primary text-primary">
                     {formatCurrency(myTrialBalance?.total_debit || 0)}
                   </td>
-                  <td className="py-4 px-6 text-right font-mono border-primary text-slate-900">
+                  <td className="py-4 px-6 text-right font-mono border-primary text-primary">
                     {formatCurrency(myTrialBalance?.total_credit || 0)}
                   </td>
                 </tr>
@@ -390,7 +390,7 @@ export default function FinancialReports() {
                           <span className="font-mono font-bold text-slate-400 shrink-0">
                             {root.account_code}
                           </span>
-                          <span className="font-bold text-slate-900 truncate pl-1">
+                          <span className="font-bold text-primary truncate pl-1">
                             {root.account_name}
                           </span>
                         </div>
@@ -548,7 +548,7 @@ export default function FinancialReports() {
                 <span className="text-[11px] text-slate-400 font-bold">
                   KES
                 </span>
-                <span className="text-slate-900 font-black">
+                <span className="text-primary font-black">
                   {formatCurrency(myIncomeStatement?.net_surplus || 0)}
                 </span>
               </div>
@@ -701,7 +701,7 @@ export default function FinancialReports() {
                   <span className="text-[10px] text-slate-400 font-bold font-sans">
                     KES
                   </span>
-                  <span className="text-slate-900 font-black">
+                  <span className="text-primary font-black">
                     {formatCurrency(myBalanceSheet?.total_assets || 0)}
                   </span>
                 </div>
@@ -715,7 +715,7 @@ export default function FinancialReports() {
                   <span className="text-[10px] text-slate-400 font-bold font-sans">
                     KES
                   </span>
-                  <span className="text-slate-900 font-black">
+                  <span className="text-primary font-black">
                     {formatCurrency(
                       myBalanceSheet?.liabilities_and_equity || 0,
                     )}

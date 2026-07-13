@@ -25,20 +25,20 @@ import {
 import { getRoles } from "../../sdk/roles/roles";
 import { useQuery, useMutation } from "react-query";
 import { useToast } from "../../contexts/ToastProvider";
-import { addUser } from "../../sdk/users/users";
-import { useNavigate } from "react-router-dom";
+import { addUser, editUser, getUser } from "../../sdk/users/users";
+import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function EditAdminUser() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-
-  // Workflow Phase Tracking States
   const [roles, setRoles] = useState([]);
   const [isReviewing, setIsReviewing] = useState(false);
   const [successData, setSuccessData] = useState(null);
   const [errors, setErrors] = useState({});
   const [copied, setCopied] = useState(false);
+  const { id } = useParams();
+  const [user, setUser] = useState({});
 
   const [formData, setFormData] = useState({
     firstname: "",
@@ -55,6 +55,7 @@ export default function EditAdminUser() {
     address: "",
     role_id: "",
   });
+
   useQuery({
     queryKey: ["roles"],
     queryFn: async () => {
@@ -67,6 +68,40 @@ export default function EditAdminUser() {
     onError: (error) => {
       showToast({
         title: "Roles processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  useQuery({
+    queryKey: ["get user"],
+    queryFn: async () => {
+      const response = await getUser(id);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setUser(data || {});
+      setFormData({
+        firstname: data?.lastname || "",
+        lastname: data?.lastname || "",
+        username: data?.username || "",
+        email: data?.email || "",
+        phone: data?.phone || "",
+        office_phone: data?.office_phone || "",
+        job_title: data?.job_title || "",
+        department: data?.department || "",
+        country: data?.country || "",
+        county: data?.county || "",
+        subcounty: data?.subcounty || "",
+        address: data?.address || "",
+        role_id: data?.role?.id || "",
+      });
+    },
+    onError: (error) => {
+      showToast({
+        title: "User processing failed",
         type: "error",
         position: "top-right",
         description: error?.response?.data?.message || error.message,
@@ -91,7 +126,6 @@ export default function EditAdminUser() {
       if (name === "email" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
         errorMsg = "Invalid email format (e.g., name@sacco.co.ke)";
       }
-      // Relaxed phone check to cleanly support numbers starting with 0 (e.g., 0721...)
       if (name === "phone" && !/^\+?[0-9]\d{7,14}$/.test(value)) {
         errorMsg = "Invalid phone number formatting";
       }
@@ -99,7 +133,6 @@ export default function EditAdminUser() {
         errorMsg = "Password must be at least 8 characters long";
       }
     }
-
     setErrors((prev) => ({ ...prev, [name]: errorMsg }));
     return errorMsg;
   };
@@ -132,8 +165,6 @@ export default function EditAdminUser() {
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
-
-      // Map names to a human-readable list (e.g., role_id turns into "role id")
       const pendingFieldsList = Object.keys(newErrors)
         .map((f) => f.replace("_", " "))
         .join(", ");
@@ -150,9 +181,10 @@ export default function EditAdminUser() {
   };
 
   const { mutate, isLoading } = useMutation({
-    mutationKey: ["add user"],
+    mutationKey: ["edit user"],
     mutationFn: async () => {
-      return await addUser(
+      return await editUser(
+        id,
         formData?.email,
         formData?.username,
         formData?.firstname,
@@ -551,7 +583,7 @@ export default function EditAdminUser() {
                 className="h-11 px-6 bg-emerald-600 text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-emerald-600/10 hover:bg-emerald-700 transition-all active:scale-97 cursor-pointer flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400"
               >
                 <span>
-                  {isLoading ? "Provisioning..." : "Confirm & Add User"}
+                  {isLoading ? "Provisioning..." : "Confirm & Update User"}
                 </span>
                 <Check size={14} />
               </button>

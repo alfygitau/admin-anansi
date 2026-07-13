@@ -86,7 +86,7 @@ export default function Loan() {
       ) : (
         <div className="w-full space-y-5 antialiased text-slate-800">
           {/* EXECUTIVE CONTROL HEADER LAYER */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 select-none">
+          <div className="w-full flex flex-col md:flex-row md:items-center md:justify-between gap-4 select-none">
             <div className="flex items-center gap-4">
               <button
                 onClick={() => navigate(-1)}
@@ -120,13 +120,13 @@ export default function Loan() {
 
             {/* CONCEALED WORKFLOW MANAGEMENT DECK */}
             <div
-              className="relative inline-block text-left"
+              className="relative inline-block text-left sm:w-full"
               ref={actionMenuRef}
             >
               <button
                 type="button"
                 onClick={() => setIsActionMenuOpen(!isActionMenuOpen)}
-                className={`h-11 px-4 border rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2.5 cursor-pointer shadow-2xs ${
+                className={`sm:w-full h-11 px-4 border rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-2.5 cursor-pointer shadow-2xs ${
                   isActionMenuOpen
                     ? "border-primary bg-primary/5 text-primary ring-4 ring-primary/5"
                     : "border-slate-200 bg-white text-slate-700 hover:bg-slate-50 hover:text-primary"

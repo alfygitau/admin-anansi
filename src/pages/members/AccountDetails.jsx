@@ -84,7 +84,7 @@ export default function AccountDetails({ onBack }) {
         <AccountDetailsLoader />
       ) : (
         <div>
-          <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between pb-6 select-none">
+          <div className="w-full flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between pb-6 select-none">
             <div className="flex items-center gap-3">
               <button
                 onClick={onBack}
@@ -102,11 +102,11 @@ export default function AccountDetails({ onBack }) {
                 </p>
               </div>
             </div>
-            <div className="relative">
+            <div className="relative sm:w-full">
               {/* Dropdown Menu Trigger Button */}
               <button
                 onClick={() => setIsActionMenuOpen(!isActionMenuOpen)}
-                className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 bg-white text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 active:bg-slate-100/80 transition-all cursor-pointer shadow-2xs outline-none focus:border-slate-300"
+                className="sm:w-full flex items-center gap-1.5 h-10 px-4 border border-slate-200 bg-white text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 active:bg-slate-100/80 transition-all cursor-pointer shadow-2xs outline-none focus:border-slate-300"
               >
                 <span>Account Actions</span>
                 <ChevronDown

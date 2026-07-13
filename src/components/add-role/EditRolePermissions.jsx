@@ -174,7 +174,7 @@ export default function AssignPermissions({
                   <Lock size={12} strokeWidth={2.5} />
                 </div>
                 <span className="text-[10px] font-black uppercase tracking-wider text-[#074073]">
-                  Security Protocol Matrix
+                  Security Protocol
                 </span>
               </div>
               <h2 className="text-xl font-black text-primary tracking-tight mt-1.5">
@@ -185,26 +185,7 @@ export default function AssignPermissions({
                 <span className="text-[#074073] font-bold">{roleName}</span>.
               </p>
             </div>
-
-            {/* Real-time Directory Search Deck */}
-            <div className="px-8 pb-4 select-none">
-              <div className="relative group w-full">
-                <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-slate-300 group-focus-within:text-[#074073] transition-colors">
-                  <Search size={15} />
-                </div>
-                <input
-                  type="text"
-                  placeholder="Filter keys e.g., disbursement, write, view..."
-                  value={searchQuery}
-                  disabled={loading}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-11 pr-4 h-11 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-[#074073] focus:bg-white transition-all shadow-3xs"
-                />
-              </div>
-            </div>
-
             <div className="border-b mx-8 border-slate-100"></div>
-
             {/* Scrollable Capability Container */}
             <div className="flex-1 overflow-y-auto px-8 py-5 space-y-6">
               {categories.map((cat) => {

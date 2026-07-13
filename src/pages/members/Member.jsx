@@ -240,7 +240,7 @@ export default function MemberDetails() {
       ) : (
         <div className="w-full space-y-6 font-sans antialiased text-slate-800">
           {/* 1. ACTION HEADER BAR CONTAINER */}
-          <div className="flex justify-between gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
+          <div className="flex justify-between gap-4 sm:flex-col sm:items-start sm:justify-between border-b border-slate-200/60 pb-6 select-none">
             <div className="flex items-center gap-3">
               <button
                 onClick={onBack}
@@ -262,10 +262,10 @@ export default function MemberDetails() {
                 </p>
               </div>
             </div>
-            <div className="relative">
+            <div className="relative sm:w-full">
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
-                className="flex items-center gap-2 h-10 px-4 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 active:bg-slate-100/80 transition-all cursor-pointer shadow-2xs outline-none focus:border-slate-300 select-none"
+                className="sm:w-full flex items-center gap-2 h-10 px-4 border border-slate-200 bg-white text-slate-700 rounded-xl text-xs font-bold hover:bg-slate-50 active:bg-slate-100/80 transition-all cursor-pointer shadow-2xs outline-none focus:border-slate-300 select-none"
               >
                 <UserCog size={14} className="text-slate-400" />
                 <span>Manage Member</span>

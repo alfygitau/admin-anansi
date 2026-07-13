@@ -193,3 +193,25 @@ export const cancelApplication = async (id, adminId, adminName, reason) => {
     throw error?.response?.data || error;
   }
 };
+
+export const getApplicationChattels = async (appId) => {
+  try {
+    const response = await loanClient.get(
+      `/loan-applications/${appId}/chattels`,
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const getApplicationDocuments = async (appId) => {
+  try {
+    const response = await loanClient.get(
+      `/loan-applications/${appId}/documents`,
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

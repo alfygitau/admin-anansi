@@ -112,9 +112,56 @@ export const addUser = async (
   }
 };
 
+export const editUser = async (
+  userId,
+  email,
+  username,
+  firstname,
+  lastname,
+  phone,
+  job_title,
+  office_phone,
+  department,
+  country,
+  county,
+  subcounty,
+  address,
+  role_id,
+) => {
+  try {
+    const response = await client.patch(`/users/${userId}`, {
+      email,
+      username,
+      firstname,
+      lastname,
+      phone,
+      job_title,
+      office_phone,
+      department,
+      country,
+      county,
+      subcounty,
+      address,
+      role_id,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
 export const getModules = async () => {
   try {
     const response = await client.get(`/modules`);
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const getUser = async (userId) => {
+  try {
+    const response = await client.get(`/users/${userId}`);
     return response;
   } catch (error) {
     throw error?.response?.data || error;

@@ -51,6 +51,7 @@ import EditAdminUser from "./pages/users/EditUser";
 import FinancialReports from "./pages/reports/FinancialReports";
 import AllReports from "./pages/reports/AllReports";
 import Analytics from "./pages/reports/Analytics";
+import VerifyChattel from "./pages/loan-applications/verify-chattels/VerifyChattel";
 
 function App() {
   return (
@@ -71,6 +72,10 @@ function App() {
         <Route
           path="loan-applications/:id/disburse"
           element={<DisburseLoan />}
+        />
+        <Route
+          path="loan-applications/:id/verify-chattel/:chattelId"
+          element={<VerifyChattel />}
         />
         <Route
           path="loan-applications/:id/cancel-application"

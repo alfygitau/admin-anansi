@@ -31,7 +31,11 @@ import {
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
-import { getApplication } from "../../../sdk/loan-applications/loan-applications";
+import {
+  getApplication,
+  getApplicationChattels,
+  getApplicationDocuments,
+} from "../../../sdk/loan-applications/loan-applications";
 import { useToast } from "../../../contexts/ToastProvider";
 import ApplicationLoader from "../../../skeletons/ApplicationLoader";
 
@@ -41,6 +45,8 @@ export default function LoanApplication() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { showToast } = useToast();
+  const [applicationChattels, setApplicationChattels] = useState([]);
+  const [applicationDocuments, setApplicationDocuments] = useState([]);
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -93,6 +99,44 @@ export default function LoanApplication() {
     },
   });
 
+  useQuery({
+    queryKey: ["get loan application chattels", id],
+    queryFn: async () => {
+      const response = await getApplicationChattels(id);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setApplicationChattels(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Transactions processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  useQuery({
+    queryKey: ["get loan application documents", id],
+    queryFn: async () => {
+      const response = await getApplicationDocuments(id);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setApplicationDocuments(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Transactions processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
   // Dynamic Status Badge Mapping
   const getStatusConfig = (status) => {
     const raw = String(status).toLowerCase();
@@ -134,6 +178,18 @@ export default function LoanApplication() {
         return "bg-slate-50 border-slate-200 text-slate-600";
     }
   };
+
+  function downloadFileDirect(url, filename) {
+    const link = document.createElement("a");
+    link.href = url;
+    if (filename) {
+      link.download = filename;
+    }
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 
   return (
     <div className="w-full space-y-4 antialiased text-slate-800 bg-slate-50/30 p-1 rounded-3xl">
@@ -578,7 +634,7 @@ export default function LoanApplication() {
             title="Collateral & Security Assets"
             icon={<ShieldAlert size={15} />}
           >
-            {!application.requires_collateral ? (
+            {!application?.loan_product?.requires_collateral ? (
               /* 1. FULL CARD EXEMPTION EMPTY STATE (Centers perfectly with no other elements) */
               <div className="col-span-full flex flex-col items-center justify-center py-12 text-center select-none">
                 <div className="size-12 bg-blue-50/60 border border-blue-100 rounded-2xl flex items-center justify-center text-blue-600 mb-4 shadow-3xs">
@@ -594,95 +650,68 @@ export default function LoanApplication() {
                 </p>
               </div>
             ) : (
-              /* 2. STANDARD RUNTIME GRID LAYOUT (Only loads if security assets are required) */
               <>
-                <MetricItem
-                  icon={<ShieldCheck />}
-                  label="Risk Guarantee Rule"
-                  value="Asset Pledge Required"
-                />
-                <MetricItem
-                  icon={<DollarSign />}
-                  label="Combined Evaluated Worth"
-                  value={`KES ${Number(application.collateral_value || 0).toLocaleString()}`}
-                  isCrypto
-                />
-
                 <div className="md:col-span-2 w-full space-y-4 mt-1">
-                  {/* Accepted asset types brief note */}
-                  <div className="space-y-1.5 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/50">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
-                      Accepted Protection Templates
-                    </span>
-                    <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                      {application.collateral_description ||
-                        "Verifiable logbooks, land registries, or title files."}
-                    </p>
-                  </div>
-
-                  {/* Asset list tracking registry section */}
-                  <div className="space-y-3.5 border-t border-slate-100 pt-4">
-                    <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block pl-0.5">
-                      Asset Registry Evaluations
-                    </span>
-
-                    {application?.chattels &&
-                    application.chattels.length > 0 ? (
-                      <div className="space-y-2.5">
-                        {application.chattels.map((c, i) => (
-                          <div
-                            key={i}
-                            className="border border-slate-200/70 p-4 rounded-2xl bg-white grid grid-cols-1 sm:grid-cols-3 gap-4 items-center shadow-3xs"
-                          >
-                            <div>
-                              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                                Security Asset Class
-                              </span>
-                              <p className="text-xs font-black text-slate-800 mt-0.5">
-                                {c.type}
-                              </p>
-                            </div>
-                            <div>
-                              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
-                                Escrow Folder Memo
-                              </span>
-                              <p className="text-xs text-slate-500 font-medium mt-0.5 truncate">
-                                {c.description}
-                              </p>
-                            </div>
-                            <div className="flex items-center justify-between sm:justify-end gap-4">
-                              <div className="sm:text-right">
-                                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">
-                                  Certified Value
-                                </span>
-                                <p className="text-xs font-mono font-black text-[#074073] mt-0.5">
-                                  KES{" "}
-                                  {Number(
-                                    c.calculated_value || 0,
-                                  ).toLocaleString()}
-                                </p>
-                              </div>
-                              <span className="text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md bg-blue-50 border border-blue-100 text-blue-600">
-                                {c.validation || "Cleared"}
-                              </span>
-                            </div>
+                  {applicationChattels && applicationChattels.length > 0 ? (
+                    <div className="space-y-2.5">
+                      {applicationChattels.map((c, i) => (
+                        <div
+                          key={i}
+                          onClick={() =>
+                            navigate(
+                              `/admin/loan-applications/${application?.id}/verify-chattel/${c?.id}`,
+                            )
+                          }
+                          className="border cursor-pointer border-slate-200/70 p-4 rounded-2xl bg-white grid grid-cols-1 sm:grid-cols-3 gap-4 items-center shadow-3xs"
+                        >
+                          <div>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                              Security Asset Class
+                            </span>
+                            <p className="text-xs font-black text-slate-800 mt-0.5">
+                              {c.asset_category}
+                            </p>
                           </div>
-                        ))}
-                      </div>
-                    ) : (
-                      /* REQUIRED BUT ASSETS NOT LOGGED YET STATE */
-                      <div className="border border-dashed border-rose-200 p-6 rounded-2xl bg-rose-50/20 text-center select-none">
-                        <p className="text-xs font-bold text-rose-700 uppercase tracking-wide">
-                          Assets Pending Check
-                        </p>
-                        <p className="text-[11px] text-rose-600/80 font-medium mt-1">
-                          Collateral security is mandatory for this loan, but no
-                          specific assets have been logged or evaluated by our
-                          team yet.
-                        </p>
-                      </div>
-                    )}
-                  </div>
+                          <div>
+                            <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+                              Escrow Folder Memo
+                            </span>
+                            <p className="text-xs text-slate-500 font-medium mt-0.5 truncate">
+                              {c.asset_name}
+                            </p>
+                          </div>
+                          <div className="flex items-center justify-between sm:justify-end gap-4">
+                            <div className="sm:text-right">
+                              <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">
+                                Certified Value
+                              </span>
+                              <p className="text-xs font-mono font-black text-[#074073] mt-0.5">
+                                KES{" "}
+                                {Number(
+                                  c.estimated_value || 0,
+                                ).toLocaleString()}
+                              </p>
+                            </div>
+                            <span className="text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-md bg-blue-50 border border-blue-100 text-blue-600">
+                              {c.status || "Cleared"}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    /* REQUIRED BUT ASSETS NOT LOGGED YET STATE */
+                    <div className="border border-dashed border-rose-200 p-6 rounded-2xl bg-rose-50/20 text-center select-none">
+                      <p className="text-xs font-bold text-rose-700 uppercase tracking-wide">
+                        Assets Pending Check
+                      </p>
+                      <p className="text-[11px] text-rose-600/80 font-medium mt-1">
+                        Collateral security is mandatory for this loan, but no
+                        specific assets have been logged or evaluated by our
+                        team yet.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </>
             )}
@@ -690,11 +719,11 @@ export default function LoanApplication() {
 
           {/* CARD 6: UNDERWRITING DOCUMENT COMPLIANCE VAULT */}
           <ApplicationCard
-            title="Compliance Files"
+            title="Compliance Documents"
             icon={<Paperclip size={15} />}
           >
-            {!application?.documents || application.documents.length === 0 ? (
-              /* 1. FULL CARD EXEMPTION EMPTY STATE (Centers perfectly with nothing else on the card) */
+            {applicationDocuments?.length === 0 ? (
+              /* 1. FULL CARD EXEMPTION EMPTY STATE */
               <div className="col-span-full flex flex-col items-center justify-center py-12 text-center select-none">
                 <div className="size-12 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center text-slate-400 mb-4 shadow-3xs">
                   <Paperclip size={20} strokeWidth={2.5} />
@@ -709,54 +738,61 @@ export default function LoanApplication() {
                 </p>
               </div>
             ) : (
-              /* 2. STANDARD RUNTIME GRID LAYOUT (Only loads if files exist) */
-              <>
-                <div className="md:col-span-2 space-y-1.5 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/50 mb-1">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
-                    Dossier Quality Assurance
-                  </span>
-                  <p className="text-xs text-slate-500 font-medium leading-relaxed">
-                    Ensure KYC document logs, physical bank records, and company
-                    statements match structural forms before triggering a pool
-                    vote.
-                  </p>
-                </div>
+              <div className="col-span-full w-full flex flex-col gap-3">
+                {applicationDocuments?.map((doc, i) => {
+                  const isImage = doc.type
+                    ?.toLowerCase()
+                    .match(/(jpg|jpeg|png|webp|gif)/);
+                  const displayImage = isImage && doc.file_url;
 
-                <div className="md:col-span-2 space-y-3 border-t border-slate-100 pt-4 w-full">
-                  <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block pl-0.5">
-                    Files Matrix Registry
-                  </span>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {application.documents.map((doc, i) => (
-                      <div
-                        key={i}
-                        className="border border-slate-200/70 p-3 rounded-2xl flex items-center justify-between bg-white hover:border-slate-300 transition-all group shadow-3xs"
-                      >
-                        <div className="flex items-center gap-2.5 min-w-0">
-                          <div className="size-8.5 bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 rounded-xl group-hover:text-[#074073] group-hover:bg-[#074073]/5 group-hover:border-[#074073]/10 transition-colors shrink-0">
-                            <FileText size={14} />
-                          </div>
-                          <div className="min-w-0 space-y-0.5">
-                            <p className="text-xs font-bold text-slate-800 truncate leading-tight">
-                              {doc.name}
-                            </p>
-                            <p className="text-[10px] text-slate-400 font-mono tracking-wide uppercase">
+                  return (
+                    <div
+                      key={i}
+                      className="group flex items-center justify-between p-4 bg-white border border-slate-100 rounded-2xl shadow-sm hover:shadow-md hover:border-slate-200/80 transition-all duration-300 w-full"
+                    >
+                      <div className="flex items-center gap-3.5 min-w-0 flex-1 mr-4">
+                        <div className="w-12 h-12 rounded-xl border border-slate-100 bg-slate-50 flex items-center justify-center shrink-0 overflow-hidden relative group-hover:border-blue-100 transition-colors">
+                          {displayImage ? (
+                            <img
+                              src={doc.file_url}
+                              alt={doc.name || doc.doc_type}
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="text-slate-400 group-hover:text-blue-600 group-hover:bg-blue-50/50 w-full h-full flex items-center justify-center transition-colors">
+                              <FileText size={20} />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Text Metadata */}
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-semibold text-slate-800 truncate group-hover:text-blue-900 transition-colors">
+                            {doc.doc_type || "Untitled Document"}
+                          </p>
+                          <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-400 font-medium">
+                            <span className="uppercase tracking-wider font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px]">
                               {doc.type || "PDF"}
-                            </p>
+                            </span>
+                            <span className="w-1 h-1 rounded-full bg-slate-300" />
+                            <span>{doc.file_size || "Unknown size"}KB</span>
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          className="size-8 rounded-xl flex items-center justify-center text-slate-400 hover:text-primary border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer shrink-0 ml-2 transition-all shadow-3xs active:scale-90"
-                          title={`Download ${doc.name}`}
-                        >
-                          <DownloadCloud size={13} />
-                        </button>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              </>
+                      <button
+                        onClick={() =>
+                          downloadFileDirect(doc?.file_url, doc?.doc_type)
+                        }
+                        type="button"
+                        className="w-9 h-9 rounded-xl flex items-center justify-center text-slate-400 border border-slate-200 bg-white hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50/30 cursor-pointer shrink-0 transition-all duration-200 shadow-2xs hover:shadow-sm active:scale-95"
+                        title={`Download ${doc.name || doc.doc_type}`}
+                      >
+                        <DownloadCloud size={16} />
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
             )}
           </ApplicationCard>
 

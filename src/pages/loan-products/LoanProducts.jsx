@@ -348,7 +348,9 @@ export default function LoanProducts() {
                           <Eye size={14} />
                         </button>
                         <button
-                          onClick={() => navigate("/admin/edit-loan-product")}
+                          onClick={() =>
+                            navigate(`/admin/edit-loan-product/${product?.id}`)
+                          }
                           className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm bg-white"
                           title="Edit Parameters"
                         >

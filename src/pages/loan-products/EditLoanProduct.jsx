@@ -18,31 +18,37 @@ import {
   Briefcase,
   Layers3,
 } from "lucide-react";
+import { useToast } from "../../contexts/ToastProvider";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  editLoanProduct,
+  getLoanProduct,
+} from "../../sdk/loan-products/loan-products";
+import { useQuery, useMutation } from "react-query";
 
 export default function EditLoanProduct() {
   const [formData, setFormData] = useState({
-    product_code: "Development_loan",
-    product_name: "Development Loan",
-    description:
-      "Long-term development loan requiring full credit committee review",
+    product_code: "",
+    product_name: "",
+    description: "",
     features: null,
     terms_and_conditions: null,
     is_active: true,
-    org_code: "BA208",
+    org_code: "",
     loan_mode: 1,
-    min_amount: "50000.00",
-    max_amount: "5000000.00",
-    min_period: 6,
-    max_period: 60,
+    min_amount: "",
+    max_amount: "",
+    min_period: 0,
+    max_period: 0,
     limit_algorithm: "fixed",
     limit_start_amount: "0.00",
     limit_increment_amount: "0.00",
-    limit_start_multiplier: "1.5000",
-    limit_increment_multiplier: "0.5000",
-    limit_max_multiplier: "3.0000",
+    limit_start_multiplier: "0.000",
+    limit_increment_multiplier: "0.000",
+    limit_max_multiplier: "0.0000",
     limit_multiplier_basis: "savings",
     limit_resets_on_default: true,
-    interest_rate: "1.5000",
+    interest_rate: "0.000",
     interest_key: "pm",
     interest_method: "reducing_balance",
     repayment_interval: "Monthly",
@@ -51,59 +57,234 @@ export default function EditLoanProduct() {
     processing_fee_value: "1.0000",
     deduct_fee_from_principal: true,
     has_insurance: true,
-    insurance_rate: "0.5000",
+    insurance_rate: "0.000",
     has_penalty: true,
     penalty_type: "percentage_of_outstanding",
-    penalty_value: "5.0000",
+    penalty_value: "0.0000",
     penalty_frequency: "monthly",
-    grace_period_days: 30,
+    grace_period_days: 0,
     penalty_grace_period_days: 0,
     penalty_cap_days: 0,
-    max_penalty_rate: "20.0000",
-    workflow_type: "committee_and_manager",
+    max_penalty_rate: "0.0000",
+    workflow_type: "",
     auto_disburse: false,
     committee_approvals_required: 3,
     requires_manager_approval: true,
-    committee_group_id: "credit-committee-group-uuid",
-    allowed_disbursement_methods: ["MPESA", "BANK"],
+    allowed_disbursement_methods: [],
     requires_guarantor: true,
-    min_guarantors: 2,
-    max_guarantors: 4,
+    min_guarantors: 0,
+    max_guarantors: 0,
     guarantor_required_above_amount: "0.00",
-    guarantor_coverage_percent: "100.0000",
-    min_membership_months: 6,
-    min_shares_amount: "10000.00",
-    min_savings_amount: "20000.00",
-    max_loan_to_shares_ratio: "5.0000",
+    guarantor_coverage_percent: "0.0000",
+    min_membership_months: 0,
+    min_shares_amount: "0.00",
+    min_savings_amount: "0.00",
+    max_loan_to_shares_ratio: "0.0000",
     max_loan_to_savings_ratio: "0.0000",
-    max_active_loans_of_type: 1,
-    max_total_active_loans: 2,
-    blocked_concurrent_loan_types: ["Development_loan"],
-    allowed_concurrent_loan_types: [],
+    max_active_loans_of_type: 0,
+    max_total_active_loans: 0,
     block_if_defaulted: true,
-    min_repayment_percent_before_reapply: "100.0000",
+    min_repayment_percent_before_reapply: "0.0000",
     block_if_guarantor_on_defaulted: true,
     required_kyc_level: 1,
     allows_rollover: false,
     allows_topup: true,
-    min_repayment_percent_for_topup: "50.0000",
+    min_repayment_percent_for_topup: "0.0000",
     moratorium_months: 0,
     moratorium_interest_handling: "interest_only",
     requires_collateral: false,
-    collateral_description:
-      "Logbook, title deed, or other acceptable collateral",
-    allowed_currencies: ["KES"],
+    collateral_description: "",
+    terms_and_conditions: "",
+  });
+  const navigate = useNavigate();
+  const [loanProduct, setLoanProduct] = useState({});
+  const { showToast } = useToast();
+  const { id } = useParams();
+
+  const { isFetching } = useQuery({
+    queryKey: ["loan-product", id],
+    queryFn: async () => {
+      const response = await getLoanProduct(id);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setLoanProduct(data);
+      setFormData({
+        product_code: data?.product_code ?? "",
+        product_name: data?.product_name ?? "",
+        description: data?.description ?? "",
+        features: data?.features,
+        terms_and_conditions: data?.terms_and_conditions ?? "",
+        org_code: "BA208",
+        loan_mode: data?.loan_mode ?? "",
+        min_amount: data?.min_amount ?? "",
+        max_amount: data?.max_amount ?? "",
+        min_period: data?.min_period ?? "",
+        max_period: data?.max_period ?? "",
+        limit_algorithm: data?.limit_algorithm,
+        limit_start_amount: data?.limit_start_amount,
+        limit_increment_amount: data?.limit_increment_amount,
+        limit_start_multiplier: data?.limit_start_multiplier,
+        limit_increment_multiplier: data?.limit_increment_multiplier,
+        limit_max_multiplier: data?.limit_max_multiplier,
+        limit_multiplier_basis: data?.limit_multiplier_basis,
+        limit_resets_on_default: data?.limit_resets_on_default,
+        interest_rate: data?.interest_rate,
+        interest_key: data?.interest_key,
+        interest_method: data?.interest_method,
+        repayment_interval: data?.repayment_interval,
+        duration_key: data?.duration_key,
+        processing_fee_type: data?.processing_fee_type,
+        processing_fee_value: data?.processing_fee_value,
+        deduct_fee_from_principal: data?.deduct_fee_from_principal,
+        has_insurance: data?.has_insurance,
+        insurance_rate: data?.insurance_rate,
+        has_penalty: data?.has_penalty,
+        penalty_type: data?.penalty_type,
+        penalty_value: data?.penalty_value,
+        penalty_frequency: data?.penalty_frequency,
+        penalty_cap_days: data?.penalty_cap_days,
+        max_penalty_rate: data?.max_penalty_rate,
+        workflow_type: "committee_and_manager",
+        auto_disburse: data?.auto_disburse,
+        committee_approvals_required: data?.committee_approvals_required,
+        requires_manager_approval: data?.requires_manager_approval,
+        allowed_disbursement_methods: data?.allowed_disbursement_methods,
+        requires_guarantor: data?.requires_guarantor,
+        min_guarantors: data?.min_guarantors,
+        max_guarantors: data?.max_guarantors,
+        guarantor_required_above_amount: data?.guarantor_required_above_amount,
+        guarantor_coverage_percent: data?.guarantor_coverage_percent,
+        min_membership_months: data?.min_membership_months,
+        min_shares_amount: data?.min_shares_amount,
+        min_savings_amount: data?.min_savings_amount,
+        max_loan_to_shares_ratio: data?.max_loan_to_shares_ratio,
+        max_loan_to_savings_ratio: data?.max_loan_to_savings_ratio,
+        max_active_loans_of_type: data?.max_active_loans_of_type,
+        max_total_active_loans: data?.max_total_active_loans,
+        blocked_concurrent_loan_types: data?.blocked_concurrent_loan_types,
+        allowed_concurrent_loan_types: data?.allowed_concurrent_loan_types,
+        block_if_defaulted: data?.block_if_defaulted,
+        min_repayment_percent_before_reapply:
+          data?.min_repayment_percent_before_reapply,
+        block_if_guarantor_on_defaulted: data?.block_if_guarantor_on_defaulted,
+        required_kyc_level: data?.required_kyc_level,
+        allows_rollover: data?.allows_rollover,
+        allows_topup: data?.allows_topup,
+        min_repayment_percent_for_topup: data?.min_repayment_percent_for_topup,
+        requires_collateral: data?.requires_collateral,
+        requires_documents: data?.requires_documents,
+        collateral_description: data?.collateral_description ?? "",
+      });
+    },
+    onError: (error) => {
+      showToast({
+        title: "Loan Products processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { mutate, isLoading } = useMutation({
+    mutationKey: ["edit loan product"],
+    mutationFn: async () => {
+      const response = await editLoanProduct(
+        id,
+        formData?.product_code,
+        formData?.product_name,
+        formData?.description,
+        formData?.features,
+        formData?.terms_and_conditions,
+        formData?.org_code,
+        formData?.loan_mode,
+        formData?.min_amount,
+        formData?.max_amount,
+        Number(formData?.min_period),
+        Number(formData?.max_period),
+        formData?.limit_algorithm,
+        formData?.limit_start_amount,
+        formData?.limit_increment_amount,
+        formData?.limit_start_multiplier,
+        formData?.limit_increment_multiplier,
+        Number(formData?.limit_max_multiplier),
+        formData?.limit_multiplier_basis,
+        formData?.limit_resets_on_default,
+        Number(formData?.interest_rate),
+        formData?.interest_key,
+        formData?.interest_method,
+        formData?.repayment_interval,
+        formData?.duration_key,
+        formData?.processing_fee_type,
+        formData?.processing_fee_value,
+        formData?.deduct_fee_from_principal,
+        formData?.has_insurance,
+        formData?.insurance_rate,
+        formData?.has_penalty,
+        formData?.penalty_type,
+        formData?.penalty_value,
+        formData?.penalty_frequency,
+        formData?.penalty_cap_days,
+        formData?.max_penalty_rate,
+        formData?.workflow_type,
+        formData?.auto_disburse,
+        formData?.committee_approvals_required,
+        formData?.requires_manager_approval,
+        formData?.allowed_disbursement_methods,
+        formData?.requires_guarantor,
+        formData?.min_guarantors,
+        formData?.max_guarantors,
+        formData?.guarantor_required_above_amount,
+        formData?.guarantor_coverage_percent,
+        formData?.min_membership_months,
+        formData?.min_shares_amount,
+        formData?.min_savings_amount,
+        formData?.max_loan_to_shares_ratio,
+        formData?.max_loan_to_savings_ratio,
+        formData?.max_active_loans_of_type,
+        formData?.max_total_active_loans,
+        formData?.block_if_defaulted,
+        formData?.min_repayment_percent_before_reapply,
+        formData?.block_if_guarantor_on_defaulted,
+        formData?.required_kyc_level,
+        formData?.allows_rollover,
+        formData?.allows_topup,
+        formData?.min_repayment_percent_for_topup,
+        formData?.requires_collateral,
+        formData?.collateral_description,
+      );
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      showToast({
+        title: "Product Configured",
+        type: "success",
+        position: "top-right",
+        description: `${formData.product_name} has been successfully updated onto the ecosystem platform.`,
+      });
+      navigate(`/admin/loan-products`);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Loan Products processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
   });
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    mutate();
   };
 
   const noSpinnerUtility =
     "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
 
   return (
-    <div className="w-full space-y-8 font-sans antialiased text-slate-800">
+    <div className="w-full font-sans antialiased text-slate-800">
       {/* HEADER SECTION PANEL */}
       <div className="flex items-center justify-between border-b border-slate-200/60 pb-6">
         <div>
@@ -122,14 +303,11 @@ export default function EditLoanProduct() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* RIGHT INPUT CANVAS PANELS */}
-        <form
-          onSubmit={handleSubmit}
-          className="lg:col-span-12 space-y-8 pb-24"
-        >
+        <form onSubmit={handleSubmit} className="lg:col-span-12 space-y-8">
           {/* SECTION 1: GENERAL PRODUCT CONFIG */}
-          <FormCardLayout id="general" title="Product Definition Profile">
+          <FormCardLayout id="general" title="Basic Product Details">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Product Machine Code">
+              <FormGroup label="Product Code">
                 <InputWrapper icon={<Settings size={18} />}>
                   <input
                     type="text"
@@ -137,13 +315,13 @@ export default function EditLoanProduct() {
                     onChange={(e) =>
                       setFormData({ ...formData, product_code: e.target.value })
                     }
-                    placeholder="e.g. Development_loan"
+                    placeholder="e.g. development_loan"
                     className="custom-form-input"
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Product Public Name">
+              <FormGroup label="Product Name">
                 <InputWrapper icon={<FileText size={18} />}>
                   <input
                     type="text"
@@ -158,77 +336,25 @@ export default function EditLoanProduct() {
               </FormGroup>
 
               <div className="md:col-span-2">
-                <FormGroup label="Description Ledger Context">
+                <FormGroup label="Description">
                   <textarea
                     value={formData.description}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
                     rows={3}
-                    placeholder="Detail core parameters requiring full credit review cycles..."
+                    placeholder="Describe who this loan is for and what it is generally used for..."
                     className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5"
                   />
                 </FormGroup>
-              </div>
-
-              <FormGroup label="Organization Origin Code">
-                <InputWrapper icon={<ShieldCheck size={18} />}>
-                  <input
-                    type="text"
-                    value={formData.org_code}
-                    readOnly
-                    className="custom-form-input opacity-60 bg-slate-100"
-                    placeholder="e.g. BA208"
-                  />
-                </InputWrapper>
-              </FormGroup>
-
-              <FormGroup label="Lending Operational Mode">
-                <InputWrapper icon={<Sliders size={18} />}>
-                  <input
-                    type="number"
-                    value={formData.loan_mode}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        loan_mode: Number(e.target.value),
-                      })
-                    }
-                    placeholder="e.g. 1"
-                    className={`custom-form-input ${noSpinnerUtility}`}
-                  />
-                </InputWrapper>
-              </FormGroup>
-
-              <FormGroup label="System Currency Suite">
-                <div className="flex gap-2">
-                  {formData.allowed_currencies.map((curr) => (
-                    <span
-                      key={curr}
-                      className="px-3.5 h-14 border border-slate-200/60 bg-white rounded-2xl flex items-center justify-center text-xs font-bold text-primary shadow-sm"
-                    >
-                      {curr}
-                    </span>
-                  ))}
-                </div>
-              </FormGroup>
-
-              <div className="md:col-span-2 p-4 bg-slate-50 rounded-2xl border border-slate-100/60">
-                <FormCheckbox
-                  label="Product Operational Matrix Visibility status (Is Active)"
-                  checked={formData.is_active}
-                  onChange={(checked) =>
-                    setFormData({ ...formData, is_active: checked })
-                  }
-                />
               </div>
             </div>
           </FormCardLayout>
 
           {/* SECTION 2: SIZING & THRESHOLDS */}
-          <FormCardLayout id="limits" title="Sizing, Thresholds & Bounds">
+          <FormCardLayout id="limits" title="Loan Limits & Terms">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Minimum Borrowing Capital Floor">
+              <FormGroup label="Minimum Loan Amount">
                 <InputWrapper icon={<DollarSign size={18} />}>
                   <input
                     type="number"
@@ -245,7 +371,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Borrowing Capital Ceiling">
+              <FormGroup label="Maximum Loan Amount">
                 <InputWrapper icon={<DollarSign size={18} />}>
                   <input
                     type="number"
@@ -262,7 +388,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Period Interval">
+              <FormGroup label="Minimum Loan Duration">
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -282,7 +408,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Period Interval">
+              <FormGroup label="Maximum Loan Duration">
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -302,7 +428,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Max Active Loans (Of This Specific Type)">
+              <FormGroup label="Max Active Loans (This Type)">
                 <InputWrapper icon={<Layers size={18} />}>
                   <input
                     type="number"
@@ -319,7 +445,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Max Total Active Concurrent System Loans">
+              <FormGroup label="Max Total Active Loans">
                 <InputWrapper icon={<Layers3 size={18} />}>
                   <input
                     type="number"
@@ -336,7 +462,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Required Account KYC Clearance Level">
+              <FormGroup label="Required KYC Tier">
                 <InputWrapper icon={<ShieldAlert size={18} />}>
                   <input
                     type="number"
@@ -355,30 +481,16 @@ export default function EditLoanProduct() {
                   </span>
                 </InputWrapper>
               </FormGroup>
-
-              <FormGroup label="Blocked Concurrent Matrix Profiles">
-                <div className="flex flex-wrap gap-2 pt-1">
-                  {formData.blocked_concurrent_loan_types.map((type) => (
-                    <span
-                      key={type}
-                      className="px-3.5 py-2 border border-rose-200/60 bg-rose-50/40 rounded-xl text-xs font-semibold text-error flex items-center gap-1.5"
-                    >
-                      <AlertTriangle size={12} />
-                      {type}
-                    </span>
-                  ))}
-                </div>
-              </FormGroup>
             </div>
           </FormCardLayout>
 
-          {/* SECTION 3: ALGORITHMIC MULTIPLIERS */}
+          {/* SECTION 3: BORROWING LIMITS & MULTIPLIERS */}
           <FormCardLayout
             id="multipliers"
-            title="Algorithmic Multipliers & Evaluation Bounds"
+            title="Borrowing Limits & Eligibility"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Calculation Algorithm Framework">
+              <FormGroup label="Limit Calculation Method">
                 <select
                   value={formData.limit_algorithm}
                   onChange={(e) =>
@@ -389,11 +501,11 @@ export default function EditLoanProduct() {
                   }
                   className="custom-select-box font-sans"
                 >
-                  <option value="fixed">Fixed Step Multiplier Matrix</option>
+                  <option value="fixed">Fixed Step Multiplier</option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Multiplier Evaluation Basis Source">
+              <FormGroup label="Limit Based On">
                 <select
                   value={formData.limit_multiplier_basis}
                   onChange={(e) =>
@@ -404,13 +516,11 @@ export default function EditLoanProduct() {
                   }
                   className="custom-select-box font-sans"
                 >
-                  <option value="savings">
-                    Member Deposits / Long-term Savings
-                  </option>
+                  <option value="savings">Member Savings / Deposits</option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Limit Base Start Amount">
+              <FormGroup label="Starting Limit Base Amount">
                 <InputWrapper icon={<DollarSign size={18} />}>
                   <input
                     type="number"
@@ -427,7 +537,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Limit Incremental Padding Amount">
+              <FormGroup label="Limit Increment Step Amount">
                 <InputWrapper icon={<DollarSign size={18} />}>
                   <input
                     type="number"
@@ -444,7 +554,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Start Multiplier Index Step">
+              <FormGroup label="Starting Multiplier">
                 <InputWrapper icon={<TrendingUp size={18} />}>
                   <input
                     type="number"
@@ -465,7 +575,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Incremental Step Matrix Scale">
+              <FormGroup label="Multiplier Increase Step">
                 <InputWrapper icon={<TrendingUp size={18} />}>
                   <input
                     type="number"
@@ -486,7 +596,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Absolute Maximum Multiplier Ceiling Cap">
+              <FormGroup label="Maximum Multiplier Cap">
                 <InputWrapper icon={<TrendingUp size={18} />}>
                   <input
                     type="number"
@@ -507,7 +617,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Min Membership History Profile">
+              <FormGroup label="Minimum Membership Duration">
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
@@ -527,7 +637,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Allocated Shares Balance">
+              <FormGroup label="Minimum Shares Required">
                 <InputWrapper icon={<DollarSign size={18} />}>
                   <input
                     type="number"
@@ -547,7 +657,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Capital Savings Floor">
+              <FormGroup label="Minimum Savings Required">
                 <InputWrapper icon={<DollarSign size={18} />}>
                   <input
                     type="number"
@@ -567,7 +677,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Max Loan-to-Shares Density Ratio">
+              <FormGroup label="Max Loan-to-Shares Ratio">
                 <InputWrapper icon={<Percent size={18} />}>
                   <input
                     type="number"
@@ -588,7 +698,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Max Loan-to-Savings Density Ratio">
+              <FormGroup label="Max Loan-to-Savings Ratio">
                 <InputWrapper icon={<Percent size={18} />}>
                   <input
                     type="number"
@@ -611,7 +721,7 @@ export default function EditLoanProduct() {
 
               <div className="md:col-span-2 p-4 bg-slate-50 rounded-2xl border border-slate-100/60">
                 <FormCheckbox
-                  label="Reset Multiplier Limit Calculations upon Active Delinquency/Default"
+                  label="Reset limit multipliers back to starting baseline upon default"
                   checked={formData.limit_resets_on_default}
                   onChange={(checked) =>
                     setFormData({
@@ -625,12 +735,9 @@ export default function EditLoanProduct() {
           </FormCardLayout>
 
           {/* SECTION 4: INTEREST & FEES */}
-          <FormCardLayout
-            id="amortization"
-            title="Interest, Amortization & Fee Matrix"
-          >
+          <FormCardLayout id="amortization" title="Interest Rates & Fees">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Nominal Rate Charge Basis">
+              <FormGroup label="Interest Rate">
                 <InputWrapper icon={<Percent size={18} />}>
                   <input
                     type="number"
@@ -651,7 +758,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Amortization Calculation Paradigm Method">
+              <FormGroup label="Interest Calculation Method">
                 <select
                   value={formData.interest_method}
                   onChange={(e) =>
@@ -662,16 +769,12 @@ export default function EditLoanProduct() {
                   }
                   className="custom-select-box font-sans"
                 >
-                  <option value="reducing_balance">
-                    Reducing Balance Amortization Framework
-                  </option>
-                  <option value="flat_rate">
-                    Flat Structural Evaluation Framework
-                  </option>
+                  <option value="reducing_balance">Reducing Balance</option>
+                  <option value="flat_rate">Flat Rate</option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Repayment Settlement Intervals">
+              <FormGroup label="Repayment Frequency">
                 <select
                   value={formData.repayment_interval}
                   onChange={(e) =>
@@ -682,11 +785,11 @@ export default function EditLoanProduct() {
                   }
                   className="custom-select-box font-sans"
                 >
-                  <option value="Monthly">Monthly Accounting Intervals</option>
+                  <option value="Monthly">Monthly</option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Processing System Fee Type Scale">
+              <FormGroup label="Processing Fee Type">
                 <select
                   value={formData.processing_fee_type}
                   onChange={(e) =>
@@ -697,13 +800,11 @@ export default function EditLoanProduct() {
                   }
                   className="custom-select-box font-sans"
                 >
-                  <option value="percentage">
-                    Percentage Value Evaluation
-                  </option>
+                  <option value="percentage">Percentage</option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Processing Operational Levy Cost">
+              <FormGroup label="Processing Fee">
                 <InputWrapper icon={<Percent size={18} />}>
                   <input
                     type="number"
@@ -724,7 +825,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Insurance Premium Levy Assessment">
+              <FormGroup label="Insurance Fee">
                 <InputWrapper icon={<Percent size={18} />}>
                   <input
                     type="number"
@@ -747,7 +848,7 @@ export default function EditLoanProduct() {
 
               <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60 mt-2">
                 <FormCheckbox
-                  label="Deduct Processing Fees Directly Upfront from Principal Ledger"
+                  label="Deduct processing fee upfront from loan amount"
                   checked={formData.deduct_fee_from_principal}
                   onChange={(checked) =>
                     setFormData({
@@ -757,7 +858,7 @@ export default function EditLoanProduct() {
                   }
                 />
                 <FormCheckbox
-                  label="Enforce Active Portfolio Insurance Policy Premium Cover"
+                  label="Requires active insurance policy coverage"
                   checked={formData.has_insurance}
                   onChange={(checked) =>
                     setFormData({ ...formData, has_insurance: checked })
@@ -768,12 +869,9 @@ export default function EditLoanProduct() {
           </FormCardLayout>
 
           {/* SECTION 5: RISK & PENALTY CONTROL */}
-          <FormCardLayout
-            id="risk"
-            title="Risk Mitigations, Moratoriums & Penalties"
-          >
+          <FormCardLayout id="risk" title="Penalties & Risk Safeguards">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Repayment Arrears Grace Allocation Window">
+              <FormGroup label="Repayment Grace Period">
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -793,7 +891,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Penalty Charging Matrix Assessment Framework">
+              <FormGroup label="Penalty Calculation Method">
                 <select
                   value={formData.penalty_type}
                   onChange={(e) =>
@@ -802,12 +900,12 @@ export default function EditLoanProduct() {
                   className="custom-select-box font-sans"
                 >
                   <option value="percentage_of_outstanding">
-                    Percentage of Total Outstanding Balance Arrears
+                    Percentage of Outstanding Balance
                   </option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Default Delinquency Penalty Scale Rate">
+              <FormGroup label="Penalty Rate">
                 <InputWrapper icon={<AlertTriangle size={18} />}>
                   <input
                     type="number"
@@ -828,7 +926,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Absolute Maximum Cumulative Penalty Ceiling Cap">
+              <FormGroup label="Maximum Penalty Cap">
                 <InputWrapper icon={<AlertTriangle size={18} />}>
                   <input
                     type="number"
@@ -849,7 +947,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Penalty Accounting Grace Intermission Days">
+              <FormGroup label="Penalty Grace Period">
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -869,7 +967,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Penalty Calculation Ceiling Cap Duration">
+              <FormGroup label="Penalty Cap Duration">
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -889,7 +987,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Moratorium Window Allocation Period">
+              <FormGroup label="Moratorium Period">
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -909,7 +1007,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Moratorium Accounting Interest Strategy">
+              <FormGroup label="Interest During Moratorium">
                 <select
                   value={formData.moratorium_interest_handling}
                   onChange={(e) =>
@@ -920,29 +1018,27 @@ export default function EditLoanProduct() {
                   }
                   className="custom-select-box font-sans"
                 >
-                  <option value="interest_only">
-                    Accumulate Nominal Interest Charges Only
-                  </option>
+                  <option value="interest_only">Charge Interest Only</option>
                 </select>
               </FormGroup>
 
               <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60">
                 <FormCheckbox
-                  label="Enforce Active Penalties"
+                  label="Charge penalties on late payments"
                   checked={formData.has_penalty}
                   onChange={(checked) =>
                     setFormData({ ...formData, has_penalty: checked })
                   }
                 />
                 <FormCheckbox
-                  label="Restrict Accounts If Profile in Active Default"
+                  label="Block borrower if they have an active loan default"
                   checked={formData.block_if_defaulted}
                   onChange={(checked) =>
                     setFormData({ ...formData, block_if_defaulted: checked })
                   }
                 />
                 <FormCheckbox
-                  label="Restrict Accounts If Chosen Guarantor has Arrears"
+                  label="Block borrower if their chosen guarantor has defaulted"
                   checked={formData.block_if_guarantor_on_defaulted}
                   onChange={(checked) =>
                     setFormData({
@@ -956,12 +1052,9 @@ export default function EditLoanProduct() {
           </FormCardLayout>
 
           {/* SECTION 6: WORKFLOW & UNDERWRITING */}
-          <FormCardLayout
-            id="underwriting"
-            title="Workflow Logic, Guarantorship & Collateral"
-          >
+          <FormCardLayout id="underwriting" title="Approvals & Guarantor Rules">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Lending Governance Evaluation Workflow Engine">
+              <FormGroup label="Approval Workflow">
                 <select
                   value={formData.workflow_type}
                   onChange={(e) =>
@@ -970,12 +1063,12 @@ export default function EditLoanProduct() {
                   className="custom-select-box font-sans"
                 >
                   <option value="committee_and_manager">
-                    Joint Board Committee & Executive Sign-off Matrix
+                    Committee & Manager Approval
                   </option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Governance Committee Authorization Quorum Floor">
+              <FormGroup label="Committee Approvals Required">
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
@@ -995,7 +1088,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Credit Committee Allocation Target Group Identifier">
+              <FormGroup label="Committee Group Identifier">
                 <InputWrapper icon={<Briefcase size={18} />}>
                   <input
                     type="text"
@@ -1007,7 +1100,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Required Account Cleared Ratio Before Re-Application">
+              <FormGroup label="Min Repayment Required Before Re-applying">
                 <InputWrapper icon={<Percent size={18} />}>
                   <input
                     type="number"
@@ -1028,7 +1121,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Guarantor Group Structure Floor">
+              <FormGroup label="Minimum Guarantors Required">
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
@@ -1043,12 +1136,12 @@ export default function EditLoanProduct() {
                     className={`custom-form-input pr-20 ${noSpinnerUtility}`}
                   />
                   <span className="absolute right-4 text-[10px] font-bold text-slate-400">
-                    Co-Signers
+                    Guarantors
                   </span>
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Guarantor Group Structure Ceiling">
+              <FormGroup label="Maximum Guarantors Allowed">
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
@@ -1063,12 +1156,12 @@ export default function EditLoanProduct() {
                     className={`custom-form-input pr-20 ${noSpinnerUtility}`}
                   />
                   <span className="absolute right-4 text-[10px] font-bold text-slate-400">
-                    Co-Signers
+                    Guarantors
                   </span>
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Guarantor Enforcement Floor Threshold Amount">
+              <FormGroup label="Require Guarantors Above Amount">
                 <InputWrapper icon={<DollarSign size={18} />}>
                   <input
                     type="number"
@@ -1088,7 +1181,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Guarantor Liabilities Asset Coverage Factor">
+              <FormGroup label="Guarantor Coverage">
                 <InputWrapper icon={<Percent size={18} />}>
                   <input
                     type="number"
@@ -1109,7 +1202,7 @@ export default function EditLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Required Repayment for Account Top-Up">
+              <FormGroup label="Min Repayment Required for Top-Up">
                 <InputWrapper icon={<Percent size={18} />}>
                   <input
                     type="number"
@@ -1131,7 +1224,7 @@ export default function EditLoanProduct() {
               </FormGroup>
 
               <div className="md:col-span-2">
-                <FormGroup label="Allowed Automated Ledger Distribution Channels">
+                <FormGroup label="Allowed Disbursement Channels">
                   <div className="flex gap-4">
                     {["MPESA", "BANK"].map((method) => {
                       const isChecked =
@@ -1158,7 +1251,7 @@ export default function EditLoanProduct() {
                               : "border-slate-200/60 bg-white text-slate-400"
                           }`}
                         >
-                          <span>{method} TRANSFERS</span>
+                          <span>{method}</span>
                           {isChecked && (
                             <Check size={14} className="text-primary" />
                           )}
@@ -1170,7 +1263,7 @@ export default function EditLoanProduct() {
               </div>
 
               <div className="md:col-span-2">
-                <FormGroup label="Physical Collateral Registration Requirements Description">
+                <FormGroup label="Collateral Description">
                   <textarea
                     value={formData.collateral_description}
                     onChange={(e) =>
@@ -1189,7 +1282,7 @@ export default function EditLoanProduct() {
               <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-5 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60">
                 <div className="md:col-span-1">
                   <FormCheckbox
-                    label="Manager Sign-off"
+                    label="Manager Approval"
                     checked={formData.requires_manager_approval}
                     onChange={(checked) =>
                       setFormData({
@@ -1201,7 +1294,7 @@ export default function EditLoanProduct() {
                 </div>
                 <div className="md:col-span-1">
                   <FormCheckbox
-                    label="Guarantor Bounds"
+                    label="Requires Guarantors"
                     checked={formData.requires_guarantor}
                     onChange={(checked) =>
                       setFormData({ ...formData, requires_guarantor: checked })
@@ -1210,7 +1303,7 @@ export default function EditLoanProduct() {
                 </div>
                 <div className="md:col-span-1">
                   <FormCheckbox
-                    label="Auto Disbursement"
+                    label="Auto Disburse"
                     checked={formData.auto_disburse}
                     onChange={(checked) =>
                       setFormData({ ...formData, auto_disburse: checked })
@@ -1237,7 +1330,7 @@ export default function EditLoanProduct() {
                 </div>
                 <div className="md:col-span-2 mt-1">
                   <FormCheckbox
-                    label="Requires Tangible Asset Collateral Pledges"
+                    label="Requires Physical Collateral"
                     checked={formData.requires_collateral}
                     onChange={(checked) =>
                       setFormData({ ...formData, requires_collateral: checked })
@@ -1248,21 +1341,48 @@ export default function EditLoanProduct() {
             </div>
           </FormCardLayout>
 
+          <FormCardLayout id="general" title="Loan Terms & Conditions">
+            <FormGroup label="Loan Terms & Conditions" error="">
+              <textarea
+                value={formData.terms_and_conditions}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    terms_and_conditions: e.target.value,
+                  })
+                }
+                rows={3}
+                placeholder="Outline or paste the loan terms and conditions here..."
+                className="w-full bg-white border-2 rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5 border-slate-100"
+              />
+            </FormGroup>
+          </FormCardLayout>
+
           {/* LOWER FIXED ACTIONS COMMAND DOCK BAR */}
           <div className="bg-white rounded-[24px] border border-slate-200/60 p-4 flex items-center justify-end gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
             <button
               type="button"
               className="h-11 px-5 border border-slate-200/80 bg-white text-slate-600 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-all cursor-pointer"
             >
-              Cancel & Purge
+              Cancel
             </button>
             <button
               onClick={handleSubmit}
               type="submit"
-              className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 cursor-pointer flex items-center gap-2"
+              disabled={isLoading}
+              className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
             >
-              <span>Save Product Changes</span>
-              <ArrowUpRight size={14} />
+              {isLoading ? (
+                <>
+                  <span>Saving...</span>
+                  <span className="animate-spin inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full" />
+                </>
+              ) : (
+                <>
+                  <span>Modify Product</span>
+                  <ArrowUpRight size={14} />
+                </>
+              )}
             </button>
           </div>
         </form>

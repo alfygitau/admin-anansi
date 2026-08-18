@@ -60,7 +60,7 @@ function App() {
         <Route index path="dashboard" element={<Homepage />} />
         <Route path="loan-products" element={<LoanProducts />} />
         <Route path="add-loan-product" element={<AddLoanProduct />} />
-        <Route path="edit-loan-product" element={<EditLoanProduct />} />
+        <Route path="edit-loan-product/:id" element={<EditLoanProduct />} />
         <Route path="loan-products/:id" element={<LoanProduct />} />
 
         <Route path="loan-applications" element={<LoanApplications />} />

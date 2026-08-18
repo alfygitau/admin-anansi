@@ -1482,7 +1482,9 @@ export default function AddLoanProduct() {
                 rows={3}
                 placeholder="Outline or paste the loan terms and conditions here..."
                 className={`w-full bg-white border-2 rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5 ${
-                  errors.description ? "border-red-400" : "border-slate-100"
+                  errors.terms_and_conditions
+                    ? "border-red-400"
+                    : "border-slate-100"
                 }`}
               />
             </FormGroup>

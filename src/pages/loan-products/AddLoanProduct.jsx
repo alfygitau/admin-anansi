@@ -16,16 +16,23 @@ import {
   Layers3,
   Coins,
 } from "lucide-react";
+import { useToast } from "../../contexts/ToastProvider";
+import { useNavigate } from "react-router-dom";
+import { addLoanProduct } from "../../sdk/loan-products/loan-products";
+import { useMutation } from "react-query";
 
 export default function AddLoanProduct() {
+  const [errors, setErrors] = useState({});
+  const { showToast } = useToast();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     product_code: "",
     product_name: "",
     description: "",
     features: null,
     terms_and_conditions: null,
-    is_active: false,
-    org_code: "",
+    // is_active: false,
+    org_code: "BA208",
     loan_mode: "",
     min_amount: "",
     max_amount: "",
@@ -53,8 +60,8 @@ export default function AddLoanProduct() {
     penalty_type: "percentage_of_outstanding",
     penalty_value: "",
     penalty_frequency: "monthly",
-    grace_period_days: "",
-    penalty_grace_period_days: "",
+    // grace_period_days: "",
+    // penalty_grace_period_days: "",
     penalty_cap_days: "",
     max_penalty_rate: "",
     workflow_type: "committee_and_manager",
@@ -84,16 +91,158 @@ export default function AddLoanProduct() {
     allows_rollover: false,
     allows_topup: false,
     min_repayment_percent_for_topup: "",
-    moratorium_months: "",
-    moratorium_interest_handling: "interest_only",
+    // moratorium_months: "",
+    // moratorium_interest_handling: "interest_only",
     requires_collateral: false,
+    requires_documents: false,
     collateral_description: "",
-    allowed_currencies: ["KES"],
+    // allowed_currencies: ["KES"],
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleBlur = (field, value) => {
+    let errorMsg = "";
+
+    // 1. Global Required Field Validation
+    if (!value && value !== 0) {
+      errorMsg = "This field is required";
+    } else {
+      // 2. Specific Logical Boundary Validations
+      if (
+        field === "max_amount" &&
+        Number(value) < Number(formData.min_amount)
+      ) {
+        errorMsg = "Maximum amount cannot be less than minimum amount";
+      }
+      if (
+        field === "max_period" &&
+        Number(value) < Number(formData.min_period)
+      ) {
+        errorMsg = "Maximum term cannot be less than minimum term";
+      }
+      if (
+        field === "max_penalty_rate" &&
+        Number(value) < Number(formData.penalty_value)
+      ) {
+        errorMsg =
+          "Maximum penalty cap cannot be lower than the base penalty rate";
+      }
+      if (
+        field === "max_guarantors" &&
+        Number(value) < Number(formData.min_guarantors)
+      ) {
+        errorMsg = "Maximum guarantors cannot be fewer than minimum guarantors";
+      }
+    }
+    setErrors((prev) => ({ ...prev, [field]: errorMsg }));
   };
+
+  const inputClass = (field) =>
+    `custom-form-input ${
+      errors[field]
+        ? "border-red-400 focus:border-red-500 focus:ring-red-500/10 bg-red-50/10"
+        : ""
+    }`;
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    await mutate();
+  };
+
+  const { mutate, isLoading } = useMutation({
+    mutationKey: ["edit loan product"],
+    mutationFn: async () => {
+      const response = await addLoanProduct(
+        formData?.product_code,
+        formData?.product_name,
+        formData?.description,
+        formData?.features,
+        formData?.terms_and_conditions,
+        // formData?.is_active,
+        formData?.org_code,
+        formData?.loan_mode,
+        formData?.min_amount,
+        formData?.max_amount,
+        formData?.min_period,
+        formData?.max_period,
+        formData?.limit_algorithm,
+        formData?.limit_start_amount,
+        formData?.limit_increment_amount,
+        formData?.limit_start_multiplier,
+        formData?.limit_increment_multiplier,
+        formData?.limit_max_multiplier,
+        formData?.limit_multiplier_basis,
+        formData?.limit_resets_on_default,
+        formData?.interest_rate,
+        formData?.interest_key,
+        formData?.interest_method,
+        formData?.repayment_interval,
+        formData?.duration_key,
+        formData?.processing_fee_type,
+        formData?.processing_fee_value,
+        formData?.deduct_fee_from_principal,
+        formData?.has_insurance,
+        formData?.insurance_rate,
+        formData?.has_penalty,
+        formData?.penalty_type,
+        formData?.penalty_value,
+        formData?.penalty_frequency,
+        // formData?.grace_period_days,
+        // formData?.penalty_grace_period_days,
+        formData?.penalty_cap_days,
+        formData?.max_penalty_rate,
+        formData?.workflow_type,
+        formData?.auto_disburse,
+        formData?.committee_approvals_required,
+        formData?.requires_manager_approval,
+        formData?.committee_group_id,
+        formData?.allowed_disbursement_methods,
+        formData?.requires_guarantor,
+        formData?.min_guarantors,
+        formData?.max_guarantors,
+        formData?.guarantor_required_above_amount,
+        formData?.guarantor_coverage_percent,
+        formData?.min_membership_months,
+        formData?.min_shares_amount,
+        formData?.min_savings_amount,
+        formData?.max_loan_to_shares_ratio,
+        formData?.max_loan_to_savings_ratio,
+        formData?.max_active_loans_of_type,
+        formData?.max_total_active_loans,
+        formData?.blocked_concurrent_loan_types,
+        formData?.allowed_concurrent_loan_types,
+        formData?.block_if_defaulted,
+        formData?.min_repayment_percent_before_reapply,
+        formData?.block_if_guarantor_on_defaulted,
+        formData?.required_kyc_level,
+        formData?.allows_rollover,
+        formData?.allows_topup,
+        formData?.min_repayment_percent_for_topup,
+        // formData?.moratorium_months,
+        // formData?.moratorium_interest_handling,
+        formData?.requires_collateral,
+        formData?.collateral_description,
+        // formData?.allowed_currencies,
+      );
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      showToast({
+        title: "Product Configured",
+        type: "success",
+        position: "top-right",
+        description: `${formData.product_name} has been successfully added onto the ecosystem platform.`,
+      });
+      navigate(`/admin/loan-products`);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Loan Products processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
   const noSpinnerUtility =
     "[appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none";
@@ -103,7 +252,7 @@ export default function AddLoanProduct() {
       {/* HEADER SECTION PANEL */}
       <div className="flex items-center justify-between border-b border-slate-200/60 pb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-primary">
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
             Create Loan Product
           </h1>
           <p className="text-xs text-slate-400 font-medium">
@@ -114,14 +263,11 @@ export default function AddLoanProduct() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        <form
-          onSubmit={handleSubmit}
-          className="lg:col-span-12 space-y-8 pb-24"
-        >
+        <form onSubmit={handleSubmit} className="lg:col-span-12 space-y-8">
           {/* SECTION 1: GENERAL PRODUCT CONFIG */}
           <FormCardLayout id="general" title="Basic Product Details">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Product Code">
+              <FormGroup label="Product Code" error={errors.product_code}>
                 <InputWrapper icon={<Settings size={18} />}>
                   <input
                     type="text"
@@ -129,13 +275,14 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({ ...formData, product_code: e.target.value })
                     }
+                    onBlur={(e) => handleBlur("product_code", e.target.value)}
                     placeholder="e.g. development_loan"
-                    className="custom-form-input"
+                    className={inputClass("product_code")}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Product Name">
+              <FormGroup label="Product Name" error={errors.product_name}>
                 <InputWrapper icon={<FileText size={18} />}>
                   <input
                     type="text"
@@ -143,72 +290,124 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({ ...formData, product_name: e.target.value })
                     }
+                    onBlur={(e) => handleBlur("product_name", e.target.value)}
                     placeholder="e.g. Development Loan"
-                    className="custom-form-input"
+                    className={inputClass("product_name")}
                   />
                 </InputWrapper>
               </FormGroup>
 
               <div className="md:col-span-2">
-                <FormGroup label="Description">
+                <FormGroup label="Description" error={errors.description}>
                   <textarea
                     value={formData.description}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
                     }
+                    onBlur={(e) => handleBlur("description", e.target.value)}
                     rows={3}
                     placeholder="Describe who this loan is for and what it is generally used for..."
-                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5"
+                    className={`w-full bg-white border-2 rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5 ${
+                      errors.description ? "border-red-400" : "border-slate-100"
+                    }`}
                   />
                 </FormGroup>
               </div>
 
-              <FormGroup label="Organization Code">
-                <InputWrapper icon={<ShieldCheck size={18} />}>
-                  <input
-                    type="text"
-                    value={formData.org_code}
-                    readOnly
-                    className="custom-form-input opacity-60 bg-slate-100"
-                    placeholder="e.g. BA208"
-                  />
-                </InputWrapper>
-              </FormGroup>
+              {/* FULL WIDTH SPAN FOR LAST ITEM */}
+              <div className="md:col-span-2">
+                <FormGroup label="Features" error={errors.features}>
+                  <div className="space-y-3">
+                    {(formData.features || []).map((feature, index) => (
+                      <div key={index} className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          value={feature}
+                          onChange={(e) => {
+                            const updated = [...formData.features];
+                            updated[index] = e.target.value;
+                            setFormData({ ...formData, features: updated });
+                          }}
+                          onBlur={() =>
+                            handleBlur("features", formData.features)
+                          }
+                          placeholder={`Feature #${index + 1}`}
+                          className={`w-full bg-white border-2 rounded-xl p-3 text-sm font-medium outline-none transition-all focus:border-secondary ${
+                            errors.features
+                              ? "border-red-400"
+                              : "border-slate-100"
+                          }`}
+                        />
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const updated = formData.features.filter(
+                              (_, i) => i !== index,
+                            );
+                            setFormData({ ...formData, features: updated });
+                            handleBlur("features", updated);
+                          }}
+                          className="p-3 text-slate-400 hover:text-red-500 transition-colors"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setFormData({
+                          ...formData,
+                          features: [...(formData.features || []), ""],
+                        })
+                      }
+                      className="text-xs font-bold text-secondary hover:underline pt-1"
+                    >
+                      + Add Feature
+                    </button>
+                  </div>
+                </FormGroup>
+              </div>
             </div>
           </FormCardLayout>
 
-          {/* SECTION 2: SIZING & THRESHOLDS */}
           <FormCardLayout id="limits" title="Loan Limits & Terms">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Minimum Loan Amount">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup label="Minimum Loan Amount" error={errors.min_amount}>
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     value={formData.min_amount}
                     onChange={(e) =>
                       setFormData({ ...formData, min_amount: e.target.value })
                     }
+                    onBlur={(e) => handleBlur("min_amount", e.target.value)}
                     placeholder="e.g. 50000.00"
-                    className={`custom-form-input pr-12 ${noSpinnerUtility}`}
+                    className={`${inputClass("min_amount")} pr-12 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Loan Amount">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup label="Maximum Loan Amount" error={errors.max_amount}>
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     value={formData.max_amount}
                     onChange={(e) =>
                       setFormData({ ...formData, max_amount: e.target.value })
                     }
+                    onBlur={(e) => handleBlur("max_amount", e.target.value)}
                     placeholder="e.g. 5000000.00"
-                    className={`custom-form-input pr-12 ${noSpinnerUtility}`}
+                    className={`${inputClass("max_amount")} pr-12 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Term (Months)">
+              <FormGroup
+                label="Minimum Term (Months)"
+                error={errors.min_period}
+              >
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -216,16 +415,22 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        min_period: Number(e.target.value),
+                        min_period: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) => handleBlur("min_period", e.target.value)}
                     placeholder="e.g. 6"
-                    className={`custom-form-input pr-16 ${noSpinnerUtility}`}
+                    className={`${inputClass("min_period")} pr-16 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Term (Months)">
+              <FormGroup
+                label="Maximum Term (Months)"
+                error={errors.max_period}
+              >
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -233,16 +438,22 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        max_period: Number(e.target.value),
+                        max_period: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) => handleBlur("max_period", e.target.value)}
                     placeholder="e.g. 60"
-                    className={`custom-form-input pr-16 ${noSpinnerUtility}`}
+                    className={`${inputClass("max_period")} pr-16 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Max Active Loans of This Type">
+              <FormGroup
+                label="Max Active Loans of This Type"
+                error={errors.max_active_loans_of_type}
+              >
                 <InputWrapper icon={<Layers size={18} />}>
                   <input
                     type="number"
@@ -250,16 +461,24 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        max_active_loans_of_type: Number(e.target.value),
+                        max_active_loans_of_type: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("max_active_loans_of_type", e.target.value)
+                    }
                     placeholder="e.g. 1"
-                    className={`custom-form-input ${noSpinnerUtility}`}
+                    className={`${inputClass("max_active_loans_of_type")} ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Total Max Active Loans Allowed">
+              <FormGroup
+                label="Total Max Active Loans Allowed"
+                error={errors.max_total_active_loans}
+              >
                 <InputWrapper icon={<Layers3 size={18} />}>
                   <input
                     type="number"
@@ -267,11 +486,16 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        max_total_active_loans: Number(e.target.value),
+                        max_total_active_loans: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("max_total_active_loans", e.target.value)
+                    }
                     placeholder="e.g. 2"
-                    className={`custom-form-input ${noSpinnerUtility}`}
+                    className={`${inputClass("max_total_active_loans")} ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
@@ -295,7 +519,9 @@ export default function AddLoanProduct() {
                   }
                   className="custom-select-box font-sans"
                 >
-                  <option value="fixed">Based on Multiplier</option>
+                  <option value="multiplier">Based on Multiplier</option>
+                  <option value="incremental">Incremental</option>
+                  <option value="fixed">Fixed Amount</option>
                 </select>
               </FormGroup>
 
@@ -311,11 +537,15 @@ export default function AddLoanProduct() {
                   className="custom-select-box font-sans"
                 >
                   <option value="savings">Member Deposits / Savings</option>
+                  <option value="shares">Member Share Capital</option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Starting Loan Limit">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Starting Loan Limit"
+                error={errors.limit_start_amount}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     value={formData.limit_start_amount}
@@ -325,14 +555,20 @@ export default function AddLoanProduct() {
                         limit_start_amount: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("limit_start_amount", e.target.value)
+                    }
                     placeholder="e.g. 0.00"
-                    className={`custom-form-input ${noSpinnerUtility}`}
+                    className={`${inputClass("limit_start_amount")} ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Limit Increase Step">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Limit Increase Step"
+                error={errors.limit_increment_amount}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     value={formData.limit_increment_amount}
@@ -342,13 +578,19 @@ export default function AddLoanProduct() {
                         limit_increment_amount: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("limit_increment_amount", e.target.value)
+                    }
                     placeholder="e.g. 0.00"
-                    className={`custom-form-input ${noSpinnerUtility}`}
+                    className={`${inputClass("limit_increment_amount")} ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Starting Multiplier">
+              <FormGroup
+                label="Starting Multiplier"
+                error={errors.limit_start_multiplier}
+              >
                 <InputWrapper icon={<TrendingUp size={18} />}>
                   <input
                     type="number"
@@ -360,13 +602,19 @@ export default function AddLoanProduct() {
                         limit_start_multiplier: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("limit_start_multiplier", e.target.value)
+                    }
                     placeholder="e.g. 1.5000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("limit_start_multiplier")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Multiplier Increase Step">
+              <FormGroup
+                label="Multiplier Increase Step"
+                error={errors.limit_increment_multiplier}
+              >
                 <InputWrapper icon={<TrendingUp size={18} />}>
                   <input
                     type="number"
@@ -378,13 +626,19 @@ export default function AddLoanProduct() {
                         limit_increment_multiplier: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("limit_increment_multiplier", e.target.value)
+                    }
                     placeholder="e.g. 0.5000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("limit_increment_multiplier")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Multiplier Cap">
+              <FormGroup
+                label="Maximum Multiplier Cap"
+                error={errors.limit_max_multiplier}
+              >
                 <InputWrapper icon={<TrendingUp size={18} />}>
                   <input
                     type="number"
@@ -396,13 +650,19 @@ export default function AddLoanProduct() {
                         limit_max_multiplier: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("limit_max_multiplier", e.target.value)
+                    }
                     placeholder="e.g. 3.0000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("limit_max_multiplier")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Membership Required (Months)">
+              <FormGroup
+                label="Minimum Membership Required (Months)"
+                error={errors.min_membership_months}
+              >
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
@@ -410,17 +670,25 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        min_membership_months: Number(e.target.value),
+                        min_membership_months: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("min_membership_months", e.target.value)
+                    }
                     placeholder="e.g. 6"
-                    className={`custom-form-input pr-16 ${noSpinnerUtility}`}
+                    className={`${inputClass("min_membership_months")} pr-16 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Shares Balance">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Minimum Shares Balance"
+                error={errors.min_shares_amount}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     value={formData.min_shares_amount}
@@ -430,14 +698,20 @@ export default function AddLoanProduct() {
                         min_shares_amount: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("min_shares_amount", e.target.value)
+                    }
                     placeholder="e.g. 10000.00"
-                    className={`custom-form-input pr-12 ${noSpinnerUtility}`}
+                    className={`${inputClass("min_shares_amount")} pr-12 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Savings Balance">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Minimum Savings Balance"
+                error={errors.min_savings_amount}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     value={formData.min_savings_amount}
@@ -447,14 +721,20 @@ export default function AddLoanProduct() {
                         min_savings_amount: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("min_savings_amount", e.target.value)
+                    }
                     placeholder="e.g. 20000.00"
-                    className={`custom-form-input pr-12 ${noSpinnerUtility}`}
+                    className={`${inputClass("min_savings_amount")} pr-12 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Loan-to-Shares Ratio">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Maximum Loan-to-Shares Ratio"
+                error={errors.max_loan_to_shares_ratio}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
@@ -465,14 +745,20 @@ export default function AddLoanProduct() {
                         max_loan_to_shares_ratio: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("max_loan_to_shares_ratio", e.target.value)
+                    }
                     placeholder="e.g. 5.0000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("max_loan_to_shares_ratio")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Loan-to-Savings Ratio">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Maximum Loan-to-Savings Ratio"
+                error={errors.max_loan_to_savings_ratio}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
@@ -483,8 +769,11 @@ export default function AddLoanProduct() {
                         max_loan_to_savings_ratio: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("max_loan_to_savings_ratio", e.target.value)
+                    }
                     placeholder="e.g. 0.0000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("max_loan_to_savings_ratio")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
@@ -507,7 +796,7 @@ export default function AddLoanProduct() {
           {/* SECTION 4: INTEREST & FEES */}
           <FormCardLayout id="amortization" title="Interest, Fees & Repayments">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Interest Rate">
+              <FormGroup label="Interest Rate" error={errors.interest_rate}>
                 <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
@@ -519,8 +808,9 @@ export default function AddLoanProduct() {
                         interest_rate: e.target.value,
                       })
                     }
+                    onBlur={(e) => handleBlur("interest_rate", e.target.value)}
                     placeholder="e.g. 1.5000"
-                    className={`custom-form-input pr-14 ${noSpinnerUtility}`}
+                    className={`${inputClass("interest_rate")} pr-14 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
@@ -570,11 +860,14 @@ export default function AddLoanProduct() {
                   className="custom-select-box font-sans"
                 >
                   <option value="percentage">Percentage of Loan Amount</option>
-                  <option value="fixed">Fixed Fixed Amount</option>
+                  <option value="fixed">Fixed Amount</option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Processing Fee Value">
+              <FormGroup
+                label="Processing Fee Value"
+                error={errors.processing_fee_value}
+              >
                 <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
@@ -586,13 +879,19 @@ export default function AddLoanProduct() {
                         processing_fee_value: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("processing_fee_value", e.target.value)
+                    }
                     placeholder="e.g. 1.0000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("processing_fee_value")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Insurance Cover Rate (%)">
+              <FormGroup
+                label="Insurance Cover Rate (%)"
+                error={errors.insurance_rate}
+              >
                 <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
@@ -604,8 +903,9 @@ export default function AddLoanProduct() {
                         insurance_rate: e.target.value,
                       })
                     }
+                    onBlur={(e) => handleBlur("insurance_rate", e.target.value)}
                     placeholder="e.g. 0.5000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("insurance_rate")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
@@ -635,7 +935,10 @@ export default function AddLoanProduct() {
           {/* SECTION 5: RISK & PENALTY CONTROL */}
           <FormCardLayout id="risk" title="Late Payments & Penalties">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormGroup label="Payment Grace Period (Days)">
+              <FormGroup
+                label="Payment Grace Period (Days)"
+                error={errors.grace_period_days}
+              >
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -643,11 +946,16 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        grace_period_days: Number(e.target.value),
+                        grace_period_days: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("grace_period_days", e.target.value)
+                    }
                     placeholder="e.g. 30"
-                    className={`custom-form-input pr-12 ${noSpinnerUtility}`}
+                    className={`${inputClass("grace_period_days")} pr-12 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
@@ -663,10 +971,13 @@ export default function AddLoanProduct() {
                   <option value="percentage_of_outstanding">
                     Percentage of Overdue Balance
                   </option>
+                  <option value="fixed_amount">
+                    Fixed Amount for a Specific Period
+                  </option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Penalty Rate (%)">
+              <FormGroup label="Penalty Rate (%)" error={errors.penalty_value}>
                 <InputWrapper icon={<AlertTriangle size={18} />}>
                   <input
                     type="number"
@@ -678,13 +989,17 @@ export default function AddLoanProduct() {
                         penalty_value: e.target.value,
                       })
                     }
+                    onBlur={(e) => handleBlur("penalty_value", e.target.value)}
                     placeholder="e.g. 5.0000"
-                    className={`custom-form-input pr-14 ${noSpinnerUtility}`}
+                    className={`${inputClass("penalty_value")} pr-14 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Penalty Cap (%)">
+              <FormGroup
+                label="Maximum Penalty Cap (%)"
+                error={errors.max_penalty_rate}
+              >
                 <InputWrapper icon={<AlertTriangle size={18} />}>
                   <input
                     type="number"
@@ -696,13 +1011,19 @@ export default function AddLoanProduct() {
                         max_penalty_rate: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("max_penalty_rate", e.target.value)
+                    }
                     placeholder="e.g. 20.0000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("max_penalty_rate")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Penalty Grace Period (Days)">
+              <FormGroup
+                label="Penalty Grace Period (Days)"
+                error={errors.penalty_grace_period_days}
+              >
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -710,16 +1031,24 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        penalty_grace_period_days: Number(e.target.value),
+                        penalty_grace_period_days: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("penalty_grace_period_days", e.target.value)
+                    }
                     placeholder="e.g. 0"
-                    className={`custom-form-input pr-12 ${noSpinnerUtility}`}
+                    className={`${inputClass("penalty_grace_period_days")} pr-12 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Days to Charge Penalties">
+              <FormGroup
+                label="Maximum Days to Charge Penalties"
+                error={errors.penalty_cap_days}
+              >
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -727,16 +1056,24 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        penalty_cap_days: Number(e.target.value),
+                        penalty_cap_days: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("penalty_cap_days", e.target.value)
+                    }
                     placeholder="e.g. 0"
-                    className={`custom-form-input pr-12 ${noSpinnerUtility}`}
+                    className={`${inputClass("penalty_cap_days")} pr-12 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Payment Holiday / Grace Period (Months)">
+              <FormGroup
+                label="Payment Holiday / Grace Period (Months)"
+                error={errors.moratorium_months}
+              >
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
@@ -744,11 +1081,16 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        moratorium_months: Number(e.target.value),
+                        moratorium_months: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("moratorium_months", e.target.value)
+                    }
                     placeholder="e.g. 0"
-                    className={`custom-form-input pr-12 ${noSpinnerUtility}`}
+                    className={`${inputClass("moratorium_months")} pr-12 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
@@ -765,6 +1107,7 @@ export default function AddLoanProduct() {
                   className="custom-select-box font-sans"
                 >
                   <option value="interest_only">Charge Interest Only</option>
+                  <option value="half_interest">Charge half Interest</option>
                 </select>
               </FormGroup>
 
@@ -811,10 +1154,19 @@ export default function AddLoanProduct() {
                   <option value="committee_and_manager">
                     Committee & Manager Sign-off
                   </option>
+                  <option value="automatic_processing">
+                    Automatic Processing
+                  </option>
+                  <option value="automatic_disbursement">
+                    Automatic Processing & Disbursement
+                  </option>
                 </select>
               </FormGroup>
 
-              <FormGroup label="Required Committee Approvals">
+              <FormGroup
+                label="Required Committee Approvals"
+                error={errors.committee_approvals_required}
+              >
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
@@ -822,17 +1174,25 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        committee_approvals_required: Number(e.target.value),
+                        committee_approvals_required: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("committee_approvals_required", e.target.value)
+                    }
                     placeholder="e.g. 3"
-                    className={`custom-form-input pr-14 ${noSpinnerUtility}`}
+                    className={`${inputClass("committee_approvals_required")} pr-14 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Paid Before Re-applying (%)">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Minimum Paid Before Re-applying (%)"
+                error={errors.min_repayment_percent_before_reapply}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
@@ -843,13 +1203,22 @@ export default function AddLoanProduct() {
                         min_repayment_percent_before_reapply: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur(
+                        "min_repayment_percent_before_reapply",
+                        e.target.value,
+                      )
+                    }
                     placeholder="e.g. 100.0000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("min_repayment_percent_before_reapply")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Number of Guarantors">
+              <FormGroup
+                label="Minimum Number of Guarantors"
+                error={errors.min_guarantors}
+              >
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
@@ -857,16 +1226,22 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        min_guarantors: Number(e.target.value),
+                        min_guarantors: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) => handleBlur("min_guarantors", e.target.value)}
                     placeholder="e.g. 2"
-                    className={`custom-form-input pr-20 ${noSpinnerUtility}`}
+                    className={`${inputClass("min_guarantors")} pr-20 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Maximum Number of Guarantors">
+              <FormGroup
+                label="Maximum Number of Guarantors"
+                error={errors.max_guarantors}
+              >
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
@@ -874,17 +1249,23 @@ export default function AddLoanProduct() {
                     onChange={(e) =>
                       setFormData({
                         ...formData,
-                        max_guarantors: Number(e.target.value),
+                        max_guarantors: e.target.value
+                          ? Number(e.target.value)
+                          : "",
                       })
                     }
+                    onBlur={(e) => handleBlur("max_guarantors", e.target.value)}
                     placeholder="e.g. 4"
-                    className={`custom-form-input pr-20 ${noSpinnerUtility}`}
+                    className={`${inputClass("max_guarantors")} pr-20 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Require Guarantors Above This Amount">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Require Guarantors Above This Amount"
+                error={errors.guarantor_required_above_amount}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     value={formData.guarantor_required_above_amount}
@@ -894,14 +1275,23 @@ export default function AddLoanProduct() {
                         guarantor_required_above_amount: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur(
+                        "guarantor_required_above_amount",
+                        e.target.value,
+                      )
+                    }
                     placeholder="e.g. 0.00"
-                    className={`custom-form-input pr-12 ${noSpinnerUtility}`}
+                    className={`${inputClass("guarantor_required_above_amount")} pr-12 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Guarantor Guarantee Coverage (%)">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Guarantor Guarantee Coverage (%)"
+                error={errors.guarantor_coverage_percent}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
@@ -912,14 +1302,20 @@ export default function AddLoanProduct() {
                         guarantor_coverage_percent: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("guarantor_coverage_percent", e.target.value)
+                    }
                     placeholder="e.g. 100.0000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("guarantor_coverage_percent")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <FormGroup label="Minimum Paid Before Top-Up (%)">
-                <InputWrapper icon={<DollarSign size={18} />}>
+              <FormGroup
+                label="Minimum Paid Before Top-Up (%)"
+                error={errors.min_repayment_percent_for_topup}
+              >
+                <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
@@ -930,8 +1326,14 @@ export default function AddLoanProduct() {
                         min_repayment_percent_for_topup: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur(
+                        "min_repayment_percent_for_topup",
+                        e.target.value,
+                      )
+                    }
                     placeholder="e.g. 50.0000"
-                    className={`custom-form-input pr-10 ${noSpinnerUtility}`}
+                    className={`${inputClass("min_repayment_percent_for_topup")} pr-10 ${noSpinnerUtility}`}
                   />
                 </InputWrapper>
               </FormGroup>
@@ -976,7 +1378,10 @@ export default function AddLoanProduct() {
               </div>
 
               <div className="md:col-span-2">
-                <FormGroup label="Collateral Requirements Description">
+                <FormGroup
+                  label="Collateral Requirements Description"
+                  error={errors.collateral_description}
+                >
                   <textarea
                     value={formData.collateral_description}
                     onChange={(e) =>
@@ -985,14 +1390,21 @@ export default function AddLoanProduct() {
                         collateral_description: e.target.value,
                       })
                     }
+                    onBlur={(e) =>
+                      handleBlur("collateral_description", e.target.value)
+                    }
                     rows={2}
                     placeholder="e.g. Logbook, title deed, or other acceptable physical collateral..."
-                    className="w-full bg-slate-50 border border-slate-100 rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5"
+                    className={`w-full bg-slate-50 border rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5 ${
+                      errors.collateral_description
+                        ? "border-red-400"
+                        : "border-slate-100"
+                    }`}
                   />
                 </FormGroup>
               </div>
 
-              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-5 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60">
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60">
                 <div className="md:col-span-1">
                   <FormCheckbox
                     label="Requires manager approval"
@@ -1041,9 +1453,18 @@ export default function AddLoanProduct() {
                     }
                   />
                 </div>
+                <div className="md:col-span-1">
+                  <FormCheckbox
+                    label="Requires documents"
+                    checked={formData.requires_documents}
+                    onChange={(checked) =>
+                      setFormData({ ...formData, requires_documents: checked })
+                    }
+                  />
+                </div>
                 <div className="md:col-span-2 mt-1">
                   <FormCheckbox
-                    label="Requires physical collateral (e.g., logbook, title deed)"
+                    label="Requires physical collaterals"
                     checked={formData.requires_collateral}
                     onChange={(checked) =>
                       setFormData({ ...formData, requires_collateral: checked })
@@ -1071,10 +1492,20 @@ export default function AddLoanProduct() {
             <button
               onClick={handleSubmit}
               type="submit"
-              className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 cursor-pointer flex items-center gap-2"
+              disabled={isLoading}
+              className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
             >
-              <span>Launch Product</span>
-              <ArrowUpRight size={14} />
+              {isLoading ? (
+                <>
+                  <span>Launching...</span>
+                  <span className="animate-spin inline-block w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full" />
+                </>
+              ) : (
+                <>
+                  <span>Launch Product</span>
+                  <ArrowUpRight size={14} />
+                </>
+              )}
             </button>
           </div>
         </form>
@@ -1101,12 +1532,17 @@ const FormCardLayout = ({ id, title, children }) => (
   </div>
 );
 
-const FormGroup = ({ label, children }) => (
+const FormGroup = ({ label, error, children }) => (
   <div className="space-y-2">
     <label className="text-[11px] font-bold uppercase tracking-widest text-slate-400 ml-1">
       {label}
     </label>
     {children}
+    {error && (
+      <span className="text-xs font-medium text-red-500 mt-1 animate-fadeIn">
+        {error}
+      </span>
+    )}
   </div>
 );
 
@@ -1126,7 +1562,7 @@ const FormCheckbox = ({ label, checked, onChange }) => (
   <button
     type="button"
     onClick={() => onChange(!checked)}
-    className="flex items-center gap-3 text-left py-1 text-xs font-semibold text-slate-600 hover:text-primary group select-none cursor-pointer"
+    className="flex items-center gap-3 text-left py-1 text-xs font-semibold text-slate-600 hover:text-slate-900 group select-none cursor-pointer"
   >
     <div
       className={`size-5 rounded-md border flex items-center justify-center transition-all shrink-0 ${
@@ -1137,6 +1573,6 @@ const FormCheckbox = ({ label, checked, onChange }) => (
     >
       {checked && <Check size={12} strokeWidth={3} />}
     </div>
-    <span className="leading-tight">{label}</span>
+    <span className="leading-tight truncate">{label}</span>
   </button>
 );

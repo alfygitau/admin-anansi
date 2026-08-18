@@ -31,7 +31,6 @@ export default function AddLoanProduct() {
     description: "",
     features: null,
     terms_and_conditions: null,
-    // is_active: false,
     org_code: "BA208",
     loan_mode: "",
     min_amount: "",
@@ -60,8 +59,6 @@ export default function AddLoanProduct() {
     penalty_type: "percentage_of_outstanding",
     penalty_value: "",
     penalty_frequency: "monthly",
-    // grace_period_days: "",
-    // penalty_grace_period_days: "",
     penalty_cap_days: "",
     max_penalty_rate: "",
     workflow_type: "committee_and_manager",
@@ -91,12 +88,9 @@ export default function AddLoanProduct() {
     allows_rollover: false,
     allows_topup: false,
     min_repayment_percent_for_topup: "",
-    // moratorium_months: "",
-    // moratorium_interest_handling: "interest_only",
     requires_collateral: false,
     requires_documents: false,
     collateral_description: "",
-    // allowed_currencies: ["KES"],
   });
 
   const handleBlur = (field, value) => {
@@ -157,22 +151,21 @@ export default function AddLoanProduct() {
         formData?.description,
         formData?.features,
         formData?.terms_and_conditions,
-        // formData?.is_active,
         formData?.org_code,
         formData?.loan_mode,
         formData?.min_amount,
         formData?.max_amount,
-        formData?.min_period,
-        formData?.max_period,
+        Number(formData?.min_period),
+        Number(formData?.max_period),
         formData?.limit_algorithm,
         formData?.limit_start_amount,
         formData?.limit_increment_amount,
         formData?.limit_start_multiplier,
         formData?.limit_increment_multiplier,
-        formData?.limit_max_multiplier,
+        Number(formData?.limit_max_multiplier),
         formData?.limit_multiplier_basis,
         formData?.limit_resets_on_default,
-        formData?.interest_rate,
+        Number(formData?.interest_rate),
         formData?.interest_key,
         formData?.interest_method,
         formData?.repayment_interval,
@@ -186,8 +179,6 @@ export default function AddLoanProduct() {
         formData?.penalty_type,
         formData?.penalty_value,
         formData?.penalty_frequency,
-        // formData?.grace_period_days,
-        // formData?.penalty_grace_period_days,
         formData?.penalty_cap_days,
         formData?.max_penalty_rate,
         formData?.workflow_type,
@@ -217,11 +208,8 @@ export default function AddLoanProduct() {
         formData?.allows_rollover,
         formData?.allows_topup,
         formData?.min_repayment_percent_for_topup,
-        // formData?.moratorium_months,
-        // formData?.moratorium_interest_handling,
         formData?.requires_collateral,
         formData?.collateral_description,
-        // formData?.allowed_currencies,
       );
       return response.data.data;
     },
@@ -1475,19 +1463,39 @@ export default function AddLoanProduct() {
             </div>
           </FormCardLayout>
 
+          <FormCardLayout id="general" title="Loan Terms & Conditions">
+            <FormGroup
+              label="Loan Terms & Conditions"
+              error={errors.description}
+            >
+              <textarea
+                value={formData.terms_and_conditions}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    terms_and_conditions: e.target.value,
+                  })
+                }
+                onBlur={(e) =>
+                  handleBlur("terms_and_conditions", e.target.value)
+                }
+                rows={3}
+                placeholder="Outline or paste the loan terms and conditions here..."
+                className={`w-full bg-white border-2 rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5 ${
+                  errors.description ? "border-red-400" : "border-slate-100"
+                }`}
+              />
+            </FormGroup>
+          </FormCardLayout>
+
           {/* LOWER FIXED ACTIONS COMMAND DOCK BAR */}
           <div className="bg-white rounded-[24px] border border-slate-200/60 p-4 flex items-center justify-end gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
             <button
+              onClick={() => navigate(-1)}
               type="button"
               className="h-11 px-5 border border-slate-200/80 bg-white text-slate-600 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-all cursor-pointer"
             >
               Cancel
-            </button>
-            <button
-              type="button"
-              className="h-11 px-5 border border-slate-200/80 bg-white text-slate-600 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-all cursor-pointer"
-            >
-              Save Draft
             </button>
             <button
               onClick={handleSubmit}

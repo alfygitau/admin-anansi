@@ -24,7 +24,6 @@ export const addLoanProduct = async (
   description,
   features,
   terms_and_conditions,
-  is_active,
   org_code,
   loan_mode,
   min_amount,
@@ -53,8 +52,6 @@ export const addLoanProduct = async (
   penalty_type,
   penalty_value,
   penalty_frequency,
-  grace_period_days,
-  penalty_grace_period_days,
   penalty_cap_days,
   max_penalty_rate,
   workflow_type,
@@ -84,11 +81,8 @@ export const addLoanProduct = async (
   allows_rollover,
   allows_topup,
   min_repayment_percent_for_topup,
-  moratorium_months,
-  moratorium_interest_handling,
   requires_collateral,
   collateral_description,
-  allowed_currencies,
 ) => {
   try {
     const response = await loanClient.post(`/loan-products`, {
@@ -97,7 +91,6 @@ export const addLoanProduct = async (
       description,
       features,
       terms_and_conditions,
-      is_active,
       org_code,
       loan_mode,
       min_amount,
@@ -126,8 +119,6 @@ export const addLoanProduct = async (
       penalty_type,
       penalty_value,
       penalty_frequency,
-      grace_period_days,
-      penalty_grace_period_days,
       penalty_cap_days,
       max_penalty_rate,
       workflow_type,
@@ -157,11 +148,8 @@ export const addLoanProduct = async (
       allows_rollover,
       allows_topup,
       min_repayment_percent_for_topup,
-      moratorium_months,
-      moratorium_interest_handling,
       requires_collateral,
       collateral_description,
-      allowed_currencies,
     });
     return response;
   } catch (error) {

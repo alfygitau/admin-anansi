@@ -243,7 +243,7 @@ export default function NotifyApplicant() {
           <div className="animate-in fade-in duration-200">
             <FormInput
               icon={<Type />}
-              label="Email Subject Line"
+              label="Message Title"
               name="subject"
               value={formData.subject}
               onChange={handleInputChange}
@@ -256,7 +256,7 @@ export default function NotifyApplicant() {
           {/* UNWRAPPED DESIGN: MESSAGE TEXTAREA */}
           <div className="flex flex-col space-y-2 w-full">
             <label className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block select-none">
-              Notification Message Body <span className="text-rose-500">*</span>
+              Notification Message <span className="text-rose-500">*</span>
             </label>
             <textarea
               rows={8}
@@ -280,7 +280,7 @@ export default function NotifyApplicant() {
         </div>
 
         {/* 4. SIDE-BY-SIDE DISCLAIMERS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 select-none">
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-4 select-none">
           {/* DISCLAIMER 1: COMPLIANCE LOCK */}
           <div className="p-4 bg-slate-50/80 border border-slate-200/80 rounded-xl flex items-center gap-3 text-xs text-slate-600 font-medium leading-relaxed shadow-3xs">
             <ShieldCheck size={16} className="text-[#074073] shrink-0 mt-0.5" />
@@ -292,23 +292,6 @@ export default function NotifyApplicant() {
                 Make sure the text stays friendly, helpful, and directly related
                 to the applicant's account updates. Avoid using intense
                 language, all-caps text, or unnecessary internal system jargon.
-              </p>
-            </div>
-          </div>
-
-          {/* DISCLAIMER 2: ACCURACY CONFIRMATION */}
-          <div className="p-4 bg-amber-50/60 border border-amber-200/60 rounded-xl flex items-center gap-3 text-xs text-amber-800 font-medium leading-relaxed shadow-3xs">
-            <AlertTriangle
-              size={16}
-              className="text-amber-600 shrink-0 mt-0.5"
-            />
-            <div className="space-y-1">
-              <p className="font-bold text-primary">Contact Delivery Check</p>
-              <p className="text-[11px] text-amber-700 font-medium">
-                Double-check that the applicant's phone number or email listed
-                above is accurate before pressing send. Messages are dispatched
-                instantly and cannot be recalled once they exit our network
-                systems.
               </p>
             </div>
           </div>

@@ -133,7 +133,7 @@ export default function ApprovalSuccess({
                 className="w-full sm:w-1/2 h-10 px-4 bg-white border border-slate-200 text-slate-600 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 hover:bg-slate-50 transition-all cursor-pointer shadow-2xs"
               >
                 <ArrowLeft size={13} />
-                <span>Return to Queue</span>
+                <span>Return to Application</span>
               </button>
 
               <button

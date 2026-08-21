@@ -28,6 +28,8 @@ import {
   HelpCircle,
   UserCheck,
   Cpu,
+  ArrowRight,
+  Zap,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -190,6 +192,141 @@ export default function LoanApplication() {
     link.click();
     document.body.removeChild(link);
   }
+
+  const renderActionPromptBanner = () => {
+    const rawStatus = String(
+      application?.status || application?.status_label || "",
+    ).toLowerCase();
+
+    // 1. PENDING CREDIT COMMITTEE
+    if (
+      rawStatus.includes("pending_credit_committee") ||
+      rawStatus.includes("credit committee")
+    ) {
+      return (
+        <div className="relative overflow-hidden bg-gradient-to-r from-blue-900 via-[#074073] to-slate-900 text-white p-5 md:p-6 rounded-3xl shadow-xl border border-blue-800/50 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all">
+          <div className="flex items-center gap-4 z-10">
+            <div className="size-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 text-blue-300 shadow-inner mt-0.5">
+              <Users size={22} className="animate-pulse" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest bg-blue-500/30 text-blue-200 border border-blue-400/30 px-2.5 py-0.5 rounded-full">
+                  Action Required
+                </span>
+              </div>
+              <h3 className="text-base font-bold tracking-tight text-white">
+                Pending Credit Committee Vote
+              </h3>
+              <p className="text-xs text-blue-100/80 font-medium max-w-xl leading-relaxed">
+                This loan application is currently sitting in the committee
+                review queue. Your vote and formal sign-off are required to
+                advance this file toward manager clearance.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleApprove}
+            className="z-10 h-12 px-6 bg-white hover:bg-blue-50 text-[#074073] text-xs font-bold uppercase tracking-wider rounded-2xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-98"
+          >
+            <span>Review & Approve</span>
+            <ArrowRight size={15} />
+          </button>
+
+          <div className="absolute -right-10 -bottom-10 size-40 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
+        </div>
+      );
+    }
+
+    // 2. PENDING MANAGER APPROVAL
+    if (
+      rawStatus.includes("pending_manager_approval") ||
+      rawStatus.includes("manager approval")
+    ) {
+      return (
+        <div className="relative overflow-hidden bg-gradient-to-r from-purple-950 via-indigo-900 to-slate-900 text-white p-5 md:p-6 rounded-3xl shadow-xl border border-purple-800/50 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all">
+          <div className="flex items-center gap-4 z-10">
+            <div className="size-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 text-purple-300 shadow-inner mt-0.5">
+              <UserCheck size={22} className="animate-pulse" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest bg-purple-500/30 text-purple-200 border border-purple-400/30 px-2.5 py-0.5 rounded-full">
+                  Executive Decision
+                </span>
+              </div>
+              <h3 className="text-base font-bold tracking-tight text-white">
+                Pending Manager Approval & Sign-Off
+              </h3>
+              <p className="text-xs text-purple-100/80 font-medium max-w-xl leading-relaxed">
+                Committee review has concluded successfully. Final manager
+                authorization is required to approve the loan structure and
+                unlock the disbursement queue.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleManagerApproval}
+            className="z-10 h-12 px-6 bg-purple-500 hover:bg-purple-400 text-white text-xs font-bold uppercase tracking-wider rounded-2xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-98"
+          >
+            <span>Manager Sign-Off</span>
+            <ArrowRight size={15} />
+          </button>
+
+          <div className="absolute -right-10 -bottom-10 size-40 bg-purple-500/10 rounded-full blur-2xl pointer-events-none" />
+        </div>
+      );
+    }
+
+    // 3. PENDING DISBURSEMENT / APPROVED
+    if (
+      rawStatus === "approved" ||
+      rawStatus.includes("pending_disbursement") ||
+      rawStatus.includes("disbursement")
+    ) {
+      return (
+        <div className="relative overflow-hidden bg-gradient-to-r from-emerald-950 via-teal-900 to-slate-900 text-white p-5 md:p-6 rounded-3xl shadow-xl border border-emerald-800/50 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all">
+          <div className="flex items-center gap-4 z-10">
+            <div className="size-12 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center shrink-0 text-emerald-300 shadow-inner mt-0.5">
+              <Zap size={22} className="animate-bounce" />
+            </div>
+            <div className="space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-black uppercase tracking-widest bg-emerald-500/30 text-emerald-200 border border-emerald-400/30 px-2.5 py-0.5 rounded-full">
+                  Ready for Liquidation
+                </span>
+              </div>
+              <h3 className="text-base font-bold tracking-tight text-white">
+                Approved & Awaiting Outbound Disbursement
+              </h3>
+              <p className="text-xs text-emerald-100/80 font-medium max-w-xl leading-relaxed">
+                All underwriting, guarantor, and management clearances have
+                passed. Authorize the payout release to transfer funds directly
+                to the applicant's channel.
+              </p>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleDisburse}
+            className="z-10 h-12 px-6 bg-emerald-500 hover:bg-emerald-400 text-white text-xs font-bold uppercase tracking-wider rounded-2xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-98"
+          >
+            <Upload size={15} />
+            <span>Release Funds</span>
+          </button>
+
+          <div className="absolute -right-10 -bottom-10 size-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div className="w-full space-y-4 antialiased text-slate-800 bg-slate-50/30 p-1 rounded-3xl">
@@ -387,6 +524,9 @@ export default function LoanApplication() {
             })()}
         </div>
       </div>
+
+      {/* DYNAMIC ACTION PROMPT BANNER */}
+      {!isFetching && renderActionPromptBanner()}
 
       {/* 2. SYMMETRIC CORE WORKSPACE LAYOUT CONTAINER */}
       {isFetching ? (

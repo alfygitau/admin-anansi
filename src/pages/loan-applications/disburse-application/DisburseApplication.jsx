@@ -13,6 +13,20 @@ import {
   ShieldCheck,
   ArrowUpRight,
   Loader2,
+  PiggyBank,
+  TrendingUp,
+  CreditCard,
+  Briefcase,
+  Globe,
+  Clock,
+  BadgeAlert,
+  X,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  FileText,
+  Phone,
+  Zap,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
@@ -29,7 +43,11 @@ export default function DisburseLoan() {
   const { showToast } = useToast();
   const { id } = useParams();
   const { auth } = useAuth();
+
+  // MODAL STATES
+  const [showSummaryModal, setShowSummaryModal] = useState(false);
   const [showDisburseSuccess, setShowDisburseSuccess] = useState(false);
+
   const [application, setApplication] = useState({});
 
   const [formData, setFormData] = useState({
@@ -73,7 +91,7 @@ export default function DisburseLoan() {
     return crypto.randomUUID();
   };
 
-  useQuery({
+  const { isFetching } = useQuery({
     queryKey: ["get loan application", id],
     queryFn: async () => {
       const response = await getApplication(id);
@@ -112,6 +130,7 @@ export default function DisburseLoan() {
       return response?.data?.data;
     },
     onSuccess: () => {
+      setShowSummaryModal(false);
       setShowDisburseSuccess(true);
     },
     onError: (error) => {
@@ -124,12 +143,71 @@ export default function DisburseLoan() {
     },
   });
 
-  const handleFormSubmit = async () => {
-    await mutate();
+  // PRE-SUBMISSION FORM VALIDATION
+  const handleFormSubmit = () => {
+    const newErrors = {};
+
+    if (!formData.name?.trim()) {
+      newErrors.name = "This information is needed to clear the payout.";
+    }
+
+    if (!formData.transaction_ref?.trim()) {
+      newErrors.transaction_ref =
+        "This information is needed to clear the payout.";
+    }
+
+    if (formData.method === "MPESA") {
+      if (!formData.recipient_phone?.trim()) {
+        newErrors.recipient_phone =
+          "This information is needed to clear the payout.";
+      } else if (
+        !/^(07|01|\+254)[0-9]\d{7,12}$/.test(formData.recipient_phone)
+      ) {
+        newErrors.recipient_phone = "Please enter a valid phone number.";
+      }
+    }
+
+    if (formData.method === "BANK") {
+      if (!formData.bank_name?.trim()) {
+        newErrors.bank_name = "This information is needed to clear the payout.";
+      }
+      if (!formData.bank_branch?.trim()) {
+        newErrors.bank_branch =
+          "This information is needed to clear the payout.";
+      }
+      if (!formData.bank_account_number?.trim()) {
+        newErrors.bank_account_number =
+          "This information is needed to clear the payout.";
+      }
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      setShowSummaryModal(true);
+    } else {
+      showToast({
+        title: "Missing Required Information",
+        type: "error",
+        position: "top-right",
+        description:
+          "Please fill in all mandatory disbursement fields before proceeding.",
+      });
+    }
   };
+
+  const formatCurrency = (val) =>
+    `KES ${Number(val || 0).toLocaleString("en-KE", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
+
+  const product = application?.loan_product || {};
+  const eligibility = application?.eligibility_result || {};
 
   return (
     <>
+      {/* SUCCESS MODAL */}
       <DisburseSuccess
         isOpen={showDisburseSuccess}
         onClose={() => setShowDisburseSuccess(false)}
@@ -141,6 +219,169 @@ export default function DisburseLoan() {
         viewLedger={() => navigate(`/admin/loan-transactions`)}
       />
 
+      {/* DISBURSEMENT SUMMARY MODAL */}
+      {showSummaryModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+          <div
+            className="fixed inset-0"
+            onClick={() => !isLoading && setShowSummaryModal(false)}
+          />
+
+          <div className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden z-10 flex flex-col">
+            {/* Modal Header */}
+            <div className="px-6 pt-6 pb-4 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="size-10 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-600 flex items-center justify-center">
+                  <Zap size={20} />
+                </div>
+                <div>
+                  <h3 className="text-base font-bold text-slate-800">
+                    Confirm Disbursement Summary
+                  </h3>
+                  <p className="text-xs text-slate-400 font-medium">
+                    Verify settlement parameters before executing transfer
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={() => setShowSummaryModal(false)}
+                className="size-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition-all cursor-pointer"
+              >
+                <X size={16} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+              {/* Applicant Summary Banner */}
+              <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    Approved Borrower
+                  </span>
+                  <span className="text-sm font-bold text-slate-800 block mt-0.5">
+                    {application.applicant_name}
+                  </span>
+                  <span className="text-xs font-mono text-slate-500">
+                    {application.application_number}
+                  </span>
+                </div>
+                <div className="text-right">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    Disbursement Capital
+                  </span>
+                  <span className="text-sm font-black font-mono text-primary block mt-0.5">
+                    {formatCurrency(application.applied_amount)}
+                  </span>
+                </div>
+              </div>
+
+              {/* Data Review Grid */}
+              <div className="space-y-3 text-xs">
+                <div className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                  <span className="font-semibold text-slate-500">
+                    Authorized Officer
+                  </span>
+                  <span className="font-bold text-slate-800">
+                    {formData.name}
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                  <span className="font-semibold text-slate-500">
+                    Payout Method
+                  </span>
+                  <span className="font-bold uppercase bg-primary text-white px-2 py-0.5 rounded text-[10px] font-mono">
+                    {formData.method === "MPESA"
+                      ? "Mobile Wallet"
+                      : "Bank Transfer"}
+                  </span>
+                </div>
+
+                {formData.method === "MPESA" ? (
+                  <div className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                    <span className="font-semibold text-slate-500">
+                      Recipient Phone
+                    </span>
+                    <span className="font-mono font-bold text-slate-800">
+                      {formData.recipient_phone}
+                    </span>
+                  </div>
+                ) : (
+                  <div className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/50 space-y-1.5">
+                    <span className="font-semibold text-slate-500 block">
+                      Bank Destination Details
+                    </span>
+                    <div className="flex justify-between items-center text-slate-700 font-medium">
+                      <span>Bank & Branch:</span>
+                      <span className="font-bold text-slate-800">
+                        {formData.bank_name} ({formData.bank_branch})
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center text-slate-700 font-medium">
+                      <span>Account Number:</span>
+                      <span className="font-mono font-bold text-slate-800">
+                        {formData.bank_account_number}
+                      </span>
+                    </div>
+                  </div>
+                )}
+
+                <div className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/50 flex justify-between items-center">
+                  <span className="font-semibold text-slate-500">
+                    Transaction Ref Code
+                  </span>
+                  <span className="font-mono font-bold text-primary">
+                    {formData.transaction_ref}
+                  </span>
+                </div>
+
+                {formData.notes && (
+                  <div className="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/50 space-y-1">
+                    <span className="font-semibold text-slate-500 block">
+                      Processing Notes
+                    </span>
+                    <p className="text-slate-700 font-medium leading-relaxed italic">
+                      "{formData.notes}"
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-end gap-3">
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={() => setShowSummaryModal(false)}
+                className="h-11 px-5 border border-slate-200/80 bg-white text-slate-600 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-100 transition-all cursor-pointer disabled:opacity-50"
+              >
+                Back & Edit
+              </button>
+              <button
+                type="button"
+                disabled={isLoading}
+                onClick={() => mutate()}
+                className="h-11 px-6 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider rounded-xl transition-all shadow-md shadow-emerald-600/10 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                <span>
+                  {isLoading ? "Executing..." : "Confirm & Execute Payout"}
+                </span>
+                {isLoading ? (
+                  <Loader2 size={14} className="animate-spin" />
+                ) : (
+                  <ArrowUpRight size={14} />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* PAGE CONTAINER */}
       <div className="w-full space-y-6 antialiased text-slate-800">
         {/* HEADER CONTROLS */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-200/60 pb-5 select-none">
@@ -159,7 +400,6 @@ export default function DisburseLoan() {
               <h1 className="text-xl font-black tracking-tight text-primary">
                 Disburse Loan Application
               </h1>
-              {/* FIXED: Formatted the application identifier with clean monospace typography and an optional inline label */}
               <p className="text-xs font-mono font-bold text-slate-500 flex items-center gap-1 mt-0.5">
                 <span className="text-[10px] font-sans text-slate-400 font-normal uppercase tracking-wide mr-0.5 select-none">
                   Ref:
@@ -169,6 +409,159 @@ export default function DisburseLoan() {
             </div>
           </div>
         </div>
+
+        {isFetching ? (
+          <LoanAndBorrowerSkeleton />
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full text-slate-800">
+            {/* CARD 1: LOAN APPLICATION DETAILS */}
+            <div className="bg-white rounded-3xl border border-slate-200/60 shadow-xs p-6">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-2xl bg-primary/5 text-primary border border-primary/10 flex items-center justify-center shrink-0">
+                    <FileText size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
+                      Loan Application Details
+                    </h3>
+                    <p className="text-xs text-slate-400 font-medium">
+                      {application.application_number}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 my-5 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    Applied Amount
+                  </span>
+                  <span className="text-xl font-bold text-primary tracking-tight mt-0.5 block">
+                    {formatCurrency(application.applied_amount)}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    Repayment Duration
+                  </span>
+                  <span className="text-xl font-bold text-slate-800 tracking-tight mt-0.5 block">
+                    {application.loan_period} Months
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-y-6 gap-x-6 text-xs">
+                <DetailItem
+                  icon={<Briefcase size={15} />}
+                  label="Loan Product"
+                  value={product.product_name || "—"}
+                />
+                <DetailItem
+                  icon={<CreditCard size={15} />}
+                  label="Repayment Frequency"
+                  value={application.loan_interval || "Monthly"}
+                />
+                <DetailItem
+                  icon={<BadgeAlert size={15} />}
+                  label="Loan Purpose"
+                  value={application.loan_purpose || "—"}
+                />
+                <DetailItem
+                  icon={<Globe size={15} />}
+                  label="Application Channel"
+                  value={application.loan_channel || "WEB"}
+                />
+                <DetailItem
+                  icon={<Calendar size={15} />}
+                  label="Application Date"
+                  value={
+                    application.application_date
+                      ? new Date(
+                          application.application_date,
+                        ).toLocaleDateString("en-KE", { dateStyle: "medium" })
+                      : "—"
+                  }
+                />
+                <DetailItem
+                  icon={<TrendingUp size={15} />}
+                  label="Interest Rate"
+                  value={`${Number(product.interest_rate || 0).toFixed(2)}% pm (${product.interest_method?.replace("_", " ")})`}
+                />
+              </div>
+            </div>
+
+            {/* CARD 2: BORROWER DETAILS & FINANCIAL SNAPSHOT */}
+            <div className="bg-white rounded-3xl border border-slate-200/60 shadow-xs p-6">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-2xl bg-[#074073]/5 text-[#074073] border border-[#074073]/10 flex items-center justify-center shrink-0">
+                    <User size={20} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wide">
+                      Borrower Profile
+                    </h3>
+                    <p className="text-xs text-slate-400 font-medium">
+                      Personal & Financial Profile
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="my-5 p-4 bg-[#074073]/5 rounded-2xl border border-[#074073]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">
+                    Applicant Name
+                  </span>
+                  <span className="text-base font-bold text-slate-900 tracking-tight block">
+                    {application.applicant_name}
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-3 mb-5">
+                <BalanceBox
+                  icon={<PiggyBank size={15} className="text-emerald-600" />}
+                  label="Total Shares"
+                  value={formatCurrency(eligibility.total_shares)}
+                />
+                <BalanceBox
+                  icon={<Wallet size={15} className="text-blue-600" />}
+                  label="Total Savings"
+                  value={formatCurrency(eligibility.total_savings)}
+                />
+                <BalanceBox
+                  icon={<TrendingUp size={15} className="text-indigo-600" />}
+                  label="Borrowing Limit"
+                  value={formatCurrency(eligibility.limit)}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-y-6 gap-x-6 text-xs">
+                <DetailItem
+                  icon={<ShieldCheck size={15} />}
+                  label="Eligibility Check"
+                  value={
+                    application.eligibility_passed
+                      ? "Passed All Checks"
+                      : "Failed Check"
+                  }
+                />
+                <DetailItem
+                  icon={<Calendar size={15} />}
+                  label="Membership Tenure"
+                  value="19 Months"
+                />
+                <DetailItem
+                  icon={<User size={15} />}
+                  label="Guarantors Status"
+                  value={`${application.guarantors?.length || 0} / ${product.min_guarantors} Approved`}
+                />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* THREE SIDE-BY-SIDE CONTAINERS */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch w-full">
@@ -301,37 +694,31 @@ export default function DisburseLoan() {
 
         {/* SIDE-BY-SIDE OFFICER COMPLIANCE DISCLAIMERS */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2 select-none">
-          {/* DISCLAIMER 1: LEDGER FINALITY (Firm Blue/Slate Theme) */}
+          {/* DISCLAIMER 1: PERMANENT ACTION */}
           <div className="p-4 bg-slate-50/80 border border-slate-200/80 rounded-xl flex items-center gap-3 text-xs text-slate-600 font-medium leading-relaxed shadow-3xs">
             <ShieldCheck size={16} className="text-[#074073] shrink-0 mt-0.5" />
             <div className="space-y-1">
-              <p className="font-bold text-primary">
-                Irreversible Ledger Writing
-              </p>
+              <p className="font-bold text-primary">Permanent Payment Record</p>
               <p className="text-[11px] text-slate-500 font-medium">
-                Once confirmed, this transaction is instantly committed to the
-                core financial ledger. This action cannot be undone, reversed,
-                or edited. Please ensure the transaction hash is accurate before
-                authorizing the payout.
+                Once confirmed, this payment is saved permanently and cannot be
+                canceled or edited. Please verify all details before finalizing
+                the payout.
               </p>
             </div>
           </div>
 
-          {/* DISCLAIMER 2: DESTINATION VERIFICATION (Operational Amber Theme) */}
+          {/* DISCLAIMER 2: RECIPIENT VERIFICATION */}
           <div className="p-4 bg-amber-50/60 border border-amber-200/60 rounded-xl flex items-center gap-3 text-xs text-amber-800 font-medium leading-relaxed shadow-3xs">
             <AlertTriangle
               size={16}
               className="text-amber-600 shrink-0 mt-0.5"
             />
             <div className="space-y-1">
-              <p className="font-bold text-primary">
-                Account Destination Check
-              </p>
+              <p className="font-bold text-primary">Verify Recipient Name</p>
               <p className="text-[11px] text-amber-700 font-medium">
-                Always double-check that the destination wallet or bank account
-                belongs directly to the approved applicant. Cross-verifying
-                names on your transfer screen right now prevents wrong-account
-                transfers and irreversible losses.
+                Make sure the phone number or bank account belongs directly to
+                the approved applicant. Double-checking names helps prevent
+                sending funds to the wrong person.
               </p>
             </div>
           </div>
@@ -364,16 +751,10 @@ export default function DisburseLoan() {
             <button
               onClick={handleFormSubmit}
               type="button"
-              disabled={isLoading} // Prevents double-clicking while loading
-              className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 flex items-center gap-2 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 flex items-center gap-2 cursor-pointer"
             >
-              <span>{isLoading ? "Processing..." : "Confirm Payout"}</span>
-
-              {isLoading ? (
-                <Loader2 size={14} className="animate-spin" />
-              ) : (
-                <ArrowUpRight size={14} />
-              )}
+              <span>Review Payout Summary</span>
+              <ArrowUpRight size={14} />
             </button>
           </div>
         </div>
@@ -469,5 +850,125 @@ export const FormSelect = ({ icon, label, error, children, ...props }) => (
         {error}
       </span>
     )}
+  </div>
+);
+
+const LoanAndBorrowerSkeleton = () => (
+  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full animate-pulse select-none">
+    {/* CARD 1 SKELETON */}
+    <div className="bg-white rounded-3xl border border-slate-200/60 shadow-xs p-6">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div className="flex items-center gap-3">
+          <div className="size-10 rounded-2xl bg-slate-100 shrink-0" />
+          <div className="space-y-1.5">
+            <div className="h-3.5 w-36 bg-slate-200 rounded" />
+            <div className="h-2.5 w-20 bg-slate-100 rounded" />
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4 my-5 bg-slate-50/80 p-4 rounded-2xl border border-slate-100">
+        <div className="space-y-2">
+          <div className="h-2.5 w-20 bg-slate-200 rounded" />
+          <div className="h-6 w-32 bg-slate-200 rounded-lg" />
+        </div>
+        <div className="space-y-2">
+          <div className="h-2.5 w-20 bg-slate-200 rounded" />
+          <div className="h-6 w-20 bg-slate-200 rounded-lg" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-y-6 gap-x-6">
+        {Array(6)
+          .fill(0)
+          .map((_, i) => (
+            <div key={`sk1-item-${i}`} className="flex items-start gap-2.5">
+              <div className="size-7 rounded-lg bg-slate-100 shrink-0 mt-0.5" />
+              <div className="space-y-1.5 flex-1">
+                <div className="h-2.5 w-16 bg-slate-200 rounded" />
+                <div className="h-3.5 w-24 bg-slate-100 rounded" />
+              </div>
+            </div>
+          ))}
+      </div>
+    </div>
+
+    {/* CARD 2 SKELETON */}
+    <div className="bg-white rounded-3xl border border-slate-200/60 shadow-xs p-6">
+      <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+        <div className="flex items-center gap-3">
+          <div className="size-10 rounded-2xl bg-slate-100 shrink-0" />
+          <div className="space-y-1.5">
+            <div className="h-3.5 w-32 bg-slate-200 rounded" />
+            <div className="h-2.5 w-36 bg-slate-100 rounded" />
+          </div>
+        </div>
+      </div>
+
+      <div className="my-5 p-4 bg-slate-50/80 rounded-2xl border border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="space-y-2">
+          <div className="h-2.5 w-20 bg-slate-200 rounded" />
+          <div className="h-5 w-36 bg-slate-200 rounded" />
+        </div>
+        <div className="h-7 w-28 bg-slate-200 rounded-xl" />
+      </div>
+
+      <div className="grid grid-cols-3 gap-3 mb-5">
+        {Array(3)
+          .fill(0)
+          .map((_, i) => (
+            <div
+              key={`sk2-bal-${i}`}
+              className="bg-slate-50/80 p-3 rounded-2xl border border-slate-100 space-y-2"
+            >
+              <div className="h-2 w-14 bg-slate-200 rounded" />
+              <div className="h-4 w-20 bg-slate-200 rounded" />
+            </div>
+          ))}
+      </div>
+
+      <div className="grid grid-cols-2 gap-y-6 gap-x-6">
+        {Array(3)
+          .fill(0)
+          .map((_, i) => (
+            <div key={`sk2-item-${i}`} className="flex items-start gap-2.5">
+              <div className="size-7 rounded-lg bg-slate-100 shrink-0 mt-0.5" />
+              <div className="space-y-1.5 flex-1">
+                <div className="h-2.5 w-16 bg-slate-200 rounded" />
+                <div className="h-3.5 w-24 bg-slate-100 rounded" />
+              </div>
+            </div>
+          ))}
+      </div>
+    </div>
+  </div>
+);
+
+const DetailItem = ({ icon, label, value }) => (
+  <div className="flex items-start gap-2.5 min-w-0">
+    <div className="size-7 rounded-lg bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 shrink-0 mt-0.5">
+      {icon}
+    </div>
+    <div className="min-w-0 flex flex-col">
+      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 truncate">
+        {label}
+      </span>
+      <span className="text-xs font-semibold text-slate-700 truncate mt-0.5">
+        {value}
+      </span>
+    </div>
+  </div>
+);
+
+const BalanceBox = ({ icon, label, value }) => (
+  <div className="bg-slate-50/80 p-3 rounded-2xl border border-slate-100 flex flex-col justify-between">
+    <div className="flex items-center justify-between mb-1">
+      <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400">
+        {label}
+      </span>
+    </div>
+    <span className="text-xs font-bold text-slate-800 tracking-tight truncate">
+      {value}
+    </span>
   </div>
 );

@@ -393,7 +393,10 @@ export default function LoanApplications() {
                       <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1.5">
                           <span className="font-semibold text-slate-800 text-sm tracking-tight">
-                            {app.current_stage_label}
+                            {new Date(app.created_at).toLocaleDateString(
+                              "en-KE",
+                              { dateStyle: "medium" },
+                            )}
                           </span>
                           <span
                             className={`inline-flex items-center gap-1.5 text-[10px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${

@@ -22,6 +22,7 @@ export default function LoanTransactions() {
   const [searchQuery, setSearchQuery] = useState("");
   const formatAmount = useFormatAmount();
   const [showFilters, setShowFilters] = useState(false);
+  const [activeTab, setActiveTab] = useState("repayments");
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
     page: 1,
@@ -120,6 +121,10 @@ export default function LoanTransactions() {
     todayCollections: "185,000",
   };
 
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
   return (
     <>
       <LoanTransactionsFilter
@@ -129,7 +134,7 @@ export default function LoanTransactions() {
         setFilters={setFilters}
       />
 
-      <div className="w-full space-y-6">
+      <div className="w-full space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
           <div>
             <h2 className="text-2xl font-bold tracking-tight text-primary">
@@ -229,6 +234,31 @@ export default function LoanTransactions() {
               <Download size={14} /> Export
             </button>
           </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1.5 rounded-2xl w-full border border-slate-200/60 select-none">
+          <button
+            type="button"
+            onClick={() => handleTabChange("disbursements")}
+            className={`px-10 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === "disbursements"
+                ? "bg-white text-primary shadow-2xs"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Disbursements
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTabChange("repayments")}
+            className={`px-10 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === "repayments"
+                ? "bg-white text-primary shadow-2xs"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            Repayments
+          </button>
         </div>
 
         {/* 3. DETAILED LEDGER TABLE */}

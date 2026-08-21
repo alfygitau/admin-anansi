@@ -16,6 +16,7 @@ import {
   Settings,
   HelpCircle,
   User,
+  Coins,
 } from "lucide-react";
 import { FourCircles } from "../shared/Circles";
 import useAuth from "../hooks/useAuth";
@@ -53,7 +54,7 @@ export default function Homelayer() {
       id: "loans",
       label: "Loans",
       path: "/admin/loans",
-      icon: <FileClock size={18} />,
+      icon: <Coins size={18} />,
       badge: "18",
       subItems: [
         { label: "All Loans", path: "/admin/all-loans" },

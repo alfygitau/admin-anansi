@@ -100,7 +100,6 @@ export default function AddLoanProduct() {
     if (!value && value !== 0) {
       errorMsg = "This field is required";
     } else {
-      // 2. Specific Logical Boundary Validations
       if (
         field === "max_amount" &&
         Number(value) < Number(formData.min_amount)
@@ -784,6 +783,22 @@ export default function AddLoanProduct() {
           {/* SECTION 4: INTEREST & FEES */}
           <FormCardLayout id="amortization" title="Interest, Fees & Repayments">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* CHECKBOX CONTAINER AT THE START */}
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60 mb-2 items-center">
+                <FormCheckbox
+                  label="Require insurance coverage"
+                  checked={formData.has_insurance}
+                  onChange={(checked) =>
+                    setFormData({
+                      ...formData,
+                      has_insurance: checked,
+                      // Automatically clear insurance rate when disabled
+                      insurance_rate: checked ? formData.insurance_rate : "",
+                    })
+                  }
+                />
+              </div>
+
               <FormGroup label="Interest Rate" error={errors.interest_rate}>
                 <InputWrapper icon={<Coins size={18} />}>
                   <input
@@ -876,15 +891,19 @@ export default function AddLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
+              {/* CONDITIONALLY DISABLED INPUT */}
               <FormGroup
                 label="Insurance Cover Rate (%)"
-                error={errors.insurance_rate}
+                error={formData.has_insurance ? errors.insurance_rate : ""}
               >
                 <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
-                    value={formData.insurance_rate}
+                    disabled={!formData.has_insurance}
+                    value={
+                      formData.has_insurance ? formData.insurance_rate : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -892,13 +911,15 @@ export default function AddLoanProduct() {
                       })
                     }
                     onBlur={(e) => handleBlur("insurance_rate", e.target.value)}
-                    placeholder="e.g. 0.5000"
-                    className={`${inputClass("insurance_rate")} pr-10 ${noSpinnerUtility}`}
+                    placeholder={
+                      formData.has_insurance ? "e.g. 0.5000" : "Disabled"
+                    }
+                    className={`${inputClass("insurance_rate")} pr-10 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
-              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60 mt-2">
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60 mb-2 items-center">
                 <FormCheckbox
                   label="Deduct processing fees upfront from the loan amount"
                   checked={formData.deduct_fee_from_principal}
@@ -909,13 +930,6 @@ export default function AddLoanProduct() {
                     })
                   }
                 />
-                <FormCheckbox
-                  label="Require insurance coverage"
-                  checked={formData.has_insurance}
-                  onChange={(checked) =>
-                    setFormData({ ...formData, has_insurance: checked })
-                  }
-                />
               </div>
             </div>
           </FormCardLayout>
@@ -923,6 +937,32 @@ export default function AddLoanProduct() {
           {/* SECTION 5: RISK & PENALTY CONTROL */}
           <FormCardLayout id="risk" title="Late Payments & Penalties">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* CHECKBOX CONTAINER AT THE START */}
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60 mb-2 items-center">
+                <FormCheckbox
+                  label="Enable late fees and penalties"
+                  checked={formData.has_penalty}
+                  onChange={(checked) =>
+                    setFormData({
+                      ...formData,
+                      has_penalty: checked,
+                      // Clear penalty fields when disabled
+                      penalty_value: checked ? formData.penalty_value : "",
+                      max_penalty_rate: checked
+                        ? formData.max_penalty_rate
+                        : "",
+                      penalty_grace_period_days: checked
+                        ? formData.penalty_grace_period_days
+                        : "",
+                      penalty_cap_days: checked
+                        ? formData.penalty_cap_days
+                        : "",
+                    })
+                  }
+                />
+              </div>
+
+              {/* GENERAL PAYMENT GRACE PERIOD */}
               <FormGroup
                 label="Payment Grace Period (Days)"
                 error={errors.grace_period_days}
@@ -948,13 +988,15 @@ export default function AddLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
+              {/* PENALTY METHOD - CONDITIONALLY DISABLED */}
               <FormGroup label="Penalty Calculation Method">
                 <select
-                  value={formData.penalty_type}
+                  disabled={!formData.has_penalty}
+                  value={formData.has_penalty ? formData.penalty_type : ""}
                   onChange={(e) =>
                     setFormData({ ...formData, penalty_type: e.target.value })
                   }
-                  className="custom-select-box font-sans"
+                  className="custom-select-box font-sans disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80"
                 >
                   <option value="percentage_of_outstanding">
                     Percentage of Overdue Balance
@@ -965,12 +1007,17 @@ export default function AddLoanProduct() {
                 </select>
               </FormGroup>
 
-              <FormGroup label="Penalty Rate (%)" error={errors.penalty_value}>
+              {/* PENALTY RATE - CONDITIONALLY DISABLED */}
+              <FormGroup
+                label="Penalty Rate (%)"
+                error={formData.has_penalty ? errors.penalty_value : ""}
+              >
                 <InputWrapper icon={<AlertTriangle size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
-                    value={formData.penalty_value}
+                    disabled={!formData.has_penalty}
+                    value={formData.has_penalty ? formData.penalty_value : ""}
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -978,21 +1025,27 @@ export default function AddLoanProduct() {
                       })
                     }
                     onBlur={(e) => handleBlur("penalty_value", e.target.value)}
-                    placeholder="e.g. 5.0000"
-                    className={`${inputClass("penalty_value")} pr-14 ${noSpinnerUtility}`}
+                    placeholder={
+                      formData.has_penalty ? "e.g. 5.0000" : "Disabled"
+                    }
+                    className={`${inputClass("penalty_value")} pr-14 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* MAXIMUM PENALTY CAP - CONDITIONALLY DISABLED */}
               <FormGroup
                 label="Maximum Penalty Cap (%)"
-                error={errors.max_penalty_rate}
+                error={formData.has_penalty ? errors.max_penalty_rate : ""}
               >
                 <InputWrapper icon={<AlertTriangle size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
-                    value={formData.max_penalty_rate}
+                    disabled={!formData.has_penalty}
+                    value={
+                      formData.has_penalty ? formData.max_penalty_rate : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1002,20 +1055,30 @@ export default function AddLoanProduct() {
                     onBlur={(e) =>
                       handleBlur("max_penalty_rate", e.target.value)
                     }
-                    placeholder="e.g. 20.0000"
-                    className={`${inputClass("max_penalty_rate")} pr-10 ${noSpinnerUtility}`}
+                    placeholder={
+                      formData.has_penalty ? "e.g. 20.0000" : "Disabled"
+                    }
+                    className={`${inputClass("max_penalty_rate")} pr-10 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* PENALTY GRACE PERIOD - CONDITIONALLY DISABLED */}
               <FormGroup
                 label="Penalty Grace Period (Days)"
-                error={errors.penalty_grace_period_days}
+                error={
+                  formData.has_penalty ? errors.penalty_grace_period_days : ""
+                }
               >
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
-                    value={formData.penalty_grace_period_days}
+                    disabled={!formData.has_penalty}
+                    value={
+                      formData.has_penalty
+                        ? formData.penalty_grace_period_days
+                        : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1027,20 +1090,24 @@ export default function AddLoanProduct() {
                     onBlur={(e) =>
                       handleBlur("penalty_grace_period_days", e.target.value)
                     }
-                    placeholder="e.g. 0"
-                    className={`${inputClass("penalty_grace_period_days")} pr-12 ${noSpinnerUtility}`}
+                    placeholder={formData.has_penalty ? "e.g. 0" : "Disabled"}
+                    className={`${inputClass("penalty_grace_period_days")} pr-12 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* MAXIMUM DAYS TO CHARGE PENALTIES - CONDITIONALLY DISABLED */}
               <FormGroup
                 label="Maximum Days to Charge Penalties"
-                error={errors.penalty_cap_days}
+                error={formData.has_penalty ? errors.penalty_cap_days : ""}
               >
                 <InputWrapper icon={<Calendar size={18} />}>
                   <input
                     type="number"
-                    value={formData.penalty_cap_days}
+                    disabled={!formData.has_penalty}
+                    value={
+                      formData.has_penalty ? formData.penalty_cap_days : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1052,12 +1119,13 @@ export default function AddLoanProduct() {
                     onBlur={(e) =>
                       handleBlur("penalty_cap_days", e.target.value)
                     }
-                    placeholder="e.g. 0"
-                    className={`${inputClass("penalty_cap_days")} pr-12 ${noSpinnerUtility}`}
+                    placeholder={formData.has_penalty ? "e.g. 0" : "Disabled"}
+                    className={`${inputClass("penalty_cap_days")} pr-12 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* PAYMENT HOLIDAY / MORATORIUM (INDEPENDENT) */}
               <FormGroup
                 label="Payment Holiday / Grace Period (Months)"
                 error={errors.moratorium_months}
@@ -1099,14 +1167,7 @@ export default function AddLoanProduct() {
                 </select>
               </FormGroup>
 
-              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60">
-                <FormCheckbox
-                  label="Enable late fees and penalties"
-                  checked={formData.has_penalty}
-                  onChange={(checked) =>
-                    setFormData({ ...formData, has_penalty: checked })
-                  }
-                />
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60 mb-2 items-center">
                 <FormCheckbox
                   label="Suspend member account if the loan defaults"
                   checked={formData.block_if_defaulted}
@@ -1131,12 +1192,122 @@ export default function AddLoanProduct() {
           {/* SECTION 6: WORKFLOW & UNDERWRITING */}
           <FormCardLayout id="underwriting" title="Approvals & Security">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* CHECKBOX CONTAINER AT THE START */}
+              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60 mb-2 items-center">
+                <div className="md:col-span-1">
+                  <FormCheckbox
+                    label="Requires manager approval"
+                    checked={formData.requires_manager_approval}
+                    onChange={(checked) =>
+                      setFormData({
+                        ...formData,
+                        requires_manager_approval: checked,
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="md:col-span-1">
+                  <FormCheckbox
+                    label="Requires guarantors"
+                    checked={formData.requires_guarantor}
+                    onChange={(checked) =>
+                      setFormData({
+                        ...formData,
+                        requires_guarantor: checked,
+                        // Clear guarantor fields when disabled
+                        min_guarantors: checked ? formData.min_guarantors : "",
+                        max_guarantors: checked ? formData.max_guarantors : "",
+                        guarantor_required_above_amount: checked
+                          ? formData.guarantor_required_above_amount
+                          : "",
+                        guarantor_coverage_percent: checked
+                          ? formData.guarantor_coverage_percent
+                          : "",
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="md:col-span-1">
+                  <FormCheckbox
+                    label="Requires physical collaterals"
+                    checked={formData.requires_collateral}
+                    onChange={(checked) =>
+                      setFormData({
+                        ...formData,
+                        requires_collateral: checked,
+                        collateral_description: checked
+                          ? formData.collateral_description
+                          : "",
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="md:col-span-1">
+                  <FormCheckbox
+                    label="Allow loan top-ups"
+                    checked={formData.allows_topup}
+                    onChange={(checked) =>
+                      setFormData({
+                        ...formData,
+                        allows_topup: checked,
+                        min_repayment_percent_for_topup: checked
+                          ? formData.min_repayment_percent_for_topup
+                          : "",
+                      })
+                    }
+                  />
+                </div>
+
+                <div className="md:col-span-1">
+                  <FormCheckbox
+                    label="Automatically send funds upon approval"
+                    checked={formData.auto_disburse}
+                    onChange={(checked) =>
+                      setFormData({ ...formData, auto_disburse: checked })
+                    }
+                  />
+                </div>
+
+                <div className="md:col-span-1">
+                  <FormCheckbox
+                    label="Allow loan rollovers"
+                    checked={formData.allows_rollover}
+                    onChange={(checked) =>
+                      setFormData({ ...formData, allows_rollover: checked })
+                    }
+                  />
+                </div>
+
+                <div className="md:col-span-1">
+                  <FormCheckbox
+                    label="Requires documents"
+                    checked={formData.requires_documents}
+                    onChange={(checked) =>
+                      setFormData({ ...formData, requires_documents: checked })
+                    }
+                  />
+                </div>
+              </div>
+
+              {/* WORKFLOW TYPE SELECT */}
               <FormGroup label="Approval Workflow">
                 <select
                   value={formData.workflow_type}
-                  onChange={(e) =>
-                    setFormData({ ...formData, workflow_type: e.target.value })
-                  }
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFormData({
+                      ...formData,
+                      workflow_type: val,
+                      // Reset committee approvals count if automatic
+                      committee_approvals_required:
+                        val === "committee_and_manager"
+                          ? formData.committee_approvals_required
+                          : "",
+                    });
+                  }}
                   className="custom-select-box font-sans"
                 >
                   <option value="committee_and_manager">
@@ -1151,14 +1322,26 @@ export default function AddLoanProduct() {
                 </select>
               </FormGroup>
 
+              {/* COMMITTEE APPROVALS - DISABLED IF AUTOMATIC WORKFLOW */}
               <FormGroup
                 label="Required Committee Approvals"
-                error={errors.committee_approvals_required}
+                error={
+                  formData.workflow_type === "committee_and_manager"
+                    ? errors.committee_approvals_required
+                    : ""
+                }
               >
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
-                    value={formData.committee_approvals_required}
+                    disabled={
+                      formData.workflow_type !== "committee_and_manager"
+                    }
+                    value={
+                      formData.workflow_type === "committee_and_manager"
+                        ? formData.committee_approvals_required
+                        : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1170,12 +1353,17 @@ export default function AddLoanProduct() {
                     onBlur={(e) =>
                       handleBlur("committee_approvals_required", e.target.value)
                     }
-                    placeholder="e.g. 3"
-                    className={`${inputClass("committee_approvals_required")} pr-14 ${noSpinnerUtility}`}
+                    placeholder={
+                      formData.workflow_type === "committee_and_manager"
+                        ? "e.g. 3"
+                        : "Disabled"
+                    }
+                    className={`${inputClass("committee_approvals_required")} pr-14 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* MINIMUM PAID BEFORE RE-APPLYING */}
               <FormGroup
                 label="Minimum Paid Before Re-applying (%)"
                 error={errors.min_repayment_percent_before_reapply}
@@ -1203,14 +1391,18 @@ export default function AddLoanProduct() {
                 </InputWrapper>
               </FormGroup>
 
+              {/* MIN GUARANTORS - CONDITIONALLY DISABLED */}
               <FormGroup
                 label="Minimum Number of Guarantors"
-                error={errors.min_guarantors}
+                error={formData.requires_guarantor ? errors.min_guarantors : ""}
               >
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
-                    value={formData.min_guarantors}
+                    disabled={!formData.requires_guarantor}
+                    value={
+                      formData.requires_guarantor ? formData.min_guarantors : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1220,20 +1412,26 @@ export default function AddLoanProduct() {
                       })
                     }
                     onBlur={(e) => handleBlur("min_guarantors", e.target.value)}
-                    placeholder="e.g. 2"
-                    className={`${inputClass("min_guarantors")} pr-20 ${noSpinnerUtility}`}
+                    placeholder={
+                      formData.requires_guarantor ? "e.g. 2" : "Disabled"
+                    }
+                    className={`${inputClass("min_guarantors")} pr-20 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* MAX GUARANTORS - CONDITIONALLY DISABLED */}
               <FormGroup
                 label="Maximum Number of Guarantors"
-                error={errors.max_guarantors}
+                error={formData.requires_guarantor ? errors.max_guarantors : ""}
               >
                 <InputWrapper icon={<Users size={18} />}>
                   <input
                     type="number"
-                    value={formData.max_guarantors}
+                    disabled={!formData.requires_guarantor}
+                    value={
+                      formData.requires_guarantor ? formData.max_guarantors : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1243,20 +1441,32 @@ export default function AddLoanProduct() {
                       })
                     }
                     onBlur={(e) => handleBlur("max_guarantors", e.target.value)}
-                    placeholder="e.g. 4"
-                    className={`${inputClass("max_guarantors")} pr-20 ${noSpinnerUtility}`}
+                    placeholder={
+                      formData.requires_guarantor ? "e.g. 4" : "Disabled"
+                    }
+                    className={`${inputClass("max_guarantors")} pr-20 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* GUARANTOR THRESHOLD AMOUNT - CONDITIONALLY DISABLED */}
               <FormGroup
                 label="Require Guarantors Above This Amount"
-                error={errors.guarantor_required_above_amount}
+                error={
+                  formData.requires_guarantor
+                    ? errors.guarantor_required_above_amount
+                    : ""
+                }
               >
                 <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
-                    value={formData.guarantor_required_above_amount}
+                    disabled={!formData.requires_guarantor}
+                    value={
+                      formData.requires_guarantor
+                        ? formData.guarantor_required_above_amount
+                        : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1269,21 +1479,33 @@ export default function AddLoanProduct() {
                         e.target.value,
                       )
                     }
-                    placeholder="e.g. 0.00"
-                    className={`${inputClass("guarantor_required_above_amount")} pr-12 ${noSpinnerUtility}`}
+                    placeholder={
+                      formData.requires_guarantor ? "e.g. 0.00" : "Disabled"
+                    }
+                    className={`${inputClass("guarantor_required_above_amount")} pr-12 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* GUARANTOR COVERAGE PERCENT - CONDITIONALLY DISABLED */}
               <FormGroup
                 label="Guarantor Guarantee Coverage (%)"
-                error={errors.guarantor_coverage_percent}
+                error={
+                  formData.requires_guarantor
+                    ? errors.guarantor_coverage_percent
+                    : ""
+                }
               >
                 <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
-                    value={formData.guarantor_coverage_percent}
+                    disabled={!formData.requires_guarantor}
+                    value={
+                      formData.requires_guarantor
+                        ? formData.guarantor_coverage_percent
+                        : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1293,21 +1515,33 @@ export default function AddLoanProduct() {
                     onBlur={(e) =>
                       handleBlur("guarantor_coverage_percent", e.target.value)
                     }
-                    placeholder="e.g. 100.0000"
-                    className={`${inputClass("guarantor_coverage_percent")} pr-10 ${noSpinnerUtility}`}
+                    placeholder={
+                      formData.requires_guarantor ? "e.g. 100.0000" : "Disabled"
+                    }
+                    className={`${inputClass("guarantor_coverage_percent")} pr-10 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* MIN PAID BEFORE TOP-UP - CONDITIONALLY DISABLED */}
               <FormGroup
                 label="Minimum Paid Before Top-Up (%)"
-                error={errors.min_repayment_percent_for_topup}
+                error={
+                  formData.allows_topup
+                    ? errors.min_repayment_percent_for_topup
+                    : ""
+                }
               >
                 <InputWrapper icon={<Coins size={18} />}>
                   <input
                     type="number"
                     step="0.0001"
-                    value={formData.min_repayment_percent_for_topup}
+                    disabled={!formData.allows_topup}
+                    value={
+                      formData.allows_topup
+                        ? formData.min_repayment_percent_for_topup
+                        : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1320,12 +1554,15 @@ export default function AddLoanProduct() {
                         e.target.value,
                       )
                     }
-                    placeholder="e.g. 50.0000"
-                    className={`${inputClass("min_repayment_percent_for_topup")} pr-10 ${noSpinnerUtility}`}
+                    placeholder={
+                      formData.allows_topup ? "e.g. 50.0000" : "Disabled"
+                    }
+                    className={`${inputClass("min_repayment_percent_for_topup")} pr-10 ${noSpinnerUtility} disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80`}
                   />
                 </InputWrapper>
               </FormGroup>
 
+              {/* ALLOWED DISBURSEMENT METHODS */}
               <div className="md:col-span-2">
                 <FormGroup label="Allowed Disbursement Methods">
                   <div className="flex gap-4">
@@ -1365,13 +1602,23 @@ export default function AddLoanProduct() {
                 </FormGroup>
               </div>
 
+              {/* COLLATERAL DESCRIPTION - CONDITIONALLY DISABLED */}
               <div className="md:col-span-2">
                 <FormGroup
                   label="Collateral Requirements Description"
-                  error={errors.collateral_description}
+                  error={
+                    formData.requires_collateral
+                      ? errors.collateral_description
+                      : ""
+                  }
                 >
                   <textarea
-                    value={formData.collateral_description}
+                    disabled={!formData.requires_collateral}
+                    value={
+                      formData.requires_collateral
+                        ? formData.collateral_description
+                        : ""
+                    }
                     onChange={(e) =>
                       setFormData({
                         ...formData,
@@ -1382,83 +1629,19 @@ export default function AddLoanProduct() {
                       handleBlur("collateral_description", e.target.value)
                     }
                     rows={2}
-                    placeholder="e.g. Logbook, title deed, or other acceptable physical collateral..."
-                    className={`w-full bg-slate-50 border rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5 ${
-                      errors.collateral_description
+                    placeholder={
+                      formData.requires_collateral
+                        ? "e.g. Logbook, title deed, or other acceptable physical collateral..."
+                        : "Disabled — physical collateral is not required"
+                    }
+                    className={`w-full bg-slate-50 border rounded-2xl p-4 text-sm font-medium outline-none transition-all focus:border-secondary focus:bg-white focus:ring-4 focus:ring-secondary/5 disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed disabled:border-slate-200/80 ${
+                      errors.collateral_description &&
+                      formData.requires_collateral
                         ? "border-red-400"
                         : "border-slate-100"
                     }`}
                   />
                 </FormGroup>
-              </div>
-
-              <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-2xl border border-slate-100/60">
-                <div className="md:col-span-1">
-                  <FormCheckbox
-                    label="Requires manager approval"
-                    checked={formData.requires_manager_approval}
-                    onChange={(checked) =>
-                      setFormData({
-                        ...formData,
-                        requires_manager_approval: checked,
-                      })
-                    }
-                  />
-                </div>
-                <div className="md:col-span-1">
-                  <FormCheckbox
-                    label="Requires guarantors"
-                    checked={formData.requires_guarantor}
-                    onChange={(checked) =>
-                      setFormData({ ...formData, requires_guarantor: checked })
-                    }
-                  />
-                </div>
-                <div className="md:col-span-1">
-                  <FormCheckbox
-                    label="Automatically send funds upon approval"
-                    checked={formData.auto_disburse}
-                    onChange={(checked) =>
-                      setFormData({ ...formData, auto_disburse: checked })
-                    }
-                  />
-                </div>
-                <div className="md:col-span-1">
-                  <FormCheckbox
-                    label="Allow loan rollovers"
-                    checked={formData.allows_rollover}
-                    onChange={(checked) =>
-                      setFormData({ ...formData, allows_rollover: checked })
-                    }
-                  />
-                </div>
-                <div className="md:col-span-1">
-                  <FormCheckbox
-                    label="Allow loan top-ups"
-                    checked={formData.allows_topup}
-                    onChange={(checked) =>
-                      setFormData({ ...formData, allows_topup: checked })
-                    }
-                  />
-                </div>
-                <div className="md:col-span-1">
-                  <FormCheckbox
-                    label="Requires documents"
-                    checked={formData.requires_documents}
-                    onChange={(checked) =>
-                      setFormData({ ...formData, requires_documents: checked })
-                    }
-                  />
-                </div>
-                <div className="md:col-span-2 mt-1">
-                  <FormCheckbox
-                    label="Requires physical collaterals"
-                    checked={formData.requires_collateral}
-                    onChange={(checked) =>
-                      setFormData({ ...formData, requires_collateral: checked })
-                    }
-                  />
-                </div>
               </div>
             </div>
           </FormCardLayout>

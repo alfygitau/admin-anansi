@@ -30,20 +30,28 @@ import {
 } from "recharts";
 
 export default function Analytics() {
-  const memberLifecycleData = [
-    { group: "18-25 Yrs", avgSavings: 15000, avgLoans: 45000 },
-    { group: "26-35 Yrs", avgSavings: 45000, avgLoans: 120000 },
-    { group: "36-50 Yrs", avgSavings: 110000, avgLoans: 280000 },
-    { group: "Over 50", avgSavings: 250000, avgLoans: 90000 },
+  const memberGrowthData = [
+    { month: "Jan", members: 24 },
+    { month: "Feb", members: 38 },
+    { month: "Mar", members: 45 },
+    { month: "Apr", members: 52 },
+    { month: "May", members: 68 },
+    { month: "Jun", members: 75 },
+    { month: "Jul", members: 89 },
+    { month: "Aug", members: 96 },
+    { month: "Sep", members: 112 },
+    { month: "Oct", members: 128 },
+    { month: "Nov", members: 145 },
+    { month: "Dec", members: 160 },
   ];
 
   const depositMobilizationData = [
-    { month: "Jan", inflows: 24200000, outflows: 18100000 },
-    { month: "Feb", inflows: 28500000, outflows: 19400000 },
-    { month: "Mar", inflows: 31100000, outflows: 22500000 },
-    { month: "Apr", inflows: 29800000, outflows: 21000000 },
-    { month: "May", inflows: 35400000, outflows: 20200000 },
-    { month: "Jun", inflows: 38900000, outflows: 23400000 },
+    { month: "Jan", inflows: 24200000 },
+    { month: "Feb", inflows: 28500000 },
+    { month: "Mar", inflows: 31100000 },
+    { month: "Apr", inflows: 29800000 },
+    { month: "May", inflows: 35400000 },
+    { month: "Jun", inflows: 38900000 },
   ];
 
   const dividendProjectionData = [
@@ -109,14 +117,13 @@ export default function Analytics() {
           {/* CHART ON LEFT: Added flex flex-col to expand space internally */}
           <div className="lg:col-span-8 bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col w-full">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block select-none mb-3">
-              Average Savings vs. Loans by Age Group
+              Member Growth Over Time
             </span>
 
-            {/* THE FIX: Changed h-56 to relative flex-1 so the chart stretches cleanly with the column */}
             <div className="relative flex-1 min-h-[300px] text-xs w-full">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={memberLifecycleData}
+                <LineChart
+                  data={memberGrowthData}
                   margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
                 >
                   <CartesianGrid
@@ -124,27 +131,21 @@ export default function Analytics() {
                     stroke="#f1f5f9"
                     vertical={false}
                   />
-                  <XAxis dataKey="group" stroke="#94a3b8" tickLine={false} />
+                  <XAxis dataKey="month" stroke="#94a3b8" tickLine={false} />
                   <YAxis stroke="#94a3b8" tickLine={false} />
                   <Tooltip
-                    formatter={(value) => [`KES ${value.toLocaleString()}`]}
+                    formatter={(value) => [`${value} Members`, "Total Members"]}
                   />
-                  <Legend iconType="circle" />
-                  <Bar
-                    dataKey="avgSavings"
-                    name="Average Savings"
-                    fill="#94a3b8"
-                    radius={[4, 4, 0, 0]}
-                    maxBarSize={32}
+                  <Line
+                    type="monotone"
+                    dataKey="members"
+                    name="Total Members"
+                    stroke="#2563eb"
+                    strokeWidth={3}
+                    dot={{ r: 4, fill: "#2563eb" }}
+                    activeDot={{ r: 6 }}
                   />
-                  <Bar
-                    dataKey="avgLoans"
-                    name="Average Loan Amount"
-                    fill="#2563eb"
-                    radius={[4, 4, 0, 0]}
-                    maxBarSize={32}
-                  />
-                </BarChart>
+                </LineChart>
               </ResponsiveContainer>
             </div>
           </div>
@@ -242,7 +243,7 @@ export default function Analytics() {
           {/* CHART ON LEFT: Added flex flex-col to allow inner containers to expand dynamically */}
           <div className="lg:col-span-8 bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col w-full">
             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block select-none mb-3">
-              Money Coming In (Deposits) vs. Going Out (Withdrawals)
+              Money Coming In (Deposits)
             </span>
 
             {/* THE FIX: Swapped out h-56 for relative flex-1 min-h-[300px] to match the cards column height */}
@@ -263,23 +264,14 @@ export default function Analytics() {
                     formatter={(value) => [`KES ${value.toLocaleString()}`]}
                   />
                   <Legend iconType="circle" />
-                  <Area
+                  <Line
                     type="monotone"
                     dataKey="inflows"
-                    name="Deposits Saved"
+                    name="Savings"
                     stroke="#10b981"
                     fillOpacity={0.06}
                     fill="#10b981"
                     strokeWidth={2.5}
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="outflows"
-                    name="Money Withdrawn"
-                    stroke="#f43f5e"
-                    fillOpacity={0.02}
-                    fill="#f43f5e"
-                    strokeWidth={2}
                   />
                 </AreaChart>
               </ResponsiveContainer>

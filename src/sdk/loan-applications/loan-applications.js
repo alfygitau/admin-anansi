@@ -230,3 +230,31 @@ export const getMemberLoanEligibility = async (memberId, productId) => {
     throw error?.response?.data || error;
   }
 };
+
+export const createLoanApplication = async (
+  productId,
+  customerId,
+  amount,
+  duration,
+  applicantName,
+  applicantMobile,
+  purpose,
+) => {
+  try {
+    const response = await loanClient.post(`/loan-applications`, {
+      customer_id: customerId,
+      applicant_name: applicantName,
+      applicant_mobile: applicantMobile,
+      loan_product_id: productId,
+      applied_amount: amount,
+      loan_period: duration,
+      loan_channel: "WEB",
+      loan_org_code: "BA208",
+      loan_purpose: purpose,
+      currency: "KES",
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

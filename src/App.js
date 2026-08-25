@@ -147,9 +147,18 @@ function App() {
           path="apply-loan/:memberId/loan-application-details/:productId"
           element={<LoanApplicationDetails />}
         />
-        <Route path="apply-loan/add-guarantor" element={<AddGuarantor />} />
-        <Route path="apply-loan/collaterals" element={<ChattelRegistry />} />
-        <Route path="apply-loan/loan-documents" element={<LoanDocuments />} />
+        <Route
+          path="apply-loan/:productId/add-guarantor/:appId"
+          element={<AddGuarantor />}
+        />
+        <Route
+          path="apply-loan/:productId/collaterals/:appId"
+          element={<ChattelRegistry />}
+        />
+        <Route
+          path="apply-loan/:productId/loan-documents/:appId"
+          element={<LoanDocuments />}
+        />
         <Route path="help-support" element={<HelpCenter />} />
 
         <Route path="financial-reports" element={<FinancialReports />} />

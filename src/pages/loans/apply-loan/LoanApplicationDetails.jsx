@@ -12,33 +12,62 @@ import {
   BadgePercent,
   Calculator,
   ShieldCheck,
+  ArrowLeft,
+  Loader2,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { getLoanProduct } from "../../../sdk/loan-products/loan-products";
 import { useToast } from "../../../contexts/ToastProvider";
 import { useParams } from "react-router-dom";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
 import { getMember } from "../../../sdk/members/members";
+import { createLoanApplication } from "../../../sdk/loan-applications/loan-applications";
+import useAuth from "../../../hooks/useAuth";
 
-const LoanApplicationDetails = ({
-  memberData,
-  selectedProduct,
-  onSubmitApplication,
-}) => {
+const LoanApplicationDetails = () => {
   const navigate = useNavigate();
-  // 1. Form States
-  const [amount, setAmount] = useState(250000);
-  const [period, setPeriod] = useState(24);
-  const [frequency, setFrequency] = useState("monthly"); // 'daily' | 'weekly' | 'monthly'
-  const [purposeCategory, setPurposeCategory] = useState("business");
+  const [amount, setAmount] = useState(0);
+  const [period, setPeriod] = useState(0);
+  const [frequency, setFrequency] = useState("Monthly");
   const [purposeDetails, setPurposeDetails] = useState("");
-  const [disbursementChannel, setDisbursementChannel] = useState("fosa");
   const [loanProduct, setLoanProduct] = useState({});
   const { showToast } = useToast();
   const { memberId, productId } = useParams();
   const formatAmount = useFormatAmount();
   const [member, setMember] = useState({});
+  const { auth } = useAuth();
+  const [appId, setAppId] = useState("");
+
+  const [amountError, setAmountError] = useState("");
+  const [periodError, setPeriodError] = useState("");
+
+  const handleAmountBlur = () => {
+    const min = loanProduct?.min_amount ?? 0;
+    const max = loanProduct?.max_amount ?? 0;
+    const numAmount = Number(amount);
+
+    if (!amount || numAmount < min) {
+      setAmountError(`Amount must be at least ${formatAmount(min)}`);
+    } else if (numAmount > max) {
+      setAmountError(`Amount cannot exceed ${formatAmount(max)}`);
+    } else {
+      setAmountError("");
+    }
+  };
+
+  const handlePeriodBlur = () => {
+    const max = loanProduct?.max_period ?? 0;
+    const numPeriod = Number(period);
+
+    if (!period || numPeriod < 1) {
+      setPeriodError("Period must be at least 1 month");
+    } else if (numPeriod > max) {
+      setPeriodError(`Period cannot exceed ${max} months`);
+    } else {
+      setPeriodError("");
+    }
+  };
 
   useQuery({
     queryKey: ["get member", memberId],
@@ -67,6 +96,7 @@ const LoanApplicationDetails = ({
     },
     onSuccess: (data) => {
       setLoanProduct(data);
+      setPeriod(data?.min_period);
     },
     onError: (error) => {
       showToast({
@@ -78,39 +108,83 @@ const LoanApplicationDetails = ({
     },
   });
 
-  const principal = loanProduct?.amount ?? 500000;
-  const maxLimit = loanProduct?.maxLimit ?? 900000;
-  const interestRate = loanProduct?.interestRate ?? 12.0; // % per annum
-  const durationMonths = loanProduct?.duration ?? 24;
-  const monthlyInstallment = loanProduct?.monthlyInstallment ?? 23537.5;
-  const totalInterest = loanProduct?.totalInterest ?? 64900.0;
-  const processingFee = loanProduct?.processingFee ?? 5000.0;
+  const requiresGuarantor = loanProduct?.requires_guarantor ?? false;
+  const requiresChattels = loanProduct?.requires_collateral ?? false;
+  const requiresDocuments = loanProduct?.requires_documents ?? false;
+
+  const getNextRoute = (id) => {
+    const nextRoute = requiresGuarantor
+      ? `/admin/apply-loan/${productId}/add-guarantor/${id}`
+      : requiresChattels
+        ? `/admin/apply-loan/${productId}/add-collateral/${id}`
+        : requiresDocuments
+          ? `/admin/apply-loan/${productId}/add-documents/${id}`
+          : `/admin/apply-loan/${productId}/review/${id}`;
+    return nextRoute;
+  };
+
+  const { isLoading, mutate } = useMutation({
+    mutationKey: ["create loan application"],
+    mutationFn: async () => {
+      const response = await createLoanApplication(
+        productId,
+        memberId,
+        amount,
+        period,
+        `${member?.firstname} ${member?.lastname}`,
+        member?.mobileno,
+        purposeDetails,
+      );
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setAppId(data?.id);
+      navigate(getNextRoute(data?.id));
+    },
+    onError: (error) => {
+      showToast({
+        title: "Loan Products processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    navigate("/admin/apply-loan/add-guarantor");
+    mutate();
   };
 
   return (
     <div className="w-full space-y-8 font-sans antialiased text-slate-800 p-1">
       {/* 1. APPLICANT CONTEXT HEADER */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-slate-200/60 pb-6 select-none">
-        <div>
-          <h2 className="text-xl font-black text-primary tracking-tight">
-            Configure Loan Parameters
-          </h2>
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="size-11 rounded-2xl border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs cursor-pointer active:scale-95"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div>
+            <h2 className="text-xl font-black text-primary tracking-tight">
+              Configure Loan Parameters
+            </h2>
 
-          {/* INLINE TAILWIND CSS UTILITY CLASSES */}
-          <p className="text-sm font-bold text-slate-700 mt-0.5 capitalize">
-            {member?.firstname} {member?.middlename} {member?.lastname}
-          </p>
+            {/* INLINE TAILWIND CSS UTILITY CLASSES */}
+            <p className="text-sm font-bold text-slate-700 mt-0.5 capitalize">
+              {member?.firstname} {member?.middlename} {member?.lastname}
+            </p>
 
-          <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
-            <span>Member ID:</span>
-            <span className="font-mono font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/50">
-              {member?.public_id}
-            </span>
-          </p>
+            <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
+              <span>Member ID:</span>
+              <span className="font-mono font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/50">
+                {member?.public_id}
+              </span>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -230,11 +304,26 @@ const LoanApplicationDetails = ({
                 <input
                   type="number"
                   value={amount}
-                  onChange={(e) => setAmount(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setAmount(val === "" ? "" : Number(val));
+                    if (amountError) setAmountError("");
+                  }}
+                  onBlur={handleAmountBlur}
                   className="flex-1 h-full px-2 bg-transparent font-normal text-slate-800 focus:outline-none"
                   placeholder="0"
                 />
               </div>
+              {amountError ? (
+                <p className="text-rose-500 text-xs font-semibold">
+                  {amountError}
+                </p>
+              ) : (
+                <p className="text-slate-400 text-xs tracking-widest">
+                  Minimum of {formatAmount(loanProduct?.min_amount ?? 0)} and
+                  maximum of {formatAmount(loanProduct?.max_amount ?? 0)}
+                </p>
+              )}
             </div>
 
             {/* OVERHAULED INPUT: REPAYMENT PERIOD DURATION */}
@@ -252,14 +341,25 @@ const LoanApplicationDetails = ({
                 <input
                   type="number"
                   value={period}
-                  onChange={(e) => setPeriod(Number(e.target.value))}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setPeriod(val === "" ? "" : Number(val));
+                    if (periodError) setPeriodError("");
+                  }}
+                  onBlur={handlePeriodBlur}
                   className="flex-1 h-full px-3.5 bg-transparent font-normal text-slate-800 focus:outline-none"
                   placeholder="e.g. 24"
                 />
-                <div className="pr-3.5 pl-2 text-slate-400 font-bold text-[10px] uppercase tracking-wide select-none">
-                  {loanProduct.periodLabel}
-                </div>
               </div>
+              {periodError ? (
+                <p className="text-rose-500 text-xs font-semibold">
+                  {periodError}
+                </p>
+              ) : (
+                <p className="text-slate-400 text-xs tracking-widest">
+                  Maximum period of {loanProduct?.max_period ?? 0}
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -280,16 +380,16 @@ const LoanApplicationDetails = ({
                 <input
                   type="radio"
                   name="repaymentFrequency"
-                  value="daily"
-                  checked={frequency === "daily"}
+                  value="Daily"
+                  checked={frequency === "Daily"}
                   onChange={() => {
-                    setFrequency("daily");
+                    setFrequency("Daily");
                     setPeriod(90);
                   }}
                   className="w-4 h-4 text-[#074073] focus:ring-[#074073] border-slate-300 cursor-pointer"
                 />
                 <span
-                  className={`text-xs font-bold ${frequency === "daily" ? "text-[#074073]" : "text-slate-600 group-hover:text-slate-800"}`}
+                  className={`text-xs font-bold ${frequency === "Daily" ? "text-[#074073]" : "text-slate-600 group-hover:text-slate-800"}`}
                 >
                   Daily Collection
                 </span>
@@ -300,16 +400,16 @@ const LoanApplicationDetails = ({
                 <input
                   type="radio"
                   name="repaymentFrequency"
-                  value="weekly"
-                  checked={frequency === "weekly"}
+                  value="Weekly"
+                  checked={frequency === "Weekly"}
                   onChange={() => {
-                    setFrequency("weekly");
+                    setFrequency("Weekly");
                     setPeriod(52);
                   }}
                   className="w-4 h-4 text-[#074073] focus:ring-[#074073] border-slate-300 cursor-pointer"
                 />
                 <span
-                  className={`text-xs font-bold ${frequency === "weekly" ? "text-[#074073]" : "text-slate-600 group-hover:text-slate-800"}`}
+                  className={`text-xs font-bold ${frequency === "Weekly" ? "text-[#074073]" : "text-slate-600 group-hover:text-slate-800"}`}
                 >
                   Weekly Installments
                 </span>
@@ -320,18 +420,18 @@ const LoanApplicationDetails = ({
                 <input
                   type="radio"
                   name="repaymentFrequency"
-                  value="monthly"
-                  checked={frequency === "monthly"}
+                  value="Monthly"
+                  checked={frequency === "Monthly"}
                   onChange={() => {
-                    setFrequency("monthly");
+                    setFrequency("Monthly");
                     setPeriod(24);
                   }}
                   className="w-4 h-4 text-[#074073] focus:ring-[#074073] border-slate-300 cursor-pointer"
                 />
                 <span
-                  className={`text-xs font-bold ${frequency === "monthly" ? "text-[#074073]" : "text-slate-600 group-hover:text-slate-800"}`}
+                  className={`text-xs font-bold ${frequency === "Monthly" ? "text-[#074073]" : "text-slate-600 group-hover:text-slate-800"}`}
                 >
-                  Monthly Statements
+                  Monthly Installments
                 </span>
               </label>
             </div>
@@ -383,12 +483,21 @@ const LoanApplicationDetails = ({
         </button>
         <button
           onClick={handleFormSubmit}
-          disabled={amount > member.maxEligibility || !amount || !period}
+          disabled={isLoading || !amount || !period}
           type="button"
           className="h-11 px-6 bg-[#074073] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-[#074073]/10 hover:bg-[#052d52] transition-all active:scale-97 cursor-pointer flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed disabled:active:scale-100"
         >
-          <span>Continue With Application</span>
-          <ArrowUpRight size={14} />
+          {isLoading ? (
+            <>
+              <Loader2 size={14} className="animate-spin" />
+              <span>Processing...</span>
+            </>
+          ) : (
+            <>
+              <span>Continue With Application</span>
+              <ArrowUpRight size={14} />
+            </>
+          )}
         </button>
       </div>
     </div>

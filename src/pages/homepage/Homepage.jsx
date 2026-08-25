@@ -18,8 +18,85 @@ import {
   ArrowDownRight,
   Smartphone,
 } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Legend,
+} from "recharts";
 
 export default function Homepage() {
+  const memberGrowthTrend = [
+    { month: "Mar", total: 1020, active: 890 },
+    { month: "Apr", total: 1060, active: 920 },
+    { month: "May", total: 1100, active: 950 },
+    { month: "Jun", total: 1140, active: 980 },
+    { month: "Jul", total: 1192, active: 1020 },
+    { month: "Aug", total: 1240, active: 1064 },
+  ];
+
+  const savingsMobilizationTrend = [
+    { month: "Mar", avgSavings: 41200 },
+    { month: "Apr", avgSavings: 42800 },
+    { month: "May", avgSavings: 44000 },
+    { month: "Jun", avgSavings: 45500 },
+    { month: "Jul", avgSavings: 46900 },
+    { month: "Aug", avgSavings: 48500 },
+  ];
+
+  const monthlyPipelineTrend = [
+    { month: "Jan", submitted: 140, approved: 105 },
+    { month: "Feb", submitted: 180, approved: 125 },
+    { month: "Mar", submitted: 220, approved: 150 },
+    { month: "Apr", submitted: 190, approved: 160 },
+    { month: "May", submitted: 250, approved: 180 },
+    { month: "Jun", submitted: 210, approved: 175 },
+  ];
+
+  const monthlyPendingQueueTrend = [
+    { month: "Jan", pending: 45 },
+    { month: "Feb", pending: 48 },
+    { month: "Mar", pending: 52 },
+    { month: "Apr", pending: 41 },
+    { month: "May", pending: 38 },
+    { month: "Jun", pending: 34 },
+  ];
+
+  const financialPortfolioTrend = [
+    { month: "Jan", capital: 88.5, loans: 195.0 },
+    { month: "Feb", capital: 92.0, loans: 202.5 },
+    { month: "Mar", capital: 95.8, loans: 210.0 },
+    { month: "Apr", capital: 99.2, loans: 218.4 },
+    { month: "May", capital: 102.5, loans: 226.0 },
+    { month: "Jun", capital: 106.3, loans: 235.7 },
+  ];
+
+  const liquidityAndRiskTrend = [
+    { month: "Jan", cash: 11.2, risk: 8.8 },
+    { month: "Feb", cash: 12.0, risk: 8.5 },
+    { month: "Mar", cash: 12.8, risk: 8.1 },
+    { month: "Apr", cash: 13.5, risk: 7.9 },
+    { month: "May", cash: 14.1, risk: 7.8 },
+    { month: "Jun", cash: 14.65, risk: 7.63 },
+  ];
+
+  // Dummy Dataset (in Millions)
+  const savingsAndSharesTrend = [
+    { month: "Jan", savings: 68.2, shares: 18.0 },
+    { month: "Feb", savings: 71.5, shares: 18.8 },
+    { month: "Mar", savings: 75.0, shares: 19.5 },
+    { month: "Apr", savings: 78.4, shares: 20.2 },
+    { month: "May", savings: 81.2, shares: 21.1 },
+    { month: "Jun", savings: 84.2, shares: 22.1 },
+  ];
+
+  const formatMillionsAmount = (val) => `${val}M`;
+
+  const formatMillions = (val) => `${(val / 1000).toFixed(0)}k`;
   return (
     <div className="w-full space-y-8 antialiased text-slate-800">
       <div className="space-y-4">
@@ -102,6 +179,121 @@ export default function Homepage() {
           </MetricCard>
         </div>
       </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full">
+        {/* CHART 1: MOBILIZED FUNDS VS OUTSTANDING LOANS */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col w-full">
+          <div className="mb-4">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block select-none">
+              Mobilized Capital vs. Active Loan Book
+            </span>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Monthly growth comparison of total deposit funds against active
+              loan portfolio.
+            </p>
+          </div>
+
+          <div className="relative h-[260px] text-xs w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={financialPortfolioTrend}
+                margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  vertical={false}
+                />
+                <XAxis dataKey="month" stroke="#94a3b8" tickLine={false} />
+                <YAxis
+                  stroke="#94a3b8"
+                  tickLine={false}
+                  tickFormatter={formatMillionsAmount}
+                />
+                <Tooltip formatter={(value) => [`KES ${value}M`]} />
+                <Legend
+                  iconType="circle"
+                  wrapperStyle={{ paddingTop: "10px" }}
+                />
+                <Line
+                  type="natural"
+                  dataKey="capital"
+                  name="Mobilized Capital"
+                  stroke="#074073"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+                <Line
+                  type="natural"
+                  dataKey="loans"
+                  name="Outstanding Loans"
+                  stroke="#2563eb"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* CHART 2: LIQUID CASH RESERVES VS OVERDUE RISK EXPOSURE */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col w-full">
+          <div className="mb-4">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block select-none">
+              Monthly Savings vs. Shares Growth
+            </span>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Growth trajectory comparing member deposits against core share
+              capital pool.
+            </p>
+          </div>
+
+          <div className="relative h-[260px] text-xs w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={savingsAndSharesTrend}
+                margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  vertical={false}
+                />
+                <XAxis dataKey="month" stroke="#94a3b8" tickLine={false} />
+                <YAxis
+                  stroke="#94a3b8"
+                  tickLine={false}
+                  tickFormatter={formatMillionsAmount}
+                />
+                <Tooltip formatter={(value) => [`KES ${value}M`]} />
+                <Legend
+                  iconType="circle"
+                  wrapperStyle={{ paddingTop: "10px" }}
+                />
+                <Line
+                  type="natural"
+                  dataKey="savings"
+                  name="Member Savings"
+                  stroke="#10b981"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+                <Line
+                  type="natural"
+                  dataKey="shares"
+                  name="Member Shares"
+                  stroke="#074073"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
 
       <div className="space-y-4">
         <div>
@@ -182,6 +374,107 @@ export default function Homepage() {
         </div>
       </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full">
+        {/* CHART 1: MEMBER GROWTH TRAJECTORY */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col w-full">
+          <div className="mb-4">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block select-none">
+              Member Growth Trajectory
+            </span>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Comparison between total registered and active accounts.
+            </p>
+          </div>
+
+          <div className="relative h-[260px] text-xs w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={memberGrowthTrend}
+                margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  vertical={false}
+                />
+                <XAxis dataKey="month" stroke="#94a3b8" tickLine={false} />
+                <YAxis stroke="#94a3b8" tickLine={false} />
+                <Tooltip
+                  formatter={(value) => [`${value.toLocaleString()} Members`]}
+                />
+                <Legend
+                  iconType="circle"
+                  wrapperStyle={{ paddingTop: "10px" }}
+                />
+                <Line
+                  type="natural"
+                  dataKey="total"
+                  name="Total Members"
+                  stroke="#074073"
+                  strokeWidth={3}
+                  dot={false}
+                />
+                <Line
+                  type="natural"
+                  dataKey="active"
+                  name="Active Members"
+                  stroke="#10b981"
+                  strokeWidth={3}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* CHART 2: AVERAGE SAVINGS TREND */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col w-full">
+          <div className="mb-4">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block select-none">
+              Average Member Savings Trend
+            </span>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Steady rise in average individual savings mobilization.
+            </p>
+          </div>
+
+          <div className="relative h-[260px] text-xs w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={savingsMobilizationTrend}
+                margin={{ top: 10, right: 10, left: -5, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  vertical={false}
+                />
+                <XAxis dataKey="month" stroke="#94a3b8" tickLine={false} />
+                <YAxis
+                  stroke="#94a3b8"
+                  tickLine={false}
+                  tickFormatter={formatMillions}
+                />
+                <Tooltip
+                  formatter={(value) => [
+                    `KES ${value.toLocaleString()}`,
+                    "Avg. Savings",
+                  ]}
+                />
+                <Line
+                  type="natural"
+                  dataKey="avgSavings"
+                  name="Avg. Savings (KES)"
+                  stroke="#2563eb"
+                  strokeWidth={3}
+                  dot={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      </div>
+
       <div className="space-y-4">
         <div>
           <h2 className="text-base font-black tracking-tight text-primary">
@@ -240,6 +533,104 @@ export default function Homepage() {
               confirm
             </p>
           </MetricCard>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 w-full">
+        {/* CHART 1: MONTHLY SUBMISSIONS VS APPROVALS */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col w-full">
+          <div className="mb-4">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block select-none">
+              Monthly Submissions vs. Approvals
+            </span>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Monthly momentum of incoming applications against cleared files.
+            </p>
+          </div>
+
+          <div className="relative h-[260px] text-xs w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={monthlyPipelineTrend}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  vertical={false}
+                />
+                <XAxis dataKey="month" stroke="#94a3b8" tickLine={false} />
+                <YAxis stroke="#94a3b8" tickLine={false} />
+                <Tooltip formatter={(value) => [`${value} Loans`]} />
+                <Legend
+                  iconType="circle"
+                  wrapperStyle={{ paddingTop: "10px" }}
+                />
+                <Line
+                  type="natural"
+                  dataKey="submitted"
+                  name="Applications Submitted"
+                  stroke="#2563eb"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+                <Line
+                  type="natural"
+                  dataKey="approved"
+                  name="Loans Approved"
+                  stroke="#10b981"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* CHART 2: TOTAL PENDING QUEUE VOLUME */}
+        <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm flex flex-col w-full">
+          <div className="mb-4">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block select-none">
+              Pending Queue Volume
+            </span>
+            <p className="text-xs text-slate-500 font-medium mt-0.5">
+              Monthly backlog trend of applications awaiting processing steps.
+            </p>
+          </div>
+
+          <div className="relative h-[260px] text-xs w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={monthlyPendingQueueTrend}
+                margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              >
+                <CartesianGrid
+                  strokeDasharray="3 3"
+                  stroke="#f1f5f9"
+                  vertical={false}
+                />
+                <XAxis dataKey="month" stroke="#94a3b8" tickLine={false} />
+                <YAxis stroke="#94a3b8" tickLine={false} />
+                <Tooltip
+                  formatter={(value) => [
+                    `${value} Applications`,
+                    "Pending Total",
+                  ]}
+                />
+                <Line
+                  type="natural"
+                  dataKey="pending"
+                  name="Pending Files"
+                  stroke="#f59e0b"
+                  strokeWidth={3}
+                  dot={false}
+                  activeDot={{ r: 6 }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
 

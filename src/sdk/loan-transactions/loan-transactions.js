@@ -39,3 +39,12 @@ export const getLoanTransactions = async (
     throw error?.response?.data || error;
   }
 };
+
+export const getLoanRepayments = async (id) => {
+  try {
+    const response = await loanClient.get(`/loans/${id}/repayments`);
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

@@ -52,6 +52,7 @@ import FinancialReports from "./pages/reports/FinancialReports";
 import AllReports from "./pages/reports/AllReports";
 import Analytics from "./pages/reports/Analytics";
 import VerifyChattel from "./pages/loan-applications/verify-chattels/VerifyChattel";
+import MyLoanTransactions from "./pages/loans/all-loans/LoanTransactions";
 
 function App() {
   return (
@@ -88,6 +89,10 @@ function App() {
 
         <Route path="all-loans" element={<AllLoans />} />
         <Route path="all-loans/:id" element={<Loan />} />
+        <Route
+          path="all-loans/:id/transactions"
+          element={<MyLoanTransactions />}
+        />
         <Route path="guarantors" element={<Guarantors />} />
         <Route
           path="all-loans/:id/send-notification"

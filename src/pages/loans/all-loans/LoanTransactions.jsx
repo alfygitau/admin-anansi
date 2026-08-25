@@ -9,35 +9,29 @@ import {
   SlidersHorizontal,
   Layers,
   AlertTriangle,
+  Clock,
 } from "lucide-react";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
 import { useQuery } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
-import { getLoanTransactions } from "../../../sdk/loan-transactions/loan-transactions";
+import {
+  getLoanRepayments,
+  getLoanTransactions,
+} from "../../../sdk/loan-transactions/loan-transactions";
 import LoanTransactionsFilter from "../../../components/filters/LoanTransactionsFilter";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Pagination from "../../../components/pagination/Pagination";
 
-export default function LoanTransactions() {
+export default function MyLoanTransactions() {
   const [searchQuery, setSearchQuery] = useState("");
   const formatAmount = useFormatAmount();
   const [showFilters, setShowFilters] = useState(false);
   const [activeTab, setActiveTab] = useState("repayments");
   const navigate = useNavigate();
-  const [filters, setFilters] = useState({
-    page: 1,
-    limit: 10,
-    q: "",
-    status: "",
-    fromDate: "",
-    toDate: "",
-    leastAmount: "",
-    mostAmount: "",
-    type: "",
-  });
   const { showToast } = useToast();
   const [totalItems, setTotalItems] = useState(0);
   const [loanTransactions, setLoanTransactions] = useState([]);
+  const { id } = useParams();
 
   const getTxType = (tx) => {
     if (parseFloat(tx.penalty_paid) > 0) return "Penalty";
@@ -47,40 +41,13 @@ export default function LoanTransactions() {
   };
 
   const { isFetching } = useQuery({
-    queryKey: [
-      "loan transactions",
-      filters?.page,
-      filters?.limit,
-      filters?.q,
-      filters?.status,
-      filters?.type,
-      filters?.leastAmount,
-      filters?.mostAmount,
-      filters?.fromDate,
-      filters?.toDate,
-    ],
+    queryKey: ["loan repayments", id],
     queryFn: async () => {
-      const response = await getLoanTransactions(
-        filters?.page,
-        filters?.limit,
-        filters?.q,
-        filters?.status,
-        filters?.type,
-        filters?.leastAmount,
-        filters?.mostAmount,
-        filters?.fromDate,
-        filters?.toDate,
-      );
+      const response = await getLoanRepayments(id);
       return response?.data?.data;
     },
     onSuccess: (data) => {
-      setLoanTransactions(data?.transactions);
-      setFilters((prev) => ({
-        ...prev,
-        page: data.page,
-        limit: data.limit,
-      }));
-      setTotalItems(data.total);
+      setLoanTransactions(data);
     },
     onError: (error) => {
       showToast({
@@ -91,20 +58,6 @@ export default function LoanTransactions() {
       });
     },
   });
-
-  const handlePageChange = (page) => {
-    setFilters((prev) => ({
-      ...prev,
-      page: page,
-    }));
-  };
-
-  const handleOnItemsPageChange = (limit) => {
-    setFilters((prev) => ({
-      ...prev,
-      limit: limit,
-    }));
-  };
 
   const metrics = {
     // Total value of all posted transactions combined
@@ -127,13 +80,6 @@ export default function LoanTransactions() {
 
   return (
     <>
-      <LoanTransactionsFilter
-        isOpen={showFilters}
-        onClose={() => setShowFilters(false)}
-        filters={filters}
-        setFilters={setFilters}
-      />
-
       <div className="w-full space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
           <div>
@@ -141,7 +87,7 @@ export default function LoanTransactions() {
               Loan Transactions
             </h2>
             <p className="text-xs text-slate-400 font-medium mt-1">
-              Real-time tracking of disbursements, principal-interest allocation
+              Real-time tracking of repayments, principal-interest allocation
               splits, automated penalties, and multi-channel payment
               reconciliations.
             </p>
@@ -176,24 +122,24 @@ export default function LoanTransactions() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <SummaryMetricCard
-              title="Successful Payments"
-              value={`KES ${metrics.postedVolume}`}
-              desc="Money safely received and updated in member accounts"
+              title="Total Repayment"
+              value="KES 1,250,000.00"
+              desc="Total expected loan amount including interest and fees"
+              icon={<Receipt size={18} />}
+              color="text-primary bg-primary/5"
+            />
+            <SummaryMetricCard
+              title="Total Paid"
+              value="KES 850,000.00"
+              desc="Amount successfully received and cleared toward this loan"
               icon={<CheckCircle2 size={18} />}
               color="text-success bg-success/5"
             />
             <SummaryMetricCard
-              title="On the Way"
-              value={`${metrics.pendingCount} Processing`}
-              desc="Payments currently making their way through M-Pesa or bank systems"
-              icon={<Layers size={18} />}
-              color="text-primary bg-primary/5"
-            />
-            <SummaryMetricCard
-              title="Returned or Fixed"
-              value={`${metrics.reversedCount} Reversed`}
-              desc="Bounced transactions or minor corrections kept safely for our records"
-              icon={<AlertTriangle size={18} />}
+              title="Outstanding Balance"
+              value="KES 400,000.00"
+              desc="Remaining amount required to fully settle the loan balance"
+              icon={<Clock size={18} />}
               color="text-warning bg-warning/5"
             />
           </div>
@@ -221,7 +167,6 @@ export default function LoanTransactions() {
           <div className="flex items-center gap-3">
             <button
               type="button"
-              onClick={() => setShowFilters(true)} // Connect to your drawer display state variable
               className="flex items-center gap-2 h-9 px-3.5 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 rounded-xl text-xs font-bold transition-all shadow-3xs cursor-pointer active:scale-98"
             >
               <SlidersHorizontal size={13} />
@@ -234,31 +179,6 @@ export default function LoanTransactions() {
               <Download size={14} /> Export
             </button>
           </div>
-        </div>
-
-        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1.5 rounded-2xl w-full border border-slate-200/60 select-none">
-          <button
-            type="button"
-            onClick={() => handleTabChange("disbursements")}
-            className={`px-10 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "disbursements"
-                ? "bg-white text-primary shadow-2xs"
-                : "text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            Disbursements
-          </button>
-          <button
-            type="button"
-            onClick={() => handleTabChange("repayments")}
-            className={`px-10 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "repayments"
-                ? "bg-white text-primary shadow-2xs"
-                : "text-slate-500 hover:text-slate-800"
-            }`}
-          >
-            Repayments
-          </button>
         </div>
 
         {/* 3. DETAILED LEDGER TABLE */}
@@ -348,15 +268,16 @@ export default function LoanTransactions() {
                       <td className="py-5 px-6">
                         <div className="flex flex-col">
                           <span className="font-bold text-primary">
-                            {tx.reference || "—"}
+                            {tx.transaction_ref || "—"}
                           </span>
                           <span className="text-[10px] text-slate-400">
-                            {tx.transaction_date
-                              ? new Date(
-                                  tx.transaction_date,
-                                ).toLocaleDateString("en-KE", {
-                                  dateStyle: "medium",
-                                })
+                            {tx.created_at
+                              ? new Date(tx.created_at).toLocaleDateString(
+                                  "en-KE",
+                                  {
+                                    dateStyle: "medium",
+                                  },
+                                )
                               : "—"}
                           </span>
                         </div>
@@ -366,7 +287,7 @@ export default function LoanTransactions() {
                       <td className="py-5 px-6">
                         <div className="flex flex-col gap-1">
                           <span className="px-2 py-0.5 bg-slate-100 text-slate-700 rounded-md text-[9px] font-bold uppercase tracking-wide w-fit">
-                            {tx.channel || "Manual"}
+                            {tx.payment_mode || "Manual"}
                           </span>
                           <span className="text-[9px] font-medium text-slate-500 uppercase tracking-wide">
                             {tx.transaction_type?.replace(/_/g, " ") ||
@@ -380,18 +301,26 @@ export default function LoanTransactions() {
                         <div className="flex gap-8">
                           <div className="flex flex-col">
                             <span className="text-[9px] text-slate-400 uppercase tracking-wider">
-                              Loan Code
+                              Principal
                             </span>
                             <span className="font-mono font-bold text-slate-700 mt-0.5">
-                              {tx.loan_code || "—"}
+                              {tx.principal_paid || "—"}
                             </span>
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[9px] text-slate-400 uppercase tracking-wider">
-                              Product Family
+                              Interest
                             </span>
                             <span className="font-semibold text-slate-600 capitalize mt-0.5">
-                              {tx.loan_type?.replace(/_/g, " ") || "—"}
+                              {tx.interest_paid || "—"}
+                            </span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[9px] text-slate-400 uppercase tracking-wider">
+                              Penalty
+                            </span>
+                            <span className="font-semibold text-slate-600 capitalize mt-0.5">
+                              {tx.penalty_paid || "—"}
                             </span>
                           </div>
                         </div>
@@ -400,8 +329,8 @@ export default function LoanTransactions() {
                       {/* Column 4: Sum Value Paid */}
                       <td className="py-5 px-6 text-right font-bold text-primary">
                         {formatAmount
-                          ? formatAmount(tx.amount)
-                          : `KES ${Number(tx.amount || 0).toLocaleString()}`}
+                          ? formatAmount(tx.amount_paid)
+                          : `KES ${Number(tx.amount_paid || 0).toLocaleString()}`}
                       </td>
 
                       {/* Column 5: Structural Processing State Status */}
@@ -462,13 +391,6 @@ export default function LoanTransactions() {
               </tbody>
             </table>
           </div>
-          <Pagination
-            currentPage={filters?.page}
-            totalItems={totalItems}
-            itemsPerPage={filters?.limit}
-            onPageChange={handlePageChange}
-            onItemsPerPageChange={handleOnItemsPageChange}
-          />
         </div>
       </div>
     </>

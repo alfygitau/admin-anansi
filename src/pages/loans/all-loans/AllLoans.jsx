@@ -439,14 +439,16 @@ export default function AllLoans() {
                           >
                             <Eye size={14} />
                           </button>
-                          {loan.loan_status === "Active" && (
-                            <button
-                              className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
-                              title="Log Repayment Transaction"
-                            >
-                              <ArrowUpRight size={14} />
-                            </button>
-                          )}
+
+                          <button
+                            onClick={() =>
+                              navigate(`/admin/all-loans/${loan?.id}/transactions`)
+                            }
+                            className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
+                            title="Log Repayment Transaction"
+                          >
+                            <ArrowUpRight size={14} />
+                          </button>
                         </div>
                       </td>
                     </tr>

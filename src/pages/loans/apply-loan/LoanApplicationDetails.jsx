@@ -150,7 +150,7 @@ const LoanApplicationDetails = ({
           {/* CARD 1: LOAN FACILITY PARAMETERS */}
           <ApplicationCard
             title={loanProduct?.product_name ?? ""}
-            icon={<Banknote size={15} />}
+            icon={<Coins size={15} />}
           >
             <MetricItem
               icon={<Banknote size={14} />}

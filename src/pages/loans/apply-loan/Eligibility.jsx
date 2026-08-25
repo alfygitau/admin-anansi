@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import {
-  UserCheck,
+  ShieldCheck,
   Award,
   Wallet,
   Scale,
@@ -239,9 +239,6 @@ const LoanEligibility = ({ memberData, onProceedToApplication }) => {
                       {/* Title Skeleton */}
                       <div className="h-4 w-36 bg-slate-200 rounded-md" />
                     </div>
-
-                    {/* Status Circle Skeleton */}
-                    <div className="size-5 rounded-full bg-slate-200 shrink-0" />
                   </div>
 
                   {/* DESCRIPTION PARAGRAPH SKELETONS */}
@@ -264,7 +261,7 @@ const LoanEligibility = ({ memberData, onProceedToApplication }) => {
           : checklist?.map((item) => (
               <EligibilityContainer
                 key={item?.rule}
-                icon={<UserCheck />}
+                icon={<ShieldCheck />}
                 title={formatTitle(item?.rule)}
                 description={item?.description}
                 status={item?.passed}
@@ -309,7 +306,7 @@ const EligibilityContainer = ({
 
   return (
     <div
-      className={`bg-white rounded-2xl border p-3 flex flex-col justify-between transition-all shadow-3xs group ${
+      className={`bg-white rounded-2xl border p-3.5 flex flex-col justify-between transition-all shadow-3xs group ${
         isPassed
           ? "border-emerald-100 bg-emerald-50/10"
           : isFailed
@@ -319,10 +316,10 @@ const EligibilityContainer = ({
     >
       <div className="space-y-2">
         {/* Core Indicator Title Node */}
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-2.5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="flex items-center gap-2">
             <div
-              className={`p-2 border rounded-xl transition-colors ${
+              className={`p-1 rounded-lg border shrink-0 transition-colors ${
                 isPassed
                   ? "bg-emerald-50 border-emerald-100 text-emerald-600"
                   : isFailed
@@ -332,42 +329,11 @@ const EligibilityContainer = ({
                       : "bg-slate-50 border-slate-200/40 text-slate-500"
               }`}
             >
-              {icon}
+              {icon ?? <ShieldCheck size={16} />}
             </div>
-            <h4 className="text-sm font-bold text-primary tracking-tight">
+            <h4 className="text-xs font-bold text-primary tracking-tight">
               {title}
             </h4>
-          </div>
-
-          {/* DYNAMIC VISUAL STATE CHECKMARK */}
-          <div className="shrink-0 pt-0.5">
-            {isPassed && (
-              <CheckCircle2
-                size={20}
-                className="text-emerald-600"
-                fill="#f0fdf4"
-                strokeWidth={2.5}
-              />
-            )}
-            {isFailed && (
-              <XCircle
-                size={20}
-                className="text-rose-600"
-                fill="#fef2f2"
-                strokeWidth={2.5}
-              />
-            )}
-            {isReview && (
-              <AlertTriangle
-                size={20}
-                className="text-amber-500"
-                fill="#fffbeb"
-                strokeWidth={2.5}
-              />
-            )}
-            {!isPassed && !isFailed && !isReview && (
-              <HelpCircle size={20} className="text-slate-300" />
-            )}
           </div>
         </div>
 
@@ -379,7 +345,7 @@ const EligibilityContainer = ({
       {/* Vetting Context Metadata Output Footer */}
       <div className="border-t border-slate-100 pt-2 mt-2 flex items-center justify-between gap-3 text-[11px]">
         {/* Left Side: Context Meta Information */}
-        <span className="font-mono text-slate-500 font-semibold bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+        <span className="font-mono text-slate-500 font-semibold bg-slate-50 px-2 py-0.5 rounded-md border border-slate-100 text-[10px]">
           {metaInfo}
         </span>
 

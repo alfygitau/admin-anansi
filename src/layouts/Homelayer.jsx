@@ -309,7 +309,7 @@ export default function Homelayer() {
   };
 
   return (
-    <div className="h-screen w-screen bg-slate-50 flex overflow-hidden font-sans antialiased text-slate-800">
+    <div className="h-screen w-screen bg-slate-50 flex overflow-hidden font-sans pr-2 antialiased text-slate-800">
       {/* DESKTOP SIDEBAR PANEL */}
       <aside className="hidden lg:flex flex-col w-80 bg-white border-r border-slate-200/80 shrink-0 justify-between">
         <div className="h-20 flex items-center gap-3 px-6 border-b border-slate-200/80 shrink-0 bg-white">

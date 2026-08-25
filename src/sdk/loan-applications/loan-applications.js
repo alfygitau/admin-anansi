@@ -215,3 +215,18 @@ export const getApplicationDocuments = async (appId) => {
     throw error?.response?.data || error;
   }
 };
+
+export const getMemberLoanEligibility = async (memberId, productId) => {
+  try {
+    const response = await loanClient.post(
+      `/loan-applications/check-eligibility`,
+      {
+        customer_id: memberId,
+        loan_product_id: productId,
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

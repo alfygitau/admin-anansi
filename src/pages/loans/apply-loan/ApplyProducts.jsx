@@ -15,6 +15,8 @@ import {
   Sprout,
   ArrowUpRight,
   Briefcase,
+  PieChart,
+  ArrowLeft,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getMember } from "../../../sdk/members/members";
@@ -29,39 +31,16 @@ const ApplyProducts = () => {
   const [member, setMember] = useState({});
   const [loanProducts, setLoanProducts] = useState([]);
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const [amount, setAmount] = useState("");
-  const [months, setMonths] = useState("");
   const [notes, setNotes] = useState("");
   const selectedProduct = loanProducts.find((p) => p.id === selectedProductId);
 
   const handleProductSelect = (id) => {
     setSelectedProductId(id);
-    const prod = loanProducts.find((p) => p.id === id);
-    setAmount(prod.maxAmount > 500000 ? 500000 : prod.maxAmount);
-    setMonths(prod.maxPeriodMonths);
   };
 
-  const calculateEstimatedRepayment = () => {
-    if (!selectedProduct || !amount || !months) return 0;
-    const principal = Number(amount);
-    const rate = selectedProduct.interestRate / 100 / 12;
-
-    if (selectedProduct.interestType === "Flat Rate") {
-      const totalInterest =
-        principal * (selectedProduct.interestRate / 100) * (months / 12);
-      return (principal + totalInterest) / months;
-    } else {
-      return (
-        (principal * rate * Math.pow(1 + rate, months)) /
-        (Math.pow(1 + rate, months) - 1)
-      );
-    }
-  };
-
-  const estimatedMonthly = calculateEstimatedRepayment();
   const handleFormSubmit = (e) => {
     e.preventDefault();
-    if (!selectedProductId) return alert("Please select a loan product first.");
+    navigate(`/admin/apply-loan/${id}/eligibility/${selectedProductId}`);
   };
 
   const { isFetching } = useQuery({
@@ -106,22 +85,31 @@ const ApplyProducts = () => {
     <div className="w-full h-full flex flex-col justify-start antialiased text-slate-800 p-1">
       {/* 1. MEMBER PROFILE CONTEXT BANNER */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 border-b border-slate-200/60 pb-6 select-none mb-4">
-        <div>
-          <span className="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-md uppercase tracking-wider border border-slate-200/40">
-            New Application Lifecycle
-          </span>
-          <h2 className="text-xl font-black text-primary tracking-tight mt-1">
-            Choose Loan Product
-          </h2>
-          <p className="text-sm font-medium text-slate-700 mt-1">
-            {member?.firstname} {member?.lastname}
-          </p>
-          <p className="text-xs text-slate-500">
-            Member ID Reference:{" "}
-            <span className="font-mono font-bold text-slate-700">
-              {member?.public_id}
+        <div className="flex items-center gap-4">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="size-11 rounded-2xl border border-slate-200 bg-white flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs cursor-pointer active:scale-95"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div>
+            <span className="text-[10px] bg-slate-100 text-slate-600 font-bold px-2.5 py-1 rounded-md uppercase tracking-wider border border-slate-200">
+              New Application Lifecycle
             </span>
-          </p>
+            <h2 className="text-xl font-black text-primary tracking-tight mt-1">
+              Choose Loan Product
+            </h2>
+            <p className="text-sm font-medium text-slate-700 mt-1">
+              {member?.firstname} {member?.lastname}
+            </p>
+            <p className="text-xs text-slate-500">
+              Member ID Reference:{" "}
+              <span className="font-mono font-bold text-slate-700">
+                {member?.public_id}
+              </span>
+            </p>
+          </div>
         </div>
       </div>
 
@@ -254,7 +242,7 @@ const ApplyProducts = () => {
                   <div className="grid grid-cols-2 gap-3 border-t border-slate-100 pt-4 mt-5 text-[11px] font-medium text-slate-500">
                     <div className="space-y-0.5">
                       <span className="text-[9px] uppercase font-bold text-slate-400 flex items-center gap-1">
-                        <Percent size={10} /> Rate
+                        <PieChart size={10} /> Rate
                       </span>
                       <p className="text-slate-800 font-bold">
                         {Number(product?.interest_rate)?.toFixed(1)}%{" "}
@@ -289,7 +277,7 @@ const ApplyProducts = () => {
         )}
       </div>
 
-      <div className="mt-auto pt-8 w-full">
+      <div className="mt-auto pt-8 pb-4 w-full">
         <div className="bg-white rounded-[24px] border border-slate-200/60 p-4 flex items-center justify-end gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.02)]">
           <button
             type="button"
@@ -298,7 +286,7 @@ const ApplyProducts = () => {
             Cancel
           </button>
           <button
-            onClick={() => navigate("/admin/apply-loan/eligibility")}
+            onClick={handleFormSubmit}
             type="button"
             className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 cursor-pointer flex items-center gap-2"
           >

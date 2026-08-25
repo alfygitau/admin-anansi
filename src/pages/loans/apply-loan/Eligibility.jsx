@@ -279,7 +279,11 @@ const LoanEligibility = ({ memberData, onProceedToApplication }) => {
           Cancel
         </button>
         <button
-          onClick={() => navigate("/admin/apply-loan/loan-application-details")}
+          onClick={() =>
+            navigate(
+              `/admin/apply-loan/${memberId}/loan-application-details/${productId}`,
+            )
+          }
           type="button"
           disabled={!eligibility?.is_eligible}
           className="h-11 px-6 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-97 cursor-pointer flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none disabled:active:scale-100 disabled:hover:bg-slate-200"

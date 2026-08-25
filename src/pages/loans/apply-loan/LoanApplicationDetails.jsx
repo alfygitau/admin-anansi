@@ -9,8 +9,17 @@ import {
   Info,
   XCircle,
   ArrowUpRight,
+  BadgePercent,
+  Calculator,
+  ShieldCheck,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
+import { getLoanProduct } from "../../../sdk/loan-products/loan-products";
+import { useToast } from "../../../contexts/ToastProvider";
+import { useParams } from "react-router-dom";
+import { useFormatAmount } from "../../../hooks/useFormatAmount";
+import { getMember } from "../../../sdk/members/members";
 
 const LoanApplicationDetails = ({
   memberData,
@@ -18,19 +27,6 @@ const LoanApplicationDetails = ({
   onSubmitApplication,
 }) => {
   const navigate = useNavigate();
-  const member = memberData || {
-    id: "MBR-90412",
-    name: "Jane S. Moraa",
-    maxEligibility: 750000,
-  };
-
-  const product = selectedProduct || {
-    id: "PROD-DEVELOPMENT",
-    name: "Premium Development Loan",
-    interestRate: 13.5,
-    interestType: "Reducing Balance",
-  };
-
   // 1. Form States
   const [amount, setAmount] = useState(250000);
   const [period, setPeriod] = useState(24);
@@ -38,58 +34,57 @@ const LoanApplicationDetails = ({
   const [purposeCategory, setPurposeCategory] = useState("business");
   const [purposeDetails, setPurposeDetails] = useState("");
   const [disbursementChannel, setDisbursementChannel] = useState("fosa");
+  const [loanProduct, setLoanProduct] = useState({});
+  const { showToast } = useToast();
+  const { memberId, productId } = useParams();
+  const formatAmount = useFormatAmount();
+  const [member, setMember] = useState({});
 
-  // 2. Dynamic Metric Calculations Based on Selected Frequency
-  const calculateMetrics = () => {
-    const principal = Number(amount) || 0;
-    const totalPeriods = Number(period) || 1;
-    const annualRate = product.interestRate / 100;
+  useQuery({
+    queryKey: ["get member", memberId],
+    queryFn: async () => {
+      const response = await getMember(memberId);
+      return response?.data?.data;
+    },
+    onSuccess: (data) => {
+      setMember(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Member processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
-    let periodsPerYear = 12;
-    if (frequency === "daily") periodsPerYear = 365;
-    if (frequency === "weekly") periodsPerYear = 52;
+  const { isFetching } = useQuery({
+    queryKey: ["loan-product", productId],
+    queryFn: async () => {
+      const response = await getLoanProduct(productId);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setLoanProduct(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Loan Products processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
-    const ratePerPeriod = annualRate / periodsPerYear;
-
-    let installment = 0;
-    let totalPayable = 0;
-
-    if (product.interestType === "Flat Rate") {
-      const totalInterest =
-        principal * annualRate * (totalPeriods / periodsPerYear);
-      totalPayable = principal + totalInterest;
-      installment = totalPayable / totalPeriods;
-    } else {
-      // Reducing Balance Amortization Formula
-      if (ratePerPeriod > 0) {
-        installment =
-          (principal *
-            ratePerPeriod *
-            Math.pow(1 + ratePerPeriod, totalPeriods)) /
-          (Math.pow(1 + ratePerPeriod, totalPeriods) - 1);
-        totalPayable = installment * totalPeriods;
-      } else {
-        installment = principal / totalPeriods;
-        totalPayable = principal;
-      }
-    }
-
-    return {
-      periodLabel:
-        frequency === "daily"
-          ? "Days"
-          : frequency === "weekly"
-            ? "Weeks"
-            : "Months",
-      installment: isNaN(installment) ? 0 : installment,
-      totalInterest: isNaN(totalPayable - principal)
-        ? 0
-        : totalPayable - principal,
-      totalPayable: isNaN(totalPayable) ? 0 : totalPayable,
-    };
-  };
-
-  const metrics = calculateMetrics();
+  const principal = loanProduct?.amount ?? 500000;
+  const maxLimit = loanProduct?.maxLimit ?? 900000;
+  const interestRate = loanProduct?.interestRate ?? 12.0; // % per annum
+  const durationMonths = loanProduct?.duration ?? 24;
+  const monthlyInstallment = loanProduct?.monthlyInstallment ?? 23537.5;
+  const totalInterest = loanProduct?.totalInterest ?? 64900.0;
+  const processingFee = loanProduct?.processingFee ?? 5000.0;
 
   const handleFormSubmit = (e) => {
     e.preventDefault();
@@ -107,17 +102,106 @@ const LoanApplicationDetails = ({
 
           {/* INLINE TAILWIND CSS UTILITY CLASSES */}
           <p className="text-sm font-bold text-slate-700 mt-0.5 capitalize">
-            {member.name}
+            {member?.firstname} {member?.middlename} {member?.lastname}
           </p>
 
           <p className="text-xs text-slate-400 mt-1 flex items-center gap-1.5">
             <span>Member ID:</span>
             <span className="font-mono font-bold text-slate-600 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/50">
-              {member.id}
+              {member?.public_id}
             </span>
           </p>
         </div>
       </div>
+
+      {isFetching ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch select-none">
+          {[1, 2].map((cardIndex) => (
+            <div
+              key={cardIndex}
+              className="bg-white rounded-2xl border border-slate-200/60 p-4 shadow-3xs flex flex-col justify-between space-y-4 animate-pulse"
+            >
+              {/* CARD HEADER SKELETON */}
+              <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3.5">
+                <div className="size-8 rounded-xl bg-slate-100 shrink-0" />
+                <div className="h-4 w-40 bg-slate-200 rounded-md" />
+              </div>
+
+              {/* METRIC ITEMS GRID SKELETON */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {[1, 2].map((itemIndex) => (
+                  <div key={itemIndex} className="flex items-start gap-2.5 p-2">
+                    {/* Icon Skeleton */}
+                    <div className="size-7 rounded-lg bg-slate-100 shrink-0 mt-0.5" />
+
+                    {/* Label & Value Skeletons */}
+                    <div className="space-y-2 w-full">
+                      <div className="h-2.5 w-20 bg-slate-100 rounded" />
+                      <div className="h-3.5 w-28 bg-slate-200 rounded-md" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full items-stretch select-none">
+          {/* CARD 1: LOAN FACILITY PARAMETERS */}
+          <ApplicationCard
+            title={loanProduct?.product_name ?? ""}
+            icon={<Banknote size={15} />}
+          >
+            <MetricItem
+              icon={<Banknote size={14} />}
+              label="Minimum to Apply"
+              value={formatAmount(loanProduct?.min_amount ?? 0)}
+            />
+            <MetricItem
+              icon={<ShieldCheck size={14} />}
+              label="Max Product Limit"
+              value={formatAmount(loanProduct?.max_amount ?? 0)}
+            />
+            <MetricItem
+              icon={<BadgePercent size={14} />}
+              label="Interest Rate"
+              value={`${Number(loanProduct?.interest_rate ?? 0).toFixed(1)}% p.m`}
+            />
+            <MetricItem
+              icon={<Calendar size={14} />}
+              label="Repayment Duration"
+              value={`${loanProduct?.max_period} Months`}
+            />
+          </ApplicationCard>
+
+          {/* CARD 2: REPAYMENT & COST BREAKDOWN */}
+          <ApplicationCard
+            title="Interest and Fees"
+            icon={<Calculator size={15} />}
+          >
+            <MetricItem
+              icon={<Calculator size={14} />}
+              label="Interest Method"
+              value={loanProduct?.interest_method}
+            />
+            <MetricItem
+              icon={<BadgePercent size={14} />}
+              label="Repayment Frequency"
+              value={loanProduct?.repayment_interval}
+            />
+            <MetricItem
+              icon={<FileText size={14} />}
+              label="Processing Fee"
+              value={`(${loanProduct?.processing_fee_type}) ${formatAmount(loanProduct?.processing_fee_value)}`}
+            />
+            <MetricItem
+              icon={<Wallet size={14} />}
+              label="Insurance Rate (%)"
+              value={formatAmount(loanProduct?.insurance_rate)}
+            />
+          </ApplicationCard>
+        </div>
+      )}
 
       {/* 2. CORE SPECIFICATION CONTAINER FORM */}
       <div className="w-full space-y-6">
@@ -134,9 +218,6 @@ const LoanApplicationDetails = ({
                 <label className="text-xs font-bold text-slate-700">
                   Requested Loan Capital
                 </label>
-                <span className="text-[10px] text-slate-400 font-medium">
-                  Max Ceiling: KES {member.maxEligibility.toLocaleString()}
-                </span>
               </div>
 
               <div className="flex items-center w-full h-14 bg-white border border-slate-200 rounded-xl shadow-3xs focus-within:border-[#074073] focus-within:ring-1 focus-within:ring-[#074073]/10 transition-all overflow-hidden">
@@ -150,7 +231,7 @@ const LoanApplicationDetails = ({
                   type="number"
                   value={amount}
                   onChange={(e) => setAmount(Number(e.target.value))}
-                  className="flex-1 h-full px-2 bg-transparent text-xs font-mono font-bold text-slate-800 focus:outline-none"
+                  className="flex-1 h-full px-2 bg-transparent font-normal text-slate-800 focus:outline-none"
                   placeholder="0"
                 />
               </div>
@@ -160,11 +241,8 @@ const LoanApplicationDetails = ({
             <div className="space-y-1.5">
               <div className="flex justify-between items-center">
                 <label className="text-xs font-bold text-slate-700">
-                  Repayment Period Duration
+                  Repayment Period Duration (months)
                 </label>
-                <span className="text-[10px] text-slate-400 font-medium capitalize">
-                  Measured in {metrics.periodLabel}
-                </span>
               </div>
 
               <div className="flex items-center w-full h-14 bg-white border border-slate-200 rounded-xl shadow-3xs focus-within:border-[#074073] focus-within:ring-1 focus-within:ring-[#074073]/10 transition-all overflow-hidden">
@@ -175,11 +253,11 @@ const LoanApplicationDetails = ({
                   type="number"
                   value={period}
                   onChange={(e) => setPeriod(Number(e.target.value))}
-                  className="flex-1 h-full px-3.5 bg-transparent text-xs font-bold text-slate-800 focus:outline-none"
+                  className="flex-1 h-full px-3.5 bg-transparent font-normal text-slate-800 focus:outline-none"
                   placeholder="e.g. 24"
                 />
                 <div className="pr-3.5 pl-2 text-slate-400 font-bold text-[10px] uppercase tracking-wide select-none">
-                  {metrics.periodLabel}
+                  {loanProduct.periodLabel}
                 </div>
               </div>
             </div>
@@ -263,56 +341,8 @@ const LoanApplicationDetails = ({
         {/* SECTION C: PURPOSE & STRATEGY */}
         <div className="space-y-4 pt-2">
           <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 flex items-center gap-2 border-b border-slate-100 pb-2">
-            <FileText size={14} /> 3. Loan Purpose & Funding Directives
+            <FileText size={14} /> Loan Purpose & Funding Directives
           </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* OVERHAULED DROPDOWN: CATEGORY */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">
-                Sector Classification
-              </label>
-              <div className="flex items-center w-full h-14 bg-white border border-slate-200 rounded-xl shadow-3xs focus-within:border-[#074073] focus-within:ring-1 focus-within:ring-[#074073]/10 transition-all overflow-hidden">
-                <div className="flex items-center justify-center h-full px-3.5 bg-slate-50 border-r border-slate-200 shrink-0 text-slate-400">
-                  <Coins size={15} />
-                </div>
-                <select
-                  value={purposeCategory}
-                  onChange={(e) => setPurposeCategory(e.target.value)}
-                  className="flex-1 h-full px-3.5 bg-transparent text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
-                >
-                  <option value="business">
-                    Business Investment / Trading
-                  </option>
-                  <option value="agriculture">Agribusiness Operations</option>
-                  <option value="education">School Fees & Training</option>
-                  <option value="emergency">Medical / Emergency Relief</option>
-                  <option value="asset">Asset Purchase / Land</option>
-                </select>
-              </div>
-            </div>
-
-            {/* OVERHAULED DROPDOWN: DISBURSEMENT ROUTING */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-bold text-slate-700">
-                Disbursement Channel
-              </label>
-              <div className="flex items-center w-full h-14 bg-white border border-slate-200 rounded-xl shadow-3xs focus-within:border-[#074073] focus-within:ring-1 focus-within:ring-[#074073]/10 transition-all overflow-hidden">
-                <div className="flex items-center justify-center h-full px-3.5 bg-slate-50 border-r border-slate-200 shrink-0 text-slate-400">
-                  <Wallet size={15} />
-                </div>
-                <select
-                  value={disbursementChannel}
-                  onChange={(e) => setDisbursementChannel(e.target.value)}
-                  className="flex-1 h-full px-3.5 bg-transparent text-xs font-bold text-slate-700 focus:outline-none cursor-pointer"
-                >
-                  <option value="fosa">FOSA Savings Account</option>
-                  <option value="mpesa">Mobile Wallet (M-Pesa B2C)</option>
-                  <option value="rtgs">Bank Transfer (EFT/RTGS)</option>
-                </select>
-              </div>
-            </div>
-          </div>
 
           {/* OVERHAULED INPUT: TEXTAREA DETAILED INSIGHTS */}
           <div className="space-y-1.5">
@@ -320,7 +350,7 @@ const LoanApplicationDetails = ({
               Detailed Purpose Breakdown Statement
             </label>
             <textarea
-              rows={3}
+              rows={5}
               value={purposeDetails}
               onChange={(e) => setPurposeDetails(e.target.value)}
               className="w-full p-3 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-[#074073] focus:ring-1 focus:ring-[#074073]/10 transition-all resize-none shadow-3xs"
@@ -364,5 +394,51 @@ const LoanApplicationDetails = ({
     </div>
   );
 };
+
+const ApplicationCard = ({ title, icon, children, className = "" }) => (
+  <div
+    className={`bg-white border border-slate-200/70 shadow-2xs rounded-[24px] overflow-hidden w-full h-full hover:shadow-xs transition-shadow duration-300 ${className}`}
+  >
+    <div className="px-5 py-4 bg-slate-50/40 border-b border-slate-100 flex items-center gap-2.5 select-none">
+      <div className="size-7.5 rounded-xl bg-white border border-slate-200/70 flex items-center justify-center text-slate-400 shadow-3xs">
+        {icon}
+      </div>
+      <h3 className="text-xs font-black uppercase tracking-wider text-slate-700">
+        {title}
+      </h3>
+    </div>
+    <div className="p-5 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
+      {children}
+    </div>
+  </div>
+);
+
+/* REFINED METRIC ATOM CELL WITH ENHANCED FONT SIZING TRACKING */
+const MetricItem = ({
+  icon,
+  label,
+  value,
+  isCapitalized = false,
+  isCrypto = false,
+  className = "",
+}) => (
+  <div className="flex items-start gap-3 min-w-0">
+    <div className="size-8.5 rounded-xl bg-slate-50 border border-slate-200/40 flex items-center justify-center text-slate-400 shrink-0 shadow-3xs mt-0.5">
+      {React.cloneElement(icon, { size: 14, strokeWidth: 2.5 })}
+    </div>
+    <div className="min-w-0 flex flex-col space-y-1">
+      <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 leading-normal">
+        {label}
+      </span>
+      <span
+        className={`text-xs font-bold tracking-tight leading-normal truncate ${
+          isCrypto ? "font-mono text-primary text-[13px]" : "text-slate-800"
+        } ${isCapitalized ? "capitalize" : ""} ${className}`}
+      >
+        {value || "—"}
+      </span>
+    </div>
+  </div>
+);
 
 export default LoanApplicationDetails;

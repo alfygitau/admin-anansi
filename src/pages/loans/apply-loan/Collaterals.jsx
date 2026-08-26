@@ -13,9 +13,19 @@ import {
   FileUp,
   Info,
   ArrowUpRight,
+  Loader2,
+  Coins,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery, useMutation } from "react-query";
+import { useToast } from "../../../contexts/ToastProvider";
+import {
+  addChattel,
+  deleteChattel,
+  listChattels,
+} from "../../../sdk/chattels/chattels";
+import { getLoanProduct } from "../../../sdk/loan-products/loan-products";
 
 const CATEGORY_OPTIONS = [
   { value: "ELECTRONICS", label: "Electronics & Media" },
@@ -29,13 +39,16 @@ export default function ChattelRegistry() {
   const [chattels, setChattels] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { showToast } = useToast();
+  const { appId, productId } = useParams();
+  const [loanProduct, setLoanProduct] = useState({});
 
   const [formData, setFormData] = useState({
     asset_name: "",
     asset_category: "",
     estimated_value: "",
-    image_file: null,
-    doc_file: null,
+    image_files: [],
+    doc_files: [],
   });
   const [errors, setErrors] = useState({});
 
@@ -52,10 +65,11 @@ export default function ChattelRegistry() {
     }
   };
 
-  // Files state mutators
+  // Files state mutators supporting multiple file uploads
   const handleFileChange = (e, key) => {
-    if (e.target.files && e.target.files[0]) {
-      setFormData((prev) => ({ ...prev, [key]: e.target.files[0] }));
+    if (e.target.files && e.target.files.length > 0) {
+      const selectedFiles = Array.from(e.target.files);
+      setFormData((prev) => ({ ...prev, [key]: selectedFiles }));
       if (errors[key]) {
         setErrors((prev) => ({ ...prev, [key]: "" }));
       }
@@ -93,26 +107,7 @@ export default function ChattelRegistry() {
       setErrors(localErrors);
       return;
     }
-
-    const newChattelRecord = {
-      id: `CHTL-${String(chattels.length + 1).padStart(3, "0")}`,
-      asset_name: formData.asset_name,
-      asset_category: formData.asset_category,
-      estimated_value: parseFloat(formData.estimated_value),
-      image_urls: formData.image_file
-        ? [URL.createObjectURL(formData.image_file)]
-        : [],
-      doc_urls: formData.doc_file
-        ? [URL.createObjectURL(formData.doc_file)]
-        : [],
-    };
-
-    setChattels((prev) => [...prev, newChattelRecord]);
-    resetFormAndCloseModal();
-  };
-
-  const deleteChattelRecord = (id) => {
-    setChattels((prev) => prev.filter((item) => item.id !== id));
+    mutate();
   };
 
   const resetFormAndCloseModal = () => {
@@ -120,15 +115,112 @@ export default function ChattelRegistry() {
       asset_name: "",
       asset_category: "",
       estimated_value: "",
-      image_file: null,
-      doc_file: null,
+      image_files: [],
+      doc_files: [],
     });
     setErrors({});
     setIsModalOpen(false);
   };
 
+  const requiresDocuments = loanProduct?.requires_documents ?? false;
+
+  const getNextRoute = (id) => {
+    const nextRoute = requiresDocuments
+      ? `/admin/apply-loan/${productId}/add-documents/${id}`
+      : `/admin/apply-loan/application-successful/${id}`;
+    return nextRoute;
+  };
+
   const handleAddDocuments = () => {
-    navigate(`/admin/apply-loan/loan-documents`);
+    navigate(getNextRoute(appId));
+  };
+
+  const { isFetching, refetch } = useQuery({
+    queryKey: ["fetch collaterals"],
+    queryFn: async () => {
+      const response = await listChattels(appId);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setChattels(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Chattels processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  useQuery({
+    queryKey: ["loan-product", productId],
+    queryFn: async () => {
+      const response = await getLoanProduct(productId);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setLoanProduct(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Loan Products processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { isLoading, mutate } = useMutation({
+    mutationKey: ["add collateral"],
+    mutationFn: async () => {
+      const response = await addChattel(
+        appId,
+        formData?.asset_name,
+        formData?.estimated_value,
+        formData?.asset_category,
+        formData?.doc_files,
+        formData?.image_files,
+      );
+      return response.data.data;
+    },
+    onSuccess: () => {
+      refetch();
+      resetFormAndCloseModal();
+    },
+    onError: (error) => {
+      showToast({
+        title: "Chattels processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { isLoading: deleting, mutate: deleteMyChattel } = useMutation({
+    mutationKey: ["delete collateral"],
+    mutationFn: async (id) => {
+      const response = await deleteChattel(appId, id);
+      return response.data.data;
+    },
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      showToast({
+        title: "Chattels processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const deleteChattelRecord = (id) => {
+    deleteMyChattel(id);
   };
 
   return (
@@ -164,21 +256,104 @@ export default function ChattelRegistry() {
           </div>
 
           {/* DYNAMIC CONTENT SPACE */}
-          {chattels.length === 0 ? (
-            /* EMPTY CHATTELS RECONCILIATION CARD PANEL UI */
-            <div className="flex flex-col flex-1 bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-12 space-y-4 justify-center items-center min-h-[340px]">
-              <div className="size-12 bg-slate-50 border border-slate-200/60 text-slate-400 rounded-2xl flex items-center justify-center shadow-3xs">
-                <Tv size={22} strokeWidth={1.5} />
-              </div>
-              <div className="space-y-1 max-w-sm">
-                <p className="text-sm font-bold text-slate-800 text-center">
-                  No Security Items Declared Yet
-                </p>
-                <p className="text-xs text-slate-400 leading-relaxed font-medium text-center">
-                  Click the tracking action button to register an asset. You
-                  will be able to supply ownership receipts and pictures to
-                  establish security legitimacy.
-                </p>
+          {isFetching ? (
+            /* SKELETON LOADING UI */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 9 }).map((_, index) => (
+                <div
+                  key={`chattel-skeleton-${index}`}
+                  className="bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-4 flex flex-col justify-between animate-pulse select-none pointer-events-none"
+                >
+                  <div className="space-y-3.5">
+                    {/* Top Category Badge Skeleton */}
+                    <div className="flex justify-between items-start">
+                      <div className="h-4 w-28 bg-slate-200 rounded-md" />
+                    </div>
+
+                    {/* Core Content Skeleton */}
+                    <div className="space-y-3">
+                      {/* Title Line */}
+                      <div className="h-4 bg-slate-200 rounded-md w-3/4" />
+
+                      {/* Estimated Value Block */}
+                      <div className="space-y-1.5 pt-1">
+                        <div className="h-2.5 bg-slate-200 rounded-sm w-28" />
+                        <div className="h-5 bg-slate-200 rounded-md w-36" />
+                      </div>
+
+                      {/* Description Lines */}
+                      <div className="space-y-1 pt-1">
+                        <div className="h-2.5 bg-slate-200 rounded-sm w-full" />
+                        <div className="h-2.5 bg-slate-200 rounded-sm w-4/5" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer Interaction Strip Skeleton */}
+                  <div className="pt-3.5 mt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div className="h-3 w-24 bg-slate-200 rounded-md" />
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-20 bg-slate-200 rounded-xl" />
+                      <div className="h-8 w-8 bg-slate-200 rounded-xl" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : chattels.length === 0 ? (
+            /* EMPTY CHATTEL CONTAINER CARD UI */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in duration-200">
+              <div className="bg-white border-2 border-dashed border-slate-200/90 hover:border-[#074073]/40 shadow-3xs rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 group">
+                <div className="space-y-3.5">
+                  <div className="flex justify-between items-start select-none">
+                    <span className="font-sans text-[9px] font-black bg-slate-100 border border-slate-200/60 text-slate-400 px-2 py-0.5 rounded-md tracking-wider uppercase">
+                      No Asset Assigned
+                    </span>
+                  </div>
+
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <div className="size-8 rounded-xl bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400 group-hover:bg-blue-50 group-hover:text-[#074073] transition-colors shrink-0">
+                        <Tv size={16} strokeWidth={1.5} />
+                      </div>
+                      <h3 className="text-sm font-black text-slate-800 tracking-tight">
+                        No Security Items Declared
+                      </h3>
+                    </div>
+
+                    <div className="space-y-0.5 pt-1">
+                      <span className="text-[9px] font-black uppercase text-slate-400 tracking-widest block">
+                        Estimated Asset Value
+                      </span>
+                      <span className="text-base font-black text-slate-300 font-mono tracking-tight">
+                        KES 0.00
+                      </span>
+                    </div>
+
+                    <p className="text-[11px] text-slate-400 font-medium leading-relaxed border-l-2 border-slate-100 pl-2">
+                      Register household properties, electronics, or vehicles to
+                      support loan security coverage ratios.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-3.5 mt-4 border-t border-slate-100/80 flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 select-none">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-amber-400"></span>
+                    </span>
+                    <span>Action Required</span>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => setIsModalOpen(true)}
+                    className="h-8 px-3 text-[11px] font-bold text-white bg-[#074073] hover:bg-[#053057] rounded-xl transition-all flex items-center gap-1 cursor-pointer shadow-3xs active:scale-98"
+                  >
+                    <Plus size={12} strokeWidth={3} />
+                    <span>Add Asset</span>
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
@@ -190,17 +365,12 @@ export default function ChattelRegistry() {
                   className="bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-4 flex flex-col justify-between hover:border-slate-300/90 transition-all duration-200"
                 >
                   <div className="space-y-3.5">
-                    {/* Top Identifier Badge Metric Bar */}
                     <div className="flex justify-between items-start select-none">
-                      <span className="font-mono text-[9px] font-black bg-slate-50 border border-slate-200/40 text-slate-400 px-1.5 py-0.5 rounded">
-                        {chattel.id}
-                      </span>
                       <span className="font-sans text-[9px] font-black bg-blue-50/50 border border-blue-100/40 text-[#074073] px-2 py-0.5 rounded-md tracking-wider">
                         {chattel.asset_category}
                       </span>
                     </div>
 
-                    {/* Core String Descriptions Info */}
                     <div>
                       <h3 className="text-sm font-black text-primary tracking-tight leading-tight block truncate">
                         {chattel.asset_name}
@@ -218,7 +388,6 @@ export default function ChattelRegistry() {
                         </span>
                       </div>
 
-                      {/* Dynamic Item Description Node Block */}
                       {chattel.description && (
                         <p className="text-[11px] text-slate-400 font-medium leading-relaxed mt-2.5 line-clamp-2 border-l-2 border-slate-100 pl-2">
                           {chattel.description}
@@ -227,7 +396,6 @@ export default function ChattelRegistry() {
                     </div>
                   </div>
 
-                  {/* Card Commands Interaction Strip */}
                   <div className="pt-3.5 mt-4 border-t border-slate-100/80 flex items-center justify-between">
                     <div className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider text-slate-400 select-none">
                       <span className="relative flex h-1.5 w-1.5">
@@ -253,11 +421,16 @@ export default function ChattelRegistry() {
 
                       <button
                         type="button"
+                        disabled={deleting}
                         onClick={() => deleteChattelRecord(chattel.id)}
                         className="h-8 w-8 text-slate-400 hover:text-rose-600 border border-transparent hover:border-rose-100 hover:bg-rose-50/50 rounded-xl transition-all flex items-center justify-center cursor-pointer shadow-3xs active:scale-98"
                         title="Remove asset allocation profile from current session memory"
                       >
-                        <Trash2 size={13} />
+                        {deleting ? (
+                          <Loader2 size={13} color="blue" />
+                        ) : (
+                          <Trash2 size={13} />
+                        )}
                       </button>
                     </div>
                   </div>
@@ -267,7 +440,7 @@ export default function ChattelRegistry() {
           )}
         </div>
 
-        {/* FIXED: Removed condition wrapper so the lower dock always remains anchored below */}
+        {/* LOWER DOCK */}
         <div className="bg-white mt-8 rounded-[24px] border border-slate-200/60 p-4 flex items-center justify-end gap-3 shadow-[0_8px_30px_rgb(0,0,0,0.02)] select-none shrink-0">
           <button
             type="button"
@@ -295,7 +468,7 @@ export default function ChattelRegistry() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex justify-end bg-zinc-950/30 backdrop-blur-xs font-sans"
+            className="fixed inset-0 z-[100] flex justify-end bg-zinc-950/30 font-sans"
           >
             <div
               className="absolute inset-0"
@@ -414,7 +587,7 @@ export default function ChattelRegistry() {
                       Estimated Value
                     </label>
                     <div className="relative flex items-center group">
-                      <DollarSign
+                      <Coins
                         size={14}
                         className="absolute left-4 text-slate-400 pointer-events-none group-focus-within:text-[#074073] transition-colors"
                       />
@@ -447,18 +620,21 @@ export default function ChattelRegistry() {
 
                   {/* UPLOAD ATTACHMENTS SECTION */}
                   <div className="grid grid-cols-1 gap-4 pt-2">
+                    {/* MULTIPLE IMAGES UPLOAD */}
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider ml-1">
-                        Photo of the Item
+                        Photos of the Item
                       </label>
                       <div className="relative h-26 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50 flex flex-col items-center justify-center p-3 text-center transition-all hover:border-[#074073]/30">
                         <input
                           type="file"
                           accept="image/*"
-                          onChange={(e) => handleFileChange(e, "image_file")}
+                          multiple
+                          onChange={(e) => handleFileChange(e, "image_files")}
                           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                         />
-                        {formData.image_file ? (
+                        {formData.image_files &&
+                        formData.image_files.length > 0 ? (
                           <div className="flex flex-col items-center gap-1 animate-in fade-in duration-150">
                             <CheckCircle2
                               className="text-emerald-500"
@@ -466,38 +642,40 @@ export default function ChattelRegistry() {
                               strokeWidth={3}
                             />
                             <span className="text-[11px] font-bold text-slate-700 truncate max-w-[280px] block">
-                              {formData.image_file.name}
+                              {formData.image_files.length} Photo(s) Selected
                             </span>
                             <span className="text-[9px] font-mono text-slate-400">
-                              Click to change photo
+                              Click to replace or add photos
                             </span>
                           </div>
                         ) : (
                           <>
                             <FileUp className="text-slate-300 mb-1" size={16} />
                             <span className="text-[11px] font-bold text-slate-600 block">
-                              Upload a Clear Photo
+                              Upload Photos
                             </span>
                             <span className="text-[9px] font-medium text-slate-400 mt-0.5">
-                              PNG or JPG up to 5MB
+                              PNG or JPG up to 5MB (multiple allowed)
                             </span>
                           </>
                         )}
                       </div>
                     </div>
 
+                    {/* MULTIPLE DOCUMENTS UPLOAD */}
                     <div className="space-y-1.5">
                       <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider ml-1">
-                        Proof of Ownership or Receipt
+                        Proof of Ownership or Receipts
                       </label>
                       <div className="relative h-26 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50/50 flex flex-col items-center justify-center p-3 text-center transition-all hover:border-[#074073]/30">
                         <input
                           type="file"
                           accept=".pdf,image/*"
-                          onChange={(e) => handleFileChange(e, "doc_file")}
+                          multiple
+                          onChange={(e) => handleFileChange(e, "doc_files")}
                           className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
                         />
-                        {formData.doc_file ? (
+                        {formData.doc_files && formData.doc_files.length > 0 ? (
                           <div className="flex flex-col items-center gap-1 animate-in fade-in duration-150">
                             <CheckCircle2
                               className="text-emerald-500"
@@ -505,10 +683,10 @@ export default function ChattelRegistry() {
                               strokeWidth={3}
                             />
                             <span className="text-[11px] font-bold text-slate-700 truncate max-w-[280px] block">
-                              {formData.doc_file.name}
+                              {formData.doc_files.length} Document(s) Selected
                             </span>
                             <span className="text-[9px] font-mono text-slate-400">
-                              Click to change document
+                              Click to replace or add documents
                             </span>
                           </div>
                         ) : (
@@ -518,10 +696,10 @@ export default function ChattelRegistry() {
                               size={16}
                             />
                             <span className="text-[11px] font-bold text-slate-600 block">
-                              Upload Receipt or Logbook
+                              Upload Receipts or Logbooks
                             </span>
                             <span className="text-[9px] font-medium text-slate-400 mt-0.5">
-                              PDF or sharp images are accepted
+                              PDF or sharp images (multiple allowed)
                             </span>
                           </>
                         )}
@@ -534,17 +712,28 @@ export default function ChattelRegistry() {
                 <div className="pt-4 mt-auto border-t border-slate-100 flex items-center justify-end gap-3 select-none shrink-0">
                   <button
                     type="button"
+                    disabled={isLoading}
                     onClick={resetFormAndCloseModal}
-                    className="h-10 px-4 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold shadow-3xs transition-all cursor-pointer active:scale-98"
+                    className="h-10 px-4 bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 rounded-xl text-xs font-bold shadow-3xs transition-all cursor-pointer active:scale-98 disabled:opacity-50"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="h-10 px-5 bg-[#074073] hover:bg-[#053057] text-white rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer active:scale-98 flex items-center gap-1.5"
+                    disabled={isLoading}
+                    className="h-10 px-5 bg-[#074073] hover:bg-[#053057] text-white rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer active:scale-98 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    <CheckCircle2 size={13} strokeWidth={2.5} />
-                    <span>Save Asset Details</span>
+                    {isLoading ? (
+                      <>
+                        <Loader2 size={13} className="animate-spin" />
+                        <span>Saving...</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 size={13} strokeWidth={2.5} />
+                        <span>Save Asset Details</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </form>

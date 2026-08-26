@@ -878,7 +878,7 @@ export default function MemberAccounts() {
         {selectedAccount && (
           <div className="fixed inset-0 z-[110] flex justify-end">
             <div
-              className="absolute inset-0 bg-primary/10 backdrop-blur-xs"
+              className="absolute inset-0 bg-primary/10 "
               onClick={() => setSelectedAccount(null)}
             />
             <motion.div

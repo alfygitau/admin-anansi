@@ -17,6 +17,7 @@ import {
   Briefcase,
   PieChart,
   ArrowLeft,
+  PackageX,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getMember } from "../../../sdk/members/members";
@@ -177,6 +178,22 @@ const ApplyProducts = () => {
                 </div>
               </div>
             ))}
+          </div>
+        ) : !loanProducts || loanProducts.length === 0 ? (
+          /* EMPTY STATE CONTAINER */
+          <div className="w-full flex flex-col items-center justify-center p-10 bg-white border border-slate-200/80 rounded-2xl text-center space-y-3 shadow-3xs select-none">
+            <div className="size-12 rounded-2xl bg-slate-50 border border-slate-200/60 flex items-center justify-center text-slate-400">
+              <PackageX size={22} className="stroke-1.5" />
+            </div>
+            <div className="space-y-1 max-w-sm">
+              <h4 className="text-xs sm:text-sm font-bold text-slate-800">
+                No Loan Products Available
+              </h4>
+              <p className="text-[11px] text-slate-400 font-medium leading-relaxed">
+                There are currently no active loan products configured or
+                available for selection.
+              </p>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full items-stretch">

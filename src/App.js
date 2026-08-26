@@ -156,7 +156,7 @@ function App() {
           element={<ChattelRegistry />}
         />
         <Route
-          path="apply-loan/:productId/loan-documents/:appId"
+          path="apply-loan/:productId/add-documents/:appId"
           element={<LoanDocuments />}
         />
         <Route path="help-support" element={<HelpCenter />} />

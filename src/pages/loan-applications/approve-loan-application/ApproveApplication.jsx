@@ -161,7 +161,7 @@ const ApproveApplication = () => {
 
       {/* SUMMARY CONFIRMATION MODAL */}
       {showSummaryModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40  animate-in fade-in duration-200">
           <div
             className="fixed inset-0"
             onClick={() => !isLoading && setShowSummaryModal(false)}

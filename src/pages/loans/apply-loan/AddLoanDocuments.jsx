@@ -11,25 +11,36 @@ import {
   ArrowUpRight,
   Calendar,
   HardDrive,
+  Loader2,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery, useMutation } from "react-query";
+import { useToast } from "../../../contexts/ToastProvider";
+import {
+  getApplicationDocuments,
+  addLoanDocument,
+} from "../../../sdk/documents/documents";
 
-// Standard clear type maps matching your strict DB schema layout keys
 const DOC_TYPE_OPTIONS = [
   { value: "mpesa_statement", label: "M-Pesa Statement (PDF)" },
+  { value: "bank_statement", label: "Bank Statement (PDF)" },
+  { value: "payslip", label: "Payslips (PDF)" },
+  { value: "passport", label: "Passport (PDF)" },
   { value: "national_id", label: "National ID Scan" },
-  { value: "kra_pin_cert", label: "KRA PIN Certificate" },
+  { value: "kra_pin", label: "KRA PIN Certificate" },
   { value: "bank_statement", label: "Certified Bank Statement" },
-  { value: "employment_letter", label: "Letter of Employment" },
+  { value: "employment_contract", label: "Contract of Employment" },
+  { value: "collateral_proof", label: "Collateral Proof" },
 ];
 
 export default function LoanDocuments() {
   const [documents, setDocuments] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
+  const { productId, appId } = useParams();
+  const { showToast } = useToast();
 
-  // Form State aligned precisely with your JSON schema structure
   const [formData, setFormData] = useState({
     doc_type: "",
     notes: "",
@@ -37,7 +48,6 @@ export default function LoanDocuments() {
   });
   const [errors, setErrors] = useState({});
 
-  // Utility pipe to convert integer bytes into friendly text
   const formatFileSize = (bytes) => {
     if (!bytes || bytes === 0) return "0 Bytes";
     const k = 1024;
@@ -85,24 +95,10 @@ export default function LoanDocuments() {
       setErrors(localErrors);
       return;
     }
-
-    // INSTANTIATES YOUR EXACT JSON SCHEMA OBJECT
-    const newDocumentRecord = {
-      id: `DOC-${String(documents.length + 1).padStart(3, "0")}`,
-      doc_type: formData.doc_type,
-      file_name: formData.document_file.name,
-      file_size: formData.document_file.size, // Stores clean integer bytes, e.g., 40960
-      file_url: URL.createObjectURL(formData.document_file),
-      notes: formData.notes || "",
-    };
-
-    setDocuments((prev) => [...prev, newDocumentRecord]);
-    resetFormAndCloseModal();
+    mutate();
   };
 
-  const deleteDocumentRecord = (id) => {
-    setDocuments((prev) => prev.filter((item) => item.id !== id));
-  };
+  const deleteDocumentRecord = (id) => {};
 
   const resetFormAndCloseModal = () => {
     setFormData({ doc_type: "", notes: "", document_file: null });
@@ -111,8 +107,52 @@ export default function LoanDocuments() {
   };
 
   const handleCompleteApplication = () => {
-    navigate(`/admin/loan-applications`);
+    navigate(`/admin/apply-loan/application-successful/${appId}`);
   };
+
+  const { isFetching, refetch } = useQuery({
+    queryKey: ["fetch documents"],
+    queryFn: async () => {
+      const response = await getApplicationDocuments(appId);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setDocuments(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Chattels processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { isLoading, mutate } = useMutation({
+    mutationKey: ["add document"],
+    mutationFn: async () => {
+      const response = await addLoanDocument(
+        appId,
+        formData?.doc_type,
+        formData?.notes,
+        formData?.document_file,
+      );
+      return response.data.data;
+    },
+    onSuccess: () => {
+      refetch();
+      resetFormAndCloseModal();
+    },
+    onError: (error) => {
+      showToast({
+        title: "Chattels processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
   return (
     <div className="h-full bg-slate-50 flex flex-col justify-between antialiased font-sans text-slate-800">
@@ -142,7 +182,48 @@ export default function LoanDocuments() {
           </div>
 
           {/* DOCUMENT MAP VIEW GRID MATRIX */}
-          {documents.length === 0 ? (
+          {isFetching ? (
+            /* SKELETON LOADING UI */
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 9 }).map((_, index) => (
+                <div
+                  key={`doc-skeleton-${index}`}
+                  className="bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-4 flex flex-col justify-between animate-pulse select-none pointer-events-none"
+                >
+                  <div className="space-y-3.5">
+                    {/* Top Badge Skeleton */}
+                    <div className="flex justify-between items-start">
+                      <div className="h-4 w-28 bg-slate-200 rounded-md" />
+                    </div>
+
+                    {/* Title & Info Skeleton */}
+                    <div className="space-y-2.5">
+                      {/* Document Type Title */}
+                      <div className="h-4 bg-slate-200 rounded-md w-3/4" />
+
+                      {/* File Size Metric */}
+                      <div className="h-3 bg-slate-200 rounded-md w-20" />
+
+                      {/* Notes Section Lines */}
+                      <div className="space-y-1.5 pt-1">
+                        <div className="h-2.5 bg-slate-200 rounded-sm w-full" />
+                        <div className="h-2.5 bg-slate-200 rounded-sm w-4/5" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Footer Interaction Strip Skeleton */}
+                  <div className="pt-3.5 mt-4 border-t border-slate-100 flex items-center justify-between">
+                    <div className="h-3 w-24 bg-slate-200 rounded-md" />
+                    <div className="flex items-center gap-2">
+                      <div className="h-8 w-20 bg-slate-200 rounded-xl" />
+                      <div className="h-8 w-8 bg-slate-200 rounded-xl" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : documents.length === 0 ? (
             <div className="flex flex-col flex-1 bg-white border border-slate-200/60 shadow-3xs rounded-2xl p-12 space-y-4 justify-center items-center min-h-[340px]">
               <div className="size-12 bg-slate-50 border border-slate-200/60 text-slate-400 rounded-2xl flex items-center justify-center shadow-3xs">
                 <FileText size={22} strokeWidth={1.5} />
@@ -166,17 +247,13 @@ export default function LoanDocuments() {
                 >
                   <div className="space-y-3.5">
                     <div className="flex justify-between items-start select-none">
-                      <span className="font-mono text-[9px] font-black bg-slate-50 border border-slate-200/40 text-slate-400 px-1.5 py-0.5 rounded">
-                        {doc.id}
-                      </span>
                       <span className="font-sans text-[9px] font-black bg-blue-50/50 border border-blue-100/40 text-[#074073] px-2 py-0.5 rounded-md tracking-wider capitalize">
                         {doc.doc_type.replace(/_/g, " ")}
                       </span>
                     </div>
-
                     <div>
-                      <h3 className="text-sm font-black text-primary tracking-tight leading-tight block truncate">
-                        {doc.file_name}
+                      <h3 className="text-sm font-black text-primary capitalize tracking-tight leading-tight block truncate">
+                        {doc.doc_type.replace(/_/g, " ")}
                       </h3>
 
                       {/* Displaying Extracted Metric Telemetry details */}
@@ -211,7 +288,7 @@ export default function LoanDocuments() {
                         rel="noreferrer"
                         className="h-8 px-3 text-[11px] font-bold text-slate-600 hover:text-[#074073] bg-slate-50 hover:bg-slate-100/80 border border-slate-200/60 rounded-xl transition-all flex items-center gap-1 cursor-pointer shadow-3xs active:scale-98"
                       >
-                        <span>Open Document</span>
+                        <span>Open File</span>
                       </a>
 
                       <button
@@ -257,7 +334,7 @@ export default function LoanDocuments() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex justify-end bg-zinc-950/30 backdrop-blur-xs font-sans"
+            className="fixed inset-0 z-[100] flex justify-end bg-zinc-950/30  font-sans"
           >
             <div
               className="absolute inset-0"
@@ -342,7 +419,6 @@ export default function LoanDocuments() {
                       Additional Notes
                     </label>
                     <div className="relative flex items-start group">
-                      <div className="absolute left-10 w-[1px] h-5 bg-slate-200 top-3.5 group-focus-within:bg-[#074073]/30 transition-colors" />
                       <textarea
                         name="notes"
                         value={formData.notes}
@@ -417,10 +493,20 @@ export default function LoanDocuments() {
                   </button>
                   <button
                     type="submit"
-                    className="h-10 px-5 bg-[#074073] hover:bg-[#053057] text-white rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer active:scale-98 flex items-center gap-1.5"
+                    disabled={isLoading}
+                    className="h-10 px-5 bg-[#074073] hover:bg-[#053057] text-white rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer active:scale-98 flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100"
                   >
-                    <CheckCircle2 size={13} strokeWidth={2.5} />
-                    <span>Attach Document</span>
+                    {isLoading ? (
+                      <>
+                        <Loader2 size={13} className="animate-spin" />
+                        <span>Attaching...</span>
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 size={13} strokeWidth={2.5} />
+                        <span>Attach Document</span>
+                      </>
+                    )}
                   </button>
                 </div>
               </form>

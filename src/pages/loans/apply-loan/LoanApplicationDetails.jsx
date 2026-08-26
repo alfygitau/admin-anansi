@@ -14,12 +14,18 @@ import {
   ShieldCheck,
   ArrowLeft,
   Loader2,
+  X,
+  CheckCircle2,
+  User,
+  Hash,
+  ArrowRight,
+  SlidersHorizontal,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
 import { getLoanProduct } from "../../../sdk/loan-products/loan-products";
 import { useToast } from "../../../contexts/ToastProvider";
-import { useParams } from "react-router-dom";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
 import { getMember } from "../../../sdk/members/members";
 import { createLoanApplication } from "../../../sdk/loan-applications/loan-applications";
@@ -41,6 +47,7 @@ const LoanApplicationDetails = () => {
 
   const [amountError, setAmountError] = useState("");
   const [periodError, setPeriodError] = useState("");
+  const [isSummaryModalOpen, setIsSummaryModalOpen] = useState(false);
 
   const handleAmountBlur = () => {
     const min = loanProduct?.min_amount ?? 0;
@@ -49,10 +56,13 @@ const LoanApplicationDetails = () => {
 
     if (!amount || numAmount < min) {
       setAmountError(`Amount must be at least ${formatAmount(min)}`);
+      return false;
     } else if (numAmount > max) {
       setAmountError(`Amount cannot exceed ${formatAmount(max)}`);
+      return false;
     } else {
       setAmountError("");
+      return true;
     }
   };
 
@@ -62,10 +72,13 @@ const LoanApplicationDetails = () => {
 
     if (!period || numPeriod < 1) {
       setPeriodError("Period must be at least 1 month");
+      return false;
     } else if (numPeriod > max) {
       setPeriodError(`Period cannot exceed ${max} months`);
+      return false;
     } else {
       setPeriodError("");
+      return true;
     }
   };
 
@@ -119,7 +132,7 @@ const LoanApplicationDetails = () => {
         ? `/admin/apply-loan/${productId}/add-collateral/${id}`
         : requiresDocuments
           ? `/admin/apply-loan/${productId}/add-documents/${id}`
-          : `/admin/apply-loan/${productId}/review/${id}`;
+          : `/admin/apply-loan/application-successful/${id}`;
     return nextRoute;
   };
 
@@ -139,9 +152,11 @@ const LoanApplicationDetails = () => {
     },
     onSuccess: (data) => {
       setAppId(data?.id);
+      setIsSummaryModalOpen(false);
       navigate(getNextRoute(data?.id));
     },
     onError: (error) => {
+      setIsSummaryModalOpen(false);
       showToast({
         title: "Loan Products processing failed",
         type: "error",
@@ -151,9 +166,25 @@ const LoanApplicationDetails = () => {
     },
   });
 
-  const handleFormSubmit = (e) => {
+  const handleOpenSummary = (e) => {
     e.preventDefault();
-    mutate();
+    handleAmountBlur();
+    handlePeriodBlur();
+
+    if (!amount || !period || !purposeDetails.trim()) {
+      showToast({
+        title: "Incomplete Parameters",
+        type: "error",
+        position: "top-right",
+        description:
+          "Please complete all required fields correctly before reviewing.",
+      });
+      return;
+    }
+
+    if (amountError || periodError) return;
+
+    setIsSummaryModalOpen(true);
   };
 
   return (
@@ -173,7 +204,6 @@ const LoanApplicationDetails = () => {
               Configure Loan Parameters
             </h2>
 
-            {/* INLINE TAILWIND CSS UTILITY CLASSES */}
             <p className="text-sm font-bold text-slate-700 mt-0.5 capitalize">
               {member?.firstname} {member?.middlename} {member?.lastname}
             </p>
@@ -195,20 +225,15 @@ const LoanApplicationDetails = () => {
               key={cardIndex}
               className="bg-white rounded-2xl border border-slate-200/60 p-4 shadow-3xs flex flex-col justify-between space-y-4 animate-pulse"
             >
-              {/* CARD HEADER SKELETON */}
               <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3.5">
                 <div className="size-8 rounded-xl bg-slate-100 shrink-0" />
                 <div className="h-4 w-40 bg-slate-200 rounded-md" />
               </div>
 
-              {/* METRIC ITEMS GRID SKELETON */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {[1, 2].map((itemIndex) => (
                   <div key={itemIndex} className="flex items-start gap-2.5 p-2">
-                    {/* Icon Skeleton */}
                     <div className="size-7 rounded-lg bg-slate-100 shrink-0 mt-0.5" />
-
-                    {/* Label & Value Skeletons */}
                     <div className="space-y-2 w-full">
                       <div className="h-2.5 w-20 bg-slate-100 rounded" />
                       <div className="h-3.5 w-28 bg-slate-200 rounded-md" />
@@ -286,13 +311,11 @@ const LoanApplicationDetails = () => {
           </h3>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* OVERHAULED INPUT: LOAN AMOUNT */}
+            {/* INPUT: LOAN AMOUNT */}
             <div className="space-y-1.5">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-slate-700">
-                  Requested Loan Capital
-                </label>
-              </div>
+              <label className="text-xs font-bold text-slate-700">
+                Requested Loan Capital
+              </label>
 
               <div className="flex items-center w-full h-14 bg-white border border-slate-200 rounded-xl shadow-3xs focus-within:border-[#074073] focus-within:ring-1 focus-within:ring-[#074073]/10 transition-all overflow-hidden">
                 <div className="flex items-center justify-center h-full px-3.5 bg-slate-50 border-r border-slate-200 shrink-0 text-slate-400">
@@ -310,7 +333,7 @@ const LoanApplicationDetails = () => {
                     if (amountError) setAmountError("");
                   }}
                   onBlur={handleAmountBlur}
-                  className="flex-1 h-full px-2 bg-transparent font-normal text-slate-800 focus:outline-none"
+                  className="flex-1 h-full px-2 bg-transparent font-normal text-slate-800 focus:outline-none font-normal"
                   placeholder="0"
                 />
               </div>
@@ -326,13 +349,11 @@ const LoanApplicationDetails = () => {
               )}
             </div>
 
-            {/* OVERHAULED INPUT: REPAYMENT PERIOD DURATION */}
+            {/* INPUT: REPAYMENT PERIOD DURATION */}
             <div className="space-y-1.5">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-bold text-slate-700">
-                  Repayment Period Duration (months)
-                </label>
-              </div>
+              <label className="text-xs font-bold text-slate-700">
+                Repayment Period Duration (months)
+              </label>
 
               <div className="flex items-center w-full h-14 bg-white border border-slate-200 rounded-xl shadow-3xs focus-within:border-[#074073] focus-within:ring-1 focus-within:ring-[#074073]/10 transition-all overflow-hidden">
                 <div className="flex items-center justify-center h-full px-3.5 bg-slate-50 border-r border-slate-200 shrink-0 text-slate-400">
@@ -347,7 +368,7 @@ const LoanApplicationDetails = () => {
                     if (periodError) setPeriodError("");
                   }}
                   onBlur={handlePeriodBlur}
-                  className="flex-1 h-full px-3.5 bg-transparent font-normal text-slate-800 focus:outline-none"
+                  className="flex-1 h-full px-3.5 bg-transparent font-normal text-slate-800 focus:outline-none font-normal"
                   placeholder="e.g. 24"
                 />
               </div>
@@ -375,7 +396,6 @@ const LoanApplicationDetails = () => {
               Select Collection Cadence
             </label>
             <div className="flex flex-wrap gap-6 pt-1">
-              {/* DAILY FREQUENCY */}
               <label className="flex items-center gap-2.5 cursor-pointer group select-none">
                 <input
                   type="radio"
@@ -395,7 +415,6 @@ const LoanApplicationDetails = () => {
                 </span>
               </label>
 
-              {/* WEEKLY FREQUENCY */}
               <label className="flex items-center gap-2.5 cursor-pointer group select-none">
                 <input
                   type="radio"
@@ -415,7 +434,6 @@ const LoanApplicationDetails = () => {
                 </span>
               </label>
 
-              {/* MONTHLY FREQUENCY */}
               <label className="flex items-center gap-2.5 cursor-pointer group select-none">
                 <input
                   type="radio"
@@ -444,7 +462,6 @@ const LoanApplicationDetails = () => {
             <FileText size={14} /> Loan Purpose & Funding Directives
           </h3>
 
-          {/* OVERHAULED INPUT: TEXTAREA DETAILED INSIGHTS */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-600">
               Detailed Purpose Breakdown Statement
@@ -482,24 +499,170 @@ const LoanApplicationDetails = () => {
           Cancel
         </button>
         <button
-          onClick={handleFormSubmit}
-          disabled={isLoading || !amount || !period}
+          onClick={handleOpenSummary}
+          disabled={isLoading || !amount || !period || !purposeDetails.trim()}
           type="button"
           className="h-11 px-6 bg-[#074073] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-[#074073]/10 hover:bg-[#052d52] transition-all active:scale-97 cursor-pointer flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed disabled:active:scale-100"
         >
-          {isLoading ? (
-            <>
-              <Loader2 size={14} className="animate-spin" />
-              <span>Processing...</span>
-            </>
-          ) : (
-            <>
-              <span>Continue With Application</span>
-              <ArrowUpRight size={14} />
-            </>
-          )}
+          <span>Review Apply Details</span>
+          <ArrowUpRight size={14} />
         </button>
       </div>
+
+      {/* SUMMARY REVIEW CONFIRMATION MODAL */}
+      <AnimatePresence>
+        {isSummaryModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40  font-sans antialiased text-slate-800"
+          >
+            <div
+              className="absolute inset-0"
+              onClick={() => !isLoading && setIsSummaryModalOpen(false)}
+            />
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              transition={{ duration: 0.2 }}
+              className="bg-white relative w-full max-w-lg rounded-[24px] border border-slate-200/80 shadow-2xl flex flex-col z-10 overflow-hidden"
+            >
+              {/* MODAL HEADER */}
+              <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 select-none">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-xl bg-white border border-slate-200/70 flex items-center justify-center text-[#074073] shadow-3xs">
+                    <SlidersHorizontal size={18} />
+                  </div>
+                  <div>
+                    <h3 className="text-base font-black text-slate-800 tracking-tight">
+                      Application Summary
+                    </h3>
+                    <p className="text-xs font-semibold text-slate-400">
+                      Verify configured parameters before committing
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => setIsSummaryModalOpen(false)}
+                  className="size-9 rounded-xl border border-slate-200/60 bg-white flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-50 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* MODAL BODY */}
+              <div className="p-6 overflow-y-auto space-y-5">
+                {/* APPLICANT CARD */}
+                <div className="bg-slate-50/70 border border-slate-200/70 rounded-2xl p-4 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="size-10 rounded-xl bg-white border border-slate-200/60 flex items-center justify-center text-[#074073] font-bold text-xs shadow-3xs">
+                      {member?.firstname?.[0]}
+                      {member?.lastname?.[0]}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-xs font-extrabold text-slate-800 capitalize">
+                        {member?.firstname} {member?.middlename}{" "}
+                        {member?.lastname}
+                      </span>
+                      <span className="text-[10px] font-medium text-slate-400">
+                        {member?.mobileno || "No Mobile"}
+                      </span>
+                    </div>
+                  </div>
+                  <span className="font-mono text-[10px] font-bold text-slate-600 bg-white px-2 py-1 rounded-lg border border-slate-200/60">
+                    ID: {member?.public_id}
+                  </span>
+                </div>
+
+                {/* PARAMETERS MATRIX */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="p-3 bg-white border border-slate-200/70 rounded-xl space-y-1">
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                      <Coins size={11} /> Selected Product
+                    </span>
+                    <p className="text-xs font-bold text-slate-800 truncate">
+                      {loanProduct?.product_name || "—"}
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-white border border-slate-200/70 rounded-xl space-y-1">
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                      <Banknote size={11} /> Requested Capital
+                    </span>
+                    <p className="text-xs font-black text-[#074073] font-mono">
+                      KES {Number(amount)?.toLocaleString()}
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-white border border-slate-200/70 rounded-xl space-y-1">
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                      <Calendar size={11} /> Duration
+                    </span>
+                    <p className="text-xs font-bold text-slate-800">
+                      {period} Months
+                    </p>
+                  </div>
+
+                  <div className="p-3 bg-white border border-slate-200/70 rounded-xl space-y-1">
+                    <span className="text-[9px] font-black uppercase text-slate-400 tracking-wider flex items-center gap-1">
+                      <RefreshCw size={11} /> Cadence
+                    </span>
+                    <p className="text-xs font-bold text-slate-800">
+                      {frequency}
+                    </p>
+                  </div>
+                </div>
+
+                {/* PURPOSE STATEMENT PREVIEW */}
+                <div className="space-y-1.5 pt-1">
+                  <span className="text-[10px] font-bold uppercase text-slate-400 tracking-widest">
+                    Statement of Purpose
+                  </span>
+                  <div className="p-3 bg-slate-50 border border-slate-200/60 rounded-xl text-xs text-slate-600 font-medium leading-relaxed max-h-24 overflow-y-auto">
+                    {purposeDetails}
+                  </div>
+                </div>
+              </div>
+
+              {/* MODAL FOOTER */}
+              <div className="p-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between gap-3 select-none">
+                <button
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => setIsSummaryModalOpen(false)}
+                  className="h-11 px-5 border border-slate-200 bg-white text-slate-600 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-50 transition-all cursor-pointer disabled:opacity-50"
+                >
+                  Edit Details
+                </button>
+
+                <button
+                  type="button"
+                  disabled={isLoading}
+                  onClick={() => mutate()}
+                  className="flex-1 h-11 bg-[#074073] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-[#074073]/10 hover:bg-[#052d52] transition-all cursor-pointer flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  {isLoading ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin" />
+                      <span>Submitting...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Confirm & Proceed</span>
+                      <ArrowRight size={14} />
+                    </>
+                  )}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
@@ -522,7 +685,6 @@ const ApplicationCard = ({ title, icon, children, className = "" }) => (
   </div>
 );
 
-/* REFINED METRIC ATOM CELL WITH ENHANCED FONT SIZING TRACKING */
 const MetricItem = ({
   icon,
   label,

@@ -13,54 +13,31 @@ import {
   Users,
   Wallet,
   ArrowUpRight,
+  Phone,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
-
-// MOCK DATA: High-fidelity member data representing the core ledger search engine
-const MOCK_MEMBER_DATABASE = [
-  {
-    id: "M-4092",
-    name: "Emmanuel Kipchumba",
-    phone: "+254 712 345 678",
-    email: "e.kipchumba@domain.com",
-    shares: 450000,
-    crbStatus: "Good Standing",
-    activeGuarantees: 1,
-    riskScore: "Low Risk",
-  },
-  {
-    id: "M-8812",
-    name: "Jane Mwangi Nyeri",
-    phone: "+254 722 987 654",
-    email: "jane.mwangi@domain.com",
-    shares: 820000,
-    crbStatus: "Excellent",
-    activeGuarantees: 0,
-    riskScore: "Minimal Risk",
-  },
-  {
-    id: "M-1104",
-    name: "David Ochieng Omolo",
-    phone: "+254 733 555 111",
-    email: "d.ochieng@domain.com",
-    shares: 120000,
-    crbStatus: "Conditional",
-    activeGuarantees: 3,
-    riskScore: "Medium Risk",
-  },
-];
+import { useNavigate, useParams } from "react-router-dom";
+import { useQuery, useMutation } from "react-query";
+import {
+  checkGuarantor,
+  commitGuarantors,
+  getGuarantors,
+  listGuarantors,
+  removeGuarantor,
+} from "../../../sdk/guarantors/guarantors";
+import { useToast } from "../../../contexts/ToastProvider";
+import { getLoanProduct } from "../../../sdk/loan-products/loan-products";
 
 export default function AddGuarantor() {
   // Query state hooks
   const [searchParams, setSearchParams] = useState({ name: "", phone: "" });
   const [errors, setErrors] = useState({});
-  const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [hasSearched, setHasSearched] = useState(false);
   const navigate = useNavigate();
-
-  // Staged Allocation State
   const [allocatedGuarantors, setAllocatedGuarantors] = useState([]);
+  const { productId, appId } = useParams();
+  const { showToast } = useToast();
+  const [loanProduct, setLoanProduct] = useState({});
 
   // Clear errors instantly upon character inputs
   const handleInputChange = (e) => {
@@ -91,35 +68,135 @@ export default function AddGuarantor() {
       });
       return;
     }
-    setErrors({});
-    setIsSearching(true);
+    findGuarantors();
+  };
 
-    setTimeout(() => {
-      const filtered = MOCK_MEMBER_DATABASE.filter((member) => {
-        const matchesName = searchParams.name
-          ? member.name.toLowerCase().includes(searchParams.name.toLowerCase())
-          : false;
-        const matchesPhone = searchParams.phone
-          ? member.phone
-              .replace(/\s+/g, "")
-              .includes(searchParams.phone.replace(/\s+/g, ""))
-          : false;
-        return matchesName || matchesPhone;
-      });
+  const requiresChattels = loanProduct?.requires_collateral ?? false;
+  const requiresDocuments = loanProduct?.requires_documents ?? false;
 
-      setSearchResults(filtered);
-      setIsSearching(false);
-      setHasSearched(true);
-    }, 1200);
+  const getNextRoute = (id) => {
+    const nextRoute = requiresChattels
+      ? `/admin/apply-loan/${productId}/collaterals/${id}`
+      : requiresDocuments
+        ? `/admin/apply-loan/${productId}/add-documents/${id}`
+        : `/admin/apply-loan/application-successful/${id}`;
+    return nextRoute;
   };
 
   // Allocation Handlers
   const allocateGuarantor = () => {
-    navigate(`/admin/apply-loan/collaterals`);
+    commitMyGuarantors();
   };
 
   const removeAllocatedGuarantor = (id) => {
     setAllocatedGuarantors((prev) => prev.filter((g) => g.id !== id));
+  };
+
+  const { mutate: findGuarantors, isLoading: isSearching } = useMutation({
+    mutationKey: ["find guarantors"],
+    mutationFn: async () => {
+      const response = await checkGuarantor(
+        appId,
+        searchParams?.phone,
+        searchParams?.name,
+      );
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setSearchParams({
+        phone: "",
+        name: "",
+      });
+      refetch();
+    },
+    onError: (error) => {
+      showToast({
+        title: "Guarantor processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { mutate: commitMyGuarantors, isLoading: committing } = useMutation({
+    mutationKey: ["commit guarantors"],
+    mutationFn: async () => {
+      const response = await commitGuarantors(appId);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      navigate(getNextRoute(appId));
+    },
+    onError: (error) => {
+      showToast({
+        title: "Guarantor processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { mutate: onRemoveGuarantor, isLoading: removing } = useMutation({
+    mutationKey: ["remove guarantor"],
+    mutationFn: async (id) => {
+      const response = await removeGuarantor(appId, id);
+      return response.data.data;
+    },
+    onSuccess: () => {
+      refetch();
+    },
+    onError: (error) => {
+      showToast({
+        title: "Guarantor processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  useQuery({
+    queryKey: ["loan-product", productId],
+    queryFn: async () => {
+      const response = await getLoanProduct(productId);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setLoanProduct(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Loan Products processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { isFetching, refetch } = useQuery({
+    queryKey: ["get guarantors", appId],
+    queryFn: async () => {
+      const response = await listGuarantors(appId);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setAllocatedGuarantors(data?.guarantors ?? []);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Guarantors processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const handleRemoveGuarantor = (id) => {
+    onRemoveGuarantor(id);
   };
 
   return (
@@ -241,38 +318,6 @@ export default function AddGuarantor() {
                   )}
                 </button>
               </form>
-
-              {/* STAGED LIST PREVIEW DRAWER */}
-              {allocatedGuarantors.length > 0 && (
-                <div className="pt-4 mt-auto border-t border-slate-100 space-y-3">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">
-                    Selected Guarantor Pool ({allocatedGuarantors.length})
-                  </p>
-                  <div className="space-y-2 max-h-36 overflow-y-auto pr-1">
-                    {allocatedGuarantors.map((guarantor) => (
-                      <div
-                        key={guarantor.id}
-                        className="flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200/60 rounded-xl animate-in fade-in duration-150"
-                      >
-                        <div className="min-w-0">
-                          <p className="text-xs font-bold text-slate-800 truncate">
-                            {guarantor.name}
-                          </p>
-                          <p className="text-[10px] font-mono font-medium text-slate-400 mt-0.5">
-                            ID: {guarantor.id} • {guarantor.phone}
-                          </p>
-                        </div>
-                        <button
-                          onClick={() => removeAllocatedGuarantor(guarantor.id)}
-                          className="size-6 bg-white border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 rounded-lg transition-all flex items-center justify-center shadow-3xs cursor-pointer"
-                        >
-                          <X size={12} strokeWidth={2.5} />
-                        </button>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
           </div>
 
@@ -290,8 +335,39 @@ export default function AddGuarantor() {
 
               {/* DYNAMIC RESULTS PLAYGROUND HOOK */}
               <div className="p-6 flex-1 overflow-y-auto">
-                {/* STATE A: NO SEARCH INITIALIZATION COMMITTED YET */}
-                {!hasSearched && !isSearching && (
+                {/* 1. LOADING STATE */}
+                {isFetching && (
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-4">
+                    {Array.from({ length: 4 }).map((_, index) => (
+                      <div
+                        key={`guarantor-skeleton-${index}`}
+                        className="border border-slate-200/80 rounded-2xl p-3.5 bg-white shadow-3xs flex items-center justify-between gap-3 animate-pulse select-none pointer-events-none"
+                      >
+                        {/* LEFT: CIRCLED INITIALS & MEMBER DETAILS */}
+                        <div className="flex items-center gap-3 min-w-0">
+                          {/* CIRCLED AVATAR PLACEHOLDER */}
+                          <div className="size-10 rounded-full bg-slate-200 shrink-0" />
+
+                          {/* NAME & PHONE PLACEHOLDERS */}
+                          <div className="min-w-0 flex flex-col space-y-1.5">
+                            {/* Name Line */}
+                            <div className="h-3.5 bg-slate-200 rounded-md w-28" />
+                            {/* Phone Line */}
+                            <div className="h-2.5 bg-slate-200 rounded-md w-20" />
+                          </div>
+                        </div>
+
+                        {/* RIGHT: CIRCLED REMOVE ICON PLACEHOLDER */}
+                        <div className="flex items-center shrink-0">
+                          <div className="size-7 rounded-full bg-slate-200" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* 2. STATE A: INITIAL STATE (Add your search term check if using a query string) */}
+                {!isFetching && !appId && (
                   <div className="h-full flex flex-col items-center justify-center text-center py-12 max-w-sm mx-auto space-y-4">
                     <div className="size-12 bg-slate-50 border border-slate-200/60 text-slate-400 rounded-2xl flex items-center justify-center shadow-3xs">
                       <Users size={22} strokeWidth={1.5} />
@@ -309,8 +385,8 @@ export default function AddGuarantor() {
                   </div>
                 )}
 
-                {/* STATE B: SEARCH COMPLETE - ZERO CANDIDATES DETECTED */}
-                {hasSearched && searchResults.length === 0 && !isSearching && (
+                {/* 3. STATE B: ZERO CANDIDATES DETECTED */}
+                {!isFetching && appId && allocatedGuarantors.length === 0 && (
                   <div className="h-full flex flex-col items-center justify-center text-center py-12 max-w-sm mx-auto space-y-4">
                     <div className="size-12 bg-rose-50 border border-rose-100 text-rose-500 rounded-2xl flex items-center justify-center shadow-3xs">
                       <X size={20} strokeWidth={2.5} />
@@ -328,84 +404,67 @@ export default function AddGuarantor() {
                   </div>
                 )}
 
-                {/* STATE C: ACTIVE SYSTEM RESULTS DETECTED GRID RENDERING */}
-                {hasSearched && searchResults.length > 0 && !isSearching && (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in duration-200">
-                    {searchResults.map((candidate) => {
-                      const isAlreadyAllocated = allocatedGuarantors.some(
-                        (g) => g.id === candidate.id,
-                      );
+                {/* 4. STATE C: GUARANTORS FOUND GRID */}
+                {!isFetching && allocatedGuarantors.length > 0 && (
+                  <div className="grid grid-cols-1 md:grid-cols-1 gap-4 animate-in fade-in duration-200">
+                    {allocatedGuarantors.map((candidate) => (
+                      <div
+                        key={candidate.id}
+                        className="group relative border border-slate-200/80 hover:border-slate-300 rounded-2xl p-3.5 bg-white shadow-3xs hover:shadow-2xs transition-all duration-200 flex items-center justify-between gap-3"
+                      >
+                        {/* LEFT: CIRCLED INITIALS & MEMBER DETAILS */}
+                        <div className="flex items-center gap-3 min-w-0">
+                          {/* CIRCLED INITIALS */}
+                          <div className="size-10 rounded-full bg-[#074073] border border-[#074073]/20 text-white font-extrabold text-xs flex items-center justify-center shrink-0 shadow-3xs">
+                            {candidate?.guarantor?.name
+                              ? candidate?.guarantor?.name
+                                  .split(" ")
+                                  .map((n) => n[0])
+                                  .join("")
+                                  .slice(0, 2)
+                                  .toUpperCase()
+                              : "GU"}
+                          </div>
 
-                      return (
-                        <div
-                          key={candidate.id}
-                          className={`border rounded-2xl p-4 flex flex-col justify-between transition-all duration-200 relative ${
-                            isAlreadyAllocated
-                              ? "bg-slate-50/50 border-emerald-200 shadow-3xs"
-                              : "bg-white border-slate-200/70 hover:border-slate-300 shadow-3xs"
-                          }`}
-                        >
-                          {/* Top Identity Block */}
-                          <div className="space-y-3">
-                            <div className="flex justify-between items-start">
-                              <div className="min-w-0">
-                                <span className="font-mono text-[9px] font-black tracking-wider text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/40">
-                                  Member ID: {candidate.id}
-                                </span>
-                                <h3 className="text-xs font-black text-primary mt-1.5 truncate">
-                                  {candidate.name}
-                                </h3>
-                                <p className="text-[10px] font-medium text-slate-400 mt-0.5 truncate">
-                                  {candidate.email}
-                                </p>
-                              </div>
-
-                              <span
-                                className={`text-[9px] font-black uppercase px-2 py-0.5 rounded-md border ${
-                                  candidate.riskScore.includes("Low") ||
-                                  candidate.riskScore.includes("Minimal")
-                                    ? "bg-emerald-50 border-emerald-100 text-emerald-700"
-                                    : "bg-amber-50 border-amber-100 text-amber-700"
-                                }`}
-                              >
-                                {candidate.riskScore}
-                              </span>
+                          {/* NAME & PHONE */}
+                          <div className="min-w-0 flex flex-col space-y-0.5">
+                            <div className="flex items-center gap-1.5">
+                              <h3 className="text-xs font-black text-slate-900 truncate">
+                                {candidate?.guarantor?.name}
+                              </h3>
                             </div>
 
-                            <hr className="border-slate-100" />
-
-                            {/* Key Financial Metrics Matrix */}
-                            <div className="grid grid-cols-2 gap-y-3 text-[11px] font-medium text-slate-500">
-                              <div className="space-y-0.5">
-                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                                  <Wallet size={10} /> Total Shares
-                                </span>
-                                <span className="text-xs font-bold text-slate-800">
-                                  KES {candidate.shares.toLocaleString()}
-                                </span>
-                              </div>
-                              <div className="space-y-0.5">
-                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                                  <ShieldCheck size={10} /> Credit Status
-                                </span>
-                                <span className="text-xs font-bold text-slate-800">
-                                  {candidate.crbStatus}
-                                </span>
-                              </div>
-                              <div className="col-span-2 space-y-0.5">
-                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                                  <TrendingUp size={10} /> Active Guarantees
-                                </span>
-                                <span className="text-xs font-bold text-slate-800">
-                                  Guarantor for {candidate.activeGuarantees}{" "}
-                                  ongoing loans
-                                </span>
-                              </div>
+                            <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+                              <span className="flex items-center gap-1 text-slate-500 font-medium">
+                                <Phone
+                                  size={10}
+                                  className="text-slate-400 shrink-0"
+                                />
+                                {candidate?.guarantor?.mobile ?? "N/A"}
+                              </span>
                             </div>
                           </div>
                         </div>
-                      );
-                    })}
+
+                        {/* RIGHT: RISK BADGE & CIRCLED REMOVE ICON */}
+                        <div className="flex items-center gap-2 shrink-0">
+                          {/* CIRCLED REMOVE BUTTON */}
+                          <button
+                            type="button"
+                            disabled={removing}
+                            onClick={() => handleRemoveGuarantor(candidate?.id)}
+                            title="Remove Guarantor"
+                            className="size-7 rounded-full bg-slate-100 hover:bg-rose-50 border border-slate-200/60 hover:border-rose-200 text-slate-400 hover:text-rose-600 flex items-center justify-center transition-all cursor-pointer active:scale-90"
+                          >
+                            {removing ? (
+                              <Loader2 size={13} strokeWidth={2.5} />
+                            ) : (
+                              <X size={13} strokeWidth={2.5} />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -424,11 +483,21 @@ export default function AddGuarantor() {
           </button>
           <button
             onClick={allocateGuarantor}
+            disabled={committing}
             type="button"
             className="h-11 px-6 bg-[#074073] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-[#074073]/10 hover:bg-[#052d52] transition-all active:scale-97 cursor-pointer flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed disabled:active:scale-100"
           >
-            <span>Continue With Application</span>
-            <ArrowUpRight size={14} />
+            {committing ? (
+              <>
+                <Loader2 size={14} className="animate-spin" />
+                <span>Committing...</span>
+              </>
+            ) : (
+              <>
+                <span>Continue With Application</span>
+                <ArrowUpRight size={14} />
+              </>
+            )}
           </button>
         </div>
       </div>

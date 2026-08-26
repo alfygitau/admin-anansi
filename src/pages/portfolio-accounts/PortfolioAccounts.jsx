@@ -707,7 +707,7 @@ export default function AccountsPage() {
       {selectedAccount && (
         <div className="fixed inset-0 z-50 flex justify-end select-none">
           <div
-            className="absolute inset-0 bg-primary/10 backdrop-blur-xs transition-opacity duration-200"
+            className="absolute inset-0 bg-primary/10  transition-opacity duration-200"
             onClick={() => setSelectedAccount(null)}
           />
           <div className="fixed top-0 right-0 h-screen w-full max-w-lg bg-white shadow-2xl border-l border-slate-200 p-8 overflow-y-auto flex flex-col justify-between animate-in slide-in-from-right duration-200 z-50">

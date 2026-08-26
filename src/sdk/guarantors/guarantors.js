@@ -69,7 +69,7 @@ export const removeGuarantor = async (appId, guarantorId) => {
 export const commitGuarantors = async (appId) => {
   try {
     const response = await loanClient.patch(
-      `/loan-appplications/${appId}/guarantors/commit`,
+      `/loan-applications/${appId}/guarantors/commit`,
     );
     return response;
   } catch (error) {
@@ -87,3 +87,5 @@ export const listGuarantors = async (appId) => {
     throw error?.response?.data || error;
   }
 };
+
+

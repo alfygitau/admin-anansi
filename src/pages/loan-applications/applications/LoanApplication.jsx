@@ -8,7 +8,7 @@ import {
   User,
   Smartphone,
   ShieldCheck,
-  DollarSign,
+  Coins,
   Calendar,
   Layers,
   Percent,
@@ -564,9 +564,9 @@ export default function LoanApplication() {
           </ApplicationCard>
 
           {/* CARD 2: FINANCIAL REQUEST STRUCTURING FRAME */}
-          <ApplicationCard title="Loan Details" icon={<DollarSign size={15} />}>
+          <ApplicationCard title="Loan Details" icon={<Coins size={15} />}>
             <MetricItem
-              icon={<DollarSign />}
+              icon={<Coins />}
               label="Amount Requested"
               value={
                 application.applied_amount
@@ -623,7 +623,7 @@ export default function LoanApplication() {
 
             {/* Threshold Limitations */}
             <MetricItem
-              icon={<DollarSign />}
+              icon={<Coins />}
               label="Allowed Amount Bounds"
               value={
                 application?.loan_product?.min_amount
@@ -895,7 +895,7 @@ export default function LoanApplication() {
                           {displayImage ? (
                             <img
                               src={doc.file_url}
-                              alt={doc.name || doc.doc_type}
+                              alt={doc.name || doc.doc_type?.replace(/_/g, " ")}
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                           ) : (
@@ -907,8 +907,9 @@ export default function LoanApplication() {
 
                         {/* Text Metadata */}
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-semibold text-slate-800 truncate group-hover:text-blue-900 transition-colors">
-                            {doc.doc_type || "Untitled Document"}
+                          <p className="text-sm font-semibold capitalize text-slate-800 truncate group-hover:text-blue-900 transition-colors">
+                            {doc.doc_type?.replace(/_/g, " ") ||
+                              "Untitled Document"}
                           </p>
                           <div className="flex items-center gap-2 mt-0.5 text-xs text-slate-400 font-medium">
                             <span className="uppercase tracking-wider font-bold bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded text-[10px]">

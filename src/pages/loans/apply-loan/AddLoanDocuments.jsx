@@ -248,12 +248,12 @@ export default function LoanDocuments() {
                   <div className="space-y-3.5">
                     <div className="flex justify-between items-start select-none">
                       <span className="font-sans text-[9px] font-black bg-blue-50/50 border border-blue-100/40 text-[#074073] px-2 py-0.5 rounded-md tracking-wider capitalize">
-                        {doc.doc_type.replace(/_/g, " ")}
+                        {doc.doc_type?.replace(/_/g, " ")}
                       </span>
                     </div>
                     <div>
                       <h3 className="text-sm font-black text-primary capitalize tracking-tight leading-tight block truncate">
-                        {doc.doc_type.replace(/_/g, " ")}
+                        {doc.doc_type?.replace(/_/g, " ")}
                       </h3>
 
                       {/* Displaying Extracted Metric Telemetry details */}

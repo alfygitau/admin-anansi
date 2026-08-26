@@ -53,6 +53,7 @@ import AllReports from "./pages/reports/AllReports";
 import Analytics from "./pages/reports/Analytics";
 import VerifyChattel from "./pages/loan-applications/verify-chattels/VerifyChattel";
 import MyLoanTransactions from "./pages/loans/all-loans/LoanTransactions";
+import LoanApplicationSuccess from "./pages/loans/apply-loan/ApplicationSuccess";
 
 function App() {
   return (
@@ -158,6 +159,10 @@ function App() {
         <Route
           path="apply-loan/:productId/add-documents/:appId"
           element={<LoanDocuments />}
+        />
+        <Route
+          path="apply-loan/application-successful/:appId"
+          element={<LoanApplicationSuccess />}
         />
         <Route path="help-support" element={<HelpCenter />} />
 

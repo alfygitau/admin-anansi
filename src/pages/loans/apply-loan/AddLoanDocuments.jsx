@@ -321,7 +321,7 @@ export default function LoanDocuments() {
             disabled={documents.length === 0}
             className="h-11 px-6 bg-[#074073] text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-lg shadow-[#074073]/10 hover:bg-[#052d52] transition-all active:scale-97 cursor-pointer flex items-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:shadow-none disabled:cursor-not-allowed"
           >
-            <span>Complete Loan Processing</span>
+            <span>Continue With Application</span>
             <ArrowUpRight size={14} />
           </button>
         </div>

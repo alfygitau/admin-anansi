@@ -20,6 +20,7 @@ import { getLoanApplications } from "../../../sdk/loan-applications/loan-applica
 import Pagination from "../../../components/pagination/Pagination";
 import FilterApplications from "../../../components/filters/ApplicationFilter";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
+import MemberSearch from "../../../components/search-member/SearchMember";
 
 export default function LoanApplications() {
   const [activeTab, setActiveTab] = useState("all");
@@ -41,6 +42,7 @@ export default function LoanApplications() {
   const { showToast } = useToast();
   const [totalItems, setTotalItems] = useState(0);
   const [loanApplications, setLoanApplications] = useState([]);
+  const [openSearchMember, setOpenSearchMember] = useState(false);
 
   const metrics = {
     total: loanApplications.length,
@@ -117,6 +119,11 @@ export default function LoanApplications() {
         setFilters={setFilters}
       />
 
+      <MemberSearch
+        isOpen={openSearchMember}
+        onClose={() => setOpenSearchMember(false)}
+      />
+
       <div className="w-full space-y-6 antialiased text-slate-800">
         {/* 1. UPPER EXECUTIVE COMMAND BAR */}
         <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-6">
@@ -130,7 +137,7 @@ export default function LoanApplications() {
             </p>
           </div>
           <button
-            onClick={() => navigate("/admin/apply-loan/products")}
+            onClick={() => setOpenSearchMember(true)}
             className="sm:w-full flex items-center justify-center gap-2 h-11 px-5 w-fit bg-primary text-white rounded-xl text-xs font-bold shadow-sm hover:bg-slate-800 transition-all cursor-pointer"
           >
             <Plus size={15} />

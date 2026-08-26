@@ -39,6 +39,21 @@ export const getMembers = async (
   }
 };
 
+export const searchMembers = async (search) => {
+  try {
+    const params = new URLSearchParams();
+
+    // Text & Search filters
+    if (search) params.append("q", search);
+
+    // Send the final request with the combined search parameters
+    const response = await client.get(`/customer?${params.toString()}`);
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
 export const getMember = async (id) => {
   try {
     const response = await client.get(`/customer/${id}`);

@@ -7,9 +7,14 @@ import {
   ShieldCheck,
   Trash2,
   AlertCircle,
-  RefreshCw,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useMutation } from "react-query";
+import { useToast } from "../../contexts/ToastProvider";
+import {
+  scanBackIdentification,
+  scanFrontIdentification,
+} from "../../sdk/upload/upload";
 
 export default function UploadIdentity({
   isOpen,
@@ -17,6 +22,9 @@ export default function UploadIdentity({
   existingFrontUrl,
   existingBackUrl,
   onSubmit,
+  scannedData,
+  setScannedData,
+  setIdentityFiles,
 }) {
   const [frontFile, setFrontFile] = useState(null);
   const [frontPreview, setFrontPreview] = useState(null);
@@ -24,8 +32,8 @@ export default function UploadIdentity({
   const [backPreview, setBackPreview] = useState(null);
   const [clearedFront, setClearedFront] = useState(false);
   const [clearedBack, setClearedBack] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
   const [error, setError] = useState("");
+  const { showToast } = useToast();
 
   const isReplace = Boolean(existingFrontUrl || existingBackUrl);
 
@@ -70,7 +78,6 @@ export default function UploadIdentity({
     setClearedFront(false);
     setClearedBack(false);
     setError("");
-    setIsUploading(false);
     onClose();
   };
 
@@ -83,19 +90,75 @@ export default function UploadIdentity({
       setError("Please select the Reverse / Back View of the ID card.");
       return;
     }
-
-    setIsUploading(true);
-    try {
-      if (onSubmit) {
-        await onSubmit({ frontFile, backFile });
-      }
-      handleClose();
-    } catch (err) {
-      setError(err?.message || "Failed to upload document files.");
-    } finally {
-      setIsUploading(false);
-    }
+    submitFrontFile();
   };
+
+  const { mutate: submitFrontFile, isLoading } = useMutation({
+    mutationKey: ["upload front identity"],
+    mutationFn: async () => {
+      const response = await scanFrontIdentification(frontFile);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      const nameParts = (data?.fullNames || "").trim().split(/\s+/);
+      const firstname = nameParts[0] || "";
+      const lastname =
+        nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+      const middlename =
+        nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "";
+
+      let dob = "";
+      if (data?.dateOfBirth && data.dateOfBirth.includes(".")) {
+        const [day, month, year] = data.dateOfBirth.split(".");
+        dob = `${year}-${month}-${day}`;
+      }
+
+      const gender = data?.sex
+        ? data.sex.charAt(0).toUpperCase() + data.sex.slice(1).toLowerCase()
+        : "";
+      setScannedData({
+        firstname,
+        middlename,
+        lastname,
+        identification_type: "National ID",
+        identification: data?.idNumber || "",
+        gender,
+        dob,
+      });
+      submitBackFile();
+    },
+    onError: (error) => {
+      showToast({
+        title: "Identiy processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { mutate: submitBackFile, isLoading: uploading } = useMutation({
+    mutationKey: ["upload back identity"],
+    mutationFn: async () => {
+      const response = await scanBackIdentification(backFile);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setIdentityFiles({
+        frontFile: frontFile,
+        backFile: backFile,
+      });
+      onSubmit();
+    },
+    onError: (error) => {
+      showToast({
+        title: "Identiy processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
 
   return (
     <AnimatePresence>
@@ -206,7 +269,7 @@ export default function UploadIdentity({
               <button
                 type="button"
                 onClick={handleClose}
-                disabled={isUploading}
+                disabled={isLoading}
                 className="h-12 px-5 font-bold text-xs text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200 rounded-2xl transition-all cursor-pointer"
               >
                 Cancel
@@ -216,14 +279,14 @@ export default function UploadIdentity({
                 type="button"
                 onClick={handleSave}
                 disabled={
-                  isUploading ||
+                  isLoading ||
                   (!frontFile && !backFile && !isReplace) ||
                   !activeFrontPreview ||
                   !activeBackPreview
                 }
                 className="flex-1 h-12 font-bold text-xs bg-[#074073] text-white rounded-2xl hover:bg-[#052d52] transition-all shadow-md shadow-[#074073]/20 cursor-pointer active:scale-[0.98] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isUploading ? (
+                {isLoading ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
                     <span>Saving Both Assets...</span>
@@ -252,21 +315,20 @@ function DropzoneBox({ preview, onFileSelect, onClear, label }) {
       {/* File input is ALWAYS rendered on top to allow selection at any time */}
       <input
         type="file"
-        accept="image/*,.pdf"
+        accept="image/*"
         onChange={onFileSelect}
         className="absolute inset-0 opacity-0 cursor-pointer w-full h-full z-10"
       />
 
       {preview ? (
         <div className="relative w-full flex flex-col items-center justify-center gap-2 pointer-events-none">
-          <div className="relative max-h-28 rounded-xl overflow-hidden border border-slate-200 shadow-3xs group-hover:border-[#074073]/50 transition-colors">
+          <div className="relative max-h-40 rounded-xl overflow-hidden border border-slate-200 shadow-3xs group-hover:border-[#074073]/50 transition-colors">
             <img
               src={preview}
               alt="ID Preview"
-              className="max-h-28 object-contain"
+              className="max-h-40 object-contain"
             />
-            <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[10px] font-bold">
-              <RefreshCw size={12} />
+            <div className="absolute truncate inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1.5 text-white text-[10px] font-bold">
               <span>Click to Change</span>
             </div>
           </div>

@@ -44,6 +44,7 @@ import EditAddressDetails from "../../components/edit-member/EditAddress";
 import EditFinancialDetails from "../../components/edit-member/EditFinancialDetails";
 import EditNextOfKinDetails from "../../components/edit-member/EditKin";
 import UploadIdentity from "../../components/edit-documents/UploadIdentity";
+import IdResults from "../../components/edit-documents/IdResults";
 
 const getLoanStatusStyles = (status) => {
   const currentStatus = (status || "Active").toLowerCase();
@@ -128,7 +129,7 @@ export default function MemberDetails({ onUpdateDocument }) {
     }));
   };
 
-  const { isFetching } = useQuery({
+  const { isFetching, refetch } = useQuery({
     queryKey: ["get member", id],
     queryFn: async () => {
       const response = await getMember(id);
@@ -209,6 +210,12 @@ export default function MemberDetails({ onUpdateDocument }) {
   });
 
   const [openUploadIdentity, setOpenUploadIdentity] = useState(false);
+  const [openIdResults, setOpenIdResults] = useState(false);
+  const [scannedData, setScannedData] = useState({});
+  const [identityFiles, setIdentityFiles] = useState({
+    frontFile: null,
+    backFile: null,
+  });
   const handleOpenModal = () => {
     setOpenUploadIdentity(true);
   };
@@ -220,7 +227,25 @@ export default function MemberDetails({ onUpdateDocument }) {
         onClose={() => setOpenUploadIdentity(false)}
         existingFrontUrl={member?.id_front_image ?? ""}
         existingBackUrl={member?.id_back_image ?? ""}
-        onSubmit={() => {}}
+        onSubmit={() => {
+          setOpenUploadIdentity(false);
+          setOpenIdResults(true);
+        }}
+        scannedData={scannedData}
+        setScannedData={setScannedData}
+        setIdentityFiles={setIdentityFiles}
+      />
+
+      <IdResults
+        isOpen={openIdResults}
+        onClose={() => setOpenIdResults(false)}
+        scannedData={scannedData}
+        onApplyData={() => {
+          setOpenIdResults(false);
+        }}
+        customerId={id}
+        identityFiles={identityFiles}
+        refetch={refetch}
       />
 
       <EditNextOfKinDetails

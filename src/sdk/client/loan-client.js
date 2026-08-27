@@ -5,7 +5,6 @@ const apiKey = process.env.REACT_APP_API_KEY;
 
 export const loanClient = axios.create({
   baseURL: apiUrl,
-  timeout: 10000,
   headers: {
     "X-API-Key": apiKey,
     "Content-Type": "application/json",

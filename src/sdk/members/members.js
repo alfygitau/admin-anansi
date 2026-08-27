@@ -86,3 +86,41 @@ export const addAdminMember = async (
     throw error?.response?.data || error;
   }
 };
+
+const convertToISODate = (dateStr) => {
+  if (!dateStr) return "";
+  const date = new Date(dateStr);
+  return !isNaN(date.getTime()) ? date.toISOString().split("T")[0] : dateStr;
+};
+
+export const updateMemberIdentity = async (
+  id,
+  firstName,
+  middleName = "",
+  lastName,
+  idNumber,
+  gender,
+  birthDate = "",
+) => {
+  try {
+    const payload = {
+      firstname: firstName,
+      lastname: lastName,
+      identification: idNumber,
+      gender: gender,
+    };
+
+    if (middleName && middleName.trim().length > 1) {
+      payload.middlename = middleName.trim();
+    }
+
+    if (birthDate && birthDate.trim() !== "") {
+      payload.dob = convertToISODate(birthDate);
+    }
+
+    const response = await client.patch(`/customer/${id}`, payload);
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

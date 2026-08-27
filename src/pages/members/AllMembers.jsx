@@ -13,6 +13,10 @@ import {
   Users2,
   X,
   User,
+  Users,
+  TrendingUp,
+  UserCheck,
+  UserX,
 } from "lucide-react";
 import MembersFilter from "../../components/filters/MembersFilter";
 import { useQuery } from "react-query";
@@ -155,6 +159,17 @@ export default function AllMembers() {
     });
   };
 
+  const data = {
+    totalMembers: 12480,
+    totalMembersGrowth: "+8.2%",
+    activeMembers: 10850,
+    activePercentage: "86.9%",
+    pendingKyc: 412,
+    pendingActionRequired: true,
+    dormantMembers: 1218,
+    dormantRate: "9.7%",
+  };
+
   return (
     <>
       <MembersFilter
@@ -183,6 +198,80 @@ export default function AllMembers() {
             <UserPlus size={15} />
             <span>Add Member</span>
           </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 antialiased font-sans">
+          {/* 1. TOTAL MEMBERS */}
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-3xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                Total Members
+              </span>
+              <div className="size-9 rounded-xl bg-blue-50 border border-blue-100/80 text-[#074073] flex items-center justify-center shrink-0">
+                <Users size={16} strokeWidth={2.2} />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">
+                {data.totalMembers?.toLocaleString()}
+              </p>
+            </div>
+          </div>
+
+          {/* 2. ACTIVE MEMBERS */}
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-3xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                Active Accounts
+              </span>
+              <div className="size-9 rounded-xl bg-emerald-50 border border-emerald-100/80 text-emerald-600 flex items-center justify-center shrink-0">
+                <UserCheck size={16} strokeWidth={2.2} />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">
+                {data.activeMembers?.toLocaleString()}
+              </p>
+            </div>
+          </div>
+
+          {/* 3. PENDING KYC VERIFICATION */}
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-3xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                Pending Onboarding
+              </span>
+              <div className="size-9 rounded-xl bg-amber-50 border border-amber-100/80 text-amber-600 flex items-center justify-center shrink-0">
+                <UserPlus size={16} strokeWidth={2.2} />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">
+                {data.pendingKyc?.toLocaleString()}
+              </p>
+            </div>
+          </div>
+
+          {/* 4. DORMANT / SUSPENDED */}
+          <div className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-3xs hover:border-slate-300 transition-all duration-200 flex flex-col justify-between space-y-3">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                Dormant / Inactive
+              </span>
+              <div className="size-9 rounded-xl bg-rose-50 border border-rose-100/80 text-rose-600 flex items-center justify-center shrink-0">
+                <UserX size={16} strokeWidth={2.2} />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">
+                {data.dormantMembers?.toLocaleString()}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* FILTER & LOOKUP UTILITIES */}
@@ -642,5 +731,25 @@ export default function AllMembers() {
         )}
       </div>
     </>
+  );
+
+  const MemberStatsSkeleton = () => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
+      {Array.from({ length: 4 }).map((_, index) => (
+        <div
+          key={`member-stat-skeleton-${index}`}
+          className="bg-white border border-slate-200/80 rounded-2xl p-4 shadow-3xs space-y-3"
+        >
+          <div className="flex items-center justify-between">
+            <div className="h-3 w-24 bg-slate-200 rounded-md" />
+            <div className="size-9 bg-slate-100 rounded-xl" />
+          </div>
+          <div className="space-y-2">
+            <div className="h-7 w-20 bg-slate-200 rounded-md" />
+            <div className="h-3 w-32 bg-slate-100 rounded-md" />
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }

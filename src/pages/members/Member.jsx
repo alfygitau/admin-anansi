@@ -31,9 +31,12 @@ import {
   ImageOff,
   X,
   Trash2,
+  Smartphone,
+  ArrowRight,
+  Wallet,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { getMember } from "../../sdk/members/members";
 import { useToast } from "../../contexts/ToastProvider";
 import { motion, AnimatePresence } from "framer-motion";
@@ -46,6 +49,13 @@ import EditNextOfKinDetails from "../../components/edit-member/EditKin";
 import UploadIdentity from "../../components/edit-documents/UploadIdentity";
 import IdResults from "../../components/edit-documents/IdResults";
 import UploadSelfie from "../../components/edit-selfie/UploadSelfie";
+import Registration from "../../components/pay-registration/Registration";
+import RegistrationSummary from "../../components/pay-registration/RegistrationSummary";
+import AwaitStkPush from "../../components/pay-registration/AwaitStk";
+import {
+  checkMembership,
+  promptRegistration,
+} from "../../sdk/membership/membership";
 
 const getLoanStatusStyles = (status) => {
   const currentStatus = (status || "Active").toLowerCase();
@@ -138,6 +148,10 @@ export default function MemberDetails({ onUpdateDocument }) {
     },
     onSuccess: (data) => {
       setMember(data);
+      setPaymentDetails((prev) => ({
+        ...prev,
+        phoneNumber: data?.mobileno ?? "",
+      }));
     },
     onError: (error) => {
       showToast({
@@ -210,10 +224,16 @@ export default function MemberDetails({ onUpdateDocument }) {
     },
   });
 
+  const [reference, setReference] = useState("");
   const [openUploadIdentity, setOpenUploadIdentity] = useState(false);
+  const [openRegistration, setOpenRegistration] = useState(false);
+  const [openRegistrationSummary, setOpenRegistrationSummary] = useState(false);
+  const [openRegistrationStk, setOpenRegistrationStk] = useState(false);
   const [openIdResults, setOpenIdResults] = useState(false);
   const [openUploadSelfie, setOpenUploadSelfie] = useState(false);
+  const [showAwaitPayment, setShowAwaitPayment] = useState(false);
   const [scannedData, setScannedData] = useState({});
+  const [payStatus, setPayStatus] = useState("pending");
   const [identityFiles, setIdentityFiles] = useState({
     frontFile: null,
     backFile: null,
@@ -222,8 +242,127 @@ export default function MemberDetails({ onUpdateDocument }) {
     setOpenUploadIdentity(true);
   };
 
+  const generateUUID = () => crypto.randomUUID();
+
+  const [paymentDetails, setPaymentDetails] = useState({
+    phoneNumber: "",
+    regFee: 1,
+    includeShares: false,
+    sharesAmount: 0,
+    includeSavings: false,
+    savingsAmount: 0,
+  });
+
+  const totalAmount =
+    Number(paymentDetails.regFee || 0) +
+    (paymentDetails.includeShares
+      ? Number(paymentDetails.sharesAmount || 0)
+      : 0) +
+    (paymentDetails.includeSavings
+      ? Number(paymentDetails.savingsAmount || 0)
+      : 0);
+
+  const { mutate: payingRegistration, isLoading: isSubmitting } = useMutation({
+    mutationKey: ["pay registration"],
+    mutationFn: async (ref) => {
+      const response = await promptRegistration(
+        ref,
+        id,
+        paymentDetails?.regFee,
+        totalAmount,
+        paymentDetails?.sharesAmount,
+        paymentDetails?.savingsAmount,
+        paymentDetails?.phoneNumber,
+      );
+      return response.data.data;
+    },
+    onSuccess: () => {
+      setOpenRegistrationSummary(false);
+      setOpenRegistrationStk(true);
+      setShowAwaitPayment(true);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Member processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const handlePayRegistration = () => {
+    const ref = generateUUID();
+    setReference(ref);
+    payingRegistration(ref);
+  };
+
+  const handleRePayRegistration = () => {
+    payingRegistration(reference);
+  };
+
+  useQuery({
+    queryKey: ["poll registration repayment"],
+    queryFn: async () => {
+      const response = await checkMembership(id);
+      return response.data.data?.exists;
+    },
+    enabled: !!showAwaitPayment,
+    onSuccess: async (data) => {
+      if (data) {
+        setShowAwaitPayment(false);
+        setPayStatus("success");
+        refetch();
+      }
+    },
+    refetchInterval: 3000,
+    refetchIntervalInBackground: true,
+    onErrors: (error) => {
+      showToast({
+        title: "Authentication glitch",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
   return (
     <>
+      <AwaitStkPush
+        isOpen={openRegistrationStk}
+        onClose={() => setOpenRegistrationStk(false)}
+        onRetry={handleRePayRegistration}
+        phoneNumber={paymentDetails?.phoneNumber}
+        amount={totalAmount}
+        timeoutSeconds={60}
+        status={payStatus}
+      />
+
+      <RegistrationSummary
+        isOpen={openRegistrationSummary}
+        onClose={() => setOpenRegistrationSummary(false)}
+        onBack={() => {
+          setOpenRegistrationSummary(false);
+          setOpenRegistration(true);
+        }}
+        paymentDetails={paymentDetails}
+        onConfirmStk={handlePayRegistration}
+        isSubmitting={isSubmitting}
+      />
+
+      <Registration
+        isOpen={openRegistration}
+        onClose={() => setOpenRegistration(false)}
+        defaultRegFee={1000}
+        paymentDetails={paymentDetails}
+        setPaymentDetails={setPaymentDetails}
+        onSubmitStk={() => {
+          setOpenRegistration(false);
+          setOpenRegistrationSummary(true);
+        }}
+      />
+
       <UploadIdentity
         isOpen={openUploadIdentity}
         onClose={() => setOpenUploadIdentity(false)}
@@ -384,6 +523,49 @@ export default function MemberDetails({ onUpdateDocument }) {
             </div>
           </div>
 
+          {member?.status === "Pending Payment" && (
+            <div className="relative overflow-hidden bg-primary text-white p-5 md:p-6 rounded-3xl shadow-xl border border-amber-500/30 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all">
+              <div className="flex items-center gap-5 z-10">
+                <div className="size-12 rounded-2xl bg-amber-500/10 backdrop-blur-md border border-amber-400/30 flex items-center justify-center shrink-0 text-amber-300 shadow-inner mt-0.5">
+                  <Smartphone
+                    size={22}
+                    className="animate-pulse text-amber-400"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-300 border border-amber-400/30 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                      <span className="size-1.5 rounded-full bg-amber-400 animate-ping" />
+                      Pay Registration Fee
+                    </span>
+                  </div>
+                  <h3 className="text-base font-bold tracking-tight text-white">
+                    Complete Account Activation
+                  </h3>
+                  <p className="text-xs text-slate-200/90 font-medium max-w-2xl leading-relaxed">
+                    Your membership profile requires registration fee payment
+                    before full portal access is granted. Click below to receive
+                    an M-Pesa STK push prompt directly on your phone.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setOpenRegistration(true)}
+                className="z-10 h-12 px-6 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-2xl transition-all shadow-lg hover:shadow-amber-500/20 flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-98"
+              >
+                <Wallet size={16} />
+                <span>Pay Fee via STK Push</span>
+                <ArrowRight size={15} />
+              </button>
+
+              {/* Decorative Glow */}
+              <div className="absolute -right-10 -bottom-10 size-40 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -left-10 -top-10 size-40 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
+            </div>
+          )}
+
           {/* 2. FIRST ROW: IDENTITY, ADDRESS, AND FINANCIAL PROFILE GRID */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch">
             {/* CARD A: CORE IDENTITY PARAMETERS */}
@@ -439,11 +621,26 @@ export default function MemberDetails({ onUpdateDocument }) {
                   <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
                     <MapPin size={14} /> Physical Address
                   </h3>
-                  <Edit
-                    onClick={() => showAddressDetails(member)}
-                    size={14}
-                    className="text-slate-400 cursor-pointer"
-                  />
+                  {/* DYNAMIC ADD / EDIT ICON */}
+                  {member?.addresses && member.addresses.length > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => showAddressDetails(member)}
+                      className="p-1 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer text-slate-400 hover:text-[#074073]"
+                      title="Edit Physical Address"
+                    >
+                      <Edit size={14} />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => showAddressDetails(member)}
+                      className="p-1 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer text-slate-400 hover:text-[#074073]"
+                      title="Add Physical Address"
+                    >
+                      <Plus size={14} strokeWidth={2.5} />
+                    </button>
+                  )}
                 </div>
                 {member?.addresses?.map((addr) => (
                   <div
@@ -836,11 +1033,26 @@ export default function MemberDetails({ onUpdateDocument }) {
                   <h3 className="text-xs font-bold tracking-widest text-slate-400 uppercase flex items-center gap-2">
                     <Users size={14} /> Next of Kin
                   </h3>
-                  <Edit
-                    onClick={() => showKinDetails(member)}
-                    size={14}
-                    className="text-slate-400 cursor-pointer hover:text-primary transition-colors"
-                  />
+                  {/* DYNAMIC ADD / EDIT ICON */}
+                  {member?.nextOfKins && member.nextOfKins.length > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => showKinDetails(member)}
+                      className="p-1 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer text-slate-400 hover:text-[#074073]"
+                      title="Edit Next of Kin"
+                    >
+                      <Edit size={14} />
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => showKinDetails(member)}
+                      className="p-1 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer text-slate-400 hover:text-[#074073]"
+                      title="Add Next of Kin"
+                    >
+                      <Plus size={14} strokeWidth={2.5} />
+                    </button>
+                  )}
                 </div>
 
                 {/* CONDITION MATRIX CONTAINER */}

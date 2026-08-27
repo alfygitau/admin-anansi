@@ -30,7 +30,6 @@ export default function IdResults({
   const [copied, setCopied] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const { showToast } = useToast();
-  console.log(customerId);
 
   const handleCopySummary = () => {
     const summary = `Name: ${scannedData?.firstname || ""} ${

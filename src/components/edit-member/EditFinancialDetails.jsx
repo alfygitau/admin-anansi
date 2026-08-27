@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Loader2,
   Edit2,
+  ChevronDown,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -166,34 +167,44 @@ const EditFinancialDetails = ({
                     icon={UserCheck}
                     error={errors.employmentType}
                   >
-                    <select
-                      value={formData.employmentType || ""}
-                      onChange={(e) => {
-                        setFormData({
-                          ...formData,
-                          employmentType: e.target.value,
-                        });
-                        if (errors.employmentType)
-                          setErrors({ ...errors, employmentType: "" });
-                      }}
-                      onBlur={(e) =>
-                        validateField("employmentType", e.target.value)
-                      }
-                      className={`w-full pl-[74px] pr-4 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all appearance-none cursor-pointer ${
-                        errors.employmentType
-                          ? "border-rose-300 bg-rose-50/10"
-                          : "border-slate-200 focus:border-[#074073] focus:bg-white"
-                      }`}
-                    >
-                      <option value="">Select Class Matrix...</option>
-                      <option value="Permanent">Permanent / Salaried</option>
-                      <option value="Contract">Fixed Term Contract</option>
-                      <option value="Self-Employed">
-                        Self-Employed / Entrepreneur
-                      </option>
-                      <option value="Casual">Casual Labor / Freelancer</option>
-                      <option value="Retired">Retired / Pensioner</option>
-                    </select>
+                    <div className="relative flex items-center">
+                      <select
+                        value={formData.employmentType || ""}
+                        onChange={(e) => {
+                          setFormData({
+                            ...formData,
+                            employmentType: e.target.value,
+                          });
+                          if (errors.employmentType)
+                            setErrors({ ...errors, employmentType: "" });
+                        }}
+                        onBlur={(e) =>
+                          validateField("employmentType", e.target.value)
+                        }
+                        className={`w-full pl-[74px] pr-10 h-14 bg-slate-50 border rounded-2xl text-xs font-semibold outline-none transition-all appearance-none cursor-pointer ${
+                          errors.employmentType
+                            ? "border-rose-300 bg-rose-50/10"
+                            : "border-slate-200 focus:border-[#074073] focus:bg-white"
+                        }`}
+                      >
+                        <option value="">Select employment type</option>
+                        <option value="Permanent">Permanent / Salaried</option>
+                        <option value="Contract">Fixed Term Contract</option>
+                        <option value="Self-Employed">
+                          Self-Employed / Entrepreneur
+                        </option>
+                        <option value="Casual">
+                          Casual Labor / Freelancer
+                        </option>
+                        <option value="Retired">Retired / Pensioner</option>
+                      </select>
+
+                      {/* DROPDOWN ARROW ICON */}
+                      <ChevronDown
+                        size={16}
+                        className="absolute right-4 text-slate-400 pointer-events-none"
+                      />
+                    </div>
                   </FilterField>
 
                   <FilterField

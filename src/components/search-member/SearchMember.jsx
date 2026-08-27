@@ -223,7 +223,7 @@ export default function MemberSearch({ isOpen, onClose }) {
                 onClick={onClose}
                 className="flex-1 h-12 font-bold text-xs bg-[#074073] text-white rounded-2xl hover:bg-[#052d52] transition-all shadow-md shadow-[#074073]/20 cursor-pointer active:scale-[0.98]"
               >
-                Close Drawer
+                Close
               </button>
             </div>
           </motion.div>

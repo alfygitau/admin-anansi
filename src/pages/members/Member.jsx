@@ -22,6 +22,15 @@ import {
   ChevronDown,
   UserCog,
   FileSpreadsheet,
+  FileUp,
+  Image as ImageIcon,
+  CheckCircle2,
+  Loader2,
+  RefreshCw,
+  Plus,
+  ImageOff,
+  X,
+  Trash2,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -34,6 +43,7 @@ import EditPersonalDetails from "../../components/edit-member/EditPersonalDetail
 import EditAddressDetails from "../../components/edit-member/EditAddress";
 import EditFinancialDetails from "../../components/edit-member/EditFinancialDetails";
 import EditNextOfKinDetails from "../../components/edit-member/EditKin";
+import UploadIdentity from "../../components/edit-documents/UploadIdentity";
 
 const getLoanStatusStyles = (status) => {
   const currentStatus = (status || "Active").toLowerCase();
@@ -51,7 +61,7 @@ const getLoanStatusStyles = (status) => {
   }
 };
 
-export default function MemberDetails() {
+export default function MemberDetails({ onUpdateDocument }) {
   const { id } = useParams();
   const [member, setMember] = useState({});
   const { showToast } = useToast();
@@ -68,6 +78,10 @@ export default function MemberDetails() {
   const [addressStep, setAddressStep] = useState("form");
   const [financialStep, setFinancialStep] = useState("form");
   const [kinStep, setKinStep] = useState("form");
+  const [frontFile, setFrontFile] = useState(null);
+  const [frontPreview, setFrontPreview] = useState(null);
+  const [backFile, setBackFile] = useState(null);
+  const [backPreview, setBackPreview] = useState(null);
 
   const [kinFormData, setKinFormData] = useState({
     name: "",
@@ -194,8 +208,21 @@ export default function MemberDetails() {
     },
   });
 
+  const [openUploadIdentity, setOpenUploadIdentity] = useState(false);
+  const handleOpenModal = () => {
+    setOpenUploadIdentity(true);
+  };
+
   return (
     <>
+      <UploadIdentity
+        isOpen={openUploadIdentity}
+        onClose={() => setOpenUploadIdentity(false)}
+        existingFrontUrl={member?.id_front_image ?? ""}
+        existingBackUrl={member?.id_back_image ?? ""}
+        onSubmit={() => {}}
+      />
+
       <EditNextOfKinDetails
         isOpen={showEditKinDetails}
         onClose={() => setShowEditKinDetails(false)}
@@ -918,6 +945,7 @@ export default function MemberDetails() {
 
           {/* 5. FOURTH ROW: EXPANDABLE KYC IMAGE GALLERY SYSTEM */}
           <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6">
+            {/* HEADER SECTION */}
             <div
               className="w-full flex items-center justify-between cursor-pointer group select-none"
               onClick={() => setShowImages(!showImages)}
@@ -935,7 +963,12 @@ export default function MemberDetails() {
               </div>
 
               <button
-                className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all ${showImages ? "bg-slate-100 text-slate-600 hover:bg-slate-200" : "bg-blue-50 text-[#074073] hover:bg-blue-100"}`}
+                type="button"
+                className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer ${
+                  showImages
+                    ? "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                    : "bg-blue-50 text-[#074073] hover:bg-blue-100"
+                }`}
               >
                 {showImages ? (
                   <>
@@ -949,6 +982,7 @@ export default function MemberDetails() {
               </button>
             </div>
 
+            {/* COLLAPSIBLE BODY */}
             <AnimatePresence>
               {showImages && (
                 <motion.div
@@ -962,15 +996,21 @@ export default function MemberDetails() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                       <KYCDocLarge
                         label="National Identity Card (Front View Asset)"
-                        url={member.id_front_image}
+                        type="id_front"
+                        url={member?.id_front_image}
+                        onOpenModal={handleOpenModal}
                       />
                       <KYCDocLarge
                         label="National Identity Card (Reverse View Asset)"
-                        url={member.id_back_image}
+                        type="id_back"
+                        url={member?.id_back_image}
+                        onOpenModal={handleOpenModal}
                       />
                       <KYCDocLarge
                         label="System Onboarding Selfie Biometric"
-                        url={member.selfie_image}
+                        type="selfie"
+                        url={member?.selfie_image}
+                        onOpenModal={handleOpenModal}
                       />
                     </div>
                   </div>
@@ -997,39 +1037,96 @@ const ProfileMetaBlock = ({ label, value, title, isMono = false }) => (
   </div>
 );
 
-const KYCDocLarge = ({ label, url }) => (
-  <div className="flex flex-col space-y-2 group border border-slate-100 p-3 rounded-xl bg-slate-50/40 hover:border-slate-200 transition-colors">
-    <div className="w-full aspect-[4/3] bg-slate-100 rounded-lg overflow-hidden flex items-center justify-center relative shadow-inner border border-slate-200/60">
-      {url ? (
-        <>
-          <img
-            src={url}
-            alt={label}
-            className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-300 ease-out"
-          />
-          <div className="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2">
-            <button
-              onClick={() => window.open(url, "_blank")}
-              className="p-2 bg-white/90 rounded-lg text-slate-800 hover:bg-white text-xs font-bold shadow flex items-center gap-1.5 transition-transform translate-y-2 group-hover:translate-y-0 duration-300 cursor-pointer"
-            >
-              <Maximize2 size={13} /> Inspect Asset
-            </button>
-          </div>
-        </>
-      ) : (
-        <div className="flex flex-col items-center space-y-1 text-slate-300 select-none">
-          <AlertCircle size={20} />
-          <span className="text-[11px] font-medium italic">
-            Asset records empty
+const KYCDocLarge = ({ label, type, url, onOpenModal, onView }) => {
+  const handleView = () => {
+    if (onView) {
+      onView(url);
+    } else if (url) {
+      window.open(url, "_blank");
+    }
+  };
+
+  return (
+    <div className="flex flex-col justify-between space-y-3 border border-slate-200/80 p-3.5 rounded-2xl bg-white shadow-3xs hover:border-slate-300 transition-all duration-200">
+      {/* Header Label & Badge */}
+      <div className="flex items-center justify-between min-h-[22px]">
+        <span className="text-[11px] font-extrabold text-slate-700 tracking-tight block truncate">
+          {label}
+        </span>
+        {url && (
+          <span className="text-[9px] font-black uppercase text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-md shrink-0">
+            Uploaded
           </span>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Main Image Asset Container */}
+      <div className="w-full aspect-[4/3] bg-slate-50 rounded-xl overflow-hidden flex items-center justify-center relative border border-slate-200/80 group/img">
+        {url ? (
+          <>
+            <img
+              src={url}
+              alt={label}
+              className="w-full h-full object-cover group-hover/img:scale-105 transition-transform duration-300 ease-out"
+            />
+            {/* Quick Actions Hover Overlay */}
+            <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover/img:opacity-100 transition-opacity duration-200 flex items-center justify-center gap-2 backdrop-blur-[2px]">
+              <button
+                type="button"
+                onClick={handleView}
+                className="h-8 px-3 bg-white/95 hover:bg-white text-slate-800 text-[11px] font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all transform translate-y-1 group-hover/img:translate-y-0 duration-200 cursor-pointer active:scale-95"
+              >
+                <Maximize2 size={13} />
+                <span>View</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => onOpenModal?.({ label, url })}
+                className="h-8 px-3 bg-[#074073] hover:bg-[#053057] text-white text-[11px] font-bold rounded-xl shadow-xs flex items-center gap-1.5 transition-all transform translate-y-1 group-hover/img:translate-y-0 duration-200 cursor-pointer active:scale-95"
+              >
+                <RefreshCw size={12} />
+                <span>Replace</span>
+              </button>
+            </div>
+          </>
+        ) : (
+          /* Empty State */
+          <div className="flex flex-col items-center justify-center space-y-1.5 text-center p-4">
+            <div className="size-9 rounded-xl bg-slate-100 border border-slate-200/60 text-slate-400 flex items-center justify-center">
+              <ImageOff size={18} />
+            </div>
+            <span className="text-[11px] font-medium text-slate-400">
+              No document uploaded
+            </span>
+          </div>
+        )}
+      </div>
+
+      {/* Action Footer Button (Mobile & Direct Click Fallback) */}
+      <div>
+        {url ? (
+          <button
+            type="button"
+            onClick={() => onOpenModal?.({ type, label, url })}
+            className="w-full h-8 text-[11px] font-bold text-slate-600 hover:text-[#074073] bg-slate-50 hover:bg-slate-100/80 border border-slate-200/70 rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-3xs active:scale-98"
+          >
+            <RefreshCw size={12} />
+            <span>Replace Asset</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => onOpenModal?.({ type, label, url })}
+            className="w-full h-8 text-[11px] font-bold text-white bg-[#074073] hover:bg-[#053057] rounded-xl transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-3xs active:scale-98"
+          >
+            <Plus size={13} strokeWidth={2.5} />
+            <span>Add Asset</span>
+          </button>
+        )}
+      </div>
     </div>
-    <span className="text-[11px] font-bold text-slate-600 tracking-tight text-center block pt-0.5">
-      {label}
-    </span>
-  </div>
-);
+  );
+};
 
 const KYCLabelOnlyFallback = ({ label, checked }) => (
   <div className="flex items-center justify-between p-3 rounded-xl border border-slate-200/60 bg-white shadow-3xs text-xs font-medium text-slate-600">

@@ -45,6 +45,7 @@ import EditFinancialDetails from "../../components/edit-member/EditFinancialDeta
 import EditNextOfKinDetails from "../../components/edit-member/EditKin";
 import UploadIdentity from "../../components/edit-documents/UploadIdentity";
 import IdResults from "../../components/edit-documents/IdResults";
+import UploadSelfie from "../../components/edit-selfie/UploadSelfie";
 
 const getLoanStatusStyles = (status) => {
   const currentStatus = (status || "Active").toLowerCase();
@@ -211,6 +212,7 @@ export default function MemberDetails({ onUpdateDocument }) {
 
   const [openUploadIdentity, setOpenUploadIdentity] = useState(false);
   const [openIdResults, setOpenIdResults] = useState(false);
+  const [openUploadSelfie, setOpenUploadSelfie] = useState(false);
   const [scannedData, setScannedData] = useState({});
   const [identityFiles, setIdentityFiles] = useState({
     frontFile: null,
@@ -245,6 +247,14 @@ export default function MemberDetails({ onUpdateDocument }) {
         }}
         customerId={id}
         identityFiles={identityFiles}
+        refetch={refetch}
+      />
+
+      <UploadSelfie
+        isOpen={openUploadSelfie}
+        onClose={() => setOpenUploadSelfie(false)}
+        existingSelfieUrl={member?.selfie_image ?? ""}
+        customerId={id}
         refetch={refetch}
       />
 
@@ -1035,7 +1045,7 @@ export default function MemberDetails({ onUpdateDocument }) {
                         label="System Onboarding Selfie Biometric"
                         type="selfie"
                         url={member?.selfie_image}
-                        onOpenModal={handleOpenModal}
+                        onOpenModal={() => setOpenUploadSelfie(true)}
                       />
                     </div>
                   </div>

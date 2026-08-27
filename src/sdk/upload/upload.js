@@ -42,3 +42,21 @@ export const uploadIdImages = async (id, frontImage, backImage) => {
     throw error?.response?.data || error;
   }
 };
+
+export const uploadSelfieImage = async (id, selfieImage) => {
+  try {
+    const formData = new FormData();
+
+    if (selfieImage) {
+      formData.append("file", selfieImage);
+    }
+
+    const response = await client.patch(
+      `/customer/${id}/selfie-image`,
+      formData,
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

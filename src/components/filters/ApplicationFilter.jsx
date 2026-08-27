@@ -27,7 +27,6 @@ export default function FilterApplications({
   const tabs = [
     { id: "q", label: "Search Query", icon: Search },
     { id: "status", label: "Status", icon: CheckCircle2 },
-    { id: "loanType", label: "Loan Type", icon: Layers },
     { id: "identifiers", label: "Identifiers", icon: Hash },
     { id: "fromDate", label: "Start Date", icon: Calendar },
     { id: "toDate", label: "End Date", icon: CalendarDays },
@@ -42,13 +41,6 @@ export default function FilterApplications({
     { value: "disbursed", label: "Disbursed" },
     { value: "rejected", label: "Rejected" },
     { value: "cancelled", label: "Cancelled" },
-  ];
-
-  const loanTypeOptions = [
-    { value: "development", label: "Development Loans" },
-    { value: "emergency", label: "Emergency Loans" },
-    { value: "asset_finance", label: "Asset Finance" },
-    { value: "education", label: "School Fees / Education" },
   ];
 
   // Helper to ensure filters.status is always an array
@@ -90,17 +82,6 @@ export default function FilterApplications({
       : [...currentLoanTypes, value];
 
     setFilters((prev) => ({ ...prev, loan_type: updated }));
-  };
-
-  const handleSelectAllLoanTypes = () => {
-    if (currentLoanTypes.length === loanTypeOptions.length) {
-      setFilters((prev) => ({ ...prev, loan_type: [] }));
-    } else {
-      setFilters((prev) => ({
-        ...prev,
-        loan_type: loanTypeOptions.map((opt) => opt.value),
-      }));
-    }
   };
 
   const handleInputChange = (field, value) => {
@@ -273,54 +254,6 @@ export default function FilterApplications({
                         <div
                           key={option.value}
                           onClick={() => handleStatusToggle(option.value)}
-                          className={`flex items-center gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
-                            isChecked
-                              ? "border-[#074073] bg-blue-50/50 text-[#074073] font-bold"
-                              : "border-slate-200 bg-slate-50/50 text-slate-600 hover:bg-slate-100 font-medium"
-                          }`}
-                        >
-                          <div
-                            className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all ${
-                              isChecked
-                                ? "bg-[#074073] border-[#074073] text-white"
-                                : "border-slate-300 bg-white"
-                            }`}
-                          >
-                            {isChecked && <Check size={12} strokeWidth={3} />}
-                          </div>
-                          <span className="text-xs">{option.label}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 3: LOAN TYPE MULTI-SELECT */}
-              {activeTab === "loanType" && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      Select Structural Categories
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleSelectAllLoanTypes}
-                      className="text-xs font-bold text-[#074073] hover:underline cursor-pointer"
-                    >
-                      {currentLoanTypes.length === loanTypeOptions.length
-                        ? "Deselect All"
-                        : "Select All"}
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {loanTypeOptions.map((option) => {
-                      const isChecked = currentLoanTypes.includes(option.value);
-                      return (
-                        <div
-                          key={option.value}
-                          onClick={() => handleLoanTypeToggle(option.value)}
                           className={`flex items-center gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
                             isChecked
                               ? "border-[#074073] bg-blue-50/50 text-[#074073] font-bold"

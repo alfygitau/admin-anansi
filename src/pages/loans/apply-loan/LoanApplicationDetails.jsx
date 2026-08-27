@@ -68,10 +68,11 @@ const LoanApplicationDetails = () => {
 
   const handlePeriodBlur = () => {
     const max = loanProduct?.max_period ?? 0;
+    const min = loanProduct?.min_period ?? 0;
     const numPeriod = Number(period);
 
-    if (!period || numPeriod < 1) {
-      setPeriodError("Period must be at least 1 month");
+    if (!period || numPeriod < min) {
+      setPeriodError(`Period must be at least ${min} month`);
       return false;
     } else if (numPeriod > max) {
       setPeriodError(`Period cannot exceed ${max} months`);

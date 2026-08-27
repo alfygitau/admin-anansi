@@ -35,21 +35,14 @@ export default function FilterLoans({
   ];
 
   const statusOptions = [
-    { value: "active", label: "Active" },
-    { value: "pending_disbursement", label: "Pending Disbursement" },
-    { value: "disbursed", label: "Disbursed" },
-    { value: "fully_paid", label: "Fully Paid" },
-    { value: "in_arrears", label: "In Arrears" },
-    { value: "defaulted", label: "Defaulted" },
-    { value: "written_off", label: "Written Off" },
-    { value: "cancelled", label: "Cancelled" },
-  ];
-
-  const loanTypeOptions = [
-    { value: "development", label: "Development Loans" },
-    { value: "emergency", label: "Emergency Loans" },
-    { value: "asset_finance", label: "Asset Finance" },
-    { value: "education", label: "School Fees / Education" },
+    { value: "Active", label: "Active" },
+    { value: "Pending", label: "Pending" },
+    { value: "Disbursed", label: "Disbursed" },
+    { value: "Cleared", label: "Fully Paid" },
+    { value: "Reversed", label: "Reversed" },
+    { value: "Defaulted", label: "Defaulted" },
+    { value: "Written_Off", label: "Written Off" },
+    { value: "Rejected", label: "Cancelled" },
   ];
 
   // Helper to ensure status is handled as an array
@@ -57,13 +50,6 @@ export default function FilterLoans({
     ? filters.status
     : filters.status
       ? [filters.status]
-      : [];
-
-  // Helper to ensure loan_type is handled as an array
-  const currentLoanTypes = Array.isArray(filters.loan_type)
-    ? filters.loan_type
-    : filters.loan_type
-      ? [filters.loan_type]
       : [];
 
   const handleStatusToggle = (value) => {
@@ -81,25 +67,6 @@ export default function FilterLoans({
       setFilters((prev) => ({
         ...prev,
         status: statusOptions.map((opt) => opt.value),
-      }));
-    }
-  };
-
-  const handleLoanTypeToggle = (value) => {
-    const updated = currentLoanTypes.includes(value)
-      ? currentLoanTypes.filter((t) => t !== value)
-      : [...currentLoanTypes, value];
-
-    setFilters((prev) => ({ ...prev, loan_type: updated }));
-  };
-
-  const handleSelectAllLoanTypes = () => {
-    if (currentLoanTypes.length === loanTypeOptions.length) {
-      setFilters((prev) => ({ ...prev, loan_type: [] }));
-    } else {
-      setFilters((prev) => ({
-        ...prev,
-        loan_type: loanTypeOptions.map((opt) => opt.value),
       }));
     }
   };
@@ -122,7 +89,6 @@ export default function FilterLoans({
       status: [],
       loan_code: "",
       application_number: "",
-      loan_type: [],
       loan_product_code: "",
       fromDate: "",
       toDate: "",
@@ -138,7 +104,6 @@ export default function FilterLoans({
   const hasValue = (tabId) => {
     if (tabId === "q") return !!filters.q;
     if (tabId === "status") return currentStatuses.length > 0;
-    if (tabId === "loanType") return currentLoanTypes.length > 0;
     if (tabId === "identifiers")
       return !!(
         filters.loan_code ||
@@ -279,54 +244,6 @@ export default function FilterLoans({
                         <div
                           key={option.value}
                           onClick={() => handleStatusToggle(option.value)}
-                          className={`flex items-center gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
-                            isChecked
-                              ? "border-[#074073] bg-blue-50/50 text-[#074073] font-bold"
-                              : "border-slate-200 bg-slate-50/50 text-slate-600 hover:bg-slate-100 font-medium"
-                          }`}
-                        >
-                          <div
-                            className={`w-5 h-5 rounded-lg border flex items-center justify-center transition-all ${
-                              isChecked
-                                ? "bg-[#074073] border-[#074073] text-white"
-                                : "border-slate-300 bg-white"
-                            }`}
-                          >
-                            {isChecked && <Check size={12} strokeWidth={3} />}
-                          </div>
-                          <span className="text-xs">{option.label}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              )}
-
-              {/* TAB 3: LOAN TYPE MULTI-SELECT */}
-              {activeTab === "loanType" && (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                      Select Structural Categories
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleSelectAllLoanTypes}
-                      className="text-xs font-bold text-[#074073] hover:underline cursor-pointer"
-                    >
-                      {currentLoanTypes.length === loanTypeOptions.length
-                        ? "Deselect All"
-                        : "Select All"}
-                    </button>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {loanTypeOptions.map((option) => {
-                      const isChecked = currentLoanTypes.includes(option.value);
-                      return (
-                        <div
-                          key={option.value}
-                          onClick={() => handleLoanTypeToggle(option.value)}
                           className={`flex items-center gap-3 p-3.5 rounded-2xl border transition-all cursor-pointer select-none ${
                             isChecked
                               ? "border-[#074073] bg-blue-50/50 text-[#074073] font-bold"

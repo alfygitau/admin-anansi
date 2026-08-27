@@ -5,7 +5,6 @@ export const getLoanApplications = async (
   limit,
   status,
   application_number,
-  loan_type,
   loan_product_code,
   startDate,
   endDate,
@@ -18,8 +17,6 @@ export const getLoanApplications = async (
     if (page != null) params.append("page", page);
     if (limit != null) params.append("limit", limit);
 
-    // Text & Search filters
-    if (loan_type) params.append("loan_type", loan_type);
     if (application_number)
       params.append("application_number", application_number);
     if (status) params.append("status", status);

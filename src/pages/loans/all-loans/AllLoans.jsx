@@ -31,10 +31,9 @@ export default function AllLoans() {
     page: 1,
     limit: 10,
     loan_code: "",
-    status: "",
+    status: [],
     fromDate: "",
     toDate: "",
-    loan_type: "",
     loan_product_code: "",
   });
   const { showToast } = useToast();
@@ -48,7 +47,6 @@ export default function AllLoans() {
       filters?.limit,
       filters?.status,
       filters?.loan_code,
-      filters?.loan_type,
       filters?.loan_product_code,
       filters?.fromDate,
       filters.toDate,
@@ -57,9 +55,8 @@ export default function AllLoans() {
       const response = await getLoans(
         filters?.page,
         filters?.limit,
-        filters?.status,
+        filters?.status?.join(","),
         filters?.loan_code,
-        filters?.loan_type,
         filters?.loan_product_code,
         filters?.fromDate,
         filters.toDate,
@@ -442,7 +439,9 @@ export default function AllLoans() {
 
                           <button
                             onClick={() =>
-                              navigate(`/admin/all-loans/${loan?.id}/transactions`)
+                              navigate(
+                                `/admin/all-loans/${loan?.id}/transactions`,
+                              )
                             }
                             className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
                             title="Log Repayment Transaction"

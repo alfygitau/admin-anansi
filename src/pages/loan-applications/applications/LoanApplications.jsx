@@ -33,7 +33,7 @@ export default function LoanApplications() {
     page: 1,
     limit: 10,
     application_number: "",
-    status: "",
+    status: [],
     fromDate: "",
     toDate: "",
     loan_type: "",
@@ -52,6 +52,8 @@ export default function LoanApplications() {
     volume: "1,305,000.00",
   };
 
+  console.log(filters?.status?.join(","));
+
   const { isFetching } = useQuery({
     queryKey: [
       "loan-applications",
@@ -59,7 +61,6 @@ export default function LoanApplications() {
       filters?.limit,
       filters?.status,
       filters?.application_number,
-      filters?.loan_type,
       filters?.loan_product_code,
       filters?.fromDate,
       filters?.toDate,
@@ -68,9 +69,8 @@ export default function LoanApplications() {
       const response = await getLoanApplications(
         filters?.page,
         filters?.limit,
-        filters?.status,
+        filters?.status?.join(","),
         filters?.application_number,
-        filters?.loan_type,
         filters?.loan_product_code,
         filters?.fromDate,
         filters?.toDate,

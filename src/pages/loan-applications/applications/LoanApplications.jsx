@@ -52,8 +52,6 @@ export default function LoanApplications() {
     volume: "1,305,000.00",
   };
 
-  console.log(filters?.status?.join(","));
-
   const { isFetching } = useQuery({
     queryKey: [
       "loan-applications",

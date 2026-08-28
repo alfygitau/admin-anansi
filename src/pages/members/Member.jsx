@@ -57,6 +57,9 @@ import {
   checkMembership,
   promptRegistration,
 } from "../../sdk/membership/membership";
+import AddInvestment from "../../components/quick-invest/AddInvestment";
+import InvestSummary from "../../components/quick-invest/InvestSummary";
+import AwaitInvestStk from "../../components/quick-invest/AwaitInvestStk";
 
 const getLoanStatusStyles = (status) => {
   const currentStatus = (status || "Active").toLowerCase();
@@ -235,6 +238,7 @@ export default function MemberDetails({ onUpdateDocument }) {
   const [showAwaitPayment, setShowAwaitPayment] = useState(false);
   const [scannedData, setScannedData] = useState({});
   const [payStatus, setPayStatus] = useState("pending");
+  const [investPayStatus, setInvestPayStatus] = useState("pending");
   const [identityFiles, setIdentityFiles] = useState({
     frontFile: null,
     backFile: null,
@@ -253,8 +257,24 @@ export default function MemberDetails({ onUpdateDocument }) {
     savingsAmount: 0,
   });
 
+  const [investPaymentDetails, setInvestPaymentDetails] = useState({
+    phoneNumber: "",
+    includeShares: false,
+    sharesAmount: 0,
+    includeSavings: false,
+    savingsAmount: 0,
+  });
+
   const totalAmount =
     Number(paymentDetails.regFee || 0) +
+    (paymentDetails.includeShares
+      ? Number(paymentDetails.sharesAmount || 0)
+      : 0) +
+    (paymentDetails.includeSavings
+      ? Number(paymentDetails.savingsAmount || 0)
+      : 0);
+
+  const investTotalAmount =
     (paymentDetails.includeShares
       ? Number(paymentDetails.sharesAmount || 0)
       : 0) +
@@ -327,8 +347,45 @@ export default function MemberDetails({ onUpdateDocument }) {
     },
   });
 
+  const [openAddInvestment, setOpenAddInvestment] = useState(false);
+  const [openInvestSummary, setOpenInvestSummary] = useState(false);
+  const [openInvestStk, setOpenInvestStk] = useState(false);
+
   return (
     <>
+      <AddInvestment
+        isOpen={openAddInvestment}
+        onClose={() => setOpenAddInvestment(false)}
+        paymentDetails={investPaymentDetails}
+        setPaymentDetails={setInvestPaymentDetails}
+        onSubmitStk={() => {
+          setOpenAddInvestment(false);
+          setOpenInvestSummary(true);
+        }}
+      />
+
+      <InvestSummary
+        isOpen={openInvestSummary}
+        onClose={() => setOpenInvestSummary(false)}
+        onBack={() => {
+          setOpenInvestSummary(false);
+          setOpenAddInvestment(true);
+        }}
+        paymentDetails={investPaymentDetails}
+        isSubmitting={false}
+        onConfirmStk={() => {}}
+      />
+
+      <AwaitInvestStk
+        isOpen={openInvestStk}
+        onClose={() => setOpenInvestStk(false)}
+        onRetry={() => {}}
+        phoneNumber={investPaymentDetails?.phoneNumber}
+        amount={investTotalAmount}
+        timeoutSeconds={60}
+        status={investPayStatus}
+      />
+
       <AwaitStkPush
         isOpen={openRegistrationStk}
         onClose={() => setOpenRegistrationStk(false)}
@@ -496,6 +553,7 @@ export default function MemberDetails({ onUpdateDocument }) {
                     <button
                       onClick={() => {
                         setIsMenuOpen(false);
+                        setOpenAddInvestment(true);
                       }}
                       className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 text-left transition-colors cursor-pointer"
                     >

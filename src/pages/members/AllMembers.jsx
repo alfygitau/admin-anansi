@@ -35,7 +35,7 @@ export default function AllMembers() {
     page: 1,
     limit: 10,
     q: "",
-    status: "",
+    status: [],
     location: "",
     county: "",
     subcounty: "",
@@ -102,7 +102,7 @@ export default function AllMembers() {
       const response = await getMembers(
         filters?.page,
         filters?.limit,
-        filters.status,
+        filters.status?.join(","),
         filters.q,
         filters.county,
         filters.subcounty,

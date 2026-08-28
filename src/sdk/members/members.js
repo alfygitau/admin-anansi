@@ -124,3 +124,110 @@ export const updateMemberIdentity = async (
     throw error?.response?.data || error;
   }
 };
+
+export const editKin = async (
+  kinId,
+  fullName,
+  birthDate,
+  relationship,
+  phone,
+  location,
+) => {
+  try {
+    const response = await client.patch(`/customer/next-of-kin/${kinId}`, {
+      name: fullName,
+      dateOfBirth: birthDate,
+      relationship: relationship,
+      phoneNumber: phone,
+      location: location,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const updateIncomeDetails = async (
+  id,
+  countryOfResidence,
+  employmentType,
+  kra,
+  jobTitle,
+  income,
+) => {
+  try {
+    const response = await client.patch(`/customer/${id}`, {
+      country_of_residence: countryOfResidence,
+      employment_type: employmentType,
+      kraPin: kra,
+      occupation: jobTitle,
+      income_range: income,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const updateAddress = async (
+  addressId,
+  customer_id,
+  county,
+  subcounty,
+  physical_address,
+  city,
+  postal_address,
+  state,
+  land_mark,
+  street,
+  zip_code,
+) => {
+  try {
+    const response = await client.patch(`/address/${addressId}`, {
+      county,
+      subcounty,
+      physical_address,
+      city,
+      postal_address,
+      state,
+      land_mark,
+      street,
+      zip_code,
+      customer_id,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const addAddress = async (
+  customer_id,
+  county,
+  subcounty,
+  physical_address,
+  postal_address,
+  city,
+  state,
+  land_mark,
+  street,
+  zip_code,
+) => {
+  try {
+    const response = await client.post(`/address`, {
+      county,
+      subcounty,
+      physical_address,
+      city,
+      postal_address,
+      state,
+      land_mark,
+      street,
+      zip_code,
+      customer_id,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

@@ -14,24 +14,36 @@ import {
   PlusCircle,
   FileText,
   Search,
+  Plus,
 } from "lucide-react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { getAccount } from "../../sdk/account/account";
 import { useToast } from "../../contexts/ToastProvider";
 import { getAccountTransactions } from "../../sdk/transactions/transactions";
 import AccountDetailsLoader from "../../skeletons/AccountDetailsLoader";
+import AddSavings from "../../components/add-savings/DepositSavings";
+import SavingsSummary from "../../components/add-savings/SavingsSummary";
+import SavingsStkPush from "../../components/add-savings/AwaitSavingsStk";
+import AddShares from "../../components/buy-shares/AddShares";
+import SharesSummary from "../../components/buy-shares/SharesSummary";
+import SharesStkPush from "../../components/buy-shares/AwaitSharesStk";
 
-export default function AccountDetails({ onBack }) {
+export default function AccountDetails() {
   const [copied, setCopied] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const { id, accountNumber } = useParams();
   const { showToast } = useToast();
+  const navigate = useNavigate();
 
   const [account, setAccount] = useState({});
 
   const [transactions, setTransactions] = useState([]);
+
+  const onBack = () => {
+    navigate(-1);
+  };
 
   const handleCopyText = (text) => {
     navigator.clipboard.writeText(text);
@@ -77,8 +89,90 @@ export default function AccountDetails({ onBack }) {
     },
   });
 
+  const [openAddShares, setOpenAddShares] = useState(false);
+  const [openSharesSummary, setOpenSharesSummary] = useState(false);
+  const [openSharesStk, setOpenSharesStk] = useState(false);
+
+  const [openAddSavings, setOpenAddSavings] = useState(false);
+  const [openSavingsSummary, setOpenSavingsSummary] = useState(false);
+  const [openSavingsStk, setOpenSavingsStk] = useState(false);
+  const [payStatus, setPayStatus] = useState("pending");
+  const generateUUID = () => crypto.randomUUID();
+
+  const [paymentDetails, setPaymentDetails] = useState({
+    phoneNumber: "",
+    sharesAmount: 0,
+    savingsAmount: 0,
+  });
+
   return (
     <div className="w-full space-y-5 font-sans antialiased text-slate-800">
+      <AddShares
+        isOpen={openAddShares}
+        onClose={() => setOpenAddShares(false)}
+        paymentDetails={paymentDetails}
+        setPaymentDetails={setPaymentDetails}
+        onSubmitStk={() => {
+          setOpenAddShares(false);
+          setOpenSharesSummary(true);
+        }}
+      />
+
+      <SharesSummary
+        isOpen={openSharesSummary}
+        onClose={() => setOpenSharesSummary(false)}
+        onBack={() => {
+          setOpenSharesSummary(false);
+          setOpenAddShares(true);
+        }}
+        paymentDetails={paymentDetails}
+        isSubmitting={false}
+        onConfirmStk={() => {}}
+      />
+
+      <SharesStkPush
+        isOpen={openSharesStk}
+        onClose={() => setOpenSharesStk(false)}
+        onRetry={() => {}}
+        phoneNumber={paymentDetails?.phoneNumber}
+        amount={paymentDetails?.sharesAmount}
+        timeoutSeconds={60}
+        status={payStatus}
+      />
+
+      <AddSavings
+        isOpen={openAddSavings}
+        onClose={() => setOpenAddSavings(false)}
+        paymentDetails={paymentDetails}
+        setPaymentDetails={setPaymentDetails}
+        onSubmitStk={() => {
+          setOpenAddSavings(false);
+          setOpenSavingsSummary(true);
+        }}
+      />
+
+      <SavingsSummary
+        isOpen={openSavingsSummary}
+        onClose={() => setOpenSavingsSummary(false)}
+        onBack={() => {
+          setOpenSavingsSummary(false);
+          setOpenAddSavings(true);
+        }}
+        paymentDetails={paymentDetails}
+        onConfirmStk={() => {}}
+        isSubmitting={false}
+      />
+
+      <SavingsStkPush
+        isOpen={openSavingsStk}
+        onClose={() => setOpenSavingsStk(false)}
+        onRetry={() => {}}
+        phoneNumber={paymentDetails?.phoneNumber}
+        amount={paymentDetails?.savingsAmount}
+        timeoutSeconds={60}
+        status={payStatus}
+      />
+
       {/* HEADER CONTROL BAR */}
       {fetchingAccount ? (
         <AccountDetailsLoader />
@@ -147,6 +241,30 @@ export default function AccountDetails({ onBack }) {
                       <PlusCircle size={14} className="text-slate-700" />
                       <span>Add Manual Payment</span>
                     </button>
+                    {account?.product?.name === "Shares" && (
+                      <button
+                        onClick={() => {
+                          setIsActionMenuOpen(false);
+                          setOpenAddShares(true);
+                        }}
+                        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-emerald-50/40 text-left transition-colors cursor-pointer"
+                      >
+                        <Plus size={14} className="text-slate-700" />
+                        <span>Buy Shares</span>
+                      </button>
+                    )}
+                    {account?.product?.name === "Savings" && (
+                      <button
+                        onClick={() => {
+                          setIsActionMenuOpen(false);
+                          setOpenAddSavings(true);
+                        }}
+                        className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-emerald-50/40 text-left transition-colors cursor-pointer"
+                      >
+                        <Plus size={14} className="text-slate-700" />
+                        <span>Deposit Savings</span>
+                      </button>
+                    )}
                   </div>
                 </>
               )}

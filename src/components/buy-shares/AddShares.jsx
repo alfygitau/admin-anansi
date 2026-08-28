@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   X,
   Smartphone,
@@ -6,35 +6,24 @@ import {
   Loader2,
   ShieldCheck,
   Building2,
-  Coins,
   AlertCircle,
-  CreditCard,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useFormatAmount } from "../../hooks/useFormatAmount";
 
-export default function Registration({
+export default function AddShares({
   isOpen,
   onClose,
   member,
-  defaultRegFee = 1000,
   paymentDetails,
-  onSubmitStk,
   setPaymentDetails,
+  onSubmitStk,
 }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
   const formatAmount = useFormatAmount();
 
-  // Calculate live total payment amount
-  const totalAmount =
-    Number(paymentDetails.regFee || defaultRegFee) +
-    (paymentDetails.includeShares
-      ? Number(paymentDetails.sharesAmount || 0)
-      : 0) +
-    (paymentDetails.includeSavings
-      ? Number(paymentDetails.savingsAmount || 0)
-      : 0);
+  const totalAmount = Number(paymentDetails?.sharesAmount || 0);
 
   const handleClose = () => {
     setError("");
@@ -44,10 +33,15 @@ export default function Registration({
 
   const handlePay = async () => {
     if (
-      !paymentDetails.phoneNumber ||
+      !paymentDetails?.phoneNumber ||
       paymentDetails.phoneNumber.trim().length < 9
     ) {
       setError("Please provide a valid M-Pesa phone number.");
+      return;
+    }
+
+    if (!totalAmount || totalAmount <= 0) {
+      setError("Please enter a valid shares purchase amount.");
       return;
     }
 
@@ -57,13 +51,7 @@ export default function Registration({
     try {
       const payload = {
         phone_number: paymentDetails.phoneNumber,
-        registration_fee: paymentDetails.regFee || defaultRegFee,
-        shares_amount: paymentDetails.includeShares
-          ? Number(paymentDetails.sharesAmount)
-          : 0,
-        savings_amount: paymentDetails.includeSavings
-          ? Number(paymentDetails.savingsAmount)
-          : 0,
+        shares_amount: totalAmount,
         total_amount: totalAmount,
       };
 
@@ -98,14 +86,15 @@ export default function Registration({
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] font-black uppercase tracking-wider text-[#074073]">
-                    M-Pesa Checkout
+                    Equity Portfolio
                   </span>
                 </div>
                 <h2 className="text-xl font-bold text-[#074073] mt-0.5">
-                  Registration Payment
+                  Purchase Share Capital
                 </h2>
                 <p className="text-xs text-slate-500 font-medium mt-0.5">
-                  Complete membership activation & optional account deposits.
+                  Acquire additional equity shares to boost your SACCO
+                  ownership.
                 </p>
               </div>
 
@@ -119,7 +108,7 @@ export default function Registration({
             </div>
 
             {/* Scrollable Form Body */}
-            <div className="flex-1 overflow-y-auto p-8 py-3 space-y-5">
+            <div className="flex-1 overflow-y-auto p-8 py-4 space-y-5">
               {error && (
                 <div className="p-3.5 bg-rose-50 border border-rose-100 rounded-2xl flex items-center gap-2.5 text-xs text-rose-700 font-bold">
                   <AlertCircle size={16} className="shrink-0 text-rose-600" />
@@ -127,7 +116,7 @@ export default function Registration({
                 </div>
               )}
 
-              {/* M-PESA PHONE NUMBER SELECTION */}
+              {/* M-PESA PHONE NUMBER INPUT */}
               <div className="space-y-1.5">
                 <label className="text-[10px] font-black uppercase text-slate-400 tracking-wider">
                   M-Pesa Phone Number
@@ -140,7 +129,7 @@ export default function Registration({
                   <input
                     type="tel"
                     placeholder="e.g. 0712345678 or 254712345678"
-                    value={paymentDetails.phoneNumber}
+                    value={paymentDetails?.phoneNumber || ""}
                     onChange={(e) =>
                       setPaymentDetails((prev) => ({
                         ...prev,
@@ -155,79 +144,36 @@ export default function Registration({
                 </p>
               </div>
 
-              {/* PAYMENT BREAKDOWN ITEMS */}
+              {/* SHARES PURCHASE ALLOCATION */}
               <div className="space-y-3 pt-2">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">
-                  Fee Allocations
+                  Shares Allocation
                 </p>
 
-                {/* 1. MANDATORY REGISTRATION FEE */}
-                <div className="p-4 bg-blue-50/40 border border-blue-100/80 rounded-2xl flex items-center justify-between">
+                <div className="p-4 border border-[#074073]/30 bg-slate-50/80 rounded-2xl space-y-3.5 shadow-3xs">
                   <div className="flex items-center gap-3">
-                    <div className="size-9 rounded-xl bg-[#074073] text-white flex items-center justify-center shrink-0 shadow-3xs">
-                      <CreditCard size={18} />
+                    <div className="size-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0 shadow-3xs">
+                      <Building2 size={18} />
                     </div>
                     <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-slate-800">
-                          Registration Fee
-                        </span>
-                        <span className="text-[9px] font-black uppercase text-blue-700 bg-blue-100 px-2 py-0.5 rounded-md">
-                          Mandatory
-                        </span>
-                      </div>
+                      <p className="text-xs font-bold text-slate-800">
+                        Share Capital Deposit
+                      </p>
                       <p className="text-[10px] text-slate-400 font-medium">
-                        Standard SACCO onboarding charge
+                        Non-withdrawable SACCO equity shares
                       </p>
                     </div>
                   </div>
-                  <span className="text-xs font-black text-[#074073]">
-                    {formatAmount(paymentDetails.regFee || defaultRegFee || 0)}
-                  </span>
-                </div>
-
-                {/* 2. OPTIONAL BUY SHARES */}
-                <div
-                  className={`p-4 border rounded-2xl transition-all space-y-3 ${
-                    paymentDetails.includeShares
-                      ? "bg-slate-50/80 border-[#074073]/40 shadow-3xs"
-                      : "bg-white border-slate-200/80"
-                  }`}
-                >
-                  <label className="flex items-center gap-3 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={paymentDetails.includeShares}
-                      onChange={(e) =>
-                        setPaymentDetails((prev) => ({
-                          ...prev,
-                          includeShares: e.target.checked,
-                        }))
-                      }
-                      className="size-4 accent-[#074073] rounded cursor-pointer"
-                    />
-                    <div className="flex items-center gap-2.5">
-                      <div>
-                        <p className="text-xs font-bold text-slate-800">
-                          Purchase Share Capital
-                        </p>
-                        <p className="text-[10px] text-slate-400 font-medium">
-                          Add initial equity shares
-                        </p>
-                      </div>
-                    </div>
-                  </label>
 
                   <div className="space-y-1">
                     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Shares Amount (KES)
+                      Purchase Amount (KES)
                     </label>
                     <input
                       type="number"
                       min="100"
                       step="100"
-                      disabled={!paymentDetails.includeShares}
-                      value={paymentDetails.sharesAmount}
+                      value={paymentDetails?.sharesAmount || ""}
                       onChange={(e) =>
                         setPaymentDetails((prev) => ({
                           ...prev,
@@ -235,64 +181,25 @@ export default function Registration({
                         }))
                       }
                       placeholder="Enter shares amount"
-                      className="w-full h-11 px-3.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-[#074073] outline-none focus:border-[#074073] transition-all disabled:bg-slate-100/80 disabled:border-slate-200/60 disabled:text-slate-400 disabled:cursor-not-allowed shadow-3xs"
+                      className="w-full h-12 px-4 bg-white border border-slate-200 rounded-xl text-sm font-black text-[#074073] outline-none focus:border-[#074073] transition-all shadow-3xs"
                     />
                   </div>
                 </div>
+              </div>
 
-                {/* 3. OPTIONAL DEPOSIT SAVINGS */}
-                <div
-                  className={`p-4 border rounded-2xl transition-all space-y-3 ${
-                    paymentDetails.includeSavings
-                      ? "bg-slate-50/80 border-[#074073]/40 shadow-3xs"
-                      : "bg-white border-slate-200/80"
-                  }`}
-                >
-                  <label className="flex items-center gap-3 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={paymentDetails.includeSavings}
-                      onChange={(e) =>
-                        setPaymentDetails((prev) => ({
-                          ...prev,
-                          includeSavings: e.target.checked,
-                        }))
-                      }
-                      className="size-4 accent-[#074073] rounded cursor-pointer"
-                    />
-                    <div className="flex items-center gap-2.5">
-                      <div>
-                        <p className="text-xs font-bold text-slate-800">
-                          Deposit Initial Savings
-                        </p>
-                        <p className="text-[10px] text-slate-400 font-medium">
-                          Deposit to Savings
-                        </p>
-                      </div>
-                    </div>
-                  </label>
-
-                  <div className="space-y-1">
-                    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                      Savings Amount (KES)
-                    </label>
-                    <input
-                      type="number"
-                      min="100"
-                      step="100"
-                      disabled={!paymentDetails.includeSavings}
-                      value={paymentDetails.savingsAmount}
-                      onChange={(e) =>
-                        setPaymentDetails((prev) => ({
-                          ...prev,
-                          savingsAmount: e.target.value,
-                        }))
-                      }
-                      placeholder="Enter savings amount"
-                      className="w-full h-11 px-3.5 bg-white border border-slate-200 rounded-xl text-xs font-black text-[#074073] outline-none focus:border-[#074073] transition-all disabled:bg-slate-100/80 disabled:border-slate-200/60 disabled:text-slate-400 disabled:cursor-not-allowed shadow-3xs"
-                    />
-                  </div>
+              {/* SUMMARY HIGHLIGHT CARD */}
+              <div className="p-4 bg-[#074073] text-white rounded-2xl flex items-center justify-between">
+                <div>
+                  <span className="text-[9px] font-bold uppercase tracking-wider text-blue-200 block">
+                    Total Payable
+                  </span>
+                  <span className="text-base font-black text-emerald-400">
+                    {formatAmount(totalAmount)}
+                  </span>
                 </div>
+                <span className="text-[9px] font-black uppercase tracking-wider bg-white/10 border border-white/20 px-2.5 py-1 rounded-lg text-white">
+                  M-Pesa STK
+                </span>
               </div>
 
               <div className="p-3 bg-slate-50 border border-slate-100 rounded-xl flex items-center gap-2 text-[10px] text-slate-400 font-medium">
@@ -326,7 +233,7 @@ export default function Registration({
                 ) : (
                   <>
                     <Wallet size={16} />
-                    <span>Pay KES {totalAmount.toLocaleString()}</span>
+                    <span>Pay {formatAmount(totalAmount)}</span>
                   </>
                 )}
               </button>

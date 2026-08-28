@@ -34,6 +34,7 @@ import {
   Smartphone,
   ArrowRight,
   Wallet,
+  PlusCircle,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "react-query";
@@ -243,7 +244,6 @@ export default function MemberDetails({ onUpdateDocument }) {
   };
 
   const generateUUID = () => crypto.randomUUID();
-
   const [paymentDetails, setPaymentDetails] = useState({
     phoneNumber: "",
     regFee: 1,
@@ -492,6 +492,15 @@ export default function MemberDetails({ onUpdateDocument }) {
                     >
                       <Coins size={14} className="text-[#074073]" />
                       <span>Apply for a Loan</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsMenuOpen(false);
+                      }}
+                      className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 text-left transition-colors cursor-pointer"
+                    >
+                      <PlusCircle size={14} className="text-[#074073]" />
+                      <span>Quick Invest</span>
                     </button>
                     <div className="border-t border-slate-100 my-1 mx-2" />
                     <button

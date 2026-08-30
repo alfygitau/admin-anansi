@@ -52,20 +52,29 @@ export default function LoanTransactions() {
       filters?.page,
       filters?.limit,
       filters?.q,
-      filters?.status,
-      filters?.type,
+      Array.isArray(filters?.status)
+        ? filters.status.join(",")
+        : filters?.status,
+      Array.isArray(filters?.type) ? filters.type.join(",") : filters?.type,
       filters?.leastAmount,
       filters?.mostAmount,
       filters?.fromDate,
       filters?.toDate,
     ],
     queryFn: async () => {
+      const statusParam = Array.isArray(filters?.status)
+        ? filters.status.join(",")
+        : filters?.status || "";
+
+      const typeParam = Array.isArray(filters?.type)
+        ? filters.type.join(",")
+        : filters?.type || "";
       const response = await getLoanTransactions(
         filters?.page,
         filters?.limit,
         filters?.q,
-        filters?.status?.join(","),
-        filters?.type?.join(","),
+        statusParam,
+        typeParam,
         filters?.leastAmount,
         filters?.mostAmount,
         filters?.fromDate,
@@ -83,6 +92,7 @@ export default function LoanTransactions() {
       setTotalItems(data.total);
     },
     onError: (error) => {
+      console.log(error);
       showToast({
         title: "Transactions processing failed",
         type: "error",

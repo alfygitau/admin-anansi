@@ -188,7 +188,60 @@ export default function AddMember() {
     }
   };
 
+  const isStepInvalid = () => {
+    // Check if there are active error messages
+    if (Object.values(errors).some((msg) => msg !== "")) return true;
+
+    switch (activeStep.id) {
+      case "profile":
+        return (
+          !formData.username?.trim() ||
+          !formData.email?.trim() ||
+          !/\S+@\S+\.\S+/.test(formData.email) ||
+          !formData.mobileno?.trim() ||
+          formData.mobileno.length < 10
+        );
+      case "scan_id":
+        return !formData.id_front || !formData.id_back;
+      case "review_id":
+        return (
+          !formData.firstname?.trim() ||
+          !formData.lastname?.trim() ||
+          !formData.identification?.trim()
+        );
+      case "selfie":
+        return !formData.selfieFile;
+      case "address":
+        return (
+          !formData.country?.trim() ||
+          !formData.county?.trim() ||
+          !formData.subcounty?.trim() ||
+          !formData.physical_address?.trim()
+        );
+      case "income":
+        return (
+          !formData.employment_type?.trim() ||
+          !formData.occupation?.trim() ||
+          !formData.income_range ||
+          !formData.kra_pin?.trim() ||
+          formData.kra_pin.length !== 11
+        );
+      case "next_of_kin":
+        return (
+          !formData.fullname?.trim() ||
+          !formData.phone?.trim() ||
+          !formData.relationship?.trim() ||
+          !formData.location?.trim()
+        );
+      case "review_submit":
+        return false;
+      default:
+        return false;
+    }
+  };
+
   const handleNext = async () => {
+    if (isStepInvalid()) return;
     if (activeStep.id === "scan_id") {
       await submitFrontFile();
     } else if (!isLastStep) {
@@ -1455,9 +1508,7 @@ export default function AddMember() {
             <button
               type="button"
               onClick={handleNext}
-              disabled={
-                isStepBusy || Object.values(errors).some((msg) => msg !== "")
-              }
+              disabled={isStepBusy || isStepInvalid()}
               className={`inline-flex items-center gap-2 h-10 px-5 rounded-xl text-xs font-bold text-white shadow-sm transition-all cursor-pointer active:scale-98 disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed ${
                 isLastStep
                   ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-900/10"

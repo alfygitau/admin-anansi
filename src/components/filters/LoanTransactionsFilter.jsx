@@ -26,7 +26,7 @@ export default function LoanTransactionsFilter({
   const tabs = [
     { id: "q", label: "Search Query", icon: Search },
     { id: "status", label: "Status", icon: CheckCircle2 },
-    { id: "type", label: "Type", icon: ArrowUpDown },
+    { id: "type", label: "Transaction Type", icon: ArrowUpDown },
     { id: "amount", label: "Amount Range", icon: Coins },
     { id: "fromDate", label: "Start Date", icon: Calendar },
     { id: "toDate", label: "End Date", icon: CalendarDays },

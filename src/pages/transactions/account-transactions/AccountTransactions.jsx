@@ -38,12 +38,12 @@ export default function AccountTransactions() {
     page: 1,
     limit: 10,
     q: "",
-    status: "",
+    status: [],
     fromDate: "",
     toDate: "",
     leastAmount: "",
     mostAmount: "",
-    type: "",
+    type: [],
   });
   const { showToast } = useToast();
   const [totalItems, setTotalItems] = useState(0);
@@ -80,8 +80,8 @@ export default function AccountTransactions() {
         filters?.page,
         filters?.limit,
         filters?.q,
-        filters?.status,
-        filters?.type,
+        filters?.status?.join(","),
+        filters?.type?.join(","),
         filters?.leastAmount,
         filters?.mostAmount,
         filters?.fromDate,
@@ -171,7 +171,7 @@ export default function AccountTransactions() {
             </div>
             <div className="min-w-0 flex-1">
               <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block truncate">
-                Non-Withdrawable Deposits
+                Non-Withdrawable Savings
               </span>
               <span className="text-base font-mono font-black text-[#074073] block truncate mt-0.5">
                 KES 800,000.00

@@ -28,6 +28,14 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useMutation, useQuery } from "react-query";
+import { useToast } from "../../contexts/ToastProvider";
+import { addAdminCustomer, getCounties } from "../../sdk/members/members";
+import {
+  scanBackIdentification,
+  scanFrontIdentification,
+  uploadSelfieImage,
+} from "../../sdk/upload/upload";
 
 const REGISTRATION_STEPS = [
   {
@@ -80,73 +88,52 @@ const REGISTRATION_STEPS = [
   },
 ];
 
-const scannedData = {
-  firstname: "John",
-  middlename: "Kipkorir",
-  lastname: "Doe",
-  identification_type: "National ID",
-  identification: "32145678",
-  gender: "Male",
-  dob: "1994-04-24",
-};
-
 export default function AddMember() {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
+  const { showToast } = useToast();
 
   const [formData, setFormData] = useState({
-    username: "Alfred",
-    email: "alfy@gmail.com",
-    mobileno: "0754360450",
+    username: "",
+    email: "",
+    mobileno: "",
 
-    firstname: "Alfred",
-    middlename: "Kariuki",
+    firstname: "",
+    middlename: "",
     lastname: "Gitau",
-    identification_type: "National ID",
-    identification: "3006780",
-    gender: "Male",
-    dob: "1992-12-29",
+    identification_type: "",
+    identification: "",
+    gender: "",
+    dob: "",
 
-    country: "Kenya",
-    county: "Nakuru",
-    subcounty: "Bahati",
-    physical_address: "Subukia",
+    country: "",
+    county: "",
+    subcounty: "",
+    physical_address: "",
 
-    employment_type: "Salaried",
-    occupation: "Software Engineer",
-    income_range: "200000",
-    kra_pin: "A123456789G",
+    employment_type: "",
+    occupation: "",
+    income_range: "",
+    kra_pin: "",
 
-    fullname: "Margret Maina",
-    relationship: "Wife",
-    location: "Bahati",
-    phone: "0780400400",
+    fullname: "",
+    relationship: "",
+    location: "",
+    phone: "",
+    kinDob: "",
+
+    id_front: "",
+    id_back: "",
+    selfieFile: "",
   });
 
   const [previewUrl, setPreviewUrl] = useState(null);
   const [countyDropdownOpen, setCountyDropdownOpen] = useState(false);
   const [subcountyDropdownOpen, setSubcountyDropdownOpen] = useState(false);
   const [employmentDropdownOpen, setEmploymentDropdownOpen] = useState(false);
-
-  const countyOptions = [
-    { value: "", label: "Select county..." },
-    { value: "Nairobi", label: "Nairobi" },
-    { value: "Mombasa", label: "Mombasa" },
-    { value: "Kiambu", label: "Kiambu" },
-    { value: "Kisumu", label: "Kisumu" },
-    { value: "Nakuru", label: "Nakuru" },
-  ];
-
-  const subcountyOptions = [
-    { value: "", label: "Select sub-county..." },
-    { value: "Westlands", label: "Westlands" },
-    { value: "Dagoretti", label: "Dagoretti" },
-    { value: "Changamwe", label: "Changamwe" },
-    { value: "Thika", label: "Thika" },
-    { value: "Kisumu Central", label: "Kisumu Central" },
-    { value: "Bahati", label: "Bahati" },
-  ];
+  const [counties, setCounties] = useState([]);
+  const [subCounties, setsubCounties] = useState([]);
 
   const employmentOptions = [
     { value: "", label: "Select employment type..." },
@@ -201,8 +188,10 @@ export default function AddMember() {
     }
   };
 
-  const handleNext = () => {
-    if (!isLastStep) {
+  const handleNext = async () => {
+    if (activeStep.id === "scan_id") {
+      await submitFrontFile();
+    } else if (!isLastStep) {
       setCurrentStepIndex((prev) => prev + 1);
     } else {
       handleSubmitRegistration();
@@ -215,10 +204,172 @@ export default function AddMember() {
     }
   };
 
-  const handleSubmitRegistration = () => {
-    setIsSubmitting(true);
-    setTimeout(() => setIsSubmitting(false), 2000);
+  useQuery({
+    queryKey: ["counties"],
+    queryFn: async () => {
+      const response = await getCounties();
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setCounties(data);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Counties processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const handleSubmitRegistration = async () => {
+    await mutate();
   };
+
+  const { mutate: submitFrontFile, isLoading } = useMutation({
+    mutationKey: ["upload front identity"],
+    mutationFn: async () => {
+      const response = await scanFrontIdentification(formData?.id_front);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      const nameParts = (data?.fullNames || "").trim().split(/\s+/);
+      const firstname = nameParts[0] || "";
+      const lastname =
+        nameParts.length > 1 ? nameParts[nameParts.length - 1] : "";
+      const middlename =
+        nameParts.length > 2 ? nameParts.slice(1, -1).join(" ") : "";
+
+      let dob = "";
+      if (data?.dateOfBirth && data.dateOfBirth.includes(".")) {
+        const [day, month, year] = data.dateOfBirth.split(".");
+        dob = `${year}-${month}-${day}`;
+      }
+
+      const gender = data?.sex
+        ? data.sex.charAt(0).toUpperCase() + data.sex.slice(1).toLowerCase()
+        : "";
+      setFormData((prev) => ({
+        ...prev,
+        firstname,
+        middlename,
+        lastname,
+        identification_type: "National ID",
+        identification: data?.idNumber || "",
+        gender,
+        dob,
+      }));
+      submitBackFile();
+    },
+    onError: (error) => {
+      showToast({
+        title: "Identiy processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { mutate: submitBackFile, isLoading: uploading } = useMutation({
+    mutationKey: ["upload back identity"],
+    mutationFn: async () => {
+      const response = await scanBackIdentification(formData?.id_back);
+      return response.data.data;
+    },
+    onSuccess: (data) => {
+      setCurrentStepIndex((prev) => prev + 1);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Identiy processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const { mutate, isLoading: adding } = useMutation({
+    mutationKey: ["add member"],
+    mutationFn: async () => {
+      const response = await addAdminCustomer(
+        {
+          firstname: formData?.firstname,
+          middlename: formData?.middlename,
+          lastname: formData?.lastname,
+          identification: formData?.identification,
+          identification_type: formData?.identification_type,
+          mobileno: formData?.mobileno,
+          country_of_residence: formData?.country,
+          dob: formData?.dob,
+          kraPin: formData?.kra_pin,
+          occupation: formData?.occupation,
+          income_range: formData?.income_range,
+          email: formData?.email,
+          username: formData?.username,
+          temporary_password: true,
+          employment_type: formData?.employment_type,
+          citizenship: "Kenyan",
+          isMobile: false,
+          onboarding_stage: "Complete",
+        },
+        {
+          fullname: formData?.fullname,
+          relationship: formData?.relationship,
+          location: formData?.location,
+          phone: formData?.phone,
+        },
+        {
+          county: formData?.county,
+          subcounty: formData?.subcounty,
+          physical_address: formData?.physical_address,
+        },
+        formData?.selfieFile,
+        formData?.id_front,
+        formData?.id_back,
+      );
+      return response.data.data;
+    },
+    onSuccess: () => {},
+    onError: (error) => {
+      showToast({
+        title: "Members processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const selectedCountyObj = counties?.find(
+    (item) => item.county === formData.county || item.id === formData.county,
+  );
+
+  const availableSubCounties = selectedCountyObj?.sub_counties || [];
+
+  const handleSelectCounty = (countyItem) => {
+    setFormData((prev) => ({
+      ...prev,
+      county: countyItem.county, // Or countyItem.id if storing IDs
+      subcounty: "", // Reset sub-county when county changes
+    }));
+    setCountyDropdownOpen(false);
+    setErrors((prev) => ({ ...prev, county: "", subcounty: "" }));
+  };
+
+  // 4. Select Sub-county Handler
+  const handleSelectSubcounty = (subcountyName) => {
+    setFormData((prev) => ({
+      ...prev,
+      subcounty: subcountyName,
+    }));
+    setSubcountyDropdownOpen(false);
+    setErrors((prev) => ({ ...prev, subcounty: "" }));
+  };
+
+  const isStepBusy = isLoading || uploading || adding;
 
   return (
     <div className="bg-slate-50 h-full flex flex-col text-slate-800">
@@ -424,18 +575,18 @@ export default function AddMember() {
                         <ScannedDataField
                           label="First Name"
                           icon={User}
-                          value={scannedData?.firstname}
+                          value={formData?.firstname}
                         />
                         <ScannedDataField
                           label="Middle Name"
                           icon={User}
-                          value={scannedData?.middlename}
+                          value={formData?.middlename}
                         />
                         <div className="md:col-span-2">
                           <ScannedDataField
                             label="Last Name"
                             icon={User}
-                            value={scannedData?.lastname}
+                            value={formData?.lastname}
                           />
                         </div>
                       </div>
@@ -449,24 +600,24 @@ export default function AddMember() {
                         <ScannedDataField
                           label="Identification Type"
                           icon={Shield}
-                          value={scannedData?.identification_type}
+                          value={formData?.identification_type}
                           isUppercase={true}
                         />
                         <ScannedDataField
                           label="Document ID Number"
                           icon={Hash}
-                          value={scannedData?.identification}
+                          value={formData?.identification}
                           isUppercase={true}
                         />
                         <ScannedDataField
                           label="Gender Classification"
                           icon={User}
-                          value={scannedData?.gender}
+                          value={formData?.gender}
                         />
                         <ScannedDataField
                           label="Date of Birth (DOB)"
                           icon={Calendar}
-                          value={scannedData?.dob}
+                          value={formData?.dob}
                         />
                       </div>
                     </div>
@@ -588,7 +739,8 @@ export default function AddMember() {
                       )}
                     </div>
 
-                    <div>
+                    {/* COUNTY SELECTOR */}
+                    <div className="relative">
                       <FilterField label="County / Region" icon={Building2}>
                         <button
                           type="button"
@@ -613,9 +765,7 @@ export default function AddMember() {
                                 : "text-slate-400 font-medium"
                             }
                           >
-                            {countyOptions.find(
-                              (opt) => opt.value === formData.county,
-                            )?.label || "Select county..."}
+                            {formData.county || "Select county..."}
                           </span>
                           <ChevronDown
                             size={16}
@@ -627,6 +777,27 @@ export default function AddMember() {
                           />
                         </button>
                       </FilterField>
+
+                      {/* County Menu */}
+                      {countyDropdownOpen && counties?.length > 0 && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 max-h-56 overflow-y-auto p-1.5 space-y-1">
+                          {counties.map((item) => (
+                            <button
+                              key={item.id}
+                              type="button"
+                              onClick={() => handleSelectCounty(item)}
+                              className={`w-full px-4 py-2.5 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer ${
+                                formData.county === item.county
+                                  ? "bg-[#074073] text-white font-bold"
+                                  : "text-slate-700 hover:bg-slate-100"
+                              }`}
+                            >
+                              {item.county}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
                       {errors.county && (
                         <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1">
                           <AlertCircle size={12} /> {errors.county}
@@ -634,15 +805,17 @@ export default function AddMember() {
                       )}
                     </div>
 
-                    <div>
+                    {/* SUB-COUNTY SELECTOR */}
+                    <div className="relative">
                       <FilterField label="Sub-County / District" icon={Map}>
                         <button
                           type="button"
+                          disabled={!formData.county}
                           onClick={() => {
                             setSubcountyDropdownOpen(!subcountyDropdownOpen);
                             setCountyDropdownOpen(false);
                           }}
-                          className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer ${
+                          className={`w-full pl-[74px] pr-5 h-14 bg-slate-50 border rounded-2xl outline-none transition-all text-xs font-semibold text-left flex items-center justify-between cursor-pointer disabled:bg-slate-100/80 disabled:opacity-60 disabled:cursor-not-allowed ${
                             errors.subcounty
                               ? "border-rose-400"
                               : "border-slate-200"
@@ -659,9 +832,9 @@ export default function AddMember() {
                                 : "text-slate-400 font-medium"
                             }
                           >
-                            {subcountyOptions.find(
-                              (opt) => opt.value === formData.subcounty,
-                            )?.label || "Select sub-county..."}
+                            {!formData.county
+                              ? "Select county first..."
+                              : formData.subcounty || "Select sub-county..."}
                           </span>
                           <ChevronDown
                             size={16}
@@ -673,6 +846,28 @@ export default function AddMember() {
                           />
                         </button>
                       </FilterField>
+
+                      {/* Sub-County Menu */}
+                      {subcountyDropdownOpen &&
+                        availableSubCounties.length > 0 && (
+                          <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 max-h-56 overflow-y-auto p-1.5 space-y-1">
+                            {availableSubCounties.map((subName) => (
+                              <button
+                                key={subName}
+                                type="button"
+                                onClick={() => handleSelectSubcounty(subName)}
+                                className={`w-full px-4 py-2.5 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer ${
+                                  formData.subcounty === subName
+                                    ? "bg-[#074073] text-white font-bold"
+                                    : "text-slate-700 hover:bg-slate-100"
+                                }`}
+                              >
+                                {subName}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+
                       {errors.subcounty && (
                         <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1">
                           <AlertCircle size={12} /> {errors.subcounty}
@@ -722,7 +917,8 @@ export default function AddMember() {
                   </div>
 
                   <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 mt-4">
-                    <div>
+                    {/* EMPLOYMENT TYPE SELECTOR */}
+                    <div className="relative">
                       <FilterField
                         label="Employment Status / Field"
                         icon={Briefcase}
@@ -763,6 +959,38 @@ export default function AddMember() {
                           />
                         </button>
                       </FilterField>
+
+                      {/* Employment Options Dropdown Menu */}
+                      {employmentDropdownOpen && (
+                        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl z-50 max-h-56 overflow-y-auto p-1.5 space-y-1">
+                          {employmentOptions
+                            .filter((opt) => opt.value !== "") // Excludes blank placeholder option from list
+                            .map((opt) => (
+                              <button
+                                key={opt.value}
+                                type="button"
+                                onClick={() => {
+                                  setFormData((prev) => ({
+                                    ...prev,
+                                    employment_type: opt.value,
+                                  }));
+                                  setEmploymentDropdownOpen(false);
+                                  setErrors((prev) => ({
+                                    ...prev,
+                                    employment_type: "",
+                                  }));
+                                }}
+                                className={`w-full px-4 py-2.5 rounded-xl text-xs font-semibold text-left transition-all cursor-pointer ${
+                                  formData.employment_type === opt.value
+                                    ? "bg-[#074073] text-white font-bold"
+                                    : "text-slate-700 hover:bg-slate-100"
+                                }`}
+                              >
+                                {opt.label}
+                              </button>
+                            ))}
+                        </div>
+                      )}
                       {errors.employment_type && (
                         <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1">
                           <AlertCircle size={12} /> {errors.employment_type}
@@ -941,20 +1169,20 @@ export default function AddMember() {
                       <FilterField label="Date of Birth" icon={Calendar}>
                         <input
                           type="date"
-                          name="dob"
+                          name="kinDob"
                           className={`w-full pl-[74px] pr-6 py-5 h-14 bg-slate-50 border text-xs font-semibold rounded-2xl transition-all outline-none focus:bg-white focus:border-primary focus:ring-4 focus:ring-primary/5 ${
-                            errors.dob
+                            errors.kinDob
                               ? "border-rose-400 focus:border-rose-500"
                               : "border-slate-200"
                           }`}
-                          value={formData.dob}
+                          value={formData.kinDob}
                           onBlur={handleBlur}
                           onChange={handleChange}
                         />
                       </FilterField>
-                      {errors.dob && (
+                      {errors.kinDob && (
                         <p className="text-rose-500 text-[11px] font-bold flex items-center gap-1 mt-1.5 ml-1">
-                          <AlertCircle size={12} /> {errors.dob}
+                          <AlertCircle size={12} /> {errors.kinDob}
                         </p>
                       )}
                     </div>
@@ -1046,9 +1274,9 @@ export default function AddMember() {
                       </span>
                       <span className="text-xs font-bold text-primary">
                         {[
-                          scannedData?.firstname,
-                          scannedData?.middlename,
-                          scannedData?.lastname,
+                          formData?.firstname,
+                          formData?.middlename,
+                          formData?.lastname,
                         ]
                           .filter(Boolean)
                           .join(" ") || "—"}
@@ -1059,7 +1287,7 @@ export default function AddMember() {
                         Identification Type
                       </span>
                       <span className="text-xs font-bold text-primary uppercase">
-                        {scannedData?.identification_type || "—"}
+                        {formData?.identification_type || "—"}
                       </span>
                     </div>
                     <div className="space-y-1">
@@ -1067,7 +1295,7 @@ export default function AddMember() {
                         Document ID Number
                       </span>
                       <span className="text-xs font-bold text-primary font-mono tracking-wide">
-                        {scannedData?.identification || "—"}
+                        {formData?.identification || "—"}
                       </span>
                     </div>
                     <div className="space-y-1">
@@ -1075,7 +1303,7 @@ export default function AddMember() {
                         Date of Birth / Gender
                       </span>
                       <span className="text-xs font-bold text-primary">
-                        {scannedData?.dob || "—"} ({scannedData?.gender || "—"})
+                        {formData?.dob || "—"} ({formData?.gender || "—"})
                       </span>
                     </div>
                   </div>
@@ -1228,7 +1456,7 @@ export default function AddMember() {
               type="button"
               onClick={handleNext}
               disabled={
-                isSubmitting || Object.values(errors).some((msg) => msg !== "")
+                isStepBusy || Object.values(errors).some((msg) => msg !== "")
               }
               className={`inline-flex items-center gap-2 h-10 px-5 rounded-xl text-xs font-bold text-white shadow-sm transition-all cursor-pointer active:scale-98 disabled:opacity-40 disabled:pointer-events-none disabled:cursor-not-allowed ${
                 isLastStep
@@ -1236,10 +1464,14 @@ export default function AddMember() {
                   : "bg-[#074073] hover:bg-[#053057] shadow-blue-900/10"
               }`}
             >
-              {isSubmitting ? (
+              {isStepBusy ? (
                 <>
                   <Loader2 size={14} className="animate-spin" />
-                  <span>Processing Submission...</span>
+                  <span>
+                    {isLoading || uploading
+                      ? "Scanning..."
+                      : "Processing Submission..."}
+                  </span>
                 </>
               ) : (
                 <>

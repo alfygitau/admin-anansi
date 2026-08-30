@@ -25,7 +25,7 @@ export const getLoanTransactions = async (
     if (status) params.append("status", status);
 
     // Regional filters
-    if (type) params.append("type", type);
+    if (type) params.append("transaction_type", type);
     if (leastAmount) params.append("leastAmount", leastAmount);
     if (mostAmount) params.append("mostAmount", mostAmount);
 

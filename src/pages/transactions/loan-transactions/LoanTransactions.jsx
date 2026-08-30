@@ -22,18 +22,18 @@ export default function LoanTransactions() {
   const [searchQuery, setSearchQuery] = useState("");
   const formatAmount = useFormatAmount();
   const [showFilters, setShowFilters] = useState(false);
-  const [activeTab, setActiveTab] = useState("repayments");
+  const [activeTab, setActiveTab] = useState("");
   const navigate = useNavigate();
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
     q: "",
-    status: "",
+    status: [],
     fromDate: "",
     toDate: "",
     leastAmount: "",
     mostAmount: "",
-    type: "",
+    type: [],
   });
   const { showToast } = useToast();
   const [totalItems, setTotalItems] = useState(0);
@@ -64,8 +64,8 @@ export default function LoanTransactions() {
         filters?.page,
         filters?.limit,
         filters?.q,
-        filters?.status,
-        filters?.type,
+        filters?.status?.join(","),
+        filters?.type?.join(","),
         filters?.leastAmount,
         filters?.mostAmount,
         filters?.fromDate,
@@ -122,6 +122,10 @@ export default function LoanTransactions() {
   };
 
   const handleTabChange = (tab) => {
+    setFilters((prev) => ({
+      ...prev,
+      type: tab?.toLowerCase(),
+    }));
     setActiveTab(tab);
   };
 
@@ -239,9 +243,20 @@ export default function LoanTransactions() {
         <div className="flex items-center gap-1.5 bg-slate-100/80 p-1.5 rounded-2xl w-full border border-slate-200/60 select-none">
           <button
             type="button"
-            onClick={() => handleTabChange("disbursements")}
+            onClick={() => handleTabChange("")}
             className={`px-10 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "disbursements"
+              activeTab === ""
+                ? "bg-white text-primary shadow-2xs"
+                : "text-slate-500 hover:text-slate-800"
+            }`}
+          >
+            All Transactions
+          </button>
+          <button
+            type="button"
+            onClick={() => handleTabChange("loan_disbursement")}
+            className={`px-10 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              activeTab === "loan_disbursement"
                 ? "bg-white text-primary shadow-2xs"
                 : "text-slate-500 hover:text-slate-800"
             }`}
@@ -250,9 +265,9 @@ export default function LoanTransactions() {
           </button>
           <button
             type="button"
-            onClick={() => handleTabChange("repayments")}
+            onClick={() => handleTabChange("loan_repayment")}
             className={`px-10 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-              activeTab === "repayments"
+              activeTab === "loan_repayment"
                 ? "bg-white text-primary shadow-2xs"
                 : "text-slate-500 hover:text-slate-800"
             }`}
@@ -269,8 +284,8 @@ export default function LoanTransactions() {
                 <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
                   <th className="py-4.5 px-6">Transaction Ref & Date</th>
                   <th className="py-4.5 px-6">Mode & Type</th>
-                  <th className="py-4.5 px-6">Loan Allocation</th>
-                  <th className="py-4.5 px-6 text-right">Total Paid</th>
+                  <th className="py-4.5 px-6 min-w-[280px]">Loan Allocation</th>
+                  <th className="py-4.5 px-6 text-right">Total Amount</th>
                   <th className="py-4.5 px-6 text-center">Status</th>
                   <th className="py-4.5 px-6 text-center">Action</th>
                 </tr>
@@ -287,9 +302,7 @@ export default function LoanTransactions() {
                         {/* Column 1: Transaction Reference and Date Skeleton */}
                         <td className="py-5 px-6">
                           <div className="flex flex-col gap-1.5">
-                            {/* Reference Hash Placeholder */}
                             <div className="h-4 w-24 bg-slate-200 rounded" />
-                            {/* Calendar Date Line */}
                             <div className="h-3 w-16 bg-slate-100 rounded" />
                           </div>
                         </td>
@@ -297,44 +310,41 @@ export default function LoanTransactions() {
                         {/* Column 2: Payment Channel and Type Skeleton */}
                         <td className="py-5 px-6">
                           <div className="flex flex-col gap-1.5">
-                            {/* Channel Badge Mock */}
                             <div className="h-4 w-14 bg-slate-200 rounded-md" />
-                            {/* Transaction Type Label */}
                             <div className="h-3 w-16 bg-slate-100 rounded" />
                           </div>
                         </td>
 
-                        {/* Column 3: Target Loan Account Mapping Context Skeleton */}
+                        {/* Column 3: Fixed Grid Loan Allocation Skeleton */}
                         <td className="py-5 px-6">
-                          <div className="flex gap-8">
-                            {/* Loan Code Column Segment */}
+                          <div className="grid grid-cols-3 gap-4 min-w-[280px]">
                             <div className="flex flex-col gap-1">
-                              <div className="h-2.5 w-12 bg-slate-100 rounded" />
+                              <div className="h-2.5 w-10 bg-slate-100 rounded" />
                               <div className="h-4 w-14 bg-slate-200 rounded" />
                             </div>
-                            {/* Product Family Column Segment */}
                             <div className="flex flex-col gap-1">
-                              <div className="h-2.5 w-16 bg-slate-100 rounded" />
-                              <div className="h-4 w-24 bg-slate-200 rounded" />
+                              <div className="h-2.5 w-10 bg-slate-100 rounded" />
+                              <div className="h-4 w-14 bg-slate-200 rounded" />
+                            </div>
+                            <div className="flex flex-col gap-1">
+                              <div className="h-2.5 w-10 bg-slate-100 rounded" />
+                              <div className="h-4 w-14 bg-slate-200 rounded" />
                             </div>
                           </div>
                         </td>
 
                         {/* Column 4: Sum Value Paid Skeleton */}
                         <td className="py-5 px-6 text-right">
-                          {/* Total Amount Value Box */}
                           <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
                         </td>
 
-                        {/* Column 5: Structural Processing State Status Skeleton */}
+                        {/* Column 5: Status Skeleton */}
                         <td className="py-5 px-6 text-center">
-                          {/* Rounded Pill Status Tag Shell */}
                           <div className="h-6 w-16 bg-slate-100 rounded-full mx-auto" />
                         </td>
 
-                        {/* Column 6: Deep-Link Action Redirect Skeleton */}
+                        {/* Column 6: Action Redirect Skeleton */}
                         <td className="py-5 px-6 text-center align-middle">
-                          {/* Action Button Circular Box Icon Shell */}
                           <div className="size-6 bg-slate-50 border border-slate-200/30 rounded-lg mx-auto" />
                         </td>
                       </tr>
@@ -345,18 +355,20 @@ export default function LoanTransactions() {
                       key={tx.id}
                       className="group hover:bg-slate-50/60 transition-colors"
                     >
+                      {/* Column 1: Reference and Date */}
                       <td className="py-5 px-6">
                         <div className="flex flex-col">
                           <span className="font-bold text-primary">
                             {tx.reference || "—"}
                           </span>
                           <span className="text-[10px] text-slate-400">
-                            {tx.transaction_date
-                              ? new Date(
-                                  tx.transaction_date,
-                                ).toLocaleDateString("en-KE", {
-                                  dateStyle: "medium",
-                                })
+                            {tx.created_at
+                              ? new Date(tx.created_at).toLocaleDateString(
+                                  "en-KE",
+                                  {
+                                    dateStyle: "medium",
+                                  },
+                                )
                               : "—"}
                           </span>
                         </div>
@@ -375,36 +387,52 @@ export default function LoanTransactions() {
                         </div>
                       </td>
 
-                      {/* Column 3: Target Loan Account Mapping Context */}
+                      {/* Column 3: Fixed Strict Grid Allocations */}
                       <td className="py-5 px-6">
-                        <div className="flex gap-8">
+                        <div className="grid grid-cols-3 gap-4 min-w-[280px]">
                           <div className="flex flex-col">
                             <span className="text-[9px] text-slate-400 uppercase tracking-wider">
-                              Loan Code
+                              {tx?.transaction_type === "loan_disbursement"
+                                ? "Disbursement"
+                                : "Principal"}
                             </span>
-                            <span className="font-mono font-bold text-slate-700 mt-0.5">
-                              {tx.loan_code || "—"}
+                            <span className="font-mono font-bold text-slate-700 mt-0.5 truncate">
+                              {formatAmount
+                                ? formatAmount(tx?.allocations?.principal)
+                                : tx?.allocations?.principal || "—"}
                             </span>
                           </div>
                           <div className="flex flex-col">
                             <span className="text-[9px] text-slate-400 uppercase tracking-wider">
-                              Product Family
+                              Interest
                             </span>
-                            <span className="font-semibold text-slate-600 capitalize mt-0.5">
-                              {tx.loan_type?.replace(/_/g, " ") || "—"}
+                            <span className="font-semibold text-slate-600 mt-0.5 truncate">
+                              {formatAmount
+                                ? formatAmount(tx?.allocations?.interest)
+                                : tx?.allocations?.interest || "—"}
+                            </span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[9px] text-slate-400 uppercase tracking-wider">
+                              Penalty
+                            </span>
+                            <span className="font-semibold text-slate-600 mt-0.5 truncate">
+                              {formatAmount
+                                ? formatAmount(tx?.allocations?.penalty)
+                                : tx?.allocations?.penalty || "—"}
                             </span>
                           </div>
                         </div>
                       </td>
 
-                      {/* Column 4: Sum Value Paid */}
+                      {/* Column 4: Total Amount Paid */}
                       <td className="py-5 px-6 text-right font-bold text-primary">
                         {formatAmount
                           ? formatAmount(tx.amount)
                           : `KES ${Number(tx.amount || 0).toLocaleString()}`}
                       </td>
 
-                      {/* Column 5: Structural Processing State Status */}
+                      {/* Column 5: Processing Status */}
                       <td className="py-5 px-6 text-center">
                         <span
                           className={`inline-flex items-center gap-1.5 text-[9px] font-bold uppercase px-2.5 py-1 rounded-full ${
@@ -425,7 +453,7 @@ export default function LoanTransactions() {
                         </span>
                       </td>
 
-                      {/* Column 6: Deep-Link Action Redirect */}
+                      {/* Column 6: Action Redirect */}
                       <td className="py-5 px-6 text-center">
                         <button
                           type="button"
@@ -440,17 +468,14 @@ export default function LoanTransactions() {
                   <tr>
                     <td colSpan={6} className="py-8 px-6">
                       <div className="w-full bg-white rounded-[24px] p-16 text-center select-none">
-                        {/* Icon Wrapper */}
                         <div className="size-12 bg-slate-50 border border-slate-200/60 rounded-2xl flex items-center justify-center text-slate-400 mx-auto mb-4 shadow-3xs">
                           <Receipt size={22} className="opacity-80" />
                         </div>
 
-                        {/* Primary Message */}
                         <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
                           No Transactions Found
                         </h3>
 
-                        {/* Conversational Description */}
                         <p className="text-xs text-slate-400 font-medium max-w-xs mx-auto mt-2 leading-relaxed">
                           There are no repayment records or deposit receipts
                           logged under the current search parameters.

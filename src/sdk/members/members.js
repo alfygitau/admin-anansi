@@ -63,6 +63,56 @@ export const getMember = async (id) => {
   }
 };
 
+export const getCounties = async () => {
+  try {
+    const response = await client.get(`/county`);
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const addAdminCustomer = async (
+  customer,
+  nextOfKin,
+  address,
+  selfie_image,
+  id_front_image,
+  id_back_image,
+) => {
+  try {
+    const formData = new FormData();
+
+    formData.append(
+      "customer",
+      typeof customer === "object" ? JSON.stringify(customer) : customer,
+    );
+    formData.append(
+      "nextOfKin",
+      typeof nextOfKin === "object" ? JSON.stringify(nextOfKin) : nextOfKin,
+    );
+    formData.append(
+      "address",
+      typeof address === "object" ? JSON.stringify(address) : address,
+    );
+
+    // Append image files
+    if (selfie_image) formData.append("selfie_image", selfie_image);
+    if (id_front_image) formData.append("id_front_image", id_front_image);
+    if (id_back_image) formData.append("id_back_image", id_back_image);
+
+    const response = await client.post(`/customer/add-member`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
 export const addAdminMember = async (
   email,
   mobileno,

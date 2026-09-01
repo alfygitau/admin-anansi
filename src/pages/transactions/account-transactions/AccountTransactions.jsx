@@ -499,9 +499,43 @@ export default function AccountTransactions() {
               {/* HEADER SECTION */}
               <div className="flex justify-between items-start gap-4">
                 <div className="space-y-1">
-                  <h3 className="text-lg font-bold text-primary tracking-tight pt-1">
-                    {selectedTxContext.public_id}
-                  </h3>
+                  <div className="flex items-center gap-2.5 flex-wrap pt-1">
+                    <h3 className="text-lg font-bold text-primary tracking-tight">
+                      {selectedTxContext.public_id}
+                    </h3>
+
+                    {selectedTxContext?.status && (
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider border ${
+                          selectedTxContext.status.toLowerCase() === "completed"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200/60"
+                            : selectedTxContext.status.toLowerCase() ===
+                                "pending"
+                              ? "bg-amber-50 text-amber-700 border-amber-200/60"
+                              : selectedTxContext.status.toLowerCase() ===
+                                  "reversed"
+                                ? "bg-slate-100 text-slate-700 border-slate-200"
+                                : "bg-rose-50 text-rose-700 border-rose-200/60" // Failed
+                        }`}
+                      >
+                        <span
+                          className={`size-1.5 rounded-full ${
+                            selectedTxContext.status.toLowerCase() ===
+                            "completed"
+                              ? "bg-emerald-500"
+                              : selectedTxContext.status.toLowerCase() ===
+                                  "pending"
+                                ? "bg-amber-500 animate-pulse"
+                                : selectedTxContext.status.toLowerCase() ===
+                                    "reversed"
+                                  ? "bg-slate-500"
+                                  : "bg-rose-500"
+                          }`}
+                        />
+                        {selectedTxContext.status}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <button
                   type="button"
@@ -515,9 +549,8 @@ export default function AccountTransactions() {
               <div className="border-b border-slate-100" />
 
               {/* SECTION 1: TRANSACTION INFO */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex items-center gap-2 text-slate-400">
-                  <Receipt size={14} className="text-[#074073]" />
                   <span className="text-[10px] font-bold uppercase tracking-widest">
                     Transaction Details
                   </span>

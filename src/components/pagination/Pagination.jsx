@@ -12,7 +12,7 @@ export default function Pagination({
   itemsPerPage,
   onPageChange,
   onItemsPerPageChange,
-  pageSizeOptions = [10, 25, 50, 100],
+  pageSizeOptions = [10, 25, 30],
 }) {
   const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
 

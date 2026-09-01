@@ -233,7 +233,7 @@ export default function AccountTransactions() {
                 <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
                   <th className="py-4.5 px-6">Transaction Account & Debtor</th>
                   <th className="py-4.5 px-6">Product Framework</th>
-                  <th className="py-4.5 px-6">Principal & Balances</th>
+                  <th className="py-4.5 px-6">Amount & Balances</th>
                   <th className="py-4.5 px-6">Charges & Net Value</th>
                   <th className="py-4.5 px-6">Lifecycle Status</th>
                   <th className="py-4.5 px-6 text-right pr-8">Actions</th>
@@ -526,19 +526,19 @@ export default function AccountTransactions() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div className="bg-slate-50/60 border border-slate-200/40 p-3.5 rounded-xl space-y-1">
                     <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1">
-                      <Fingerprint size={10} /> Reference ID
+                      Reference ID
                     </p>
                     <p
                       className="font-mono text-xs font-semibold text-slate-700 truncate"
                       title={selectedTxContext.id}
                     >
-                      {selectedTxContext.id.substring(0, 14)}...
+                      {selectedTxContext?.receiver_reference?.substring(0, 14)}
                     </p>
                   </div>
 
                   <div className="bg-slate-50/60 border border-slate-200/40 p-3.5 rounded-xl space-y-1">
                     <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1">
-                      <DollarSign size={10} /> Transaction Amount
+                      Transaction Amount
                     </p>
                     <p className="text-xl font-bold text-primary">
                       {formatAmount(selectedTxContext.amount)}
@@ -547,24 +547,27 @@ export default function AccountTransactions() {
 
                   <div className="bg-slate-50/60 border border-slate-200/40 p-3.5 rounded-xl space-y-1">
                     <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1">
-                      <CreditCard size={10} /> Linked Account ID
+                      Linked Account ID
                     </p>
                     <p
                       className="font-mono text-xs font-semibold text-slate-700 truncate"
                       title={selectedTxContext.account_id}
                     >
-                      {selectedTxContext.account_id.substring(0, 14)}...
+                      {selectedTxContext?.sender_account_number?.substring(
+                        0,
+                        14,
+                      )}
                     </p>
                   </div>
 
                   <div className="bg-slate-50/60 border border-slate-200/40 p-3.5 rounded-xl space-y-1">
                     <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1">
-                      <History size={10} /> Date Created
+                      Date Created
                     </p>
                     <p className="text-xs font-bold text-primary">
-                      {new Date(selectedTxContext.updatedAt).toLocaleTimeString(
-                        "en-KE",
-                      )}
+                      {new Date(
+                        selectedTxContext?.updatedAt,
+                      )?.toLocaleTimeString("en-KE")}
                     </p>
                   </div>
                 </div>
@@ -638,9 +641,6 @@ export default function AccountTransactions() {
                       <p className="text-slate-700 font-semibold mt-0.5 flex items-center gap-1">
                         <Building2 size={12} className="text-slate-400" />
                         {selectedTxContext.receiver_bank_name}{" "}
-                        <span className="text-slate-400 font-normal">
-                          (Code {selectedTxContext.receiver_bank_code})
-                        </span>
                       </p>
                     </div>
                     <div className="col-span-2 border-t border-slate-100/70 pt-2">
@@ -655,6 +655,18 @@ export default function AccountTransactions() {
                       </p>
                     </div>
                   </div>
+                </div>
+
+                <div className="bg-slate-50/60 border border-slate-200/40 p-3.5 rounded-xl space-y-1">
+                  <p className="text-[9px] text-slate-400 uppercase font-bold tracking-wider flex items-center gap-1">
+                    Notes
+                  </p>
+                  <p
+                    className="font-mono text-xs font-semibold text-slate-700 truncate"
+                    title={selectedTxContext.account_id}
+                  >
+                    {selectedTxContext?.type}
+                  </p>
                 </div>
               </div>
             </div>

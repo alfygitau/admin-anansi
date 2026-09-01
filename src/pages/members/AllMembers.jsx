@@ -213,7 +213,7 @@ export default function AllMembers() {
             </div>
 
             <div className="space-y-1">
-              <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">
+              <p className="text-2xl font-black text-slate-900 font-sans">
                 {data.totalMembers?.toLocaleString()}
               </p>
             </div>
@@ -231,7 +231,7 @@ export default function AllMembers() {
             </div>
 
             <div className="space-y-1">
-              <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">
+              <p className="text-2xl font-black text-slate-900 font-sans">
                 {data.activeMembers?.toLocaleString()}
               </p>
             </div>
@@ -249,7 +249,7 @@ export default function AllMembers() {
             </div>
 
             <div className="space-y-1">
-              <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">
+              <p className="text-2xl font-black text-slate-900 font-sans">
                 {data.pendingKyc?.toLocaleString()}
               </p>
             </div>
@@ -267,7 +267,7 @@ export default function AllMembers() {
             </div>
 
             <div className="space-y-1">
-              <p className="text-2xl font-black text-slate-900 tracking-tight font-mono">
+              <p className="text-2xl font-black text-slate-900 font-sans">
                 {data.dormantMembers?.toLocaleString()}
               </p>
             </div>

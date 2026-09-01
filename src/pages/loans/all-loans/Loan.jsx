@@ -9,7 +9,7 @@ import {
   User,
   Smartphone,
   ShieldCheck,
-  DollarSign,
+  Coins,
   Calendar,
   Layers,
   Percent,
@@ -20,6 +20,7 @@ import {
   Settings,
   Receipt,
   ShieldAlert,
+  PlusCircle,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -165,7 +166,14 @@ export default function Loan() {
                       }}
                     />
                     <MenuActionButton
-                      icon={<DollarSign size={13} />}
+                      icon={<PlusCircle size={13} />}
+                      label="Generate Loan Statement"
+                      onClick={() => {
+                        setIsActionMenuOpen(false);
+                      }}
+                    />
+                    <MenuActionButton
+                      icon={<Coins size={13} />}
                       label="Record Manual Payment"
                       onClick={() => {
                         handleRecordPayment();
@@ -212,12 +220,9 @@ export default function Loan() {
             </LoanCard>
 
             {/* CONTAINER 2: LIABILITIES & RECOVERY CAPITAL METRICS */}
-            <LoanCard
-              title="Balances & Amounts"
-              icon={<DollarSign size={16} />}
-            >
+            <LoanCard title="Balances & Amounts" icon={<Coins size={16} />}>
               <MetricItem
-                icon={<DollarSign />}
+                icon={<Coins />}
                 label="Amount Borrowed"
                 value={`${loan.currency} ${parseFloat(loan?.loan_amount)?.toFixed(2)}`}
               />
@@ -296,7 +301,7 @@ export default function Loan() {
                     )?.toLocaleDateString("en-KE", { dateStyle: "long" })}
                   />
                   <MetricItem
-                    icon={<DollarSign />}
+                    icon={<Coins />}
                     label="Total Due This Month"
                     value={`${loan?.currency} ${parseFloat(loan?.next_payment?.amount_due?.toString())?.toFixed(2)}`}
                   />
@@ -379,7 +384,17 @@ export default function Loan() {
                         <td className="py-3">KES {s?.principal_due}</td>
                         <td className="py-3">KES {s?.interest_due}</td>
                         <td className="py-3 text-right pr-2">
-                          <span className="px-2 py-0.5 uppercase text-[9px] font-bold bg-warning/10 text-warning rounded-md border border-warning/10">
+                          <span
+                            className={`px-2 py-0.5 uppercase text-[9px] font-bold rounded-md border ${
+                              s?.status?.toLowerCase() === "paid"
+                                ? "bg-emerald-50 text-emerald-700 border-emerald-200/60"
+                                : s?.status?.toLowerCase() === "pending"
+                                  ? "bg-amber-50 text-amber-700 border-amber-200/60"
+                                  : s?.status?.toLowerCase() === "partial"
+                                    ? "bg-sky-50 text-sky-700 border-sky-200/60"
+                                    : "bg-slate-50 text-slate-600 border-slate-200"
+                            }`}
+                          >
                             {s?.status}
                           </span>
                         </td>

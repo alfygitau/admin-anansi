@@ -10,6 +10,7 @@ import {
   Layers,
   AlertTriangle,
   Clock,
+  ArrowLeft,
 } from "lucide-react";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
 import { useQuery } from "react-query";
@@ -82,15 +83,24 @@ export default function MyLoanTransactions() {
     <>
       <div className="w-full space-y-4">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200/60 pb-6 select-none">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight text-primary">
-              Loan Transactions
-            </h2>
-            <p className="text-xs text-slate-400 font-medium mt-1">
-              Real-time tracking of repayments, principal-interest allocation
-              splits, automated penalties, and multi-channel payment
-              reconciliations.
-            </p>
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-3xs cursor-pointer transition-all active:scale-95"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <div>
+              <h2 className="text-2xl font-bold tracking-tight text-primary">
+                Loan Transactions
+              </h2>
+              <p className="text-xs text-slate-400 font-medium mt-1">
+                Real-time tracking of repayments, principal-interest allocation
+                splits, automated penalties, and multi-channel payment
+                reconciliations.
+              </p>
+            </div>
           </div>
         </div>
 
@@ -342,7 +352,7 @@ export default function MyLoanTransactions() {
                               ? "bg-emerald-50 text-emerald-600"
                               : tx.status?.toLowerCase() === "reversed"
                                 ? "bg-rose-50 text-rose-600"
-                                : "bg-amber-50 text-amber-600"
+                                : "bg-emerald-50 text-emerald-600"
                           }`}
                         >
                           {tx.status?.toLowerCase() === "reversed" ? (
@@ -350,7 +360,7 @@ export default function MyLoanTransactions() {
                           ) : (
                             <CheckCircle2 size={10} />
                           )}
-                          {tx.status || "Pending"}
+                          {tx.status || "Completed"}
                         </span>
                       </td>
 

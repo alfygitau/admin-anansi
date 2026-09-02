@@ -412,7 +412,7 @@ export default function AccountDetails() {
             <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
               <th className="py-4.5 px-6">Transaction Account & Debtor</th>
               <th className="py-4.5 px-6">Product Framework</th>
-              <th className="py-4.5 px-6">Principal & Balances</th>
+              <th className="py-4.5 px-6">Amount & Balances</th>
               <th className="py-4.5 px-6">Charges & Net Value</th>
               <th className="py-4.5 px-6">Lifecycle Status</th>
               <th className="py-4.5 px-6 text-right pr-8">Actions</th>

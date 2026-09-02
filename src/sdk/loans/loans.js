@@ -59,3 +59,61 @@ export const getMemberLoans = async (customerId) => {
     throw error?.response?.data || error;
   }
 };
+
+export const recordManualRepayment = async (
+  id,
+  amount,
+  payment_date,
+  payment_mode,
+  transaction_ref,
+  received_by,
+  idempotency_key,
+) => {
+  try {
+    const response = await loanClient.post(`/loans/${id}/repay`, {
+      amount,
+      payment_date,
+      payment_mode,
+      transaction_ref,
+      received_by,
+      idempotency_key,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const pollLoanRepaymentStatus = async (paymentId) => {
+  try {
+    const response = await loanClient.get(
+      `/mpesa/loan-repayments/${paymentId}/status`,
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const repayLoan = async (
+  loanId,
+  amount,
+  phone_number,
+  account_reference,
+  idempotency_key,
+) => {
+  try {
+    const response = await loanClient.post(`/mpesa/loan-repayments/stk-push`, {
+      loan_id: loanId,
+      amount: amount,
+      phone_number: phone_number,
+      org_code: "BA208",
+      account_reference: account_reference,
+      description: `Loan repayment ${account_reference}`,
+      idempotency_key: idempotency_key,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};

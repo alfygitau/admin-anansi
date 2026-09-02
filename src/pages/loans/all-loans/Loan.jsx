@@ -21,12 +21,24 @@ import {
   Receipt,
   ShieldAlert,
   PlusCircle,
+  Wallet,
+  ArrowRight,
+  CalendarClock,
+  AlertTriangle,
+  BellRing,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "react-query";
-import { getLoan } from "../../../sdk/loans/loans";
+import { useQuery, useMutation } from "react-query";
+import {
+  getLoan,
+  pollLoanRepaymentStatus,
+  repayLoan,
+} from "../../../sdk/loans/loans";
 import { useToast } from "../../../contexts/ToastProvider";
 import LoanDetailsLoader from "../../../skeletons/LoanDetailsLoader";
+import RepayLoan from "../../../components/repay-loan/PromptLoan";
+import RepaySummary from "../../../components/repay-loan/RepaySummary";
+import AwaitLoanStk from "../../../components/repay-loan/AwaitLoanStk";
 
 export default function Loan() {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
@@ -61,7 +73,7 @@ export default function Loan() {
     navigate(`/admin/all-loans/${loan?.id}/loan-statements`);
   };
 
-  const { isFetching } = useQuery({
+  const { isFetching, refetch } = useQuery({
     queryKey: ["loan", id],
     queryFn: async () => {
       const response = await getLoan(id);
@@ -80,8 +92,145 @@ export default function Loan() {
     },
   });
 
+  function isLoanDue(dueDateString) {
+    if (!dueDateString || typeof dueDateString !== "string") return false;
+    const parts = dueDateString.split("-");
+    if (parts.length !== 3) return false;
+
+    const year = parseInt(parts[0], 10);
+    const month = parseInt(parts[1], 10) - 1;
+    const day = parseInt(parts[2], 10);
+
+    if (isNaN(year) || isNaN(month) || isNaN(day)) return false;
+    const dueDate = new Date(year, month, day);
+    if (
+      dueDate.getFullYear() !== year ||
+      dueDate.getMonth() !== month ||
+      dueDate.getDate() !== day
+    ) {
+      return false;
+    }
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return dueDate <= today;
+  }
+
+  const [openRepayLoan, setOpenRepayLoan] = useState(false);
+  const [openRepaySummary, setOpenRepaySummary] = useState(false);
+  const [openRepayStk, setOpenRepayStk] = useState(false);
+  const [paymentId, setPaymentId] = useState("");
+  const [showAwaitPayment, setShowAwaitPayment] = useState(false);
+  const [paymentDetails, setPaymentDetails] = useState({
+    phoneNumber: "",
+    amount: "",
+    loanId: "",
+  });
+  const [payStatus, setPayStatus] = useState("pending");
+  const generateUUID = () => crypto.randomUUID();
+  const [reference, setReference] = useState("");
+
+  const { mutate, isLoading: isSubmitting } = useMutation({
+    mutationKey: ["repay loan"],
+    mutationFn: async (ref) => {
+      const response = await repayLoan(
+        loan?.id,
+        paymentDetails?.amount,
+        paymentDetails?.phoneNumber,
+        loan?.loan_code,
+        ref,
+      );
+      return response?.data?.data;
+    },
+    onSuccess: (data) => {
+      setPaymentId(data?.id);
+      setShowAwaitPayment(true);
+      setOpenRepaySummary(false);
+      setOpenRepayStk(true);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Application Failure",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  useQuery({
+    queryKey: ["poll loan repayment"],
+    queryFn: async () => {
+      const response = await pollLoanRepaymentStatus(paymentId);
+      return response.data.data?.terminal;
+    },
+    enabled: !!showAwaitPayment,
+    onSuccess: async (data) => {
+      if (data) {
+        setPayStatus("success");
+        setShowAwaitPayment(false);
+        refetch();
+      }
+    },
+    refetchInterval: 3000,
+    refetchIntervalInBackground: true,
+    onErrors: (error) => {
+      showToast({
+        title: "Authentication glitch",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const handlePromptRepayment = async () => {
+    const ref = generateUUID();
+    setReference(ref);
+    await mutate(ref);
+  };
+
+  const handleRetry = async () => {
+    await mutate(reference);
+  };
+
   return (
     <>
+      <RepayLoan
+        isOpen={openRepayLoan}
+        onClose={() => {
+          setOpenRepayLoan(false);
+          setShowAwaitPayment(false);
+        }}
+        paymentDetails={paymentDetails}
+        setPaymentDetails={setPaymentDetails}
+        onSubmitStk={() => {
+          setOpenRepayLoan(false);
+          setOpenRepaySummary(true);
+        }}
+      />
+
+      <RepaySummary
+        isOpen={openRepaySummary}
+        onClose={() => setOpenRepaySummary(false)}
+        onBack={() => {
+          setOpenRepaySummary(false);
+          setOpenRepayLoan(true);
+        }}
+        paymentDetails={paymentDetails}
+        isSubmitting={isSubmitting}
+        onConfirmStk={handlePromptRepayment}
+      />
+
+      <AwaitLoanStk
+        isOpen={openRepayStk}
+        onClose={() => setOpenRepayStk(false)}
+        onRetry={handleRetry}
+        phoneNumber={paymentDetails?.phoneNumber}
+        amount={paymentDetails?.amount}
+        timeoutSeconds={60}
+        status={payStatus}
+      />
+
       {isFetching ? (
         <LoanDetailsLoader />
       ) : (
@@ -187,6 +336,49 @@ export default function Loan() {
               )}
             </div>
           </div>
+          {isLoanDue(loan?.next_payment?.due_date) && (
+            <div className="relative overflow-hidden bg-primary text-white p-5 md:p-6 rounded-3xl shadow-xl border border-amber-500/30 flex flex-col md:flex-row md:items-center justify-between gap-5 transition-all">
+              <div className="flex items-center gap-5 z-10">
+                <div className="size-12 rounded-2xl bg-amber-500/10 backdrop-blur-md border border-amber-400/30 flex items-center justify-center shrink-0 text-amber-300 shadow-inner mt-0.5">
+                  <CalendarClock
+                    size={22}
+                    className="animate-pulse text-amber-400"
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-300 border border-amber-400/30 px-2.5 py-0.5 rounded-full flex items-center gap-1.5">
+                      <span className="size-1.5 rounded-full bg-amber-400 animate-ping" />
+                      Loan Installment Due
+                    </span>
+                  </div>
+                  <h3 className="text-base font-bold tracking-tight text-white">
+                    Overdue Loan Facility Detected
+                  </h3>
+                  <p className="text-xs text-slate-200/90 font-medium max-w-2xl leading-relaxed">
+                    This member's loan has surpassed its scheduled repayment
+                    date and is currently flagged as overdue. Initiate an
+                    immediate settlement now to maintain a good credit standing
+                    and avoid late payment penalties.
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setOpenRepayLoan(true)}
+                type="button"
+                className="z-10 h-12 px-6 bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs font-bold uppercase tracking-wider rounded-2xl transition-all shadow-lg hover:shadow-amber-500/20 flex items-center justify-center gap-2 shrink-0 cursor-pointer active:scale-98"
+              >
+                <Wallet size={16} />
+                <span>Prompt Member to Pay</span>
+                <ArrowRight size={15} />
+              </button>
+
+              {/* Decorative Glow */}
+              <div className="absolute -right-10 -bottom-10 size-40 bg-amber-500/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -left-10 -top-10 size-40 bg-blue-500/10 rounded-full blur-2xl pointer-events-none" />
+            </div>
+          )}
 
           {/* CORE INDUSTRIAL PARAMETERS VIEW GRID */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">

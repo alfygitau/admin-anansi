@@ -547,8 +547,8 @@ export default function LoanApplication() {
             />
             <MetricItem
               icon={<Briefcase />}
-              label="Sacco Branch Code"
-              value={application.loan_org_code}
+              label="Member Channel"
+              value={application.loan_channel}
             />
             <div className="md:col-span-2 space-y-2 bg-slate-50/70 p-4 rounded-2xl border border-slate-200/50 mt-1">
               <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 block">
@@ -585,11 +585,6 @@ export default function LoanApplication() {
               label="Payment Interval"
               value={application.loan_interval}
               isCapitalized
-            />
-            <MetricItem
-              icon={<Layers />}
-              label="Origination Channel"
-              value={application.loan_channel}
             />
             <MetricItem
               icon={<FileText />}

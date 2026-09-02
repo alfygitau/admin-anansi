@@ -424,7 +424,7 @@ export default function LoanApplications() {
                               navigate(`/admin/loan-applications/${app?.id}`)
                             }
                             className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-2xs bg-white cursor-pointer"
-                            title="View Application Audit File"
+                            title="View application"
                           >
                             <Eye size={14} />
                           </button>

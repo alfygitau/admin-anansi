@@ -432,7 +432,7 @@ export default function AllLoans() {
                               navigate(`/admin/all-loans/${loan?.id}`)
                             }
                             className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
-                            title="Open Amortization File"
+                            title="Open loan"
                           >
                             <Eye size={14} />
                           </button>
@@ -444,7 +444,7 @@ export default function AllLoans() {
                               )
                             }
                             className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
-                            title="Log Repayment Transaction"
+                            title="Log repayment transaction"
                           >
                             <ArrowUpRight size={14} />
                           </button>

@@ -479,13 +479,13 @@ export default function AllMembers() {
                         <div className="flex flex-col space-y-1.5">
                           <span
                             className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${
-                              member.suspended
+                              member.status === "Suspended" || member?.status === 'Cancelled'
                                 ? "bg-red-50 border-red-100 text-red-600"
                                 : "bg-emerald-50 border-emerald-100 text-emerald-600"
                             }`}
                           >
                             <span
-                              className={`size-1 rounded-full ${member.suspended ? "bg-red-500" : "bg-emerald-500"}`}
+                              className={`size-1 rounded-full ${member.status === "Suspended" || member?.status === 'Cancelled' ? "bg-red-500" : "bg-emerald-500"}`}
                             />
                             {member.status}
                           </span>

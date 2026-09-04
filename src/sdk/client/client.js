@@ -46,6 +46,8 @@ client.interceptors.response.use(
     const method = error.config?.method?.toUpperCase() || "UNKNOWN";
     const url = error.config?.url || "UNKNOWN_URL";
 
+    Sentry.captureMessage(`Interceptor Triggered: ${method} ${url}`);
+
     Sentry.captureException(error, {
       tags: {
         endpoint: url,

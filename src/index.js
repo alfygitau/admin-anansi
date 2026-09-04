@@ -7,8 +7,15 @@ import "./styles/variable.css";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ToastProvider } from "./contexts/ToastProvider";
 import { AuthProvider } from "./contexts/AuthProvider";
+import * as Sentry from "@sentry/react";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
+
+Sentry.init({
+  dsn: "https://1c0d555310c965e0b9a66e305bbda950@o4508850577604609.ingest.de.sentry.io/4512023115661392",
+
+  integrations: [Sentry.browserTracingIntegration()],
+});
 
 const queryClient = new QueryClient({
   defaultOptions: {

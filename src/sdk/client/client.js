@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as Sentry from "@sentry/react";
 
 const apiUrl = process.env.REACT_APP_API_BASE_URL;
 export const client = axios.create({
@@ -33,6 +34,29 @@ client.interceptors.response.use(
       // Using window.location.href is the most reliable way outside of a React component
       window.location.href = "/auth/login";
     }
+
+    return Promise.reject(error);
+  },
+);
+
+client.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    const method = error.config?.method?.toUpperCase() || "UNKNOWN";
+    const url = error.config?.url || "UNKNOWN_URL";
+
+    Sentry.captureException(error, {
+      tags: {
+        endpoint: url,
+        method,
+        status: status || "NETWORK_ERROR",
+      },
+      extra: {
+        responseData: error.response?.data,
+        params: error.config?.params,
+      },
+    });
 
     return Promise.reject(error);
   },

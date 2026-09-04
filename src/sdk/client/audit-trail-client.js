@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as Sentry from "@sentry/react";
 
 const apiUrl = process.env.REACT_APP_API_AUDIT_BASE_URL;
 export const auditClient = axios.create({
@@ -29,10 +30,31 @@ auditClient.interceptors.response.use(
       // 1. Clear the expired data from local storage
       localStorage.removeItem("auth");
 
-      // 2. Redirect the user to the login page
-      // Using window.location.href is the most reliable way outside of a React component
       window.location.href = "/auth/login";
     }
+
+    return Promise.reject(error);
+  },
+);
+
+auditClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    const method = error.config?.method?.toUpperCase() || "UNKNOWN";
+    const url = error.config?.url || "UNKNOWN_URL";
+
+    Sentry.captureException(error, {
+      tags: {
+        endpoint: url,
+        method,
+        status: status || "NETWORK_ERROR",
+      },
+      extra: {
+        responseData: error.response?.data,
+        params: error.config?.params,
+      },
+    });
 
     return Promise.reject(error);
   },

@@ -374,7 +374,7 @@ export default function AllMembers() {
                     </tr>
                   ))
                 ) : members && members.length > 0 ? (
-                  members.map((member) => (
+                  members?.map((member) => (
                     <tr
                       key={member.id}
                       className="group transition-colors hover:bg-slate-50/40"

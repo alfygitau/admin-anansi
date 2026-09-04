@@ -1,4 +1,6 @@
 import axios from "axios";
+import { client } from "./client";
+import * as Sentry from "@sentry/react";
 
 const apiUrl = process.env.REACT_APP_LOAN_BASE_URL;
 const apiKey = process.env.REACT_APP_API_KEY;
@@ -18,6 +20,29 @@ loanClient.interceptors.response.use(
       localStorage.removeItem("auth");
       window.location.href = "/auth/login";
     }
+
+    return Promise.reject(error);
+  },
+);
+
+loanClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    const method = error.config?.method?.toUpperCase() || "UNKNOWN";
+    const url = error.config?.url || "UNKNOWN_URL";
+
+    Sentry.captureException(error, {
+      tags: {
+        endpoint: url,
+        method,
+        status: status || "NETWORK_ERROR",
+      },
+      extra: {
+        responseData: error.response?.data,
+        params: error.config?.params,
+      },
+    });
 
     return Promise.reject(error);
   },

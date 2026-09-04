@@ -31,6 +31,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 import ApprovalSuccess from "../../../components/approve-application/ApproveSuccess";
+import * as Sentry from "@sentry/react";
 
 const ApproveApplication = () => {
   const { showToast } = useToast();
@@ -98,6 +99,9 @@ const ApproveApplication = () => {
       setRecommendedAmount(data?.applied_amount);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Application", action: "get loan application" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",
@@ -127,6 +131,12 @@ const ApproveApplication = () => {
       setShowApprovalSuccess(true);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: {
+          component: "Loan Application",
+          action: "approve loan application",
+        },
+      });
       showToast({
         title: "Decision processing failed",
         type: "error",

@@ -26,6 +26,7 @@ import { useToast } from "../../contexts/ToastProvider";
 import Pagination from "../../components/pagination/Pagination";
 import { getRoles } from "../../sdk/roles/roles";
 import { useFormattedDateTime } from "../../hooks/useFormatDateTime";
+import * as Sentry from "@sentry/react";
 
 export default function AllUsers() {
   const [activeMenuId, setActiveMenuId] = useState(null);
@@ -101,6 +102,9 @@ export default function AllUsers() {
       setTotalItems(data.meta.totalItems);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Users", action: "get users" },
+      });
       showToast({
         title: "Members processing failed",
         type: "error",

@@ -14,6 +14,7 @@ import { useQuery } from "react-query";
 import { getLoanProducts } from "../../sdk/loan-products/loan-products";
 import { useToast } from "../../contexts/ToastProvider";
 import { useFormatAmount } from "../../hooks/useFormatAmount";
+import * as Sentry from "@sentry/react";
 
 export default function LoanProducts() {
   const [activeTab, setActiveTab] = useState("active");
@@ -33,6 +34,9 @@ export default function LoanProducts() {
       setLoanProducts(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Products", action: "get all loan products" },
+      });
       showToast({
         title: "Loan Products processing failed",
         type: "error",

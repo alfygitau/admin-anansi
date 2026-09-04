@@ -19,6 +19,7 @@ import AddPermission from "../../components/permission/AddPermission";
 import { useToast } from "../../contexts/ToastProvider";
 import { useQuery } from "react-query";
 import { getModules } from "../../sdk/users/users";
+import * as Sentry from "@sentry/react";
 
 export default function Permissions() {
   const navigate = useNavigate();
@@ -44,6 +45,9 @@ export default function Permissions() {
       setModulesList(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Permissions", action: "get permission modules" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

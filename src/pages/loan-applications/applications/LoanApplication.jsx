@@ -40,6 +40,7 @@ import {
 } from "../../../sdk/loan-applications/loan-applications";
 import { useToast } from "../../../contexts/ToastProvider";
 import ApplicationLoader from "../../../skeletons/ApplicationLoader";
+import * as Sentry from "@sentry/react";
 
 export default function LoanApplication() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -92,6 +93,9 @@ export default function LoanApplication() {
       setApplication(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Application", action: "get loan application" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",
@@ -111,6 +115,9 @@ export default function LoanApplication() {
       setApplicationChattels(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Applications", action: "get chattels" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",
@@ -130,6 +137,12 @@ export default function LoanApplication() {
       setApplicationDocuments(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: {
+          component: "Loan Application",
+          action: "get loan applications",
+        },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

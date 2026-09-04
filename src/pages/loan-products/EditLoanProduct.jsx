@@ -25,6 +25,7 @@ import {
   getLoanProduct,
 } from "../../sdk/loan-products/loan-products";
 import { useQuery, useMutation } from "react-query";
+import * as Sentry from "@sentry/react";
 
 export default function EditLoanProduct() {
   const [formData, setFormData] = useState({
@@ -178,6 +179,9 @@ export default function EditLoanProduct() {
       });
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Products", action: "get loan products" },
+      });
       showToast({
         title: "Loan Products processing failed",
         type: "error",
@@ -266,6 +270,9 @@ export default function EditLoanProduct() {
       navigate(`/admin/loan-products`);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Products", action: "edit loan product" },
+      });
       showToast({
         title: "Loan Products processing failed",
         type: "error",

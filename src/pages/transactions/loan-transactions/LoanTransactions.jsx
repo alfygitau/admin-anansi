@@ -17,6 +17,7 @@ import { getLoanTransactions } from "../../../sdk/loan-transactions/loan-transac
 import LoanTransactionsFilter from "../../../components/filters/LoanTransactionsFilter";
 import { useNavigate } from "react-router-dom";
 import Pagination from "../../../components/pagination/Pagination";
+import * as Sentry from "@sentry/react";
 
 export default function LoanTransactions() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -92,7 +93,9 @@ export default function LoanTransactions() {
       setTotalItems(data.total);
     },
     onError: (error) => {
-      console.log(error);
+      Sentry.captureException(error, {
+        tags: { component: "Loan Transactions", action: "loan transactions" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

@@ -21,6 +21,7 @@ import Pagination from "../../../components/pagination/Pagination";
 import FilterApplications from "../../../components/filters/ApplicationFilter";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
 import MemberSearch from "../../../components/search-member/SearchMember";
+import * as Sentry from "@sentry/react";
 
 export default function LoanApplications() {
   const [activeTab, setActiveTab] = useState("all");
@@ -85,6 +86,12 @@ export default function LoanApplications() {
       setTotalItems(data.total);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: {
+          component: "Loan Applications",
+          action: "get loan applications",
+        },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

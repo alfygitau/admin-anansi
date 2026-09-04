@@ -14,7 +14,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 Sentry.init({
   dsn: "https://1c0d555310c965e0b9a66e305bbda950@o4508850577604609.ingest.de.sentry.io/4512023115661392",
 
-  integrations: [Sentry.browserTracingIntegration()],
+  integrations: [
+    Sentry.captureConsoleIntegration({
+      levels: ["error", "warn"],
+    }),
+  ],
 });
 
 const queryClient = new QueryClient({

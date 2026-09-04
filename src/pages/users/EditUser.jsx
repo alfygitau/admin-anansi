@@ -28,6 +28,7 @@ import { useToast } from "../../contexts/ToastProvider";
 import { addUser, editUser, getUser } from "../../sdk/users/users";
 import { useNavigate, useParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import * as Sentry from "@sentry/react";
 
 export default function EditAdminUser() {
   const navigate = useNavigate();
@@ -210,7 +211,9 @@ export default function EditAdminUser() {
       });
     },
     onError: (error) => {
-      console.log(error);
+      Sentry.captureException(error, {
+        tags: { component: "Users", action: "edit user" },
+      });
       showToast({
         title: "Provisioning execution aborted",
         type: "error",

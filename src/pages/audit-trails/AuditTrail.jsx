@@ -18,6 +18,7 @@ import { useQuery } from "react-query";
 import { getAuditTrails } from "../../sdk/users/users";
 import Pagination from "../../components/pagination/Pagination";
 import AuditTrailFilter from "../../components/filters/AuditTrailFilter";
+import * as Sentry from "@sentry/react";
 
 export default function AuditTrail() {
   const navigate = useNavigate();
@@ -78,6 +79,9 @@ export default function AuditTrail() {
       setTotalItems(data.total);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Audit Trail", action: "All audit trails" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

@@ -24,6 +24,7 @@ import { useQuery } from "react-query";
 import { getLoanProduct } from "../../sdk/loan-products/loan-products";
 import { useToast } from "../../contexts/ToastProvider";
 import { useParams } from "react-router-dom";
+import * as Sentry from "@sentry/react";
 
 export default function LoanProduct() {
   const [loanProduct, setLoanProduct] = useState({});
@@ -40,6 +41,9 @@ export default function LoanProduct() {
       setLoanProduct(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Product", action: "get loan product" },
+      });
       showToast({
         title: "Loan Products processing failed",
         type: "error",

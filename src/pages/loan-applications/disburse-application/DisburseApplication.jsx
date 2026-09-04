@@ -37,6 +37,7 @@ import {
 } from "../../../sdk/loan-applications/loan-applications";
 import useAuth from "../../../hooks/useAuth";
 import DisburseSuccess from "../../../components/disburse-application/DisburseSuccess";
+import * as Sentry from "@sentry/react";
 
 export default function DisburseLoan() {
   const navigate = useNavigate();
@@ -101,6 +102,9 @@ export default function DisburseLoan() {
       setApplication(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Application", action: "get loan application" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",
@@ -134,6 +138,12 @@ export default function DisburseLoan() {
       setShowDisburseSuccess(true);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: {
+          component: "Loan Application",
+          action: "disburse loan application",
+        },
+      });
       showToast({
         title: "Disbursement failed",
         type: "error",

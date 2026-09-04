@@ -22,6 +22,7 @@ import AddRole from "../../components/add-role/AddRole";
 import { addRole, editRole } from "../../sdk/users/users";
 import EditRole from "../../components/add-role/EditRole";
 import AssignPermissions from "../../components/add-role/EditRolePermissions";
+import * as Sentry from "@sentry/react";
 
 export default function RolesTable() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,6 +70,9 @@ export default function RolesTable() {
       setRoles(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Roles", action: "get roles" },
+      });
       showToast({
         title: "Roles processing failed",
         type: "error",
@@ -91,6 +95,9 @@ export default function RolesTable() {
     },
     onError: (error) => {
       setStep("form");
+      Sentry.captureException(error, {
+        tags: { component: "Roles", action: "add role" },
+      });
       showToast({
         title: "Roles processing failed",
         type: "error",
@@ -101,7 +108,7 @@ export default function RolesTable() {
   });
 
   const { editMutate, isLoading: editLoading } = useMutation({
-    mutationKey: ["add role"],
+    mutationKey: ["edit role"],
     mutationFn: async () => {
       const response = await editRole(
         selectedRole?.id,
@@ -117,6 +124,9 @@ export default function RolesTable() {
     },
     onError: (error) => {
       setStep("form");
+      Sentry.captureException(error, {
+        tags: { component: "Roles", action: "edit role" },
+      });
       showToast({
         title: "Roles processing failed",
         type: "error",

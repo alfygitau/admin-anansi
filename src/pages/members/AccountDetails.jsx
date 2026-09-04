@@ -28,6 +28,7 @@ import SavingsStkPush from "../../components/add-savings/AwaitSavingsStk";
 import AddShares from "../../components/buy-shares/AddShares";
 import SharesSummary from "../../components/buy-shares/SharesSummary";
 import SharesStkPush from "../../components/buy-shares/AwaitSharesStk";
+import * as Sentry from "@sentry/react";
 
 export default function AccountDetails() {
   const [copied, setCopied] = useState(false);
@@ -61,6 +62,9 @@ export default function AccountDetails() {
       setAccount(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Account", action: "get account" },
+      });
       showToast({
         title: "Account processing failed",
         type: "error",
@@ -80,6 +84,9 @@ export default function AccountDetails() {
       setTransactions(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Account", action: "get account transactions" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

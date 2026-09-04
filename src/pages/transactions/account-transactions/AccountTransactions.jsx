@@ -27,6 +27,7 @@ import { getAllTransactions } from "../../../sdk/transactions/transactions";
 import TransactionsFilter from "../../../components/filters/TransactionsFilter";
 import Pagination from "../../../components/pagination/Pagination";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
+import * as Sentry from "@sentry/react";
 
 export default function AccountTransactions() {
   const [selectedTxContext, setSelectedTxContext] = useState(null);
@@ -108,6 +109,9 @@ export default function AccountTransactions() {
       setTotalItems(data.meta.totalItems);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Transactions", action: "account transactions" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

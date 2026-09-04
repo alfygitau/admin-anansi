@@ -20,6 +20,7 @@ import { useToast } from "../../contexts/ToastProvider";
 import { useNavigate } from "react-router-dom";
 import { addLoanProduct } from "../../sdk/loan-products/loan-products";
 import { useMutation } from "react-query";
+import * as Sentry from "@sentry/react";
 
 export default function AddLoanProduct() {
   const [errors, setErrors] = useState({});
@@ -222,6 +223,9 @@ export default function AddLoanProduct() {
       navigate(`/admin/loan-products`);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Products", action: "add loan products" },
+      });
       showToast({
         title: "Loan Products processing failed",
         type: "error",

@@ -11,6 +11,7 @@ import { useToast } from "../../contexts/ToastProvider";
 import { useQuery } from "react-query";
 import { getGuarantors } from "../../sdk/guarantors/guarantors";
 import Pagination from "../../components/pagination/Pagination";
+import * as Sentry from "@sentry/react";
 
 export default function Guarantors() {
   const [guarantors, setGuarantors] = useState([]);
@@ -72,6 +73,9 @@ export default function Guarantors() {
       setTotalItems(data.total);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Guarantors", action: "All guarantors" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

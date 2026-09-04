@@ -20,6 +20,7 @@ import {
   getApplication,
 } from "../../../sdk/loan-applications/loan-applications";
 import useAuth from "../../../hooks/useAuth";
+import * as Sentry from "@sentry/react";
 
 export default function CancelApplication() {
   const navigate = useNavigate();
@@ -39,6 +40,9 @@ export default function CancelApplication() {
       setApplication(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Application", action: "get loan application" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",
@@ -87,6 +91,12 @@ export default function CancelApplication() {
       navigate("/admin/loan-applications");
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: {
+          component: "Loan Application",
+          action: "cancel loan application",
+        },
+      });
       showToast({
         title: "Cancellation Failed",
         type: "error",

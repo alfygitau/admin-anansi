@@ -54,140 +54,158 @@ import Analytics from "./pages/reports/Analytics";
 import VerifyChattel from "./pages/loan-applications/verify-chattels/VerifyChattel";
 import MyLoanTransactions from "./pages/loans/all-loans/LoanTransactions";
 import LoanApplicationSuccess from "./pages/loans/apply-loan/ApplicationSuccess";
+import * as Sentry from "@sentry/react";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/admin" element={<Homelayer />}>
-        <Route index path="dashboard" element={<Homepage />} />
-        <Route path="loan-products" element={<LoanProducts />} />
-        <Route path="add-loan-product" element={<AddLoanProduct />} />
-        <Route path="edit-loan-product/:id" element={<EditLoanProduct />} />
-        <Route path="loan-products/:id" element={<LoanProduct />} />
+    <Sentry.ErrorBoundary
+      fallback={null}
+      onError={(error, componentStack) => {
+        Sentry.captureException(error, {
+          extra: {
+            componentStack,
+          },
+        });
+      }}
+    >
+      <Routes>
+        <Route path="/admin" element={<Homelayer />}>
+          <Route index path="dashboard" element={<Homepage />} />
+          <Route path="loan-products" element={<LoanProducts />} />
+          <Route path="add-loan-product" element={<AddLoanProduct />} />
+          <Route path="edit-loan-product/:id" element={<EditLoanProduct />} />
+          <Route path="loan-products/:id" element={<LoanProduct />} />
 
-        <Route path="loan-applications" element={<LoanApplications />} />
+          <Route path="loan-applications" element={<LoanApplications />} />
+          <Route
+            path="loan-applications-approvals"
+            element={<LoanApplicationApprovals />}
+          />
+          <Route path="loan-applications/:id" element={<LoanApplication />} />
+          <Route
+            path="loan-applications/:id/disburse"
+            element={<DisburseLoan />}
+          />
+          <Route
+            path="loan-applications/:id/verify-chattel/:chattelId"
+            element={<VerifyChattel />}
+          />
+          <Route
+            path="loan-applications/:id/cancel-application"
+            element={<CancelApplication />}
+          />
+          <Route
+            path="loan-applications/:id/send-notification"
+            element={<NotifyApplicant />}
+          />
+
+          <Route path="all-loans" element={<AllLoans />} />
+          <Route path="all-loans/:id" element={<Loan />} />
+          <Route
+            path="all-loans/:id/transactions"
+            element={<MyLoanTransactions />}
+          />
+          <Route path="guarantors" element={<Guarantors />} />
+          <Route
+            path="all-loans/:id/send-notification"
+            element={<NotifyBorrower />}
+          />
+          <Route
+            path="all-loans/:id/record-payment"
+            element={<RecordManualPayment />}
+          />
+          <Route
+            path="all-loans/:id/loan-statements"
+            element={<LoanStatements />}
+          />
+
+          <Route path="all-users" element={<AllUsers />} />
+          <Route path="all-users/:id" element={<AdminUser />} />
+          <Route path="add-admin-user" element={<AddAdminUser />} />
+          <Route path="edit-admin-user/:id" element={<EditAdminUser />} />
+          <Route path="roles" element={<Roles />} />
+          <Route path="permissions" element={<Permissions />} />
+          <Route path="audit-trail" element={<AuditTrail />} />
+
+          <Route
+            path="account-transactions"
+            element={<AccountTransactions />}
+          />
+          <Route path="loan-transactions" element={<LoanTransactions />} />
+
+          <Route path="all-members" element={<AllMembers />} />
+          <Route path="all-members/:id" element={<MemberDetails />} />
+          <Route path="all-members/add-member" element={<AddMember />} />
+          <Route
+            path="all-members/account/:id/:accountNumber"
+            element={<AccountDetails />}
+          />
+
+          <Route path="accounts" element={<Accounts />} />
+          <Route path="accounts/:id" element={<MemberAccounts />} />
+
+          <Route
+            path="loan-applications/:id/approve"
+            element={<ApproveApplication />}
+          />
+          <Route
+            path="loan-applications/:id/manager-approval"
+            element={<ManagerApproval />}
+          />
+
+          <Route path="apply-loan/products/:id" element={<ApplyProducts />} />
+          <Route
+            path="apply-loan/:memberId/eligibility/:productId"
+            element={<LoanEligibility />}
+          />
+          <Route
+            path="apply-loan/:memberId/loan-application-details/:productId"
+            element={<LoanApplicationDetails />}
+          />
+          <Route
+            path="apply-loan/:productId/add-guarantor/:appId"
+            element={<AddGuarantor />}
+          />
+          <Route
+            path="apply-loan/:productId/collaterals/:appId"
+            element={<ChattelRegistry />}
+          />
+          <Route
+            path="apply-loan/:productId/add-documents/:appId"
+            element={<LoanDocuments />}
+          />
+          <Route
+            path="apply-loan/application-successful/:appId"
+            element={<LoanApplicationSuccess />}
+          />
+          <Route path="help-support" element={<HelpCenter />} />
+
+          <Route path="financial-reports" element={<FinancialReports />} />
+          <Route path="all-reports" element={<AllReports />} />
+          <Route path="analytics" element={<Analytics />} />
+        </Route>
+
+        <Route path="/auth/member-login" element={<MemberLogin />} />
         <Route
-          path="loan-applications-approvals"
-          element={<LoanApplicationApprovals />}
-        />
-        <Route path="loan-applications/:id" element={<LoanApplication />} />
-        <Route
-          path="loan-applications/:id/disburse"
-          element={<DisburseLoan />}
-        />
-        <Route
-          path="loan-applications/:id/verify-chattel/:chattelId"
-          element={<VerifyChattel />}
-        />
-        <Route
-          path="loan-applications/:id/cancel-application"
-          element={<CancelApplication />}
-        />
-        <Route
-          path="loan-applications/:id/send-notification"
-          element={<NotifyApplicant />}
+          path="/auth/member-verify-login"
+          element={<VerifyMemberLogin />}
         />
 
-        <Route path="all-loans" element={<AllLoans />} />
-        <Route path="all-loans/:id" element={<Loan />} />
         <Route
-          path="all-loans/:id/transactions"
-          element={<MyLoanTransactions />}
-        />
-        <Route path="guarantors" element={<Guarantors />} />
-        <Route
-          path="all-loans/:id/send-notification"
-          element={<NotifyBorrower />}
+          path="/auth/member-accept-terms-conditions"
+          element={<MemberAcceptTerms />}
         />
         <Route
-          path="all-loans/:id/record-payment"
-          element={<RecordManualPayment />}
-        />
-        <Route
-          path="all-loans/:id/loan-statements"
-          element={<LoanStatements />}
+          path="/auth/member-create-access"
+          element={<MemberCreateAccess />}
         />
 
-        <Route path="all-users" element={<AllUsers />} />
-        <Route path="all-users/:id" element={<AdminUser />} />
-        <Route path="add-admin-user" element={<AddAdminUser />} />
-        <Route path="edit-admin-user/:id" element={<EditAdminUser />} />
-        <Route path="roles" element={<Roles />} />
-        <Route path="permissions" element={<Permissions />} />
-        <Route path="audit-trail" element={<AuditTrail />} />
+        <Route path="/" element={<AdminLogin />} />
+        <Route path="auth/verify-login" element={<VerifyLogin />} />
 
-        <Route path="account-transactions" element={<AccountTransactions />} />
-        <Route path="loan-transactions" element={<LoanTransactions />} />
-
-        <Route path="all-members" element={<AllMembers />} />
-        <Route path="all-members/:id" element={<MemberDetails />} />
-        <Route path="all-members/add-member" element={<AddMember />} />
-        <Route
-          path="all-members/account/:id/:accountNumber"
-          element={<AccountDetails />}
-        />
-
-        <Route path="accounts" element={<Accounts />} />
-        <Route path="accounts/:id" element={<MemberAccounts />} />
-
-        <Route
-          path="loan-applications/:id/approve"
-          element={<ApproveApplication />}
-        />
-        <Route
-          path="loan-applications/:id/manager-approval"
-          element={<ManagerApproval />}
-        />
-
-        <Route path="apply-loan/products/:id" element={<ApplyProducts />} />
-        <Route
-          path="apply-loan/:memberId/eligibility/:productId"
-          element={<LoanEligibility />}
-        />
-        <Route
-          path="apply-loan/:memberId/loan-application-details/:productId"
-          element={<LoanApplicationDetails />}
-        />
-        <Route
-          path="apply-loan/:productId/add-guarantor/:appId"
-          element={<AddGuarantor />}
-        />
-        <Route
-          path="apply-loan/:productId/collaterals/:appId"
-          element={<ChattelRegistry />}
-        />
-        <Route
-          path="apply-loan/:productId/add-documents/:appId"
-          element={<LoanDocuments />}
-        />
-        <Route
-          path="apply-loan/application-successful/:appId"
-          element={<LoanApplicationSuccess />}
-        />
-        <Route path="help-support" element={<HelpCenter />} />
-
-        <Route path="financial-reports" element={<FinancialReports />} />
-        <Route path="all-reports" element={<AllReports />} />
-        <Route path="analytics" element={<Analytics />} />
-      </Route>
-
-      <Route path="/auth/member-login" element={<MemberLogin />} />
-      <Route path="/auth/member-verify-login" element={<VerifyMemberLogin />} />
-
-      <Route
-        path="/auth/member-accept-terms-conditions"
-        element={<MemberAcceptTerms />}
-      />
-      <Route
-        path="/auth/member-create-access"
-        element={<MemberCreateAccess />}
-      />
-
-      <Route path="/" element={<AdminLogin />} />
-      <Route path="auth/verify-login" element={<VerifyLogin />} />
-
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </Sentry.ErrorBoundary>
   );
 }
 

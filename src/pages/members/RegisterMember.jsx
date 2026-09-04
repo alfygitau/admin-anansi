@@ -36,6 +36,7 @@ import {
   scanFrontIdentification,
   uploadSelfieImage,
 } from "../../sdk/upload/upload";
+import * as Sentry from "@sentry/react";
 
 const REGISTRATION_STEPS = [
   {
@@ -387,6 +388,9 @@ export default function AddMember() {
     },
     onSuccess: () => {},
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Add Member", action: "addMember" },
+      });
       showToast({
         title: "Members processing failed",
         type: "error",

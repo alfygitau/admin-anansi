@@ -60,6 +60,7 @@ import {
 import AddInvestment from "../../components/quick-invest/AddInvestment";
 import InvestSummary from "../../components/quick-invest/InvestSummary";
 import AwaitInvestStk from "../../components/quick-invest/AwaitInvestStk";
+import * as Sentry from "@sentry/react";
 
 const getLoanStatusStyles = (status) => {
   const currentStatus = (status || "Active").toLowerCase();
@@ -158,6 +159,9 @@ export default function MemberDetails({ onUpdateDocument }) {
       }));
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Member", action: "getMember" },
+      });
       showToast({
         title: "Member processing failed",
         type: "error",
@@ -219,6 +223,9 @@ export default function MemberDetails({ onUpdateDocument }) {
       setMemberLoans(data?.loan_data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Member loan", action: "getMemberLoan" },
+      });
       showToast({
         title: "Member processing failed",
         type: "error",
@@ -302,6 +309,9 @@ export default function MemberDetails({ onUpdateDocument }) {
       setShowAwaitPayment(true);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Pay Registration", action: "registration" },
+      });
       showToast({
         title: "Member processing failed",
         type: "error",
@@ -338,6 +348,9 @@ export default function MemberDetails({ onUpdateDocument }) {
     refetchInterval: 3000,
     refetchIntervalInBackground: true,
     onErrors: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Poll registration", action: "registration" },
+      });
       showToast({
         title: "Authentication glitch",
         type: "error",

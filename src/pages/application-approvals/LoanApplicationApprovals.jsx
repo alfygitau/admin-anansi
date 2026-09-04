@@ -22,6 +22,7 @@ import { useToast } from "../../contexts/ToastProvider";
 import { useFormatAmount } from "../../hooks/useFormatAmount";
 import { getAllApprovals } from "../../sdk/loan-applications/loan-applications";
 import Pagination from "../../components/pagination/Pagination";
+import * as Sentry from "@sentry/react";
 
 export default function LoanApplicationApprovals() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -85,8 +86,11 @@ export default function LoanApplicationApprovals() {
       setTotalItems(data.total);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Approvals", action: "get approvals" },
+      });
       showToast({
-        title: "Transactions processing failed",
+        title: "Approvals processing failed",
         type: "error",
         position: "top-right",
         description: error?.response?.data?.message || error.message,

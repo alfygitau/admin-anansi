@@ -18,6 +18,7 @@ import { getLoans } from "../../../sdk/loans/loans";
 import { useToast } from "../../../contexts/ToastProvider";
 import FilterLoans from "../../../components/filters/FilterLoans";
 import { useFormatAmount } from "../../../hooks/useFormatAmount";
+import * as Sentry from "@sentry/react";
 
 export default function AllLoans() {
   const [activeTab, setActiveTab] = useState("all");
@@ -73,6 +74,9 @@ export default function AllLoans() {
       setTotalItems(data.total);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loans", action: "getLoans" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

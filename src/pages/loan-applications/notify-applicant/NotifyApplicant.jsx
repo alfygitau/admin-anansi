@@ -19,6 +19,7 @@ import { useToast } from "../../../contexts/ToastProvider";
 import { getApplication } from "../../../sdk/loan-applications/loan-applications";
 import useAuth from "../../../hooks/useAuth";
 import { addNotification } from "../../../sdk/notifications/notifications";
+import * as Sentry from "@sentry/react";
 
 export default function NotifyApplicant() {
   const navigate = useNavigate();
@@ -78,6 +79,9 @@ export default function NotifyApplicant() {
       navigate(-1);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Application", action: "notify applicant" },
+      });
       showToast({
         title: "Failed to Send Message",
         type: "error",
@@ -103,6 +107,9 @@ export default function NotifyApplicant() {
       }));
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan Application", action: "get application" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

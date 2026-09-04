@@ -39,6 +39,7 @@ import LoanDetailsLoader from "../../../skeletons/LoanDetailsLoader";
 import RepayLoan from "../../../components/repay-loan/PromptLoan";
 import RepaySummary from "../../../components/repay-loan/RepaySummary";
 import AwaitLoanStk from "../../../components/repay-loan/AwaitLoanStk";
+import * as Sentry from "@sentry/react";
 
 export default function Loan() {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
@@ -83,6 +84,9 @@ export default function Loan() {
       setLoan(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan", action: "get loan" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",
@@ -148,6 +152,9 @@ export default function Loan() {
       setOpenRepayStk(true);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan", action: "repay loan" },
+      });
       showToast({
         title: "Application Failure",
         type: "error",

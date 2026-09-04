@@ -21,6 +21,7 @@ import { useMutation } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
 import { recordManualRepayment } from "../../../sdk/loans/loans";
 import useAuth from "../../../hooks/useAuth";
+import * as Sentry from "@sentry/react";
 
 export default function RecordManualPayment() {
   const navigate = useNavigate();
@@ -102,6 +103,9 @@ export default function RecordManualPayment() {
       navigate(-1);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan", action: "record manual payment" },
+      });
       showToast({
         title: "Recording Failed",
         type: "error",

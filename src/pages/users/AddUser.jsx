@@ -28,6 +28,7 @@ import { useToast } from "../../contexts/ToastProvider";
 import { addUser } from "../../sdk/users/users";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import * as Sentry from "@sentry/react";
 
 export default function AddAdminUser() {
   const navigate = useNavigate();
@@ -65,6 +66,9 @@ export default function AddAdminUser() {
       setRoles(data || []);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Roles", action: "get roles" },
+      });
       showToast({
         title: "Roles processing failed",
         type: "error",
@@ -178,7 +182,9 @@ export default function AddAdminUser() {
       });
     },
     onError: (error) => {
-      console.log(error);
+      Sentry.captureException(error, {
+        tags: { component: "User", action: "add user" },
+      });
       showToast({
         title: "Provisioning execution aborted",
         type: "error",

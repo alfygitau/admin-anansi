@@ -22,6 +22,7 @@ import {
 import LoanTransactionsFilter from "../../../components/filters/LoanTransactionsFilter";
 import { useNavigate, useParams } from "react-router-dom";
 import Pagination from "../../../components/pagination/Pagination";
+import * as Sentry from "@sentry/react";
 
 export default function MyLoanTransactions() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,6 +52,9 @@ export default function MyLoanTransactions() {
       setLoanTransactions(data);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "Loan", action: "get loan transactions" },
+      });
       showToast({
         title: "Transactions processing failed",
         type: "error",

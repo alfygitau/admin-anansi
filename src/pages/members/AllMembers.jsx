@@ -24,6 +24,7 @@ import { useToast } from "../../contexts/ToastProvider";
 import { getMembers } from "../../sdk/members/members";
 import Pagination from "../../components/pagination/Pagination";
 import { useNavigate } from "react-router-dom";
+import * as Sentry from "@sentry/react";
 
 export default function AllMembers() {
   const [members, setMembers] = useState([]);
@@ -122,6 +123,9 @@ export default function AllMembers() {
       setTotalItems(data.meta.totalItems);
     },
     onError: (error) => {
+      Sentry.captureException(error, {
+        tags: { component: "AllMembers", action: "getMembers" },
+      });
       showToast({
         title: "Members processing failed",
         type: "error",
@@ -479,13 +483,14 @@ export default function AllMembers() {
                         <div className="flex flex-col space-y-1.5">
                           <span
                             className={`inline-flex items-center gap-1.5 text-[9px] font-bold tracking-wider uppercase px-2 py-0.5 rounded-md border w-fit ${
-                              member.status === "Suspended" || member?.status === 'Cancelled'
+                              member.status === "Suspended" ||
+                              member?.status === "Cancelled"
                                 ? "bg-red-50 border-red-100 text-red-600"
                                 : "bg-emerald-50 border-emerald-100 text-emerald-600"
                             }`}
                           >
                             <span
-                              className={`size-1 rounded-full ${member.status === "Suspended" || member?.status === 'Cancelled' ? "bg-red-500" : "bg-emerald-500"}`}
+                              className={`size-1 rounded-full ${member.status === "Suspended" || member?.status === "Cancelled" ? "bg-red-500" : "bg-emerald-500"}`}
                             />
                             {member.status}
                           </span>

@@ -55,6 +55,7 @@ import VerifyChattel from "./pages/loan-applications/verify-chattels/VerifyChatt
 import MyLoanTransactions from "./pages/loans/all-loans/LoanTransactions";
 import LoanApplicationSuccess from "./pages/loans/apply-loan/ApplicationSuccess";
 import * as Sentry from "@sentry/react";
+import ViewStatement from "./pages/loans/all-loans/ViewStatement";
 
 function App() {
   return (
@@ -114,9 +115,10 @@ function App() {
             path="all-loans/:id/record-payment"
             element={<RecordManualPayment />}
           />
+          <Route path="loan-statements" element={<LoanStatements />} />
           <Route
-            path="all-loans/:id/loan-statements"
-            element={<LoanStatements />}
+            path="all-loans/:id/view-statement"
+            element={<ViewStatement />}
           />
 
           <Route path="all-users" element={<AllUsers />} />

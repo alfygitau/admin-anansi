@@ -70,8 +70,8 @@ export default function Loan() {
     navigate(`/admin/all-loans/${loan?.id}/record-payment`);
   };
 
-  const handleViewStatements = () => {
-    navigate(`/admin/all-loans/${loan?.id}/loan-statements`);
+  const handleViewStatement = () => {
+    navigate(`/admin/all-loans/${loan?.id}/view-statement`);
   };
 
   const { isFetching, refetch } = useQuery({
@@ -307,9 +307,9 @@ export default function Loan() {
                   <div className="space-y-1">
                     <MenuActionButton
                       icon={<History size={13} />}
-                      label="View Loan Statement"
+                      label="View Full Loan Statement"
                       onClick={() => {
-                        handleViewStatements();
+                        handleViewStatement();
                         setIsActionMenuOpen(false);
                       }}
                     />

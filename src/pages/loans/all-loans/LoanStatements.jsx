@@ -10,151 +10,90 @@ import {
   Plus,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
+import { useToast } from "../../../contexts/ToastProvider";
+import { getLoanStatements } from "../../../sdk/loans/loans";
 
 export default function LoanStatements() {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const { showToast } = useToast();
+  const [totalItems, setTotalItems] = useState(0);
+  const [filters, setFilters] = useState({
+    page: 1,
+    limit: 10,
+    loan_code: "",
+    loan_type: "",
+    status: [],
+    fromDate: "",
+    toDate: "",
+  });
 
-  // Sample data tracking records updated to current 2026 logs
-  const [statements] = useState([
-    {
-      id: "STMT-9041",
-      loan_code: "L00001",
-      borrower_name: "Almasi Aluoch",
-      product_name: "Development Loan",
-      statement_type: "Populated Monthly",
-      file_size: "1.4 MB",
-      days_count: "31 Days",
-      start_date: "2026-05-01",
-      end_date: "2026-05-31",
-      date_generated: "2026-06-01",
-      generated_by: "System Automated",
-    },
-    {
-      id: "STMT-8842",
-      loan_code: "L00001",
-      borrower_name: "Almasi Aluoch",
-      product_name: "Development Loan",
-      statement_type: "Generated On-Demand",
-      file_size: "2.8 MB",
-      days_count: "135 Days",
-      start_date: "2026-01-01",
-      end_date: "2026-05-15",
-      date_generated: "2026-05-15",
-      generated_by: "John Kamau",
-    },
-    {
-      id: "STMT-7140",
-      loan_code: "L00002",
-      borrower_name: "Silas Kipchumba",
-      product_name: "Flash Loan",
-      statement_type: "Populated Monthly",
-      file_size: "620 KB",
-      days_count: "30 Days",
-      start_date: "2026-04-01",
-      end_date: "2026-04-30",
-      date_generated: "2026-05-01",
-      generated_by: "System Automated",
-    },
-    {
-      id: "STMT-6521",
-      loan_code: "L00003",
-      borrower_name: "Mercy Wanjiku",
-      product_name: "Emergency Loan",
-      statement_type: "Generated On-Demand",
-      file_size: "940 KB",
-      days_count: "14 Days",
-      start_date: "2026-05-10",
-      end_date: "2026-05-24",
-      date_generated: "2026-05-24",
-      generated_by: "John Kamau",
-    },
-    {
-      id: "STMT-5912",
-      loan_code: "L00004",
-      borrower_name: "David Omondi",
-      product_name: "Business Support Loan",
-      statement_type: "Populated Monthly",
-      file_size: "1.9 MB",
-      days_count: "31 Days",
-      start_date: "2026-03-01",
-      end_date: "2026-03-31",
-      date_generated: "2026-04-01",
-      generated_by: "System Automated",
-    },
-    {
-      id: "STMT-4401",
-      loan_code: "L00005",
-      borrower_name: "Jane S. Moraa",
-      product_name: "Development Loan",
-      statement_type: "Populated Monthly",
-      file_size: "1.5 MB",
-      days_count: "30 Days",
-      start_date: "2026-04-01",
-      end_date: "2026-04-30",
-      date_generated: "2026-05-01",
-      generated_by: "System Automated",
-    },
-    {
-      id: "STMT-3982",
-      loan_code: "L00006",
-      borrower_name: "Rodney Chelal",
-      product_name: "Flash Loan",
-      statement_type: "Generated On-Demand",
-      file_size: "510 KB",
-      days_count: "60 Days",
-      start_date: "2026-02-01",
-      end_date: "2026-04-02",
-      date_generated: "2026-04-02",
-      generated_by: "Grace Soni",
-    },
-    {
-      id: "STMT-2274",
-      loan_code: "L00007",
-      borrower_name: "Amina Hussein",
-      product_name: "School Fees Loan",
-      statement_type: "Populated Monthly",
-      file_size: "1.1 MB",
-      days_count: "31 Days",
-      start_date: "2026-05-01",
-      end_date: "2026-05-31",
-      date_generated: "2026-06-01",
-      generated_by: "System Automated",
-    },
-    {
-      id: "STMT-1905",
-      loan_code: "L00008",
-      borrower_name: "Brian Mwangi",
-      product_name: "Asset Finance Loan",
-      statement_type: "Populated Monthly",
-      file_size: "2.3 MB",
-      days_count: "31 Days",
-      start_date: "2026-05-01",
-      end_date: "2026-05-31",
-      date_generated: "2026-06-01",
-      generated_by: "System Automated",
-    },
-    {
-      id: "STMT-1104",
-      loan_code: "L00009",
-      borrower_name: "Emmanuel Nduati",
-      product_name: "Agri-Business Loan",
-      statement_type: "Generated On-Demand",
-      file_size: "1.7 MB",
-      days_count: "90 Days",
-      start_date: "2026-03-01",
-      end_date: "2026-05-30",
-      date_generated: "2026-05-31",
-      generated_by: "Grace Soni",
-    },
-  ]);
+  const [statements, setStatements] = useState([]);
 
-  // Basic layout query matching filter
-  const filteredStatements = statements.filter(
-    (stmt) =>
-      stmt.loan_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      stmt.product_name.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const { idFetching } = useQuery({
+    queryKey: [
+      "loan statements",
+      filters?.page,
+      filters?.limit,
+      filters?.status?.join(","),
+      filters?.loan_code,
+      filters?.loan_type,
+      filters?.fromDate,
+      filters?.toDate,
+    ],
+    queryFn: async () => {
+      const response = await getLoanStatements(
+        filters?.page,
+        filters?.limit,
+        filters?.status?.join(","),
+        filters?.loan_code,
+        filters?.loan_type,
+        filters?.fromDate,
+        filters?.toDate,
+      );
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setStatements(data?.statements);
+      setFilters((prev) => ({
+        ...prev,
+        page: data?.page,
+        limit: data?.limit,
+      }));
+      setTotalItems(data.total);
+    },
+    onError: (error) => {
+      showToast({
+        title: "Loan statements processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "N/A";
+    const cleanStr = String(dateStr).split("T")[0].replace(/-/g, "/");
+    const parsed = new Date(cleanStr);
+    return isNaN(parsed.getTime())
+      ? "N/A"
+      : parsed.toLocaleDateString("en-KE", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        });
+  };
+
+  // Safe Days Counter Helper
+  const calculateWindowDays = (fromStr, toStr) => {
+    if (!fromStr || !toStr) return 0;
+    const from = new Date(String(fromStr).replace(/-/g, "/"));
+    const to = new Date(String(toStr).replace(/-/g, "/"));
+    if (isNaN(from.getTime()) || isNaN(to.getTime())) return 0;
+    return Math.ceil(Math.abs(to - from) / (1000 * 60 * 60 * 24)) + 1;
+  };
 
   return (
     <div className="w-full space-y-6 font-sans antialiased text-slate-800">
@@ -176,7 +115,7 @@ export default function LoanStatements() {
                 Account Documents Repository
               </span>
               <h1 className="text-xl font-black tracking-tight text-primary">
-                Loan Account Statements
+                Loan Statements
               </h1>
             </div>
           </div>
@@ -225,123 +164,116 @@ export default function LoanStatements() {
             </thead>
 
             <tbody className="divide-y divide-slate-100 text-xs tracking-tight">
-              {filteredStatements.length > 0 ? (
-                filteredStatements.map((stmt) => (
-                  <tr
-                    key={stmt.id}
-                    className="group transition-colors hover:bg-slate-50/60"
-                  >
-                    {/* Column 1: Loan Identity Track (Added Borrower Name) */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1">
-                        <div className="flex items-center gap-2 select-none">
-                          <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
-                            {stmt.loan_code}
+              {statements.length > 0 ? (
+                statements.map((item, index) => {
+                  const header = item?.header || {};
+                  const daysCount = calculateWindowDays(
+                    header.statement_from,
+                    header.statement_to,
+                  );
+
+                  return (
+                    <tr
+                      key={header.loan_code || index}
+                      className="group transition-colors hover:bg-slate-50/60"
+                    >
+                      {/* Column 1: Loan Identity */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1">
+                          <div className="flex items-center gap-2 select-none">
+                            <span className="font-sans font-bold text-[9px] tracking-wider uppercase px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md">
+                              {header.loan_code || "N/A"}
+                            </span>
+                            <span className="text-[9px] font-mono font-bold text-slate-400">
+                              ID:{" "}
+                              {header.customer_id
+                                ? `${header.customer_id.substring(0, 8)}...`
+                                : "N/A"}
+                            </span>
+                          </div>
+                          <span className="font-semibold text-primary text-sm tracking-tight">
+                            {header.product_name || "Loan Facility"}
                           </span>
-                          <span className="text-[9px] font-mono font-bold text-slate-400">
-                            ID: {stmt.id}
+                          <span className="text-[11px] text-slate-400 font-medium">
+                            Borrower: {header.member_name || "N/A"}
                           </span>
                         </div>
-                        <span className="font-semibold text-primary text-sm tracking-tight transition-colors">
-                          {stmt.product_name}
-                        </span>
-                        <span className="text-[11px] text-slate-400 font-medium">
-                          Borrower: {stmt.borrower_name || "Almasi Aluoch"}
-                        </span>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Column 2: Statement Type (Dot Removed + Added File Footprint Summary) */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1 select-none">
-                        <span className="font-semibold text-slate-700 text-sm tracking-tight">
-                          {stmt.statement_type}
-                        </span>
-                        <span className="text-[11px] text-slate-400 font-medium font-mono">
-                          {stmt.file_size || "1.2 MB"} • PDF Format
-                        </span>
-                      </div>
-                    </td>
-
-                    {/* Column 3: Coverage Period (Added Window Day Duration Counter) */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1 font-medium text-slate-600">
-                        <div className="flex items-center gap-1.5">
-                          <Calendar
-                            size={13}
-                            className="text-slate-400 shrink-0"
-                          />
-                          <span className="font-mono">
-                            {new Date(stmt.start_date).toLocaleDateString(
-                              "en-KE",
-                              { dateStyle: "medium" },
-                            )}
+                      {/* Column 2: Statement Meta */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1 select-none">
+                          <span className="font-semibold text-slate-700 text-sm tracking-tight">
+                            On-Demand Statement
                           </span>
-                          <span className="text-slate-300 font-normal px-0.5">
-                            to
-                          </span>
-                          <span className="font-mono font-bold text-slate-700">
-                            {new Date(stmt.end_date).toLocaleDateString(
-                              "en-KE",
-                              { dateStyle: "medium" },
-                            )}
+                          <span className="text-[11px] text-slate-400 font-medium font-mono">
+                            PDF Format • On-Demand
                           </span>
                         </div>
-                        <span className="text-[11px] text-slate-400 pl-5 font-medium">
-                          {stmt.days_count || "30 Days"} Accounting Window
-                        </span>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Column 4: Date Generated (Added Trigger Actor Signature logs) */}
-                    <td className="py-4 px-6">
-                      <div className="flex flex-col space-y-1 font-medium">
-                        <div className="flex items-center gap-1.5 text-slate-500 font-mono">
-                          <Clock
-                            size={13}
-                            className="text-slate-400 shrink-0"
-                          />
-                          <span>
-                            {new Date(stmt.date_generated).toLocaleDateString(
-                              "en-KE",
-                              { dateStyle: "medium" },
-                            )}
+                      {/* Column 3: Coverage Period */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1 font-medium text-slate-600">
+                          <div className="flex items-center gap-1.5">
+                            <Calendar
+                              size={13}
+                              className="text-slate-400 shrink-0"
+                            />
+                            <span className="font-mono">
+                              {formatDate(header.statement_from)}
+                            </span>
+                            <span className="text-slate-300 font-normal px-0.5">
+                              to
+                            </span>
+                            <span className="font-mono font-bold text-slate-700">
+                              {formatDate(header.statement_to)}
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-slate-400 pl-5 font-medium">
+                            {daysCount} Days Accounting Window
                           </span>
                         </div>
-                        <span className="text-[11px] text-slate-400 pl-5 font-medium">
-                          By: {stmt.generated_by || "System Automated"}
-                        </span>
-                      </div>
-                    </td>
+                      </td>
 
-                    {/* Column 5: Action Controls */}
-                    <td className="py-4 px-6 text-right pr-8">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() =>
-                            console.log("Viewing file inline:", stmt.id)
-                          }
-                          className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
-                          title="Open Document Preview"
-                        >
-                          <Eye size={13} />
-                        </button>
-                        <button
-                          onClick={() =>
-                            console.log(
-                              "Downloading local file block copy:",
-                              stmt.id,
-                            )
-                          }
-                          className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-emerald-700 hover:bg-emerald-50/50 hover:border-emerald-200/60 transition-all shadow-3xs bg-white cursor-pointer"
-                          title="Download Statement (PDF)"
-                        >
-                          <Download size={13} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                      {/* Column 4: Date Generated */}
+                      <td className="py-4 px-6">
+                        <div className="flex flex-col space-y-1 font-medium">
+                          <div className="flex items-center gap-1.5 text-slate-500 font-mono">
+                            <Clock
+                              size={13}
+                              className="text-slate-400 shrink-0"
+                            />
+                            <span>{formatDate(header.statement_date)}</span>
+                          </div>
+                          <span className="text-[11px] text-slate-400 pl-5 font-medium">
+                            By: System Automated
+                          </span>
+                        </div>
+                      </td>
+
+                      {/* Column 5: Action Buttons */}
+                      <td className="py-4 px-6 text-right pr-8">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            type="button"
+                            className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
+                            title="Open Document Preview"
+                          >
+                            <Eye size={13} />
+                          </button>
+                          <button
+                            type="button"
+                            className="size-8 rounded-xl border border-slate-200/60 flex items-center justify-center text-slate-500 hover:text-emerald-700 hover:bg-emerald-50/50 hover:border-emerald-200/60 transition-all shadow-3xs bg-white cursor-pointer"
+                            title="Download Statement (PDF)"
+                          >
+                            <Download size={13} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td

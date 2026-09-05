@@ -58,6 +58,7 @@ export default function Homelayer() {
       badge: "18",
       subItems: [
         { label: "All Loans", path: "/admin/all-loans" },
+        { label: "Loan Statements", path: "/admin/loan-statements" },
         { label: "Guarantors", path: "/admin/guarantors" },
       ],
     },

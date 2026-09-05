@@ -265,9 +265,6 @@ export default function LoanApplicationApprovals() {
                 <th scope="col" className="px-4 py-4 font-black">
                   Amounts
                 </th>
-                <th scope="col" className="px-4 py-4 font-black max-w-sm">
-                  Reason & Conditions
-                </th>
                 <th scope="col" className="px-4 py-4 font-black text-right">
                   Date & Time
                 </th>
@@ -320,14 +317,6 @@ export default function LoanApplicationApprovals() {
                       <div className="flex flex-col gap-2">
                         <div className="h-4 w-24 bg-slate-200/70 animate-pulse rounded-md" />
                         <div className="h-3.5 w-20 bg-slate-200/70 animate-pulse rounded-md" />
-                      </div>
-                    </td>
-
-                    {/* COLUMN 5: REASONS & SPECIAL CONDITIONS SKELETON */}
-                    <td className="px-4 py-4 max-w-sm">
-                      <div className="flex flex-col gap-1.5">
-                        <div className="h-3.5 w-full bg-slate-200/70 animate-pulse rounded-md" />
-                        <div className="h-3.5 w-5/6 bg-slate-200/70 animate-pulse rounded-md" />
                       </div>
                     </td>
 
@@ -430,7 +419,7 @@ export default function LoanApplicationApprovals() {
                             </span>
                           </div>
                           <div className="flex items-center gap-1 border-t border-slate-100/70 pt-0.5">
-                            <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider w-14">
+                            <span className="text-[9px] text-slate-400 uppercase font-black tracking-wider w-15">
                               Requested:
                             </span>
                             <span className="font-mono font-semibold text-slate-500 text-[11px]">
@@ -440,18 +429,6 @@ export default function LoanApplicationApprovals() {
                               ).toLocaleString()}
                             </span>
                           </div>
-                        </div>
-                      </td>
-
-                      {/* COLUMN 5: REASONS & SPECIAL CONDITIONS */}
-                      <td className="px-4 py-4 text-xs leading-relaxed max-w-sm">
-                        <div className="space-y-1.5">
-                          <p className="text-slate-600 font-medium italic">
-                            "
-                            {approval.decision_reason ||
-                              "No specific notes were left for this decision."}
-                            "
-                          </p>
                         </div>
                       </td>
 

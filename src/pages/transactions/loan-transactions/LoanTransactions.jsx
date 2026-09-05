@@ -454,7 +454,7 @@ export default function LoanTransactions() {
                               ? "bg-emerald-50 text-emerald-600"
                               : tx.status?.toLowerCase() === "reversed"
                                 ? "bg-rose-50 text-rose-600"
-                                : "bg-amber-50 text-amber-600"
+                                : "bg-emerald-50 text-emerald-600"
                           }`}
                         >
                           {tx.status?.toLowerCase() === "reversed" ? (
@@ -462,7 +462,7 @@ export default function LoanTransactions() {
                           ) : (
                             <CheckCircle2 size={10} />
                           )}
-                          {tx.status || "Pending"}
+                          {tx.status || "Posted"}
                         </span>
                       </td>
 

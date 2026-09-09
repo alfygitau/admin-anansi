@@ -388,9 +388,12 @@ export default function AddMember() {
     },
     onSuccess: () => {},
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Add Member", action: "addMember" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Add Member", action: "addMember" },
+        },
+      );
       showToast({
         title: "Members processing failed",
         type: "error",

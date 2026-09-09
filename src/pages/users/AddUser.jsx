@@ -66,9 +66,12 @@ export default function AddAdminUser() {
       setRoles(data || []);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Roles", action: "get roles" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Roles", action: "get roles" },
+        },
+      );
       showToast({
         title: "Roles processing failed",
         type: "error",
@@ -182,9 +185,12 @@ export default function AddAdminUser() {
       });
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "User", action: "add user" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "User", action: "add user" },
+        },
+      );
       showToast({
         title: "Provisioning execution aborted",
         type: "error",

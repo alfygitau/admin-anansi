@@ -123,9 +123,12 @@ export default function AllMembers() {
       setTotalItems(data.meta.totalItems);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "AllMembers", action: "getMembers" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "AllMembers", action: "getMembers" },
+        },
+      );
       showToast({
         title: "Members processing failed",
         type: "error",

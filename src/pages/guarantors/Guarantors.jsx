@@ -73,9 +73,12 @@ export default function Guarantors() {
       setTotalItems(data.total);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Guarantors", action: "All guarantors" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Guarantors", action: "All guarantors" },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",

@@ -159,9 +159,12 @@ export default function MemberDetails({ onUpdateDocument }) {
       }));
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Member", action: "getMember" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Member", action: "getMember" },
+        },
+      );
       showToast({
         title: "Member processing failed",
         type: "error",
@@ -223,9 +226,12 @@ export default function MemberDetails({ onUpdateDocument }) {
       setMemberLoans(data?.loan_data);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Member loan", action: "getMemberLoan" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Member loan", action: "getMemberLoan" },
+        },
+      );
       showToast({
         title: "Member processing failed",
         type: "error",
@@ -309,9 +315,12 @@ export default function MemberDetails({ onUpdateDocument }) {
       setShowAwaitPayment(true);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Pay Registration", action: "registration" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Pay Registration", action: "registration" },
+        },
+      );
       showToast({
         title: "Member processing failed",
         type: "error",
@@ -348,9 +357,12 @@ export default function MemberDetails({ onUpdateDocument }) {
     refetchInterval: 3000,
     refetchIntervalInBackground: true,
     onErrors: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Poll registration", action: "registration" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Poll registration", action: "registration" },
+        },
+      );
       showToast({
         title: "Authentication glitch",
         type: "error",

@@ -211,9 +211,12 @@ export default function EditAdminUser() {
       });
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Users", action: "edit user" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Users", action: "edit user" },
+        },
+      );
       showToast({
         title: "Provisioning execution aborted",
         type: "error",

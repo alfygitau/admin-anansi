@@ -34,17 +34,20 @@ loanClient.interceptors.response.use(
 
     Sentry.captureMessage(`Interceptor Triggered: ${method} ${url}`);
 
-    Sentry.captureException(error, {
-      tags: {
-        endpoint: url,
-        method,
-        status: status || "NETWORK_ERROR",
+    Sentry.captureException(
+      new Error(error?.response?.data?.message || error.message),
+      {
+        tags: {
+          endpoint: url,
+          method,
+          status: status || "NETWORK_ERROR",
+        },
+        extra: {
+          responseData: error.response?.data,
+          params: error.config?.params,
+        },
       },
-      extra: {
-        responseData: error.response?.data,
-        params: error.config?.params,
-      },
-    });
+    );
 
     return Promise.reject(error);
   },

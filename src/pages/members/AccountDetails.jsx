@@ -62,9 +62,12 @@ export default function AccountDetails() {
       setAccount(data);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Account", action: "get account" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Account", action: "get account" },
+        },
+      );
       showToast({
         title: "Account processing failed",
         type: "error",
@@ -84,9 +87,12 @@ export default function AccountDetails() {
       setTransactions(data);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Account", action: "get account transactions" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Account", action: "get account transactions" },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",

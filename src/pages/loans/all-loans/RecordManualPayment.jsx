@@ -103,9 +103,12 @@ export default function RecordManualPayment() {
       navigate(-1);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan", action: "record manual payment" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan", action: "record manual payment" },
+        },
+      );
       showToast({
         title: "Recording Failed",
         type: "error",

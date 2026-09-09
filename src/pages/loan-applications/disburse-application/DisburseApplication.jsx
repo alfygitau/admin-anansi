@@ -102,9 +102,15 @@ export default function DisburseLoan() {
       setApplication(data);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan Application", action: "get loan application" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: {
+            component: "Loan Application",
+            action: "get loan application",
+          },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",
@@ -138,12 +144,15 @@ export default function DisburseLoan() {
       setShowDisburseSuccess(true);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: {
-          component: "Loan Application",
-          action: "disburse loan application",
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: {
+            component: "Loan Application",
+            action: "disburse loan application",
+          },
         },
-      });
+      );
       showToast({
         title: "Disbursement failed",
         type: "error",

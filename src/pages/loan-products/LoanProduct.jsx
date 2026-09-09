@@ -41,9 +41,12 @@ export default function LoanProduct() {
       setLoanProduct(data);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan Product", action: "get loan product" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan Product", action: "get loan product" },
+        },
+      );
       showToast({
         title: "Loan Products processing failed",
         type: "error",

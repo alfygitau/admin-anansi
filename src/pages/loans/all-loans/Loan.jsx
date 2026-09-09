@@ -84,9 +84,12 @@ export default function Loan() {
       setLoan(data);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan", action: "get loan" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan", action: "get loan" },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",
@@ -152,9 +155,12 @@ export default function Loan() {
       setOpenRepayStk(true);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan", action: "repay loan" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan", action: "repay loan" },
+        },
+      );
       showToast({
         title: "Application Failure",
         type: "error",

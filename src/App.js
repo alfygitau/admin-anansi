@@ -62,11 +62,14 @@ function App() {
     <Sentry.ErrorBoundary
       fallback={null}
       onError={(error, componentStack) => {
-        Sentry.captureException(error, {
-          extra: {
-            componentStack,
+        Sentry.captureException(
+          new Error(error?.response?.data?.message || error.message),
+          {
+            extra: {
+              componentStack,
+            },
           },
-        });
+        );
       }}
     >
       <Routes>

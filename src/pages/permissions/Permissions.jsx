@@ -45,9 +45,12 @@ export default function Permissions() {
       setModulesList(data);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Permissions", action: "get permission modules" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Permissions", action: "get permission modules" },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",

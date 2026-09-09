@@ -79,9 +79,12 @@ export default function AuditTrail() {
       setTotalItems(data.total);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Audit Trail", action: "All audit trails" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Audit Trail", action: "All audit trails" },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",

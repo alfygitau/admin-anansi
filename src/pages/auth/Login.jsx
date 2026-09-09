@@ -20,6 +20,7 @@ import { useToast } from "../../contexts/ToastProvider";
 import { useStore } from "../../store/store";
 import useAuth from "../../hooks/useAuth";
 import { addTrail } from "../../sdk/trail/trail";
+import * as Sentry from "@sentry/react";
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -81,6 +82,12 @@ const AdminLogin = () => {
       handleLoginLogic(data?.data?.data);
     },
     onError: async (error) => {
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Authentication", action: "login" },
+        },
+      );
       await addTrail("LOGIN_FAILED", {
         username: formData?.memberId,
         metadata: {

@@ -74,9 +74,12 @@ export default function AllLoans() {
       setTotalItems(data.total);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loans", action: "getLoans" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loans", action: "getLoans" },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",

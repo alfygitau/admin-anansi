@@ -86,9 +86,12 @@ export default function LoanApplicationApprovals() {
       setTotalItems(data.total);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Approvals", action: "get approvals" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Approvals", action: "get approvals" },
+        },
+      );
       showToast({
         title: "Approvals processing failed",
         type: "error",

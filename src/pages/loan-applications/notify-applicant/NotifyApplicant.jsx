@@ -79,9 +79,12 @@ export default function NotifyApplicant() {
       navigate(-1);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan Application", action: "notify applicant" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan Application", action: "notify applicant" },
+        },
+      );
       showToast({
         title: "Failed to Send Message",
         type: "error",
@@ -107,9 +110,12 @@ export default function NotifyApplicant() {
       }));
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan Application", action: "get application" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan Application", action: "get application" },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",

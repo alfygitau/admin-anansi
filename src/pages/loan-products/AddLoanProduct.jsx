@@ -223,9 +223,12 @@ export default function AddLoanProduct() {
       navigate(`/admin/loan-products`);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan Products", action: "add loan products" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan Products", action: "add loan products" },
+        },
+      );
       showToast({
         title: "Loan Products processing failed",
         type: "error",

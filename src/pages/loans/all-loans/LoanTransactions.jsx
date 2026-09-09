@@ -52,9 +52,12 @@ export default function MyLoanTransactions() {
       setLoanTransactions(data);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan", action: "get loan transactions" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan", action: "get loan transactions" },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",

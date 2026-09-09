@@ -109,9 +109,12 @@ export default function AccountTransactions() {
       setTotalItems(data.meta.totalItems);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Transactions", action: "account transactions" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Transactions", action: "account transactions" },
+        },
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",

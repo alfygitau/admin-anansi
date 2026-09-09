@@ -179,9 +179,12 @@ export default function EditLoanProduct() {
       });
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan Products", action: "get loan products" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan Products", action: "get loan products" },
+        },
+      );
       showToast({
         title: "Loan Products processing failed",
         type: "error",
@@ -270,9 +273,12 @@ export default function EditLoanProduct() {
       navigate(`/admin/loan-products`);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Loan Products", action: "edit loan product" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Loan Products", action: "edit loan product" },
+        },
+      );
       showToast({
         title: "Loan Products processing failed",
         type: "error",

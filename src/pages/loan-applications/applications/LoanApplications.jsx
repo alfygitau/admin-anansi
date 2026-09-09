@@ -86,12 +86,15 @@ export default function LoanApplications() {
       setTotalItems(data.total);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: {
-          component: "Loan Applications",
-          action: "get loan applications",
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: {
+            component: "Loan Applications",
+            action: "get loan applications",
+          },
         },
-      });
+      );
       showToast({
         title: "Transactions processing failed",
         type: "error",

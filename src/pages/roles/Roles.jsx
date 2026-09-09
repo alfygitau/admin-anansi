@@ -70,9 +70,12 @@ export default function RolesTable() {
       setRoles(data);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Roles", action: "get roles" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Roles", action: "get roles" },
+        },
+      );
       showToast({
         title: "Roles processing failed",
         type: "error",
@@ -95,9 +98,12 @@ export default function RolesTable() {
     },
     onError: (error) => {
       setStep("form");
-      Sentry.captureException(error, {
-        tags: { component: "Roles", action: "add role" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Roles", action: "add role" },
+        },
+      );
       showToast({
         title: "Roles processing failed",
         type: "error",
@@ -124,9 +130,12 @@ export default function RolesTable() {
     },
     onError: (error) => {
       setStep("form");
-      Sentry.captureException(error, {
-        tags: { component: "Roles", action: "edit role" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Roles", action: "edit role" },
+        },
+      );
       showToast({
         title: "Roles processing failed",
         type: "error",

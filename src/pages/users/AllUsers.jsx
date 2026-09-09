@@ -102,9 +102,12 @@ export default function AllUsers() {
       setTotalItems(data.meta.totalItems);
     },
     onError: (error) => {
-      Sentry.captureException(error, {
-        tags: { component: "Users", action: "get users" },
-      });
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: { component: "Users", action: "get users" },
+        },
+      );
       showToast({
         title: "Members processing failed",
         type: "error",

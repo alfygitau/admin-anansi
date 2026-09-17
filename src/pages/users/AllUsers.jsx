@@ -17,6 +17,7 @@ import {
   Filter,
   Download,
   Edit,
+  Eye,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import UsersFilter from "../../components/filters/UsersFilter";
@@ -41,8 +42,8 @@ export default function AllUsers() {
     page: 1,
     limit: 10,
     q: "",
-    status: "",
-    role: "",
+    status: [],
+    role: [],
     fromDate: "",
     toDate: "",
   });
@@ -74,9 +75,9 @@ export default function AllUsers() {
       "get users",
       filters?.page,
       filters?.limit,
-      filters?.status,
+      filters?.status?.join(","),
       filters?.q,
-      filters?.role,
+      filters?.role?.join(","),
       filters.fromDate,
       filters.toDate,
     ],
@@ -84,9 +85,9 @@ export default function AllUsers() {
       const response = await getUsers(
         filters?.page,
         filters?.limit,
-        filters?.status,
+        filters?.status?.join(","),
         filters?.q,
-        filters?.role,
+        filters?.role?.join(","),
         filters.fromDate,
         filters.toDate,
       );
@@ -155,8 +156,8 @@ export default function AllUsers() {
       page: 1,
       limit: 10,
       q: "",
-      status: "",
-      role: "",
+      status: [],
+      role: [],
       fromDate: "",
       toDate: "",
     });
@@ -251,7 +252,7 @@ export default function AllUsers() {
         </div>
 
         {/* 4. HIGH-DENSITY PRIVILEGED IDENTITY LEDGER */}
-        <div className="w-full bg-white rounded-3xl border border-slate-200/60 shadow-xs overflow-hidden">
+        <div className="w-full bg-white rounded-3xl border border-slate-200/60 shadow-xs">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse table-auto">
               <thead>
@@ -425,11 +426,20 @@ export default function AllUsers() {
                               ref={(el) => {
                                 actionMenuRef.current = el;
                               }}
-                              className="absolute right-14 mt-2 w-48 bg-white border border-slate-200/80 rounded-xl shadow-xl p-1.5 z-50 text-left animate-in fade-in slide-in-from-top-1 duration-100"
+                              className="absolute right-14 mt-2 w-48 bg-white border border-slate-200/80 rounded-xl shadow-xl p-1.5 z-99 text-left animate-in fade-in slide-in-from-top-1 duration-100"
                             >
+                              <button
+                                onClick={() =>
+                                  navigate(`/admin/all-users/${user?.id}`)
+                                }
+                                className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors cursor-pointer"
+                              >
+                                <Eye size={12} />
+                                <span>View User</span>
+                              </button>
                               <button className="w-full h-8 px-2.5 rounded-lg flex items-center gap-2 text-xs font-medium text-slate-600 hover:text-primary hover:bg-slate-50 transition-colors cursor-pointer">
                                 <History size={12} />
-                                <span>View Access Logs</span>
+                                <span>View Audit Trail</span>
                               </button>
                               <button
                                 onClick={() => handleEditUser(user.id)}
@@ -453,7 +463,7 @@ export default function AllUsers() {
                                 )}
                                 <span>
                                   {user.status === "Active"
-                                    ? "Suspend Operator"
+                                    ? "Suspend User"
                                     : "Restore Access"}
                                 </span>
                               </button>

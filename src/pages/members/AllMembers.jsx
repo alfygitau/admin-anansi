@@ -388,34 +388,40 @@ export default function AllMembers() {
                     >
                       {/* Col 1: Identity & Identification Papers */}
                       <td className="py-4 px-6">
-                        <div className="flex items-center gap-3">
-                          <div className="size-9 rounded-xl bg-slate-100 border border-slate-200/60 flex items-center justify-center font-bold text-slate-700 text-xs shadow-3xs shrink-0 select-none">
-                            {member?.firstname && member?.lastname ? (
-                              <>
-                                {member.firstname[0].toUpperCase()}
-                                {member.lastname[0].toUpperCase()}
-                              </>
-                            ) : (
-                              <User size={16} className="text-slate-400" />
-                            )}
-                          </div>
-                          <div className="flex flex-col space-y-0.5">
-                            <span className="font-mono w-fit px-3 text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded">
-                              {member.public_id}
-                            </span>
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-bold text-primary text-sm tracking-tight">
-                                {member.firstname} {member.lastname}
+                        {member?.firstname ? (
+                          <div className="flex items-center gap-3">
+                            <div className="size-9 rounded-xl bg-slate-100 border border-slate-200/60 flex items-center justify-center font-bold text-slate-700 text-xs shadow-3xs shrink-0 select-none">
+                              {member?.firstname && member?.lastname ? (
+                                <>
+                                  {member.firstname[0].toUpperCase()}
+                                  {member.lastname[0].toUpperCase()}
+                                </>
+                              ) : (
+                                <User size={16} className="text-slate-400" />
+                              )}
+                            </div>
+                            <div className="flex flex-col space-y-0.5">
+                              <span className="font-mono w-fit px-3 text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded">
+                                {member.public_id}
+                              </span>
+                              <div className="flex items-center gap-1.5">
+                                <span className="font-bold text-primary text-sm tracking-tight">
+                                  {member.firstname} {member.lastname}
+                                </span>
+                              </div>
+                              <span className="text-[11px] text-slate-400 font-medium">
+                                {member.identification_type}:{" "}
+                                <span className="font-mono text-slate-600 font-semibold">
+                                  {member.identification}
+                                </span>
                               </span>
                             </div>
-                            <span className="text-[11px] text-slate-400 font-medium">
-                              {member.identification_type}:{" "}
-                              <span className="font-mono text-slate-600 font-semibold">
-                                {member.identification}
-                              </span>
-                            </span>
                           </div>
-                        </div>
+                        ) : (
+                          <span className="text-[10px] italic text-slate-300">
+                            Not registered
+                          </span>
+                        )}
                       </td>
 
                       {/* Col 2: Communication Verification Gateways */}
@@ -449,14 +455,25 @@ export default function AllMembers() {
                       {/* Col 3: Employment and Economic Level */}
                       <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1">
-                          <span className="font-semibold text-slate-800 flex items-center gap-1">
-                            <Briefcase size={12} className="text-slate-400" />{" "}
-                            {member.occupation}
-                          </span>
-                          <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
-                            {member.employment_type} • KES{" "}
-                            {Number(member.income_range).toFixed(2)}
-                          </span>
+                          {member?.occupation ? (
+                            <>
+                              <span className="font-semibold text-slate-800 flex items-center gap-1">
+                                <Briefcase
+                                  size={12}
+                                  className="text-slate-400"
+                                />{" "}
+                                {member.occupation}
+                              </span>
+                              <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
+                                {member.employment_type} • KES{" "}
+                                {Number(member.income_range).toFixed(2)}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-[10px] italic text-slate-300">
+                              Not registered
+                            </span>
+                          )}
                         </div>
                       </td>
 

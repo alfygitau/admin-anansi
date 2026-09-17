@@ -46,9 +46,13 @@ export default function Homelayer() {
     },
     {
       id: "accounts",
-      label: "Portfolio Accounts",
+      label: "Accounts",
       path: "/admin/accounts",
       icon: <Wallet size={18} />,
+      subItems: [
+        { label: "All Accounts", path: "/admin/accounts" },
+        { label: "Account Review Queue", path: "/admin/account-reviews" },
+      ],
     },
     {
       id: "loans",
@@ -60,6 +64,7 @@ export default function Homelayer() {
         { label: "All Loans", path: "/admin/all-loans" },
         { label: "Loan Statements", path: "/admin/loan-statements" },
         { label: "Guarantors", path: "/admin/guarantors" },
+        { label: "Loans Review Queue", path: "/admin/loan-reviews" },
       ],
     },
     {
@@ -75,6 +80,10 @@ export default function Homelayer() {
           label: "Loan Application Approvals",
           path: "/admin/loan-applications-approvals",
         },
+        {
+          label: "Products Review Queue",
+          path: "/admin/loan-products-reviews",
+        },
       ],
     },
     {
@@ -85,7 +94,12 @@ export default function Homelayer() {
       subItems: [
         { label: "Account Transactions", path: "/admin/account-transactions" },
         { label: "Loan Transactions", path: "/admin/loan-transactions" },
-        { label: "Bulk Payments", path: "/admin/bulk-payments" },
+        { label: "Add Bulk Payment", path: "/admin/add-bulk-payment" },
+        { label: "All Bulk Payments", path: "/admin/all-bulk-payments" },
+        {
+          label: "Transactions Review Queue",
+          path: "/admin/transactions-reviews",
+        },
       ],
     },
     {

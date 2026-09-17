@@ -18,54 +18,20 @@ import {
   History,
   Edit,
 } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useToast } from "../../contexts/ToastProvider";
+import { useQuery } from "react-query";
+import { getUser } from "../../sdk/users/users";
 
 export default function AdminUser() {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const actionMenuRef = useRef(null);
+  const navigate = useNavigate();
+  const { showToast } = useToast();
+  const { id } = useParams();
 
-  // Synced directly to your comprehensive database schema blueprint
-  const [user, setUser] = useState({
-    id: "21ab6e20-85dc-6827-f0fc-1d3e29252021",
-    public_id: "AN100048",
-    username: "rodney",
-    firstname: "Rodney",
-    lastname: "Chelal",
-    email: "rodneychelal@gmail.com",
-    phone: "+254721545347",
-    office_phone: "0724122252",
-    job_title: "CyberSec",
-    department: "IT",
-    country: "Kenya",
-    county: "",
-    subcounty: "",
-    address: "Westlands",
-    status: "Active",
-    suspended: null,
-    refresh_token: null,
-    role_id: "2e92e11d-ca18-4a42-8ae6-fd85d5624167",
-    counter: null,
-    logintimes: 142,
-    reset_otp_hash: "$2a$08$UPQ7c8C2MnztRIaqanX2...",
-    reset_otp_expires: "2026-06-16T12:00:00.000Z",
-    reset_otp_attempts: 0,
-    reset_otp_last_sent: "2026-06-16T11:45:00.000Z",
-    reset_otp_verified_at: "2026-06-16T11:47:12.000Z",
-    reset_otp_verified_expires: "2026-06-16T12:47:12.000Z",
-    createdAt: "2026-06-10T06:30:46.467Z",
-    updatedAt: "2026-06-16T08:20:51.791Z",
-    deletedAt: null,
-    role: {
-      id: "2e92e11d-ca18-4a42-8ae6-fd85d5624167",
-      name: "Super Admin",
-      description:
-        "Super Admin: Holds supreme authority and comprehensive control over the entire system, overseeing and managing all aspects of administrative functions and user access with unparalleled permissions.",
-      createdAt: "2024-01-09T05:49:03.451Z",
-      updatedAt: "2024-01-15T12:31:10.564Z",
-      deletedAt: null,
-    },
-  });
+  const [user, setUser] = useState({});
 
-  // Handle outside layout clicks to gracefully fold action drop panels
   useEffect(() => {
     function handleClickOutside(event) {
       if (
@@ -88,12 +54,34 @@ export default function AdminUser() {
     setIsActionMenuOpen(false);
   };
 
+  useQuery({
+    queryKey: ["get user"],
+    queryFn: async () => {
+      const response = await getUser(id);
+      return response.data?.data;
+    },
+    onSuccess: (data) => {
+      setUser(data || {});
+    },
+    onError: (error) => {
+      showToast({
+        title: "User processing failed",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
   return (
     <div className="w-full space-y-8 font-sans antialiased text-slate-800">
-      {/* EXECUTIVE IDENTITY COMMAND HEADER */}
+      {/* HEADER SECTION */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 pb-6 select-none">
         <div className="flex items-center gap-4">
-          <button className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-xs cursor-pointer">
+          <button
+            onClick={() => navigate(-1)}
+            className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary shadow-xs cursor-pointer"
+          >
             <ArrowLeft size={16} />
           </button>
           <div>
@@ -120,7 +108,7 @@ export default function AdminUser() {
           </div>
         </div>
 
-        {/* HIGH-PRIVILEGE POPOVER CONTROL COCKPIT */}
+        {/* USER ACTIONS DROPDOWN */}
         <div className="relative inline-block text-left" ref={actionMenuRef}>
           <button
             type="button"
@@ -143,7 +131,7 @@ export default function AdminUser() {
             <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200/80 rounded-2xl shadow-xl p-2 z-50 origin-top-right animate-in fade-in slide-in-from-top-2 duration-150">
               <div className="px-3 py-2 border-b border-slate-100 mb-1 select-none">
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                  Privileged Assertions
+                  Quick Actions
                 </p>
               </div>
               <div className="space-y-1">
@@ -154,7 +142,7 @@ export default function AdminUser() {
                 />
                 <MenuActionButton
                   icon={<Edit size={13} />}
-                  label="Edit User"
+                  label="Edit User Profile"
                   onClick={() => setIsActionMenuOpen(false)}
                 />
                 <MenuActionButton
@@ -171,147 +159,141 @@ export default function AdminUser() {
         </div>
       </div>
 
-      {/* SYMMETRIC ARCHITECTURAL WORKSPACE CANVAS MATRIX (6 High-Density Structural Blocks) */}
+      {/* USER INFORMATION SECTIONS */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-        {/* CONTAINER 1: CORE BIOGRAPHICAL VECTORS */}
-        <IdentityCard
-          title="Biographical Identity Verification"
-          icon={<User size={16} />}
-        >
+        {/* CARD 1: PERSONAL INFORMATION */}
+        <IdentityCard title="Personal Information" icon={<User size={16} />}>
           <TelemetryItem
             icon={<User />}
-            label="Global Administrative Registry Name"
+            label="Full Name"
             value={`${user.firstname} ${user.lastname}`}
           />
           <TelemetryItem
             icon={<Fingerprint />}
-            label="System Terminal Security Alias"
+            label="Username"
             value={`@${user.username}`}
           />
           <TelemetryItem
             icon={<Mail />}
-            label="Primary Route Communications Email"
+            label="Email Address"
             value={user.email}
           />
           <TelemetryItem
             icon={<Smartphone />}
-            label="Mobile Communications Vector"
+            label="Mobile Phone"
             value={user.phone}
           />
           <TelemetryItem
             icon={<ShieldCheck />}
-            label="Internal Database Primary ID"
+            label="User ID"
             value={user.id}
           />
         </IdentityCard>
 
-        {/* CONTAINER 2: CORPORATE ALLOCATION LOCATORS */}
+        {/* CARD 2: WORKPLACE & LOCATION */}
         <IdentityCard
-          title="Corporate Assignment & Location"
+          title="Workplace & Location"
           icon={<Building2 size={16} />}
         >
           <TelemetryItem
             icon={<Building2 />}
-            label="Corporate Business Department"
+            label="Department"
             value={user.department}
           />
           <TelemetryItem
             icon={<ShieldCheck />}
-            label="Operational Job Designation Title"
+            label="Job Title"
             value={user.job_title}
           />
           <TelemetryItem
             icon={<Smartphone />}
-            label="Office Landline Physical Terminal"
+            label="Office Phone"
             value={user.office_phone}
           />
           <TelemetryItem
             icon={<MapPin />}
-            label="Assigned Structural Hub Address"
+            label="Office Address"
             value={user.address}
           />
           <TelemetryItem
             icon={<MapPin />}
-            label="Jurisdiction Sovereign Country"
+            label="Country"
             value={user.country}
           />
           <TelemetryItem
             icon={<ShieldCheck />}
-            label="Regional County Placement Vector"
-            value={user.county || "Global / Unassigned"}
+            label="County"
+            value={user.county || "Not Specified"}
           />
         </IdentityCard>
 
-        {/* CONTAINER 3: AUTHORITY SCHEMA & RBAC CONTROL */}
-        <IdentityCard
-          title="Assigned Role-Based Access Framework"
-          icon={<Key size={16} />}
-        >
+        {/* CARD 3: ROLE & PERMISSIONS */}
+        <IdentityCard title="Role & Permissions" icon={<Key size={16} />}>
           <TelemetryItem
             icon={<Key />}
-            label="Privilege Framework Cluster Name"
-            value={user.role.name}
+            label="Assigned Role"
+            value={user?.role?.name}
           />
           <TelemetryItem
             icon={<ShieldCheck />}
-            label="Global Role Matrix Component ID"
-            value={user.role.id}
+            label="Role ID"
+            value={user?.role?.id}
           />
           <TelemetryItem
             icon={<Calendar />}
-            label="RBAC Schema Structural Ingestion Date"
-            value={new Date(user.role.createdAt).toLocaleDateString("en-KE")}
+            label="Role Created Date"
+            value={new Date(user?.role?.createdAt)?.toLocaleDateString("en-KE")}
           />
           <TelemetryItem
             icon={<Clock />}
-            label="Last Authority Configuration Update"
-            value={new Date(user.role.updatedAt).toLocaleDateString("en-KE")}
+            label="Last Role Update"
+            value={new Date(user?.role?.updatedAt)?.toLocaleDateString("en-KE")}
           />
           <div className="md:col-span-2 bg-slate-50 border border-slate-100 rounded-xl p-4 mt-1">
             <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">
-              Scope Declaration Context
+              Role Description
             </span>
             <blockquote className="text-xs font-medium text-slate-600 leading-relaxed italic">
-              "{user.role.description}"
+              "{user?.role?.description}"
             </blockquote>
           </div>
         </IdentityCard>
 
-        {/* CONTAINER 4: TERMINAL LIFECYCLE AUDIT ENGINE */}
+        {/* CARD 4: ACCOUNT ACTIVITY & STATUS */}
         <IdentityCard
-          title="Interactive Lifecycle Amortization Logs"
+          title="Account Activity & History"
           icon={<Activity size={16} />}
         >
           <TelemetryItem
             icon={<Activity />}
-            label="Aggregated System Interaction Logs"
-            value={`${user.logintimes} Cleared Access Sessions`}
+            label="Total Logins"
+            value={`${user.logintimes} Sessions`}
           />
           <TelemetryItem
             icon={<Calendar />}
-            label="Profile Initialization Timestamp"
+            label="Account Created"
             value={new Date(user.createdAt).toLocaleDateString("en-KE")}
           />
           <TelemetryItem
             icon={<Clock />}
-            label="Last Database Synchronization State"
+            label="Last Profile Update"
             value={new Date(user.updatedAt).toLocaleDateString("en-KE")}
           />
           <TelemetryItem
             icon={<ShieldCheck />}
-            label="Soft Deletion State Reference Flag"
-            value={user.deletedAt ? "Flagged True" : "Clean Asset Record"}
+            label="Deletion Status"
+            value={user.deletedAt ? "Deleted" : "Active Record"}
           />
           <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100 mt-1">
             <BooleanIndicatorRow
-              label="Privileged Operator Suspension"
+              label="Account Suspension"
               active={user.suspended !== null}
-              value={user.suspended ? "Revoked Access" : "Cleared Parameter"}
+              value={user.suspended ? "Suspended" : "Not Suspended"}
             />
             <BooleanIndicatorRow
-              label="Token Lifecycle Reference Presence"
+              label="Active Session Token"
               active={user.refresh_token !== null}
-              value={user.refresh_token ? "Token Initialized" : "Token Purged"}
+              value={user.refresh_token ? "Present" : "None Active"}
             />
           </div>
         </IdentityCard>

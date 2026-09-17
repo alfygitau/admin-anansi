@@ -56,6 +56,8 @@ import MyLoanTransactions from "./pages/loans/all-loans/LoanTransactions";
 import LoanApplicationSuccess from "./pages/loans/apply-loan/ApplicationSuccess";
 import * as Sentry from "@sentry/react";
 import ViewStatement from "./pages/loans/all-loans/ViewStatement";
+import BulkPayments from "./pages/transactions/bulk-payments/BulkPayments";
+import BulkPaymentsList from "./pages/transactions/bulk-payments/AllBulkPayments";
 
 function App() {
   return (
@@ -137,6 +139,8 @@ function App() {
             element={<AccountTransactions />}
           />
           <Route path="loan-transactions" element={<LoanTransactions />} />
+          <Route path="add-bulk-payment" element={<BulkPayments />} />
+          <Route path="all-bulk-payments" element={<BulkPaymentsList />} />
 
           <Route path="all-members" element={<AllMembers />} />
           <Route path="all-members/:id" element={<MemberDetails />} />

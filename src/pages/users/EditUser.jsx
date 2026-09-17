@@ -498,23 +498,20 @@ export default function EditAdminUser() {
                 </h3>
                 <div className="space-y-1">
                   <PreviewItem
-                    label="Full Profile Identity Name"
+                    label="Full Name"
                     value={`${formData.firstname} ${formData.lastname}`}
                   />
                   <PreviewItem
-                    label="Account Handle Identifier"
+                    label="Username"
                     value={`@${formData.username}`}
                   />
-                  <PreviewItem
-                    label="Electronic Delivery Endpoint"
-                    value={formData.email}
-                  />
+                  <PreviewItem label="Email" value={formData.email} />
                 </div>
               </div>
 
               <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] p-6 space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2 border-b border-slate-100 pb-2.5">
-                  <Building2 size={14} /> Functional Placement Parameters
+                  <Building2 size={14} /> Role Parameters
                 </h3>
                 <div className="space-y-1">
                   <div className="grid grid-cols-2 gap-x-6">
@@ -529,16 +526,16 @@ export default function EditAdminUser() {
                   </div>
                   <div className="grid grid-cols-2 gap-x-6">
                     <PreviewItem
-                      label="Primary Mobile Line"
+                      label="Primary Mobile Number"
                       value={formData.phone}
                     />
                     <PreviewItem
-                      label="Office/Alternate Line"
+                      label="Alternate Mobile Number"
                       value={formData.office_phone}
                     />
                   </div>
                   <PreviewItem
-                    label="Security Access Clearance Assignment"
+                    label="Access Role"
                     value={
                       roles.find(
                         (r) => String(r.id) === String(formData.role_id),
@@ -550,23 +547,14 @@ export default function EditAdminUser() {
 
               <div className="lg:col-span-2 bg-white border border-slate-200/60 shadow-sm rounded-[24px] p-6 space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-primary flex items-center gap-2 border-b border-slate-100 pb-2.5">
-                  <Globe size={14} /> Geographical Operational Bounds
+                  <Globe size={14} /> Location
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2">
+                  <PreviewItem label="Country" value={formData.country} />
+                  <PreviewItem label="County" value={formData.county} />
+                  <PreviewItem label="Sub-County" value={formData.subcounty} />
                   <PreviewItem
-                    label="Sovereign Jurisdiction Territory"
-                    value={formData.country}
-                  />
-                  <PreviewItem
-                    label="Regional Area County"
-                    value={formData.county}
-                  />
-                  <PreviewItem
-                    label="Sub-County Constituency Perimeter"
-                    value={formData.subcounty}
-                  />
-                  <PreviewItem
-                    label="Physical Base Office Address"
+                    label="Physical Address"
                     value={formData.address}
                   />
                 </div>
@@ -631,16 +619,14 @@ export default function EditAdminUser() {
 
               <div className="space-y-1 mb-6 px-2">
                 <h3 className="text-lg font-black text-primary tracking-tight">
-                  User Added Successfully
+                  User Edited Successfully
                 </h3>
                 <p className="text-xs text-slate-400 font-medium leading-relaxed">
                   Awesome!{" "}
                   <span className="font-bold text-slate-700">
                     {successData.firstname} {successData.lastname}
                   </span>{" "}
-                  is officially registered. Their temporary access key has been
-                  sent to your email. Follow the instructions to update your
-                  password
+                  is officially updated.
                 </p>
               </div>
 
@@ -650,16 +636,16 @@ export default function EditAdminUser() {
                   onClick={() => navigate(`/admin/all-users`)}
                   className="w-full h-11 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-md hover:opacity-95 transition-all cursor-pointer flex items-center justify-center gap-1.5 order-1"
                 >
-                  <span>Go to User Directory</span>
+                  <span>Go to Users Directory</span>
                   <ArrowRight size={13} />
                 </button>
                 <button
                   type="button"
-                  onClick={handleResetWorkflow}
+                  onClick={() => navigate(`/admin/all-users/${user?.id}`)}
                   className="w-full h-11 bg-slate-50 border border-slate-200 text-slate-600 text-xs font-bold uppercase tracking-wider rounded-xl hover:bg-slate-100 transition-all cursor-pointer flex items-center justify-center gap-1.5 order-2"
                 >
                   <UserPlus size={13} />
-                  <span>Add Another User</span>
+                  <span>View User</span>
                 </button>
               </div>
             </motion.div>

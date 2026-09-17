@@ -43,6 +43,11 @@ export default function Homelayer() {
       path: "/admin/all-members",
       icon: <UserCheck size={18} />,
       badge: "1,240",
+      subItems: [
+        { label: "Individual Members", path: "/admin/all-members" },
+        { label: "Group Accounts", path: "/admin/group-accounts" },
+        { label: "Corporate Accounts", path: "/admin/corporate-accounts" },
+      ],
     },
     {
       id: "accounts",

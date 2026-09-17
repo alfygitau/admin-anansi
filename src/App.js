@@ -58,6 +58,9 @@ import * as Sentry from "@sentry/react";
 import ViewStatement from "./pages/loans/all-loans/ViewStatement";
 import BulkPayments from "./pages/transactions/bulk-payments/BulkPayments";
 import BulkPaymentsList from "./pages/transactions/bulk-payments/AllBulkPayments";
+import AddGroupAccount from "./pages/group-accounts/AddGroupAccount";
+import GroupsList from "./pages/group-accounts/GroupAccounts";
+import GroupDetails from "./pages/group-accounts/GroupDetails";
 
 function App() {
   return (
@@ -143,6 +146,9 @@ function App() {
           <Route path="all-bulk-payments" element={<BulkPaymentsList />} />
 
           <Route path="all-members" element={<AllMembers />} />
+          <Route path="group-accounts" element={<GroupsList />} />
+          <Route path="group-accounts/:id" element={<GroupDetails />} />
+          <Route path="add-group-account" element={<AddGroupAccount />} />
           <Route path="all-members/:id" element={<MemberDetails />} />
           <Route path="all-members/add-member" element={<AddMember />} />
           <Route

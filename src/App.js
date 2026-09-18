@@ -61,6 +61,9 @@ import BulkPaymentsList from "./pages/transactions/bulk-payments/AllBulkPayments
 import AddGroupAccount from "./pages/group-accounts/AddGroupAccount";
 import GroupsList from "./pages/group-accounts/GroupAccounts";
 import GroupDetails from "./pages/group-accounts/GroupDetails";
+import CorporateAccounts from "./pages/corporate-accounts/AllCorporateAccounts";
+import AddCorporateAccount from "./pages/corporate-accounts/AddCorporateAccount";
+import CorporateAccountDetails from "./pages/corporate-accounts/CorporateAccountDetails";
 
 function App() {
   return (
@@ -158,6 +161,16 @@ function App() {
 
           <Route path="accounts" element={<Accounts />} />
           <Route path="accounts/:id" element={<MemberAccounts />} />
+
+          <Route path="corporate-accounts" element={<CorporateAccounts />} />
+          <Route
+            path="add-corporate-account"
+            element={<AddCorporateAccount />}
+          />
+          <Route
+            path="corporate-accounts/:id"
+            element={<CorporateAccountDetails />}
+          />
 
           <Route
             path="loan-applications/:id/approve"

@@ -442,7 +442,7 @@ const GroupDetails = ({
                     Leadership Team
                   </h2>
                   <button
-                    onClick={onAddLeader}
+                    onClick={()=>setOpenAddLeader(true)}
                     className="text-xs font-bold text-[#074073] hover:underline cursor-pointer"
                   >
                     + Add Leader

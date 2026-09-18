@@ -13,6 +13,7 @@ import {
   Sparkles,
   Upload,
   X,
+  ChevronRight,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -159,18 +160,23 @@ const AddGroupAccount = ({ onBack, onSubmitGroup }) => {
                   <label className="text-xs font-bold text-slate-700">
                     Group Type <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="groupType"
-                    value={formData.groupType}
-                    onChange={handleChange}
-                    className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 outline-none focus:bg-white focus:border-[#074073] transition-all cursor-pointer"
-                  >
-                    {groupTypes.map((type) => (
-                      <option key={type} value={type}>
-                        {type}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative w-full">
+                    <select
+                      name="groupType"
+                      value={formData.groupType}
+                      onChange={handleChange}
+                      className="w-full h-12 px-4 pr-10 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 outline-none appearance-none focus:bg-white focus:border-[#074073] transition-all cursor-pointer"
+                    >
+                      {groupTypes.map((type) => (
+                        <option key={type} value={type}>
+                          {type}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                      <ChevronRight size={16} className="rotate-90" />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">
@@ -244,68 +250,73 @@ const AddGroupAccount = ({ onBack, onSubmitGroup }) => {
                   <label className="text-xs font-bold text-slate-700">
                     County <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    name="county"
-                    value={formData.county || ""}
-                    onChange={handleChange}
-                    required
-                    className="w-full h-12 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 outline-none focus:bg-white focus:border-[#074073] transition-all cursor-pointer"
-                  >
-                    <option value="">Select County</option>
-                    {[
-                      "Mombasa",
-                      "Kwale",
-                      "Kilifi",
-                      "Tana River",
-                      "Lamu",
-                      "Taita–Taveta",
-                      "Garissa",
-                      "Wajir",
-                      "Mandera",
-                      "Marsabit",
-                      "Isiolo",
-                      "Meru",
-                      "Tharaka-Nithi",
-                      "Embu",
-                      "Kitui",
-                      "Machakos",
-                      "Makueni",
-                      "Nyandarua",
-                      "Nyeri",
-                      "Kirinyaga",
-                      "Murang'a",
-                      "Kiambu",
-                      "Turkana",
-                      "West Pokot",
-                      "Samburu",
-                      "Trans-Nzoia",
-                      "Uasin Gishu",
-                      "Elgeyo-Marakwet",
-                      "Nandi",
-                      "Baringo",
-                      "Laikipia",
-                      "Nakuru",
-                      "Narok",
-                      "Kajiado",
-                      "Kericho",
-                      "Bomet",
-                      "Kakamega",
-                      "Vihiga",
-                      "Bungoma",
-                      "Busia",
-                      "Siaya",
-                      "Kisumu",
-                      "Homa Bay",
-                      "Migori",
-                      "Kisii",
-                      "Nyamira",
-                      "Nairobi",
-                    ].map((c) => (
-                      <option key={c} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative w-full">
+                    <select
+                      name="county"
+                      value={formData.county || ""}
+                      onChange={handleChange}
+                      required
+                      className="w-full h-12 px-4 pr-10 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 outline-none appearance-none focus:bg-white focus:border-[#074073] transition-all cursor-pointer"
+                    >
+                      <option value="">Select County</option>
+                      {[
+                        "Mombasa",
+                        "Kwale",
+                        "Kilifi",
+                        "Tana River",
+                        "Lamu",
+                        "Taita–Taveta",
+                        "Garissa",
+                        "Wajir",
+                        "Mandera",
+                        "Marsabit",
+                        "Isiolo",
+                        "Meru",
+                        "Tharaka-Nithi",
+                        "Embu",
+                        "Kitui",
+                        "Machakos",
+                        "Makueni",
+                        "Nyandarua",
+                        "Nyeri",
+                        "Kirinyaga",
+                        "Murang'a",
+                        "Kiambu",
+                        "Turkana",
+                        "West Pokot",
+                        "Samburu",
+                        "Trans-Nzoia",
+                        "Uasin Gishu",
+                        "Elgeyo-Marakwet",
+                        "Nandi",
+                        "Baringo",
+                        "Laikipia",
+                        "Nakuru",
+                        "Narok",
+                        "Kajiado",
+                        "Kericho",
+                        "Bomet",
+                        "Kakamega",
+                        "Vihiga",
+                        "Bungoma",
+                        "Busia",
+                        "Siaya",
+                        "Kisumu",
+                        "Homa Bay",
+                        "Migori",
+                        "Kisii",
+                        "Nyamira",
+                        "Nairobi",
+                      ].map((c) => (
+                        <option key={c} value={c}>
+                          {c}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                      <ChevronRight size={16} className="rotate-90" />
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-1.5">

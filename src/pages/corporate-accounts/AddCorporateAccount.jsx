@@ -15,6 +15,7 @@ import {
   Loader2,
   Plus,
   Trash2,
+  ChevronRight,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -211,19 +212,27 @@ const AddCorporateAccount = ({ onBack, onSaveSuccess }) => {
                   <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1 block">
                     Industry / Sector *
                   </label>
-                  <select
-                    value={formData.industry}
-                    onChange={(e) =>
-                      setFormData({ ...formData, industry: e.target.value })
-                    }
-                    className="w-full h-14 px-4 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 outline-none cursor-pointer focus:bg-white focus:border-[#074073]"
-                  >
-                    {industries.map((ind) => (
-                      <option key={ind} value={ind}>
-                        {ind}
+                  <div className="relative w-full">
+                    <select
+                      value={formData.industry}
+                      onChange={(e) =>
+                        setFormData({ ...formData, industry: e.target.value })
+                      }
+                      className="w-full h-14 pl-4 pr-10 bg-slate-50 border border-slate-200 rounded-2xl text-xs font-semibold text-slate-800 outline-none cursor-pointer appearance-none focus:bg-white focus:border-[#074073]"
+                    >
+                      <option value="" disabled>
+                        Select Industry
                       </option>
-                    ))}
-                  </select>
+                      {industries.map((ind) => (
+                        <option key={ind} value={ind}>
+                          {ind}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                      <ChevronRight size={16} className="rotate-90" />
+                    </div>
+                  </div>
                 </div>
 
                 <InputField
@@ -290,26 +299,6 @@ const AddCorporateAccount = ({ onBack, onSaveSuccess }) => {
             </div>
 
             <div className="border-t border-slate-100 pt-6 space-y-5">
-              <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">
-                3. Initial Account Capitalization
-              </h3>
-
-              <div className="max-w-md">
-                <InputField
-                  label="Initial Opening Deposit (KES) *"
-                  placeholder="e.g., 500000"
-                  type="number"
-                  value={formData.initialDeposit}
-                  onChange={(e) =>
-                    setFormData({ ...formData, initialDeposit: e.target.value })
-                  }
-                  error={errors.initialDeposit}
-                  icon={DollarSign}
-                />
-              </div>
-            </div>
-
-            <div className="border-t border-slate-100 pt-6 space-y-5">
               <div className="flex items-center justify-between">
                 <div>
                   <h3 className="text-xs font-black uppercase text-slate-400 tracking-wider">
@@ -367,19 +356,24 @@ const AddCorporateAccount = ({ onBack, onSaveSuccess }) => {
                         }
                         className="h-11 px-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold outline-none focus:border-[#074073]"
                       />
-                      <select
-                        value={sig.role}
-                        onChange={(e) =>
-                          handleSignatoryChange(index, "role", e.target.value)
-                        }
-                        className="h-11 px-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold outline-none cursor-pointer focus:border-[#074073]"
-                      >
-                        {signatoryRoles.map((r) => (
-                          <option key={r} value={r}>
-                            {r}
-                          </option>
-                        ))}
-                      </select>
+                      <div className="relative w-full">
+                        <select
+                          value={sig.role}
+                          onChange={(e) =>
+                            handleSignatoryChange(index, "role", e.target.value)
+                          }
+                          className="w-full h-11 px-3 pr-9 bg-white border border-slate-200 rounded-xl text-xs font-semibold outline-none cursor-pointer appearance-none focus:border-[#074073]"
+                        >
+                          {signatoryRoles.map((r) => (
+                            <option key={r} value={r}>
+                              {r}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                          <ChevronRight size={14} className="rotate-90" />
+                        </div>
+                      </div>
                       <input
                         type="text"
                         placeholder="National ID / Passport No."

@@ -64,6 +64,8 @@ import GroupDetails from "./pages/group-accounts/GroupDetails";
 import CorporateAccounts from "./pages/corporate-accounts/AllCorporateAccounts";
 import AddCorporateAccount from "./pages/corporate-accounts/AddCorporateAccount";
 import CorporateAccountDetails from "./pages/corporate-accounts/CorporateAccountDetails";
+import Validate from "./pages/validation/Validate";
+import LoanReviews from "./pages/loans/loan-reviews/LoanReviews";
 
 function App() {
   return (
@@ -113,6 +115,7 @@ function App() {
 
           <Route path="all-loans" element={<AllLoans />} />
           <Route path="all-loans/:id" element={<Loan />} />
+          <Route path="loan-reviews" element={<LoanReviews />} />
           <Route
             path="all-loans/:id/transactions"
             element={<MyLoanTransactions />}
@@ -207,6 +210,7 @@ function App() {
             element={<LoanApplicationSuccess />}
           />
           <Route path="help-support" element={<HelpCenter />} />
+          <Route path="validate" element={<Validate />} />
 
           <Route path="financial-reports" element={<FinancialReports />} />
           <Route path="all-reports" element={<AllReports />} />

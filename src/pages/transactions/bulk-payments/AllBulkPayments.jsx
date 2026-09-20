@@ -10,6 +10,7 @@ import {
   FileSpreadsheet,
   Download,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 export default function BulkPaymentsList() {
   // Mock data for bulk payment batches
@@ -63,6 +64,7 @@ export default function BulkPaymentsList() {
   // Filter & Search State
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const navigate = useNavigate();
 
   // Status Badge Styling Helper
   const getStatusBadge = (status) => {
@@ -127,7 +129,7 @@ export default function BulkPaymentsList() {
         </div>
         <div className="flex items-center gap-3">
           <button
-            onClick={() => alert("Navigate to New Bulk Upload")}
+            onClick={() => navigate("/admin/add-bulk-payment")}
             className="px-5 h-11 bg-primary text-white rounded-2xl text-xs font-bold hover:opacity-95 transition-all shadow-3xs flex items-center gap-2"
           >
             <FileSpreadsheet size={16} />

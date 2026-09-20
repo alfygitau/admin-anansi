@@ -27,7 +27,6 @@ const CorporateAccounts = ({ onOpenAddModal }) => {
   const itemsPerPage = 6;
   const navigate = useNavigate();
 
-  // Mock corporate accounts data tailored for a SACCO environment
   const [corporateAccounts, setCorporateAccounts] = useState([
     {
       id: "CORP-9012",
@@ -145,7 +144,7 @@ const CorporateAccounts = ({ onOpenAddModal }) => {
   );
 
   return (
-    <div className="h-full bg-slate-50/50 font-sans text-slate-800">
+    <div className="bg-slate-50/50 font-sans text-slate-800">
       {/* PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
@@ -247,8 +246,6 @@ const CorporateAccounts = ({ onOpenAddModal }) => {
                 <th className="py-2 px-6">Corporate Entity</th>
                 <th className="py-2 px-6">Industry / Sector</th>
                 <th className="py-2 px-6">Primary Contact & Phone</th>
-                <th className="py-2 px-6">Total Savings</th>
-                <th className="py-2 px-6">Active Loan</th>
                 <th className="py-2 px-6">Status</th>
                 <th className="py-2 px-6 text-right">Action</th>
               </tr>
@@ -272,6 +269,9 @@ const CorporateAccounts = ({ onOpenAddModal }) => {
                           <p className="text-[10px] text-slate-400">
                             ID: {account.id} • KRA: {account.kraPin}
                           </p>
+                          <p className="text-[10px] text-slate-400">
+                            KRA: {account.kraPin}
+                          </p>
                         </div>
                       </div>
                     </td>
@@ -285,16 +285,6 @@ const CorporateAccounts = ({ onOpenAddModal }) => {
                       <p className="text-[10px] text-slate-400">
                         {account.phone}
                       </p>
-                    </td>
-                    <td className="py-4 px-6 font-bold text-emerald-600">
-                      KES {account.totalSavings.toLocaleString()}
-                    </td>
-                    <td className="py-4 px-6 font-semibold text-slate-700">
-                      {account.activeLoan > 0 ? (
-                        `KES ${account.activeLoan.toLocaleString()}`
-                      ) : (
-                        <span className="text-slate-400 font-normal">None</span>
-                      )}
                     </td>
                     <td className="py-4 px-6">
                       <StatusBadge status={account.status} />
@@ -326,59 +316,11 @@ const CorporateAccounts = ({ onOpenAddModal }) => {
             </tbody>
           </table>
         </div>
-
-        {/* PAGINATION FOOTER */}
-        <div className="px-6 py-4 border-t border-slate-100 flex items-center justify-between bg-slate-50/50">
-          <p className="text-[11px] text-slate-400 font-medium">
-            Showing{" "}
-            <span className="font-bold text-slate-700">
-              {paginatedAccounts.length > 0
-                ? (currentPage - 1) * itemsPerPage + 1
-                : 0}
-            </span>{" "}
-            to{" "}
-            <span className="font-bold text-slate-700">
-              {Math.min(currentPage * itemsPerPage, filteredAccounts.length)}
-            </span>{" "}
-            of{" "}
-            <span className="font-bold text-slate-700">
-              {filteredAccounts.length}
-            </span>{" "}
-            corporate entries
-          </p>
-
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-              className="p-2 bg-white border border-slate-200 rounded-lg text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 transition-all cursor-pointer"
-            >
-              <ChevronLeft size={15} />
-            </button>
-            <span className="text-xs font-bold text-slate-700 px-2">
-              {currentPage} / {totalPages}
-            </span>
-            <button
-              type="button"
-              onClick={() =>
-                setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-              }
-              disabled={currentPage === totalPages}
-              className="p-2 bg-white border border-slate-200 rounded-lg text-slate-600 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 transition-all cursor-pointer"
-            >
-              <ChevronRight size={15} />
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );
 };
 
-/* ==========================================================================
-   SUPPORTIVE SUB-COMPONENTS
-   ========================================================================== */
 const MetricCard = ({ title, value, subtext, icon: Icon, color }) => (
   <div className="bg-white border border-slate-200/60 rounded-2xl p-5 shadow-3xs flex items-center justify-between">
     <div className="space-y-1">

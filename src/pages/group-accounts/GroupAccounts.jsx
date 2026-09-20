@@ -86,7 +86,7 @@ const GroupsList = ({ groups = [] }) => {
   });
 
   return (
-    <div className="h-full bg-slate-50/50 flex flex-col">
+    <div className="bg-slate-50/50 flex flex-col">
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -152,7 +152,7 @@ const GroupsList = ({ groups = [] }) => {
                   <th className="py-4 px-6">Group Profile & ID</th>
                   <th className="py-4 px-6">Type & Registration</th>
                   <th className="py-4 px-6">Communication Contact</th>
-                  <th className="py-4 px-6">Financials & Members</th>
+                  <th className="py-4 px-6">Members</th>
                   <th className="py-4 px-6">Status</th>
                   <th className="py-4 px-6 text-right pr-8">Actions</th>
                 </tr>
@@ -221,15 +221,7 @@ const GroupsList = ({ groups = [] }) => {
                       {/* Col 4: Financials & Members */}
                       <td className="py-4 px-6">
                         <div className="flex flex-col space-y-1">
-                          <span className="font-semibold text-slate-800 text-xs flex items-center gap-1">
-                            <Wallet size={12} className="text-slate-400" />
-                            KES{" "}
-                            {Number(
-                              group.monthlyContribution,
-                            ).toLocaleString()}{" "}
-                          </span>
                           <span className="text-[11px] text-slate-500 font-medium">
-                            Linked Members:{" "}
                             <strong className="text-[#074073]">
                               {group.memberCount || 0}
                             </strong>

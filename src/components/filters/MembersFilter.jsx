@@ -75,6 +75,8 @@ const MembersFilter = ({ isOpen, onClose, filters, setFilters }) => {
       subcounty: "",
       fromDate: "",
       toDate: "",
+      page: 1,
+      limit: 10,
     });
   };
 

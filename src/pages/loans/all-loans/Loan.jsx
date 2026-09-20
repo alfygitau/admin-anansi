@@ -484,7 +484,7 @@ export default function Loan() {
               <MetricItem
                 icon={<Calendar />}
                 label="Loan Duration"
-                value={`${loan?.loan_period} Month (${loan?.duration_key})`}
+                value={`${loan?.loan_period} Month(s)`}
               />
               <MetricItem
                 icon={<Clock />}
@@ -572,6 +572,7 @@ export default function Loan() {
                       <th className="pb-3">Due Date</th>
                       <th className="pb-3">Principal Due</th>
                       <th className="pb-3">Interest Due</th>
+                      <th className="pb-3">Total Due</th>
                       <th className="pb-3 text-right pr-2">Status</th>
                     </tr>
                   </thead>
@@ -588,6 +589,7 @@ export default function Loan() {
                         </td>
                         <td className="py-3">KES {s?.principal_due}</td>
                         <td className="py-3">KES {s?.interest_due}</td>
+                        <td className="py-3">KES {s?.total_due}</td>
                         <td className="py-3 text-right pr-2">
                           <span
                             className={`px-2 py-0.5 uppercase text-[9px] font-bold rounded-md border ${
@@ -681,7 +683,7 @@ export default function Loan() {
                     Penalty History
                   </span>
 
-                  <div className="space-y-2 max-h-[150px] overflow-y-auto pr-1">
+                  <div className="space-y-2 max-h-[450px] overflow-y-auto pr-1">
                     {loan.penalties.map((p, i) => (
                       <div
                         key={i}
@@ -692,7 +694,7 @@ export default function Loan() {
                             Late Payment Fee
                           </p>
                           <p className="text-[10px] text-slate-400 font-medium">
-                            Charged automatically for missing the grace period
+                            Charged automatically for missing schedule repayment
                           </p>
                         </div>
                         <p className="text-xs font-bold text-error">

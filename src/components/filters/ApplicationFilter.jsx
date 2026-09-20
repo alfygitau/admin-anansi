@@ -105,6 +105,8 @@ export default function FilterApplications({
       loan_product_code: "",
       fromDate: "",
       toDate: "",
+      page: 1,
+      limit: 10,
     });
   };
 

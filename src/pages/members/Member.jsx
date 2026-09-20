@@ -689,7 +689,7 @@ export default function MemberDetails({ onUpdateDocument }) {
                   <ProfileMetaBlock label="Last Name" value={member.lastname} />
                   <ProfileMetaBlock
                     label="Identification"
-                    value={`${member.identification_type} — ${member.identification}`}
+                    value={`${member.identification}`}
                   />
                   <ProfileMetaBlock label="KRA PIN" value={member.kraPin} />
                   <ProfileMetaBlock label="Date of Birth" value={member.dob} />
@@ -825,7 +825,7 @@ export default function MemberDetails({ onUpdateDocument }) {
                     <p className="text-[10px] text-slate-400 uppercase tracking-wide">
                       Contact
                     </p>
-                    <p className="text-slate-400 text-[11px] font-normal mt-0.5">
+                    <p className="text-primary text-[11px] font-bold mt-0.5">
                       {member.email}
                     </p>
                   </div>
@@ -1286,7 +1286,7 @@ export default function MemberDetails({ onUpdateDocument }) {
           <div className="bg-white rounded-2xl border border-slate-200/60 shadow-xs p-6">
             {/* HEADER SECTION */}
             <div
-              className="w-full flex items-center justify-between cursor-pointer group select-none"
+              className="w-full sm:flex-col sm:gap-2 flex sm:items-start items-center justify-between cursor-pointer group select-none"
               onClick={() => setShowImages(!showImages)}
             >
               <div className="space-y-1">
@@ -1303,7 +1303,7 @@ export default function MemberDetails({ onUpdateDocument }) {
 
               <button
                 type="button"
-                className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer ${
+                className={`flex items-center gap-1.5 sm:w-full text-xs font-bold px-4 py-2 rounded-xl transition-all cursor-pointer ${
                   showImages
                     ? "bg-slate-100 text-slate-600 hover:bg-slate-200"
                     : "bg-blue-50 text-[#074073] hover:bg-blue-100"

@@ -17,6 +17,7 @@ import {
   HelpCircle,
   User,
   Coins,
+  Shield,
 } from "lucide-react";
 import { FourCircles } from "../shared/Circles";
 import useAuth from "../hooks/useAuth";
@@ -80,11 +81,20 @@ export default function Homelayer() {
       badge: "18",
       subItems: [
         { label: "Loan Applications", path: "/admin/loan-applications" },
-        { label: "Loan Products", path: "/admin/loan-products" },
         {
           label: "Loan Application Approvals",
           path: "/admin/loan-applications-approvals",
         },
+      ],
+    },
+    {
+      id: "Loan Products",
+      label: "Loan Products",
+      path: "/admin/loan-products",
+      icon: <Shield size={18} />,
+      badge: "18",
+      subItems: [
+        { label: "Loan Products", path: "/admin/loan-products" },
         {
           label: "Products Review Queue",
           path: "/admin/loan-products-reviews",

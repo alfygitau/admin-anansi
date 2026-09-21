@@ -755,6 +755,18 @@ export default function AddMember() {
                           No accessories like sunglasses, hats, or heavy photo
                           filters.
                         </li>
+                        <li>
+                          Take the photo in a well-lit environment with a plain,
+                          neutral background.
+                        </li>
+                        <li>
+                          Make sure your eyes are open and looking directly at
+                          the camera.
+                        </li>
+                        <li>
+                          Ensure the image is high resolution, unblurred, and
+                          free of glare.
+                        </li>
                       </ul>
                     </div>
                   </div>

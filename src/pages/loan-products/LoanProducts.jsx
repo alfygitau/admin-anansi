@@ -165,7 +165,7 @@ export default function LoanProducts() {
               <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
                 <th className="py-4.5 px-6">Product Code & Name</th>
                 <th className="py-4.5 px-6">Interest Configuration</th>
-                <th className="py-4.5 px-6">Tenor & Multiplier</th>
+                <th className="py-4.5 px-6">Tenor</th>
                 <th className="py-4.5 px-6">Amounts Requirements</th>
                 <th className="py-4.5 px-6">Underwriting Rules</th>
                 <th className="py-4.5 px-6">Status</th>

@@ -297,7 +297,7 @@ const CorporateAccounts = ({ onOpenAddModal }) => {
                         }
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-[#074073] hover:text-white text-slate-700 rounded-lg text-[11px] font-bold transition-all cursor-pointer"
                       >
-                        <span>View</span>
+                        <span>Manage</span>
                         <ChevronRight size={13} />
                       </button>
                     </td>

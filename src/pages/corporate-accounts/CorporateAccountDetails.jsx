@@ -307,9 +307,6 @@ const CorporateAccountDetails = ({
                       <span className="text-[10px] font-bold text-[#074073] uppercase">
                         {dir.role}
                       </span>
-                      <span className="text-[10px] font-bold bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded">
-                        {dir.sharesPercentage} Shares
-                      </span>
                     </div>
                     <span className="text-xs font-extrabold text-slate-800 truncate">
                       {dir.name}

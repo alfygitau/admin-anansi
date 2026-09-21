@@ -690,11 +690,15 @@ export default function Loan() {
                         className="border border-slate-100 p-3 rounded-xl bg-slate-50/40 flex items-center justify-between"
                       >
                         <div className="space-y-0.5">
+                          <p className="text-[10px] text-slate-400 font-medium">
+                            {p?.penalty_date}
+                          </p>
                           <p className="text-xs font-bold text-slate-800 uppercase tracking-wide">
                             Late Payment Fee
                           </p>
                           <p className="text-[10px] text-slate-400 font-medium">
-                            Charged automatically for missing schedule repayment
+                            {p?.reason ??
+                              "Charged automatically for missing schedule repayment"}
                           </p>
                         </div>
                         <p className="text-xs font-bold text-error">

@@ -193,8 +193,13 @@ export default function AllLoans() {
             />
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              value={filters.loan_code}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  loan_code: e.target.value,
+                }))
+              }
               placeholder="Search accounts by code or debtor..."
               className="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-medium outline-none transition-all focus:bg-white focus:border-secondary placeholder:text-slate-400 font-sans"
             />

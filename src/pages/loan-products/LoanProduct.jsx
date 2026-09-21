@@ -23,13 +23,16 @@ import {
 import { useQuery } from "react-query";
 import { getLoanProduct } from "../../sdk/loan-products/loan-products";
 import { useToast } from "../../contexts/ToastProvider";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as Sentry from "@sentry/react";
+import { useFormatPercentage } from "../../hooks/useFormatPercentage";
 
 export default function LoanProduct() {
   const [loanProduct, setLoanProduct] = useState({});
   const { showToast } = useToast();
   const { id } = useParams();
+  const formatPercentage = useFormatPercentage();
+  const navigate = useNavigate();
 
   const { isFetching } = useQuery({
     queryKey: ["loan-product", id],
@@ -61,7 +64,10 @@ export default function LoanProduct() {
       {/* HEADER ACTIONS */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200/60 pb-6 select-none">
         <div className="flex items-center gap-4">
-          <button className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 transition-all shadow-sm cursor-pointer">
+          <button
+            onClick={() => navigate(-1)}
+            className="size-10 rounded-xl border border-slate-200/80 bg-white flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 transition-all shadow-sm cursor-pointer"
+          >
             <ArrowLeft size={16} />
           </button>
           <div>
@@ -82,6 +88,11 @@ export default function LoanProduct() {
                 {loanProduct?.is_active ? "Active" : "Deactivated"}
               </span>
             </div>
+            <span
+              className={`text-sm font-medium text-slate-400 tracking-tight leading-none truncate`}
+            >
+              {loanProduct?.product_code}
+            </span>
           </div>
         </div>
 
@@ -135,7 +146,7 @@ export default function LoanProduct() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* CONTAINER 1: SYSTEM DETAILS */}
           <ProfileGridCard
-            title="System Details"
+            title="Product Basic Details"
             icon={<Settings className="text-slate-400" size={16} />}
           >
             <MetricItem
@@ -145,13 +156,13 @@ export default function LoanProduct() {
             />
             <MetricItem
               icon={<Sliders />}
-              label="Operational Mode"
-              value={`Mode ${loanProduct?.loan_mode}`}
+              label="Product Name"
+              value={loanProduct?.product_name}
             />
             <MetricItem
-              icon={<Wallet />}
-              label="Allowed Currencies"
-              value={loanProduct?.allowed_currencies?.join(", ")}
+              icon={<Sliders />}
+              label="Product Code"
+              value={loanProduct?.product_code}
             />
             <MetricItem
               icon={<ShieldAlert />}
@@ -305,7 +316,7 @@ export default function LoanProduct() {
             <MetricItem
               icon={<Percent />}
               label="Interest Rate"
-              value={`${loanProduct?.interest_rate}% / Month`}
+              value={`${formatPercentage(loanProduct?.interest_rate)} / Month`}
             />
             <MetricItem
               icon={<Clock />}
@@ -326,12 +337,12 @@ export default function LoanProduct() {
             <MetricItem
               icon={<Percent />}
               label="Processing Fee"
-              value={`${loanProduct?.processing_fee_value}% (${loanProduct?.processing_fee_type})`}
+              value={`${formatPercentage(loanProduct?.processing_fee_value)} (${loanProduct?.processing_fee_type})`}
             />
             <MetricItem
               icon={<ShieldCheck />}
               label="Insurance Fee"
-              value={`${loanProduct?.insurance_rate}% Annualized`}
+              value={`${formatPercentage(loanProduct?.insurance_rate)} Annualized`}
             />
             <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
               <BooleanIndicatorLabel
@@ -364,13 +375,13 @@ export default function LoanProduct() {
             <MetricItem
               icon={<Percent />}
               label="Penalty Rate"
-              value={`${loanProduct?.penalty_value}% / ${loanProduct?.penalty_frequency}`}
+              value={`${formatPercentage(loanProduct?.penalty_value)} / ${loanProduct?.penalty_frequency}`}
               isCapitalized
             />
             <MetricItem
               icon={<AlertTriangle />}
               label="Maximum Penalty Cap"
-              value={`${loanProduct?.max_penalty_rate}% Outstanding`}
+              value={`${formatPercentage(loanProduct?.max_penalty_rate)} Outstanding`}
             />
             <MetricItem
               icon={<Calendar />}
@@ -435,14 +446,9 @@ export default function LoanProduct() {
               value={`${loanProduct?.committee_approvals_required} Votes`}
             />
             <MetricItem
-              icon={<ShieldCheck />}
-              label="Committee Group ID"
-              value={loanProduct?.committee_group_id}
-            />
-            <MetricItem
               icon={<Percent />}
               label="Min Repayment to Re-apply"
-              value={`${loanProduct?.min_repayment_percent_before_reapply}% Paid Off`}
+              value={`${formatPercentage(loanProduct?.min_repayment_percent_before_reapply)} Paid Off`}
             />
             <MetricItem
               icon={<Users />}
@@ -457,12 +463,12 @@ export default function LoanProduct() {
             <MetricItem
               icon={<Percent />}
               label="Guarantor Coverage"
-              value={`${loanProduct?.guarantor_coverage_percent}% Covered`}
+              value={`${formatPercentage(loanProduct?.guarantor_coverage_percent)} Covered`}
             />
             <MetricItem
               icon={<Percent />}
               label="Min Repayment for Top-Up"
-              value={`${loanProduct?.min_repayment_percent_for_topup}% Paid Off`}
+              value={`${formatPercentage(loanProduct?.min_repayment_percent_for_topup)} Paid Off`}
             />
             <div className="md:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
               <BooleanIndicatorLabel
@@ -612,7 +618,7 @@ const MetricItem = ({ icon, label, value, isCapitalized = false }) => (
         {label}
       </span>
       <span
-        className={`text-sm font-medium text-slate-800 tracking-tight mt-1.5 leading-none truncate ${isCapitalized ? "capitalize" : ""}`}
+        className={`text-sm font-medium text-slate-800 tracking-tight mt-2 leading-none truncate ${isCapitalized ? "capitalize" : ""}`}
       >
         {value}
       </span>

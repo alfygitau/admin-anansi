@@ -215,9 +215,14 @@ export default function LoanApplications() {
             />
             <input
               type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search by app number or applicant name..."
+              value={filters?.application_number}
+              onChange={(e) =>
+                setFilters((prev) => ({
+                  ...prev,
+                  application_number: e.target.value,
+                }))
+              }
+              placeholder="Search by app number..."
               className="w-full h-10 pl-9 pr-4 bg-slate-50 border border-slate-200/60 rounded-xl text-xs font-medium outline-none transition-all focus:bg-white focus:border-secondary placeholder:text-slate-400 "
             />
           </div>

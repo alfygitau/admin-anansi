@@ -465,7 +465,7 @@ const LoanApplicationDetails = () => {
 
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-600">
-              Detailed Purpose Breakdown Statement
+              Detailed Purpose
             </label>
             <textarea
               rows={5}

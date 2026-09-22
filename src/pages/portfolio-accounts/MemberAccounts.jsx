@@ -508,7 +508,7 @@ export default function MemberAccounts() {
                       <tr>
                         <td
                           colSpan={7}
-                          className="py-12 text-center text-slate-400 font-medium text-xs"
+                          className="py-40 text-center text-slate-400 font-medium text-xs"
                         >
                           No active member accounts match your current filters.
                         </td>

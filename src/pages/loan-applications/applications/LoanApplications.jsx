@@ -12,6 +12,9 @@ import {
   Filter,
   Download,
   Plus,
+  Users,
+  UserCheck,
+  Wallet,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../../../contexts/ToastProvider";
@@ -434,6 +437,7 @@ export default function LoanApplications() {
                       {/* Col 6: Operational Admin Controls */}
                       <td className="py-4 px-6 text-right pr-8">
                         <div className="flex items-center justify-end gap-1.5">
+                          {/* 1. View Application */}
                           <button
                             onClick={() =>
                               navigate(`/admin/loan-applications/${app?.id}`)
@@ -443,18 +447,53 @@ export default function LoanApplications() {
                           >
                             <Eye size={14} />
                           </button>
-                          {app.status_label?.toLowerCase() !== "approved" ||
-                            (app.status_label?.toLowerCase() !==
-                              "disbursed" && (
-                              <>
-                                <button
-                                  className="size-8 rounded-xl border border-rose-100 flex items-center justify-center text-error hover:bg-rose-50 hover:border-rose-200 transition-all shadow-2xs bg-white cursor-pointer"
-                                  title="Log Disapproval Veto"
-                                >
-                                  <X size={14} />
-                                </button>
-                              </>
-                            ))}
+
+                          {/* 2. Pending Credit Committee Action */}
+                          {app.status_label === "Pending Credit Committee" && (
+                            <button
+                              onClick={() =>
+                                navigate(
+                                  `/admin/loan-applications/${app?.id}/credit-committee`,
+                                )
+                              }
+                              className="size-8 rounded-xl border border-blue-100 flex items-center justify-center text-blue-600 hover:bg-blue-50 hover:border-blue-200 transition-all shadow-2xs bg-white cursor-pointer"
+                              title="Pending Credit Committee"
+                            >
+                              <Users size={14} />
+                            </button>
+                          )}
+
+                          {/* 3. Pending Manager Approval Action */}
+                          {app.status_label ===
+                            "Pending Manager Approval" && (
+                            <button
+                              onClick={() =>
+                                navigate(
+                                  `/admin/loan-applications/${app?.id}/manager-approval`,
+                                )
+                              }
+                              className="size-8 rounded-xl border border-amber-100 flex items-center justify-center text-amber-600 hover:bg-amber-50 hover:border-amber-200 transition-all shadow-2xs bg-white cursor-pointer"
+                              title="Pending Manager Approval"
+                            >
+                              <UserCheck size={14} />
+                            </button>
+                          )}
+
+                          {/* 4. Pending Disbursement Action */}
+                          {app.status_label ===
+                            "Pending Disbursement" && (
+                            <button
+                              onClick={() =>
+                                navigate(
+                                  `/admin/loan-applications/${app?.id}/disbursement`,
+                                )
+                              }
+                              className="size-8 rounded-xl border border-emerald-100 flex items-center justify-center text-emerald-600 hover:bg-emerald-50 hover:border-emerald-200 transition-all shadow-2xs bg-white cursor-pointer"
+                              title="Pending Disbursement"
+                            >
+                              <Wallet size={14} />
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

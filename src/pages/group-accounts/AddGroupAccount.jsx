@@ -111,7 +111,6 @@ const AddGroupAccount = ({ onBack, onSubmitGroup }) => {
           </button>
           <div>
             <h1 className="text-xl font-bold text-[#074073] flex items-center gap-2">
-              <Users size={22} className="text-[#074073]" />
               Register New Group
             </h1>
             <p className="text-xs text-slate-500 font-medium mt-0.5">

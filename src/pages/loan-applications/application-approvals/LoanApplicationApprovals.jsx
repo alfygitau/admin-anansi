@@ -1,36 +1,24 @@
-import React, { useState, useMemo } from "react";
+import React, { useState } from "react";
 import {
   UserCheck,
   Search,
-  Sliders,
   Download,
   Filter,
   FileText,
-  DollarSign,
-  Calendar,
   AlertCircle,
-  ChevronLeft,
-  ChevronRight,
   TrendingUp,
-  Coins,
   ShieldCheck,
-  Clock,
   Eye,
 } from "lucide-react";
 import { useQuery } from "react-query";
-import { useToast } from "../../../../contexts/ToastProvider";
-import { useFormatAmount } from "../../../../hooks/useFormatAmount";
-import { getAllApprovals } from "../../../../sdk/loan-applications/loan-applications";
-import Pagination from "../../../../components/pagination/Pagination";
+import { useToast } from "../../../contexts/ToastProvider";
+import { useFormatAmount } from "../../../hooks/useFormatAmount";
+import { getAllApprovals } from "../../../sdk/loan-applications/loan-applications";
+import Pagination from "../../../components/pagination/Pagination";
 import * as Sentry from "@sentry/react";
 
 export default function LoanApplicationApprovals() {
   const [searchTerm, setSearchTerm] = useState("");
-  const [decisionFilter, setDecisionFilter] = useState("all");
-  const [typeFilter, setTypeFilter] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
-  const { toast } = useToast();
-  const [showFilters, setShowFilters] = useState(false);
   const formatAmount = useFormatAmount();
   const [filters, setFilters] = useState({
     page: 1,
@@ -237,10 +225,7 @@ export default function LoanApplicationApprovals() {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => setShowFilters(true)}
-            className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all"
-          >
+          <button className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">
             <Filter size={13} /> Filter
           </button>
           <button className="flex items-center gap-1.5 h-10 px-4 border border-slate-200 text-slate-600 rounded-xl text-xs font-bold hover:bg-slate-50 transition-all">

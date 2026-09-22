@@ -65,7 +65,7 @@ import AddCorporateAccount from "./pages/corporate-accounts/AddCorporateAccount"
 import CorporateAccountDetails from "./pages/corporate-accounts/CorporateAccountDetails";
 import Validate from "./pages/validation/Validate";
 import LoanReviews from "./pages/loans/loan-reviews/LoanReviews";
-import LoanApplicationApprovals from "./pages/loan-applications/applications/application-approvals/LoanApplicationApprovals";
+import LoanApplicationApprovals from "./pages/loan-applications/application-approvals/LoanApplicationApprovals";
 
 function App() {
   return (

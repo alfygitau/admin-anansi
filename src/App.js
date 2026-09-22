@@ -36,7 +36,6 @@ import RecordManualPayment from "./pages/loans/all-loans/RecordManualPayment";
 import LoanStatements from "./pages/loans/all-loans/LoanStatements";
 import Permissions from "./pages/permissions/Permissions";
 import AuditTrail from "./pages/audit-trails/AuditTrail";
-import LoanApplicationApprovals from "./pages/application-approvals/LoanApplicationApprovals";
 import AddMember from "./pages/members/RegisterMember";
 import AddGuarantor from "./pages/loans/apply-loan/AddGuarantor";
 import ChattelRegistry from "./pages/loans/apply-loan/Collaterals";
@@ -66,6 +65,7 @@ import AddCorporateAccount from "./pages/corporate-accounts/AddCorporateAccount"
 import CorporateAccountDetails from "./pages/corporate-accounts/CorporateAccountDetails";
 import Validate from "./pages/validation/Validate";
 import LoanReviews from "./pages/loans/loan-reviews/LoanReviews";
+import LoanApplicationApprovals from "./pages/loan-applications/applications/application-approvals/LoanApplicationApprovals";
 
 function App() {
   return (

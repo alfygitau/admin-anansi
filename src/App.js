@@ -2,10 +2,10 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Homepage from "./pages/homepage/Homepage";
 import Homelayer from "./layouts/Homelayer";
-import LoanProducts from "./pages/loan-products/LoanProducts";
-import AddLoanProduct from "./pages/loan-products/AddLoanProduct";
-import LoanProduct from "./pages/loan-products/LoanProduct";
-import EditLoanProduct from "./pages/loan-products/EditLoanProduct";
+import LoanProducts from "./pages/settings/loan-products/LoanProducts";
+import AddLoanProduct from "./pages/settings/loan-products/AddLoanProduct";
+import LoanProduct from "./pages/settings/loan-products/LoanProduct";
+import EditLoanProduct from "./pages/settings/loan-products/EditLoanProduct";
 import LoanApplications from "./pages/loan-applications/applications/LoanApplications";
 import LoanApplication from "./pages/loan-applications/applications/LoanApplication";
 import AllLoans from "./pages/loans/all-loans/AllLoans";
@@ -68,6 +68,10 @@ import LoanReviews from "./pages/loans/loan-reviews/LoanReviews";
 import LoanApplicationApprovals from "./pages/loan-applications/application-approvals/LoanApplicationApprovals";
 import Settings from "./pages/settings/Settings";
 import MemberAccount from "./pages/portfolio-accounts/MemberAccount";
+import { AllSettings } from "./pages/settings/all-settings/AllSettings";
+import { FinancialProducts } from "./pages/settings/financial-products/FinancialProducts";
+import { CreateFinancialProduct } from "./pages/settings/financial-products/AddFinancialProduct";
+import { EditFinancialProduct } from "./pages/settings/financial-products/EditFinancialProduct";
 
 function App() {
   return (
@@ -146,6 +150,20 @@ function App() {
           <Route path="audit-trail" element={<AuditTrail />} />
 
           {/* settings */}
+          <Route element={<AllSettings />} path="all-settings" />
+          <Route
+            element={<CreateFinancialProduct />}
+            path="financial-products/create"
+          />
+          <Route
+            element={<EditFinancialProduct />}
+            path="financial-products/:id/edit"
+          />
+          <Route
+            element={<FinancialProducts />}
+            path="all-financial-products"
+          />
+
           <Route element={<Settings />} path="settings" />
           <Route element={<Settings />} path="settings/products" />
           <Route element={<Settings />} path="settings/products/deposits" />

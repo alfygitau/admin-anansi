@@ -1,0 +1,1199 @@
+import React, { useState } from "react";
+import {
+  ArrowLeft,
+  ChevronRight,
+  AlertTriangle,
+  Plus,
+  Trash2,
+  Tag,
+  Hash,
+  Layers,
+  Target,
+  Coins,
+  Calendar,
+  Clock,
+  Wallet,
+  CalendarDays,
+  Percent,
+  ShieldCheck,
+  Building2,
+  FileText,
+  ImageIcon,
+  ArrowUpRight,
+  TrendingUp,
+} from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+const FilterField = ({ label, icon: Icon, children }) => (
+  <div className="space-y-2 w-full">
+    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+      {label}
+    </label>
+    <div className="relative group">
+      {Icon && (
+        <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
+          <Icon
+            size={18}
+            className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
+          />
+          <div className="w-[1.5px] h-5 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
+        </div>
+      )}
+      {children}
+    </div>
+  </div>
+);
+
+const FilterSelect = ({
+  label,
+  icon: Icon,
+  value,
+  onChange,
+  disabled,
+  children,
+}) => (
+  <FilterField label={label} icon={Icon}>
+    <div className="relative w-full">
+      <select
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        className="w-full pl-[74px] pr-10 py-4 h-14 bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 rounded-2xl transition-all outline-none appearance-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+      >
+        {children}
+      </select>
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 z-10">
+        <ChevronRight size={16} className="rotate-90" />
+      </div>
+    </div>
+  </FilterField>
+);
+
+const inputStyle =
+  "w-full pl-[74px] pr-6 py-4 h-14 bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 rounded-2xl transition-all outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 disabled:opacity-60 disabled:cursor-not-allowed";
+
+const emptyPayload = {
+  name: "",
+  public_code: "",
+  deposit_type: "savings",
+  product_purpose: "general",
+  account_structure: "single_account",
+  target_type: "none",
+  default_target_amount: "",
+  target_period_months: "",
+  target_due_date: "",
+  allow_member_defined_target: false,
+  target_required: false,
+  beneficiary_label: "",
+  beneficiary_required_fields: "",
+  minimum_contribution: "",
+  maximum_contribution: "",
+  contribution_frequency: "monthly",
+  share_price: "",
+  minimum_required_shares: "",
+  share_transfer_fee: "",
+  deposit_deadline_day: "",
+  auto_deduct_monthly_contribution: false,
+  enforce_monthly_deposit_rule: false,
+  has_late_penalty: false,
+  late_penalty_type: "none",
+  late_penalty_amount: "",
+  penalty_accrual_cadence: "none",
+  penalty_grace_days: "",
+  penalty_max_per_period: "",
+  penalty_posting_mode: "track_only",
+  interest_crediting_method: "no_interest",
+  fixed_annual_interest_rate: "",
+  interest_posting_day: "",
+  interest_posting_frequency: "monthly",
+  interest_compounding_method: "simple",
+  is_withdrawable: true,
+  withdrawal_fee: "",
+  mandatory_for_all_members: false,
+  create_on_member_registration: false,
+  member_registration_eligibilities: ["individual"],
+  registration_fee_amount: "",
+  exit_notice_days: "",
+  hosts_membership_fee: false,
+  dividend_eligible: false,
+  image_url: "",
+  required_documents: [{ label: "", required: true }],
+};
+
+const savingsFrequencyNotes = {
+  monthly:
+    "Contributions are expected on a monthly cycle before the deadline day.",
+  weekly: "Contributions are expected once every 7 days.",
+  daily: "Contributions are processed daily.",
+  one_off: "Flexible deposits with no fixed frequency rules.",
+};
+
+const interestPolicyNotes = {
+  no_interest: "No yield or interest will be accrued on member balances.",
+  fixed_rate:
+    "Calculates interest based on a fixed annual percentage rate (APR).",
+  post_audit_declaration:
+    "Interest is declared and posted manually after annual financial audit.",
+  tiered_by_balance:
+    "Interest rates vary based on member account balance bands.",
+};
+
+const eligibilityOptions = [
+  ["individual", "Individual Members"],
+  ["group", "Chama / Group Accounts"],
+  ["corporate", "Business / Corporate"],
+  ["junior", "Junior / Child Accounts"],
+];
+
+const generateProductCode = (name) => {
+  if (!name) return "";
+  return name
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .substring(0, 6)
+    .toUpperCase();
+};
+
+export const CreateFinancialProduct = ({ onBack, onNavigateToApprovals }) => {
+  const [form, setForm] = useState(emptyPayload);
+  const [saving, setSaving] = useState(false);
+  const [reviewing, setReviewing] = useState(false);
+  const [codeEdited, setCodeEdited] = useState(false);
+  const navigate = useNavigate();
+
+  const updateForm = (key, value) =>
+    setForm((current) => {
+      const next = { ...current, [key]: value };
+
+      if (key === "product_purpose") {
+        if (value === "welfare") {
+          next.deposit_type = "family_care_fund";
+          next.interest_crediting_method = "no_interest";
+          next.is_withdrawable = false;
+        }
+        if (["education", "holiday", "goal_savings"].includes(value)) {
+          next.allow_member_defined_target = true;
+        }
+        if (value === "education") {
+          next.account_structure = "beneficiary_sub_accounts";
+          next.allow_beneficiary_sub_accounts = true;
+          next.beneficiary_label = next.beneficiary_label || "Child";
+          next.beneficiary_required_fields =
+            next.beneficiary_required_fields ||
+            "name, date_of_birth, school_name";
+        }
+      }
+
+      if (key === "account_structure") {
+        next.allow_member_sub_accounts = value === "member_sub_accounts";
+        next.allow_beneficiary_sub_accounts =
+          value === "beneficiary_sub_accounts";
+        if (value === "beneficiary_sub_accounts") {
+          next.beneficiary_label = next.beneficiary_label || "Child";
+        }
+      }
+
+      if (key === "has_late_penalty") {
+        next.late_penalty_type = value ? "fixed_per_day" : "none";
+        next.penalty_accrual_cadence = value ? "daily_after_deadline" : "none";
+      }
+
+      return next;
+    });
+
+  const updateProductName = (value) => {
+    setForm((current) => ({
+      ...current,
+      name: value,
+      public_code: codeEdited
+        ? current.public_code
+        : generateProductCode(value),
+    }));
+  };
+
+  const updateProductCode = (value) => {
+    setCodeEdited(true);
+    updateForm("public_code", value.toUpperCase());
+  };
+
+  const toggleEligibility = (value) => {
+    setForm((current) => {
+      const existing = current.member_registration_eligibilities || [];
+      const next = existing.includes(value)
+        ? existing.filter((item) => item !== value)
+        : [...existing, value];
+      const normalized = next.length > 0 ? next : ["individual"];
+
+      return {
+        ...current,
+        member_registration_eligibilities: normalized,
+        member_registration_eligibility: normalized[0],
+        mandatory_for_all_members: normalized.includes("all"),
+      };
+    });
+  };
+
+  const updateDocumentRow = (index, value) => {
+    setForm((current) => {
+      const rows = [...(current.required_documents || [])];
+      rows[index] = { ...(rows[index] || { required: true }), label: value };
+      return { ...current, required_documents: rows };
+    });
+  };
+
+  const addDocumentRow = () => {
+    setForm((current) => ({
+      ...current,
+      required_documents: [
+        ...(current.required_documents || []),
+        { label: "", required: true },
+      ],
+    }));
+  };
+
+  const removeDocumentRow = (index) => {
+    setForm((current) => ({
+      ...current,
+      required_documents: (current.required_documents || []).filter(
+        (_, rowIndex) => rowIndex !== index,
+      ),
+    }));
+  };
+
+  const handleCreateSubmit = async () => {
+    if (!form.name.trim()) return;
+    setSaving(true);
+    try {
+      if (onNavigateToApprovals) onNavigateToApprovals();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (reviewing) {
+    return (
+      <div className="w-full space-y-6 select-none">
+        <div className="flex items-center gap-3 pb-6 border-b border-slate-200/80">
+          <button
+            type="button"
+            onClick={() => setReviewing(false)}
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-all cursor-pointer shadow-3xs"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              <span>Financial Products</span>
+              <ChevronRight size={10} />
+              <span className="text-primary">Review Submission</span>
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
+              Review Your New Product
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              {form.name} ({form.public_code || "new code"}) will be sent to a
+              checker for approval.
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-3xs space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            Product Configuration Summary
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 space-y-1">
+              <span className="text-[10px] font-bold uppercase text-slate-400">
+                Product Name & Code
+              </span>
+              <p className="font-bold text-slate-800">
+                {form.name || "N/A"} ({form.public_code || "N/A"})
+              </p>
+            </div>
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 space-y-1">
+              <span className="text-[10px] font-bold uppercase text-slate-400">
+                Deposit Type & Purpose
+              </span>
+              <p className="font-bold text-slate-800 capitalize">
+                {form.deposit_type} • {form.product_purpose}
+              </p>
+            </div>
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 space-y-1">
+              <span className="text-[10px] font-bold uppercase text-slate-400">
+                Minimum Contribution
+              </span>
+              <p className="font-bold text-slate-800 font-mono">
+                KES {Number(form.minimum_contribution || 0).toLocaleString()} (
+                {form.contribution_frequency})
+              </p>
+            </div>
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/60 space-y-1">
+              <span className="text-[10px] font-bold uppercase text-slate-400">
+                Yield & Withdrawals
+              </span>
+              <p className="font-bold text-slate-800 capitalize">
+                {form.interest_crediting_method.replace(/_/g, " ")} •{" "}
+                {form.is_withdrawable ? "Withdrawable" : "Locked Account"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3 pt-4">
+          <button
+            type="button"
+            onClick={() => setReviewing(false)}
+            className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all cursor-pointer"
+          >
+            Back to Edit
+          </button>
+          <button
+            type="button"
+            disabled={saving || !form.name.trim()}
+            onClick={handleCreateSubmit}
+            className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-[#074073] text-white text-xs font-bold transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+          >
+            {saving ? "Submitting..." : "Confirm & Submit for Approval"}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full space-y-6 select-none">
+      {/* 1. PAGE HEADER */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200/80">
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-all cursor-pointer shrink-0 shadow-3xs"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div>
+            <div className="flex items-center gap-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              <span>Settings</span>
+            </div>
+            <h2 className="text-xl font-bold text-slate-900 tracking-tight mt-0.5">
+              Create Deposit Product
+            </h2>
+            <p className="text-xs text-slate-400 mt-0.5">
+              Configure a new deposit-taking product for operational approval.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-6">
+        {/* SECTION 1: PRODUCT SELECTION */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs space-y-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            1. Product Selection
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <FilterField label="Product Name" icon={Tag}>
+              <input
+                className={inputStyle}
+                onChange={(e) => updateProductName(e.target.value)}
+                value={form.name}
+                placeholder="e.g. Regular Member Savings"
+              />
+            </FilterField>
+
+            <FilterField label="Product Code" icon={Hash}>
+              <input
+                className={inputStyle}
+                onChange={(e) => updateProductCode(e.target.value)}
+                value={form.public_code}
+                placeholder="e.g. SAV001"
+              />
+            </FilterField>
+
+            <FilterSelect
+              label="Deposit Type"
+              icon={Layers}
+              value={form.deposit_type}
+              onChange={(e) => updateForm("deposit_type", e.target.value)}
+            >
+              <option value="savings">Savings</option>
+              <option value="shares">Shares</option>
+              <option value="family_care_fund">Family Care Fund</option>
+              <option value="custom">Custom</option>
+            </FilterSelect>
+
+            <FilterSelect
+              label="Product Purpose"
+              icon={Target}
+              value={form.product_purpose}
+              onChange={(e) => updateForm("product_purpose", e.target.value)}
+            >
+              <option value="general">General Savings</option>
+              <option value="welfare">Welfare</option>
+              <option value="education">Education / Elimu</option>
+              <option value="holiday">Holiday Savings</option>
+              <option value="goal_savings">Goal Savings</option>
+              <option value="emergency">Emergency</option>
+              <option value="custom">Custom</option>
+            </FilterSelect>
+
+            <FilterSelect
+              label="Account Structure"
+              icon={Building2}
+              value={form.account_structure}
+              onChange={(e) => updateForm("account_structure", e.target.value)}
+            >
+              <option value="single_account">Single Account</option>
+              <option value="member_sub_accounts">Member Sub-Accounts</option>
+              <option value="beneficiary_sub_accounts">
+                Beneficiary Sub-Accounts
+              </option>
+            </FilterSelect>
+          </div>
+        </div>
+
+        {/* SECTION 2: SPECIAL PURPOSE RULES */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs space-y-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            2. Special Purpose Rules
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <FilterSelect
+              label="Target Type"
+              icon={Target}
+              value={form.target_type}
+              onChange={(e) => updateForm("target_type", e.target.value)}
+            >
+              <option value="none">No Target</option>
+              <option value="fixed_amount">Fixed Amount</option>
+              <option value="per_beneficiary">Per Beneficiary</option>
+              <option value="recurring_period">Recurring Period</option>
+            </FilterSelect>
+
+            <FilterField label="Default Target Amount (KES)" icon={Coins}>
+              <input
+                type="number"
+                min="0"
+                className={inputStyle}
+                disabled={form.target_type === "none"}
+                onChange={(e) =>
+                  updateForm("default_target_amount", e.target.value)
+                }
+                value={form.default_target_amount}
+                placeholder="N/A"
+              />
+            </FilterField>
+
+            <FilterField label="Target Period Months" icon={Clock}>
+              <input
+                type="number"
+                min="1"
+                className={inputStyle}
+                disabled={form.target_type !== "recurring_period"}
+                onChange={(e) =>
+                  updateForm("target_period_months", e.target.value)
+                }
+                value={form.target_period_months}
+                placeholder="N/A"
+              />
+            </FilterField>
+
+            <FilterField label="Target Due Date" icon={Calendar}>
+              <input
+                type="date"
+                className={inputStyle}
+                disabled={form.target_type === "none"}
+                onChange={(e) => updateForm("target_due_date", e.target.value)}
+                value={form.target_due_date}
+              />
+            </FilterField>
+
+            {/* Checkbox Options */}
+            <div className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+              <input
+                type="checkbox"
+                id="allow_member_defined_target"
+                checked={form.allow_member_defined_target}
+                onChange={(e) =>
+                  updateForm("allow_member_defined_target", e.target.checked)
+                }
+                className="rounded border-slate-300 text-[#074073]"
+              />
+              <label
+                htmlFor="allow_member_defined_target"
+                className="text-xs font-bold text-slate-700 cursor-pointer"
+              >
+                Allow Member-Defined Target
+              </label>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+              <input
+                type="checkbox"
+                id="target_required"
+                checked={form.target_required}
+                onChange={(e) =>
+                  updateForm("target_required", e.target.checked)
+                }
+                className="rounded border-slate-300 text-[#074073]"
+              />
+              <label
+                htmlFor="target_required"
+                className="text-xs font-bold text-slate-700 cursor-pointer"
+              >
+                Target Required
+              </label>
+            </div>
+
+            {form.account_structure !== "single_account" && (
+              <>
+                <FilterField label="Beneficiary Label" icon={Tag}>
+                  <input
+                    className={inputStyle}
+                    disabled={
+                      form.account_structure !== "beneficiary_sub_accounts"
+                    }
+                    onChange={(e) =>
+                      updateForm("beneficiary_label", e.target.value)
+                    }
+                    value={form.beneficiary_label}
+                    placeholder="e.g., Child, Project, Trip"
+                  />
+                </FilterField>
+
+                <FilterField
+                  label="Required Beneficiary Fields"
+                  icon={FileText}
+                >
+                  <input
+                    className={inputStyle}
+                    disabled={
+                      form.account_structure !== "beneficiary_sub_accounts"
+                    }
+                    onChange={(e) =>
+                      updateForm("beneficiary_required_fields", e.target.value)
+                    }
+                    value={form.beneficiary_required_fields}
+                    placeholder="name, date_of_birth, school_name"
+                  />
+                </FilterField>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* SECTION 3: SAVINGS RULES */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs space-y-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            3. Savings Rules
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <FilterField label="Minimum Saving (KES)" icon={Wallet}>
+              <input
+                type="number"
+                min="0"
+                className={inputStyle}
+                onChange={(e) =>
+                  updateForm("minimum_contribution", e.target.value)
+                }
+                value={form.minimum_contribution}
+              />
+            </FilterField>
+
+            <FilterField label="Maximum Saving (KES)" icon={Wallet}>
+              <input
+                type="number"
+                min="0"
+                className={inputStyle}
+                onChange={(e) =>
+                  updateForm("maximum_contribution", e.target.value)
+                }
+                value={form.maximum_contribution}
+                placeholder="N/A"
+              />
+            </FilterField>
+
+            <FilterSelect
+              label="Savings Frequency"
+              icon={CalendarDays}
+              value={form.contribution_frequency}
+              onChange={(e) =>
+                updateForm("contribution_frequency", e.target.value)
+              }
+            >
+              <option value="monthly">Monthly</option>
+              <option value="weekly">Weekly</option>
+              <option value="daily">Daily</option>
+              <option value="one_off">Flexible / One Off</option>
+            </FilterSelect>
+
+            <FilterField label="Deposit Deadline Day" icon={Clock}>
+              <input
+                type="number"
+                min="1"
+                max="31"
+                className={inputStyle}
+                disabled={form.contribution_frequency === "one_off"}
+                onChange={(e) =>
+                  updateForm("deposit_deadline_day", e.target.value)
+                }
+                value={form.deposit_deadline_day}
+                placeholder="N/A"
+              />
+            </FilterField>
+
+            <div className="md:col-span-2 p-3 bg-slate-50 border border-slate-200/60 rounded-xl text-xs text-slate-500 font-medium">
+              💡 {savingsFrequencyNotes[form.contribution_frequency]}
+            </div>
+
+            {form.deposit_type === "shares" && (
+              <>
+                <FilterField label="Share Price (KES)" icon={Coins}>
+                  <input
+                    type="number"
+                    min="0"
+                    className={inputStyle}
+                    onChange={(e) => updateForm("share_price", e.target.value)}
+                    value={form.share_price}
+                  />
+                </FilterField>
+
+                <FilterField label="Minimum Required Shares" icon={Hash}>
+                  <input
+                    type="number"
+                    min="0"
+                    className={inputStyle}
+                    onChange={(e) =>
+                      updateForm("minimum_required_shares", e.target.value)
+                    }
+                    value={form.minimum_required_shares}
+                  />
+                </FilterField>
+
+                <FilterField label="Share Transfer Fee (KES)" icon={Coins}>
+                  <input
+                    type="number"
+                    min="0"
+                    className={inputStyle}
+                    onChange={(e) =>
+                      updateForm("share_transfer_fee", e.target.value)
+                    }
+                    value={form.share_transfer_fee}
+                    placeholder="N/A"
+                  />
+                </FilterField>
+              </>
+            )}
+
+            {/* Checkboxes */}
+            <div className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+              <input
+                type="checkbox"
+                id="auto_deduct_monthly_contribution"
+                checked={form.auto_deduct_monthly_contribution}
+                onChange={(e) =>
+                  updateForm(
+                    "auto_deduct_monthly_contribution",
+                    e.target.checked,
+                  )
+                }
+                className="rounded border-slate-300 text-[#074073]"
+              />
+              <label
+                htmlFor="auto_deduct_monthly_contribution"
+                className="text-xs font-bold text-slate-700 cursor-pointer"
+              >
+                Auto-Deduct Monthly Savings
+              </label>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+              <input
+                type="checkbox"
+                id="enforce_monthly_deposit_rule"
+                checked={form.enforce_monthly_deposit_rule}
+                onChange={(e) =>
+                  updateForm("enforce_monthly_deposit_rule", e.target.checked)
+                }
+                className="rounded border-slate-300 text-[#074073]"
+              />
+              <label
+                htmlFor="enforce_monthly_deposit_rule"
+                className="text-xs font-bold text-slate-700 cursor-pointer"
+              >
+                Enforce Monthly Deposit Rule
+              </label>
+            </div>
+
+            <div className="md:col-span-2 flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+              <input
+                type="checkbox"
+                id="has_late_penalty"
+                checked={form.has_late_penalty}
+                onChange={(e) =>
+                  updateForm("has_late_penalty", e.target.checked)
+                }
+                className="rounded border-slate-300 text-[#074073]"
+              />
+              <label
+                htmlFor="has_late_penalty"
+                className="text-xs font-bold text-slate-700 cursor-pointer"
+              >
+                Has Late Penalty
+              </label>
+            </div>
+
+            {form.has_late_penalty && (
+              <>
+                <FilterSelect
+                  label="Late Penalty Type"
+                  icon={AlertTriangle}
+                  value={form.late_penalty_type}
+                  onChange={(e) =>
+                    updateForm("late_penalty_type", e.target.value)
+                  }
+                >
+                  <option value="none">None</option>
+                  <option value="fixed_per_day">Fixed Per Day</option>
+                </FilterSelect>
+
+                <FilterField
+                  label="Late Penalty Amount (KES)"
+                  icon={Coins}
+                >
+                  <input
+                    type="number"
+                    min="0"
+                    className={inputStyle}
+                    disabled={form.late_penalty_type === "none"}
+                    onChange={(e) =>
+                      updateForm("late_penalty_amount", e.target.value)
+                    }
+                    value={form.late_penalty_amount}
+                    placeholder="N/A"
+                  />
+                </FilterField>
+
+                <FilterSelect
+                  label="Penalty Accrual Cadence"
+                  icon={Clock}
+                  value={form.penalty_accrual_cadence}
+                  onChange={(e) =>
+                    updateForm("penalty_accrual_cadence", e.target.value)
+                  }
+                >
+                  <option value="none">None</option>
+                  <option value="daily_after_deadline">
+                    Daily After Deadline
+                  </option>
+                  <option value="once_per_period">Once Per Period</option>
+                </FilterSelect>
+
+                <FilterField label="Penalty Grace Days" icon={Calendar}>
+                  <input
+                    type="number"
+                    min="0"
+                    className={inputStyle}
+                    onChange={(e) =>
+                      updateForm("penalty_grace_days", e.target.value)
+                    }
+                    value={form.penalty_grace_days}
+                    placeholder="0"
+                  />
+                </FilterField>
+
+                <FilterField
+                  label="Penalty Max Per Period (KES)"
+                  icon={Coins}
+                >
+                  <input
+                    type="number"
+                    min="0"
+                    className={inputStyle}
+                    onChange={(e) =>
+                      updateForm("penalty_max_per_period", e.target.value)
+                    }
+                    value={form.penalty_max_per_period}
+                    placeholder="N/A"
+                  />
+                </FilterField>
+
+                <FilterSelect
+                  label="Penalty Posting Mode"
+                  icon={ShieldCheck}
+                  value={form.penalty_posting_mode}
+                  onChange={(e) =>
+                    updateForm("penalty_posting_mode", e.target.value)
+                  }
+                >
+                  <option value="track_only">Track Only</option>
+                  <option value="charge_account">Charge Account</option>
+                </FilterSelect>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* SECTION 4: INTEREST POLICY */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs space-y-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            4. Interest Policy
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <FilterSelect
+              label="Interest Crediting Method"
+              icon={TrendingUp}
+              value={form.interest_crediting_method}
+              onChange={(e) =>
+                updateForm("interest_crediting_method", e.target.value)
+              }
+            >
+              <option value="no_interest">No Interest</option>
+              <option value="fixed_rate">Fixed Rate</option>
+              <option value="post_audit_declaration">
+                Post-Audit Declaration
+              </option>
+              <option value="tiered_by_balance">Tiered By Balance</option>
+            </FilterSelect>
+
+            {form.interest_crediting_method === "fixed_rate" && (
+              <FilterField
+                label="Fixed Annual Interest Rate (%)"
+                icon={Percent}
+              >
+                <input
+                  type="number"
+                  min="0"
+                  className={inputStyle}
+                  onChange={(e) =>
+                    updateForm("fixed_annual_interest_rate", e.target.value)
+                  }
+                  value={form.fixed_annual_interest_rate}
+                />
+              </FilterField>
+            )}
+
+            <div className="md:col-span-2 p-3 bg-slate-50 border border-slate-200/60 rounded-xl text-xs text-slate-500 font-medium">
+              💡 {interestPolicyNotes[form.interest_crediting_method]}
+            </div>
+
+            {form.interest_crediting_method === "tiered_by_balance" && (
+              <div className="md:col-span-2 rounded-2xl border border-dashed border-[#074073]/30 bg-[#074073]/5 p-4 text-xs text-slate-600">
+                Tier-band configuration is reserved for the planned tiered
+                product workflow.
+              </div>
+            )}
+
+            {form.interest_crediting_method !== "no_interest" && (
+              <>
+                <FilterField label="Interest Posting Day" icon={Calendar}>
+                  <input
+                    type="number"
+                    min="1"
+                    max="31"
+                    className={inputStyle}
+                    onChange={(e) =>
+                      updateForm("interest_posting_day", e.target.value)
+                    }
+                    value={form.interest_posting_day}
+                    placeholder="e.g., 5"
+                  />
+                </FilterField>
+
+                <FilterSelect
+                  label="Posting Frequency"
+                  icon={Clock}
+                  value={form.interest_posting_frequency}
+                  onChange={(e) =>
+                    updateForm("interest_posting_frequency", e.target.value)
+                  }
+                >
+                  <option value="monthly">Monthly</option>
+                  <option value="quarterly">Quarterly</option>
+                  <option value="annually">Annually</option>
+                  <option value="on_audit_declaration">
+                    On Audit Declaration
+                  </option>
+                </FilterSelect>
+
+                <FilterSelect
+                  label="Compounding Method"
+                  icon={Percent}
+                  value={form.interest_compounding_method}
+                  onChange={(e) =>
+                    updateForm("interest_compounding_method", e.target.value)
+                  }
+                >
+                  <option value="simple">Simple</option>
+                  <option value="compound">Compound</option>
+                </FilterSelect>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* SECTION 5: WITHDRAWAL RULES */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs space-y-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            5. Withdrawal Rules
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Withdrawal Access
+              </label>
+              <div className="flex gap-3 h-14">
+                {[
+                  [false, "Non-Withdrawable"],
+                  [true, "Withdrawable"],
+                ].map(([val, label]) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => updateForm("is_withdrawable", val)}
+                    className={`flex-1 rounded-2xl border text-xs font-bold transition-all cursor-pointer ${
+                      form.is_withdrawable === val
+                        ? "border-[#074073] bg-[#074073]/5 text-[#074073]"
+                        : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <FilterField label="Withdrawal Fee (KES)" icon={ArrowUpRight}>
+              <input
+                type="number"
+                min="0"
+                className={inputStyle}
+                disabled={!form.is_withdrawable}
+                onChange={(e) => updateForm("withdrawal_fee", e.target.value)}
+                value={form.withdrawal_fee}
+                placeholder="N/A"
+              />
+            </FilterField>
+          </div>
+        </div>
+
+        {/* SECTION 6: ELIGIBILITY */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs space-y-5">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            6. Eligibility & Member Setup
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Mandatory Requirement
+              </label>
+              <div className="flex gap-3 h-14">
+                {[
+                  [true, "Mandatory for All"],
+                  [false, "Optional"],
+                ].map(([val, label]) => (
+                  <button
+                    key={label}
+                    type="button"
+                    onClick={() => updateForm("mandatory_for_all_members", val)}
+                    className={`flex-1 rounded-2xl border text-xs font-bold transition-all cursor-pointer ${
+                      form.mandatory_for_all_members === val
+                        ? "border-[#074073] bg-[#074073]/5 text-[#074073]"
+                        : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
+                    }`}
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 mt-auto h-14">
+              <input
+                type="checkbox"
+                id="create_on_member_registration"
+                checked={form.create_on_member_registration}
+                onChange={(e) =>
+                  updateForm("create_on_member_registration", e.target.checked)
+                }
+                className="rounded border-slate-300 text-[#074073]"
+              />
+              <label
+                htmlFor="create_on_member_registration"
+                className="text-xs font-bold text-slate-700 cursor-pointer"
+              >
+                Create on Member Registration
+              </label>
+            </div>
+
+            <div className="md:col-span-2 space-y-2">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+                Member Registration Eligibility
+              </span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
+                {eligibilityOptions.map(([val, label]) => (
+                  <label
+                    key={val}
+                    className="flex items-center gap-3 p-3 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-slate-50 text-xs font-semibold text-slate-700 cursor-pointer transition-all"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={form.member_registration_eligibilities.includes(
+                        val,
+                      )}
+                      onChange={() => toggleEligibility(val)}
+                      className="rounded border-slate-300 text-[#074073]"
+                    />
+                    {label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <FilterField
+              label="Registration Fee Amount (KES)"
+              icon={Coins}
+            >
+              <input
+                type="number"
+                min="0"
+                className={inputStyle}
+                onChange={(e) =>
+                  updateForm("registration_fee_amount", e.target.value)
+                }
+                value={form.registration_fee_amount}
+                placeholder="N/A"
+              />
+            </FilterField>
+
+            <FilterField label="Exit Notice Days" icon={Clock}>
+              <input
+                type="number"
+                min="0"
+                className={inputStyle}
+                onChange={(e) => updateForm("exit_notice_days", e.target.value)}
+                value={form.exit_notice_days}
+                placeholder="N/A"
+              />
+            </FilterField>
+
+            <div className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+              <input
+                type="checkbox"
+                id="hosts_membership_fee"
+                checked={form.hosts_membership_fee}
+                onChange={(e) =>
+                  updateForm("hosts_membership_fee", e.target.checked)
+                }
+                className="rounded border-slate-300 text-[#074073]"
+              />
+              <label
+                htmlFor="hosts_membership_fee"
+                className="text-xs font-bold text-slate-700 cursor-pointer"
+              >
+                Hosts Membership Fee
+              </label>
+            </div>
+
+            <div className="flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50">
+              <input
+                type="checkbox"
+                id="dividend_eligible"
+                checked={form.dividend_eligible}
+                onChange={(e) =>
+                  updateForm("dividend_eligible", e.target.checked)
+                }
+                className="rounded border-slate-300 text-[#074073]"
+              />
+              <label
+                htmlFor="dividend_eligible"
+                className="text-xs font-bold text-slate-700 cursor-pointer"
+              >
+                Dividend Eligible
+              </label>
+            </div>
+
+            <div className="md:col-span-2">
+              <FilterField label="Product Image URL" icon={ImageIcon}>
+                <input
+                  className={inputStyle}
+                  onChange={(e) => updateForm("image_url", e.target.value)}
+                  value={form.image_url}
+                  placeholder="Optional image asset URL"
+                />
+              </FilterField>
+            </div>
+          </div>
+        </div>
+
+        {/* SECTION 7: DOCUMENTS */}
+        <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+            7. Required Documents & Conditions
+          </h3>
+          <p className="text-xs text-slate-400">
+            Add short labels only. These populate the checklist when this
+            account is being opened.
+          </p>
+
+          <div className="space-y-3">
+            {(form.required_documents || []).map((row, index) => (
+              <div key={index} className="flex items-center gap-3">
+                <FilterField label={`Document ${index + 1}`} icon={FileText}>
+                  <input
+                    className={inputStyle}
+                    maxLength={40}
+                    onChange={(e) => updateDocumentRow(index, e.target.value)}
+                    value={row.label}
+                    placeholder={
+                      index === 0
+                        ? "e.g. Birth certificate"
+                        : "e.g. Parent consent"
+                    }
+                  />
+                </FilterField>
+
+                <button
+                  type="button"
+                  disabled={form.required_documents.length === 1}
+                  onClick={() => removeDocumentRow(index)}
+                  className="mt-6 p-3 text-rose-500 hover:bg-rose-50 rounded-2xl transition-colors cursor-pointer disabled:opacity-30"
+                >
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={addDocumentRow}
+            className="inline-flex items-center gap-1.5 text-xs font-bold text-[#074073] hover:underline cursor-pointer pt-2"
+          >
+            <Plus size={14} /> Add Another Document
+          </button>
+        </div>
+      </div>
+
+      {/* FOOTER ACTIONS */}
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200/80">
+        <button
+          type="button"
+          onClick={onBack}
+          className="px-5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-600 hover:bg-slate-50 transition-all cursor-pointer"
+        >
+          Cancel
+        </button>
+        <button
+          type="button"
+          onClick={() => setReviewing(true)}
+          className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-[#074073] text-white text-xs font-bold transition-all shadow-2xs cursor-pointer"
+        >
+          Submit for Approval
+        </button>
+      </div>
+    </div>
+  );
+};

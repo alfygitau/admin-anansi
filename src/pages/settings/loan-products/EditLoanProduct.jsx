@@ -18,12 +18,12 @@ import {
   Briefcase,
   Layers3,
 } from "lucide-react";
-import { useToast } from "../../contexts/ToastProvider";
+import { useToast } from "../../../contexts/ToastProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   editLoanProduct,
   getLoanProduct,
-} from "../../sdk/loan-products/loan-products";
+} from "../../../sdk/loan-products/loan-products";
 import { useQuery, useMutation } from "react-query";
 import * as Sentry from "@sentry/react";
 
@@ -1409,7 +1409,7 @@ const FormCardLayout = ({ id, title, children }) => (
     id={id}
     className="bg-white rounded-[28px] border border-slate-200/60 shadow-sm overflow-hidden scroll-mt-24"
   >
-    <div className="px-6 py-4.5 bg-slate-50/60 border-b border-slate-100 flex items-center justify-between">
+    <div className="px-4 py-4 bg-slate-50/60 border-b border-slate-100 flex items-center justify-between">
       <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
         {title}
       </h3>
@@ -1418,7 +1418,7 @@ const FormCardLayout = ({ id, title, children }) => (
         className="text-slate-400 cursor-pointer hover:text-primary transition-colors"
       />
     </div>
-    <div className="p-6 md:p-8">{children}</div>
+    <div className="p-4 md:p-4">{children}</div>
   </div>
 );
 

@@ -8,12 +8,13 @@ import {
   CheckCircle2,
   AlertTriangle,
   Search,
+  ArrowLeft,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
-import { getLoanProducts } from "../../sdk/loan-products/loan-products";
-import { useToast } from "../../contexts/ToastProvider";
-import { useFormatAmount } from "../../hooks/useFormatAmount";
+import { getLoanProducts } from "../../../sdk/loan-products/loan-products";
+import { useToast } from "../../../contexts/ToastProvider";
+import { useFormatAmount } from "../../../hooks/useFormatAmount";
 import * as Sentry from "@sentry/react";
 
 export default function LoanProducts() {
@@ -65,14 +66,24 @@ export default function LoanProducts() {
     <div className="space-y-6 antialiased">
       {/* 1. UPPER EXECUTIVE COMMAND BAR */}
       <div className="flex flex-col sm:gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-6">
-        <div>
-          <h2 className="text-xl font-bold tracking-tight text-primary">
-            Loan Products
-          </h2>
-          <p className="text-xs text-slate-400 font-medium mt-0.5">
-            Configure lending tiers, algorithmic multipliers, interest
-            calculations, and product visibility gates.
-          </p>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-all cursor-pointer shrink-0 shadow-3xs"
+            title="Go Back"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div>
+            <h2 className="text-xl font-bold tracking-tight text-primary">
+              Loan Products
+            </h2>
+            <p className="text-xs text-slate-400 font-medium mt-0.5">
+              Configure lending tiers, algorithmic multipliers, interest
+              calculations, and product visibility gates.
+            </p>
+          </div>
         </div>
 
         {/* Core Primary Action Trigger */}

@@ -15,10 +15,11 @@ import {
   Check,
   Layers3,
   Coins,
+  ArrowLeft,
 } from "lucide-react";
-import { useToast } from "../../contexts/ToastProvider";
+import { useToast } from "../../../contexts/ToastProvider";
 import { useNavigate } from "react-router-dom";
-import { addLoanProduct } from "../../sdk/loan-products/loan-products";
+import { addLoanProduct } from "../../../sdk/loan-products/loan-products";
 import { useMutation } from "react-query";
 import * as Sentry from "@sentry/react";
 
@@ -245,14 +246,24 @@ export default function AddLoanProduct() {
     <div className="w-full space-y-5 font-sans antialiased text-slate-800">
       {/* HEADER SECTION PANEL */}
       <div className="flex items-center justify-between border-b border-slate-200/60 pb-6">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Create Loan Product
-          </h1>
-          <p className="text-xs text-slate-400 font-medium">
-            Set up borrowing limits, interest rates, late fees, and approval
-            rules for this loan product.
-          </p>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-all cursor-pointer shrink-0 shadow-3xs"
+            title="Go Back"
+          >
+            <ArrowLeft size={16} />
+          </button>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+              Create Loan Product
+            </h1>
+            <p className="text-xs text-slate-400 font-medium">
+              Set up borrowing limits, interest rates, late fees, and approval
+              rules for this loan product.
+            </p>
+          </div>
         </div>
       </div>
 
@@ -1719,7 +1730,7 @@ const FormCardLayout = ({ id, title, children }) => (
     id={id}
     className="bg-white rounded-[28px] border border-slate-200/60 shadow-sm overflow-hidden scroll-mt-24"
   >
-    <div className="px-6 py-4.5 bg-slate-50/60 border-b border-slate-100 flex items-center justify-between">
+    <div className="px-4 py-4 bg-slate-50/60 border-b border-slate-100 flex items-center justify-between">
       <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
         {title}
       </h3>
@@ -1728,7 +1739,7 @@ const FormCardLayout = ({ id, title, children }) => (
         className="text-slate-400 cursor-pointer hover:text-primary transition-colors"
       />
     </div>
-    <div className="p-6 md:p-8">{children}</div>
+    <div className="p-4 md:p-4">{children}</div>
   </div>
 );
 

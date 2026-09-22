@@ -99,7 +99,7 @@ const DepositProductRow = ({ product, onTap }) => {
   const navigate = useNavigate();
   return (
     <div onClick={onTap} className="group cursor-pointer select-none text-left">
-      <div className="bg-white hover:bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70 hover:border-blue-300 transition-all grid grid-cols-1 md:grid-cols-12 items-center gap-4 text-xs shadow-2xs">
+      <div className="bg-white hover:bg-slate-50/80 p-4 rounded-2xl border border-slate-200/70 hover:border-primary/20 transition-all grid grid-cols-1 md:grid-cols-12 items-center gap-4 text-xs shadow-2xs">
         {/* Col 1: Product Name, Code & Purpose (Span 3) */}
         <div className="md:col-span-3 min-w-0 flex items-center gap-3 text-left">
           <div className="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 shadow-2xs shrink-0 group-hover:scale-105 transition-transform">

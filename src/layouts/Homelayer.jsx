@@ -84,20 +84,6 @@ export default function Homelayer() {
       ],
     },
     {
-      id: "Loan Products",
-      label: "Loan Products",
-      path: "/admin/loan-products",
-      icon: <Shield size={18} />,
-      badge: "18",
-      subItems: [
-        { label: "Loan Products", path: "/admin/loan-products" },
-        {
-          label: "Products Review Queue",
-          path: "/admin/loan-products-reviews",
-        },
-      ],
-    },
-    {
       id: "transactions",
       label: "Transactions",
       path: "/admin/transactions",

@@ -21,11 +21,11 @@ import {
   Wallet,
 } from "lucide-react";
 import { useQuery } from "react-query";
-import { getLoanProduct } from "../../sdk/loan-products/loan-products";
-import { useToast } from "../../contexts/ToastProvider";
+import { getLoanProduct } from "../../../sdk/loan-products/loan-products";
+import { useToast } from "../../../contexts/ToastProvider";
 import { useNavigate, useParams } from "react-router-dom";
 import * as Sentry from "@sentry/react";
-import { useFormatPercentage } from "../../hooks/useFormatPercentage";
+import { useFormatPercentage } from "../../../hooks/useFormatPercentage";
 
 export default function LoanProduct() {
   const [loanProduct, setLoanProduct] = useState({});

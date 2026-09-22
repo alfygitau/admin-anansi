@@ -62,6 +62,57 @@ export const getDepositProduct = async (id) => {
   }
 };
 
+export const getMemberProductSummary = async (productId, memberId) => {
+  try {
+    const response = await myClient.get(
+      `/api/v1/product-reporting/member/${memberId}/summary`,
+      {
+        params: { productId, memberId },
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
+export const getMemberProductTransactions = async (
+  productId,
+  memberId,
+  status,
+  limit,
+  page,
+  startDate,
+  endDate,
+) => {
+  try {
+    const rawParams = {
+      productId,
+      memberId,
+      status,
+      limit,
+      page,
+      startDate,
+      endDate,
+    };
+
+    const params = Object.fromEntries(
+      Object.entries(rawParams).filter(
+        ([_, val]) => val !== undefined && val !== null && val !== "",
+      ),
+    );
+    const response = await myClient.get(
+      `/api/v1/product-reporting/transactions`,
+      {
+        params,
+      },
+    );
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
 export const getDepositApprovals = async (status = "pending") => {
   const response = await myClient.get("/api/v1/product/deposits/approvals", {
     params: { status },

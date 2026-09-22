@@ -28,7 +28,6 @@ import {
 import * as Sentry from "@sentry/react";
 import Pagination from "../../components/pagination/Pagination";
 
-// 1. REUSABLE SEPARATOR INPUT COMPONENT
 const FilterField = ({ label, icon: Icon, children }) => (
   <div className="space-y-2 flex-1 min-w-0">
     <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
@@ -506,7 +505,11 @@ export default function MemberAccounts() {
                             {/* Col 7: Profile Inspection Node Trigger */}
                             <td className="py-4 px-6 text-right pr-8">
                               <button
-                                onClick={() => setSelectedAccount(acc)}
+                                onClick={() =>
+                                  navigate(
+                                    `/admin/accounts/${acc?.customer?.public_id}/${acc?.product?.id}`,
+                                  )
+                                }
                                 className="size-8 rounded-xl border border-slate-200/60 inline-flex items-center justify-center text-slate-400 hover:text-[#074073] hover:bg-slate-50 hover:border-slate-300 transition-all shadow-3xs bg-white cursor-pointer"
                                 title="Inspect Account Ledger"
                               >

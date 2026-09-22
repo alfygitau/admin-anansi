@@ -67,6 +67,7 @@ import Validate from "./pages/validation/Validate";
 import LoanReviews from "./pages/loans/loan-reviews/LoanReviews";
 import LoanApplicationApprovals from "./pages/loan-applications/application-approvals/LoanApplicationApprovals";
 import Settings from "./pages/settings/Settings";
+import MemberAccount from "./pages/portfolio-accounts/MemberAccount";
 
 function App() {
   return (
@@ -187,6 +188,10 @@ function App() {
 
           <Route path="accounts" element={<Accounts />} />
           <Route path="accounts/:id" element={<MemberAccounts />} />
+          <Route
+            path="accounts/:memberId/:productId"
+            element={<MemberAccount />}
+          />
 
           <Route path="corporate-accounts" element={<CorporateAccounts />} />
           <Route

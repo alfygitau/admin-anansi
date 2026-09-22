@@ -15,11 +15,12 @@ import {
   Building2,
   Map,
   Hash,
+  ArrowLeft,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useToast } from "../../contexts/ToastProvider";
 import { useQuery } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   getDepositProduct,
   getMembersAccounts,
@@ -54,6 +55,7 @@ export default function MemberAccounts() {
   const { showToast } = useToast();
   const { id } = useParams();
   const [totalItems, setTotalItems] = useState(0);
+  const navigate = useNavigate();
   const [filters, setFilters] = useState({
     q: "",
     status: "",
@@ -182,14 +184,24 @@ export default function MemberAccounts() {
     <>
       <div className="w-full min-h-screen antialiased text-slate-800 space-y-6">
         {/* HEADER ACTION DECK */}
+
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between border-b border-slate-200/60 pb-6">
-          <div>
-            <h2 className="text-2xl font-black text-primary tracking-tight flex items-center gap-2.5">
-              {product?.name}
-            </h2>
-            <p className="text-xs text-slate-400 font-medium mt-0.5">
-              Real-time management system for user {product?.name} allocations.
-            </p>
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => navigate(-1)}
+              className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-all cursor-pointer"
+            >
+              <ArrowLeft size={16} />
+            </button>
+            <div>
+              <h2 className="text-2xl font-black text-primary tracking-tight flex items-center gap-2.5">
+                {product?.name}
+              </h2>
+              <p className="text-xs text-slate-400 font-medium mt-0.5">
+                Real-time management system for user {product?.name}{" "}
+                allocations.
+              </p>
+            </div>
           </div>
         </div>
 

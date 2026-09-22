@@ -177,7 +177,7 @@ const GroupsList = ({ groups = [] }) => {
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
                           <div className="size-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center font-bold text-[#074073] text-sm shrink-0">
-                            <Building2 size={18} />
+                            <Users size={18} />
                           </div>
                           <div className="flex flex-col space-y-0.5">
                             <span className="font-mono w-fit text-[9px] font-bold px-1.5 py-0.5 bg-slate-100 text-slate-500 rounded">

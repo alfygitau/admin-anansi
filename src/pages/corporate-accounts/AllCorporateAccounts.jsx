@@ -260,7 +260,7 @@ const CorporateAccounts = ({ onOpenAddModal }) => {
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
                         <div className="size-10 rounded-xl bg-blue-50 text-[#074073] flex items-center justify-center font-bold text-xs shrink-0">
-                          {account.name.charAt(0)}
+                          <Building2 size={18} />
                         </div>
                         <div>
                           <p className="font-bold text-[#074073]">

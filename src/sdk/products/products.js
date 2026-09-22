@@ -34,9 +34,32 @@ export const getDepositProducts = async (status = "live") => {
   }
 };
 
+export const getMembersAccounts = async (productId, status, limit, page, q) => {
+  try {
+    const rawParams = { productId, status, limit, page, q };
+
+    const params = Object.fromEntries(
+      Object.entries(rawParams).filter(
+        ([_, val]) => val !== undefined && val !== null && val !== "",
+      ),
+    );
+
+    const response = await myClient.get("/api/v1/product-reporting", {
+      params,
+    });
+    return response;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
+};
+
 export const getDepositProduct = async (id) => {
-  const response = await myClient.get(`/api/v1/product/deposits/${id}`);
-  return response?.data;
+  try {
+    const response = await myClient.get(`/api/v1/product/deposits/${id}`);
+    return response?.data;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
 };
 
 export const getDepositApprovals = async (status = "pending") => {

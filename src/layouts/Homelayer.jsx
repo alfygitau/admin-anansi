@@ -52,7 +52,7 @@ export default function Homelayer() {
     },
     {
       id: "accounts",
-      label: "Deposit Products",
+      label: "Accounts",
       path: "/admin/accounts",
       icon: <Wallet size={18} />,
     },

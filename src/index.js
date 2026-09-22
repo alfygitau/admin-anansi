@@ -11,8 +11,10 @@ import * as Sentry from "@sentry/react";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
+console.log(process.env.REACT_APP_SentryDNS)
+
 Sentry.init({
-  dsn: "https://1c0d555310c965e0b9a66e305bbda950@o4508850577604609.ingest.de.sentry.io/4512023115661392",
+  dsn: process.env.REACT_APP_SentryDNS,
   debug: true,
   integrations: [
     Sentry.captureConsoleIntegration({

@@ -66,6 +66,7 @@ import CorporateAccountDetails from "./pages/corporate-accounts/CorporateAccount
 import Validate from "./pages/validation/Validate";
 import LoanReviews from "./pages/loans/loan-reviews/LoanReviews";
 import LoanApplicationApprovals from "./pages/loan-applications/application-approvals/LoanApplicationApprovals";
+import Settings from "./pages/settings/Settings";
 
 function App() {
   return (
@@ -142,6 +143,28 @@ function App() {
           <Route path="roles" element={<Roles />} />
           <Route path="permissions" element={<Permissions />} />
           <Route path="audit-trail" element={<AuditTrail />} />
+
+          {/* settings */}
+          <Route element={<Settings />} path="settings" />
+          <Route element={<Settings />} path="settings/products" />
+          <Route element={<Settings />} path="settings/products/deposits" />
+          <Route
+            element={<Settings />}
+            path="settings/products/deposits/create"
+          />
+          <Route
+            element={<Settings />}
+            path="settings/products/deposits/:productId/edit"
+          />
+          <Route
+            element={<Settings />}
+            path="settings/products/deposits/approvals"
+          />
+          <Route
+            element={<Settings />}
+            path="settings/products/deposits/approvals/:submissionId"
+          />
+          <Route element={<Settings />} path="settings/products/loans/create" />
 
           <Route
             path="account-transactions"

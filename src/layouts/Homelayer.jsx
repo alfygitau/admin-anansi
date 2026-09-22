@@ -52,13 +52,9 @@ export default function Homelayer() {
     },
     {
       id: "accounts",
-      label: "Accounts",
+      label: "Deposit Products",
       path: "/admin/accounts",
       icon: <Wallet size={18} />,
-      subItems: [
-        { label: "All Accounts", path: "/admin/accounts" },
-        { label: "Account Review Queue", path: "/admin/account-reviews" },
-      ],
     },
     {
       id: "loans",
@@ -363,7 +359,10 @@ export default function Homelayer() {
 
         {/* Profile Session Footer */}
         <div className="p-4 border-t border-slate-100 bg-slate-50/50 shrink-0">
-          <div className="flex items-center gap-2">
+          <div
+            onClick={() => navigate("/admin/settings")}
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <Settings className="text-slate-400" />
             <p className="text-slate-400">Settings</p>
           </div>

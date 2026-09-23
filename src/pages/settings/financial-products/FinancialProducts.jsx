@@ -9,6 +9,7 @@ import {
   Pencil,
   ShieldCheck,
   Eye,
+  Shield,
 } from "lucide-react";
 import { useQuery } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
@@ -81,7 +82,7 @@ export const FinancialProducts = ({ onBack, onAddProduct, onViewAccounts }) => {
             onClick={() => navigate("/admin/financial-products/approvals")}
             className="flex items-center justify-center gap-2 h-10 px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-3xs"
           >
-            <ShieldCheck size={15} className="text-[#074073]" />
+            <Shield size={15} className="text-[#074073]" />
             <span>Approvals Queue</span>
           </button>
 

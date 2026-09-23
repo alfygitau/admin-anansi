@@ -9,6 +9,7 @@ import {
   AlertTriangle,
   Search,
   ArrowLeft,
+  Shield,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "react-query";
@@ -87,13 +88,22 @@ export default function LoanProducts() {
         </div>
 
         {/* Core Primary Action Trigger */}
-        <button
-          onClick={() => navigate("/admin/add-loan-product")}
-          className="h-11 px-4 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-95 shrink-0"
-        >
-          <Plus size={16} />
-          <span>Create New Product</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            className="flex items-center justify-center gap-2 h-10 px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-3xs"
+          >
+            <Shield size={15} className="text-[#074073]" />
+            <span>Approvals Queue</span>
+          </button>
+          <button
+            onClick={() => navigate("/admin/add-loan-product")}
+            className="h-10 px-4 bg-primary text-white text-xs font-bold uppercase tracking-wider rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/10 hover:bg-primary/90 transition-all active:scale-95 shrink-0"
+          >
+            <Plus size={16} />
+            <span>Create New Product</span>
+          </button>
+        </div>
       </div>
 
       {/* 2. ANALYTICAL HIGH-LEVEL SUMMARY METRIC ROWS */}

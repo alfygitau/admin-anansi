@@ -77,36 +77,6 @@ export const AllSettings = () => {
 
   const systemSections = [
     {
-      id: "fee-structures",
-      category: "rules",
-      title: "Fees & Penalties",
-      description:
-        "Set up account maintenance charges, late contribution penalties, and service fees.",
-      icon: CreditCard,
-      badge: "Fee Settings",
-      actionText: "Adjust Fee Rules",
-    },
-    {
-      id: "user-roles",
-      category: "security",
-      title: "Team Roles & Permissions",
-      description:
-        "Choose who can view or change details, assign staff roles, and set up approval steps.",
-      icon: Users,
-      badge: "Team Access",
-      actionText: "Manage Team Access",
-    },
-    {
-      id: "compliance-kyc",
-      category: "security",
-      title: "Member Verification & ID",
-      description:
-        "Set required ID documents, account opening rules, and safety verification guidelines.",
-      icon: ShieldCheck,
-      badge: "Member Safety",
-      actionText: "Update Checklist",
-    },
-    {
       id: "org-details",
       category: "general",
       title: "Organization Profile",
@@ -151,8 +121,10 @@ export const AllSettings = () => {
   const onNavigate = (id) => {
     if (id === "financial-products") {
       navigate("/admin/all-financial-products");
-    } else {
+    } else if (id === "loan-products") {
       navigate("/admin/loan-products");
+    } else {
+      window.alert("coming soon");
     }
   };
 

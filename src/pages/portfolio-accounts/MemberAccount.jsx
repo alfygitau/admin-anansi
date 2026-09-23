@@ -551,7 +551,6 @@ const MemberAccount = () => {
                           <span
                             className={`font-bold text-sm ${tx.status === "completed" ? "text-success" : "text-primary"}`}
                           >
-                            {tx.status === "completed" ? "+" : "-"}
                             {formatAmount(tx.amount).toLocaleString()}
                           </span>
                         </div>

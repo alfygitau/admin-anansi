@@ -453,12 +453,6 @@ export const EditFinancialProduct = ({ onNavigateToApprovals }) => {
   });
 
   const handleEditSubmit = async () => {
-    console.log({
-      action: "update",
-      scope: "all_members",
-      product_id: id,
-      payload: buildSubmissionPayload(form),
-    });
     await edit();
   };
 

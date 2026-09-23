@@ -302,11 +302,6 @@ export const CreateFinancialProduct = ({ onBack, onNavigateToApprovals }) => {
   };
 
   const handleCreateSubmit = async () => {
-    console.log({
-      action: "create",
-      scope: "all_members",
-      payload: buildSubmissionPayload(form),
-    });
     await create();
   };
 

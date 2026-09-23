@@ -179,27 +179,6 @@ function App() {
             path="all-financial-products"
           />
 
-          <Route element={<Settings />} path="settings" />
-          <Route element={<Settings />} path="settings/products" />
-          <Route element={<Settings />} path="settings/products/deposits" />
-          <Route
-            element={<Settings />}
-            path="settings/products/deposits/create"
-          />
-          <Route
-            element={<Settings />}
-            path="settings/products/deposits/:productId/edit"
-          />
-          <Route
-            element={<Settings />}
-            path="settings/products/deposits/approvals"
-          />
-          <Route
-            element={<Settings />}
-            path="settings/products/deposits/approvals/:submissionId"
-          />
-          <Route element={<Settings />} path="settings/products/loans/create" />
-
           <Route
             path="account-transactions"
             element={<AccountTransactions />}

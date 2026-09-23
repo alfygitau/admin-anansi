@@ -346,7 +346,7 @@ export default function Homelayer() {
         {/* Profile Session Footer */}
         <div className="p-4 border-t border-slate-100 bg-slate-50/50 shrink-0">
           <div
-            onClick={() => navigate("/admin/settings")}
+            onClick={() => navigate("/admin/all-settings")}
             className="flex items-center gap-2 cursor-pointer"
           >
             <Settings className="text-slate-400" />

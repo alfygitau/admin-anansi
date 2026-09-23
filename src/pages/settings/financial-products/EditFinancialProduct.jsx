@@ -24,12 +24,14 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
 import * as Sentry from "@sentry/react";
-import { getDepositProduct } from "../../../sdk/products/products";
+import {
+  getDepositProduct,
+  updateDepositSubmission,
+} from "../../../sdk/products/products";
 
-// --- CONSOLIDATED EMPTY PAYLOAD ---
 export const emptyPayload = {
   // Identity & General Information
   name: "",
@@ -162,7 +164,6 @@ export const emptyPayload = {
   product_rules_schema: null,
 };
 
-// --- HELPER CONSTANTS & DISCLAIMERS ---
 const savingsFrequencyNotes = {
   monthly:
     "Contributions are expected on a monthly cycle before the deadline day.",
@@ -191,61 +192,97 @@ const eligibilityOptions = [
 const inputStyle =
   "w-full pl-[74px] pr-6 py-4 h-14 bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 rounded-2xl transition-all outline-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 disabled:opacity-60 disabled:cursor-not-allowed";
 
-// --- CUSTOM INPUT WRAPPERS ---
-const FilterField = ({ label, icon: Icon, children }) => (
-  <div className="space-y-2 w-full">
-    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
-      {label}
-    </label>
-    <div className="relative group">
-      {Icon && (
-        <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
-          <Icon
-            size={18}
-            className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
-          />
-          <div className="w-[1.5px] h-5 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
-        </div>
-      )}
-      {children}
-    </div>
-  </div>
-);
-
-const FilterSelect = ({
-  label,
-  icon: Icon,
-  value,
-  onChange,
-  disabled,
-  children,
-}) => (
-  <FilterField label={label} icon={Icon}>
-    <div className="relative w-full">
-      <select
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        className="w-full pl-[74px] pr-10 py-4 h-14 bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 rounded-2xl transition-all outline-none appearance-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-      >
-        {children}
-      </select>
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 z-10">
-        <ChevronRight size={16} className="rotate-90" />
-      </div>
-    </div>
-  </FilterField>
-);
-
 export const EditFinancialProduct = ({ onNavigateToApprovals }) => {
   const [product, setProduct] = useState(null);
   const [form, setForm] = useState(emptyPayload);
   const [scope, setScope] = useState("all_members");
-  const [saving, setSaving] = useState(false);
   const [reviewing, setReviewing] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
   const { showToast } = useToast();
+
+  const normalizeDocumentRows = (rows) =>
+    (Array.isArray(rows) ? rows : [])
+      .map((row) => ({
+        label: String(row?.label || "").trim(),
+        required: row?.required ?? true,
+      }))
+      .filter((row) => row.label);
+
+  const splitCsv = (value) =>
+    String(value || "")
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+  const toOptionalNumber = (value) =>
+    value === "" || value === null || value === undefined
+      ? undefined
+      : Number(value);
+
+  const joinCsv = (value) => (Array.isArray(value) ? value.join(", ") : "");
+
+  const buildSubmissionPayload = (form) => ({
+    name: form.name,
+    public_code: form.public_code || undefined,
+    deposit_type: form.deposit_type,
+    product_purpose: form.product_purpose,
+    account_structure: form.account_structure,
+    allow_member_sub_accounts: form.allow_member_sub_accounts,
+    allow_beneficiary_sub_accounts: form.allow_beneficiary_sub_accounts,
+    beneficiary_label: form.beneficiary_label || undefined,
+    beneficiary_required_fields: splitCsv(form.beneficiary_required_fields),
+    target_type: form.target_type,
+    default_target_amount: toOptionalNumber(form.default_target_amount),
+    target_period_months: toOptionalNumber(form.target_period_months),
+    target_due_date: form.target_due_date || undefined,
+    allow_member_defined_target: form.allow_member_defined_target,
+    target_required: form.target_required,
+    description: form.description || undefined,
+    minimum_contribution:
+      form.minimum_contribution === ""
+        ? undefined
+        : Number(form.minimum_contribution),
+    maximum_contribution:
+      form.maximum_contribution === ""
+        ? undefined
+        : Number(form.maximum_contribution),
+    contribution_frequency: form.contribution_frequency,
+    interest_crediting_method: form.interest_crediting_method,
+    fixed_annual_interest_rate: toOptionalNumber(
+      form.fixed_annual_interest_rate,
+    ),
+    interest_posting_day: toOptionalNumber(form.interest_posting_day),
+    interest_posting_frequency: form.interest_posting_frequency || undefined,
+    interest_compounding_method: form.interest_compounding_method || undefined,
+    is_withdrawable: form.is_withdrawable,
+    withdrawal_fee: toOptionalNumber(form.withdrawal_fee),
+    mandatory_for_all_members: form.mandatory_for_all_members,
+    create_on_member_registration: form.create_on_member_registration,
+    member_registration_eligibility:
+      form.member_registration_eligibilities?.[0] ||
+      form.member_registration_eligibility,
+    member_registration_eligibilities: form.member_registration_eligibilities,
+    required_documents: normalizeDocumentRows(form.required_documents),
+    share_price: toOptionalNumber(form.share_price),
+    minimum_required_shares: toOptionalNumber(form.minimum_required_shares),
+    registration_fee_amount: toOptionalNumber(form.registration_fee_amount),
+    hosts_membership_fee: form.hosts_membership_fee,
+    auto_deduct_monthly_contribution: form.auto_deduct_monthly_contribution,
+    dividend_eligible: form.dividend_eligible,
+    exit_notice_days: toOptionalNumber(form.exit_notice_days),
+    share_transfer_fee: toOptionalNumber(form.share_transfer_fee),
+    image_url: form.image_url || undefined,
+    deposit_deadline_day: toOptionalNumber(form.deposit_deadline_day),
+    has_late_penalty: form.has_late_penalty,
+    late_penalty_type: form.late_penalty_type,
+    late_penalty_amount: toOptionalNumber(form.late_penalty_amount),
+    penalty_accrual_cadence: form.penalty_accrual_cadence,
+    penalty_grace_days: toOptionalNumber(form.penalty_grace_days),
+    penalty_max_per_period: toOptionalNumber(form.penalty_max_per_period),
+    penalty_posting_mode: form.penalty_posting_mode,
+    enforce_monthly_deposit_rule: form.enforce_monthly_deposit_rule,
+  });
 
   const { isFetching } = useQuery({
     queryKey: ["Deposit product", id],
@@ -383,16 +420,46 @@ export const EditFinancialProduct = ({ onNavigateToApprovals }) => {
     }));
   };
 
+  const { mutate: edit, isLoading: editing } = useMutation({
+    mutationKey: ["edit financial product"],
+    mutationFn: async () => {
+      const response = await updateDepositSubmission(id, {
+        scope: "all_members",
+        product_id: id,
+        payload: buildSubmissionPayload(form),
+      });
+      return response;
+    },
+    onSuccess: (data) => {
+      navigate("/admin/financial-products");
+    },
+    onError: (error) => {
+      Sentry.captureException(
+        new Error(error?.response?.data?.message || error.message),
+        {
+          tags: {
+            component: "Product Approvals",
+            action: "DepositApproval",
+          },
+        },
+      );
+      showToast({
+        title: "Failed to update deposit product",
+        type: "error",
+        position: "top-right",
+        description: error?.response?.data?.message || error.message,
+      });
+    },
+  });
+
   const handleEditSubmit = async () => {
-    if (!form.name.trim()) return;
-    setSaving(true);
-    try {
-      if (onNavigateToApprovals) onNavigateToApprovals();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setSaving(false);
-    }
+    console.log({
+      action: "update",
+      scope: "all_members",
+      product_id: id,
+      payload: buildSubmissionPayload(form),
+    });
+    await edit();
   };
 
   if (isFetching) {
@@ -406,11 +473,13 @@ export const EditFinancialProduct = ({ onNavigateToApprovals }) => {
   if (reviewing) {
     return (
       <div className="w-full space-y-6 select-none font-sans antialiased text-slate-800">
+        {/* 1. HEADER */}
         <div className="flex items-center gap-3 pb-6 border-b border-slate-200/80">
           <button
             type="button"
             onClick={() => setReviewing(false)}
             className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-all cursor-pointer shadow-3xs"
+            title="Go Back to Edit"
           >
             <ArrowLeft size={16} />
           </button>
@@ -422,112 +491,293 @@ export const EditFinancialProduct = ({ onNavigateToApprovals }) => {
               Review Your Modifications
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
-              {product?.name} ({product?.public_code}) will be sent to a checker
-              for approval.
+              <strong className="text-slate-700">{product?.name}</strong> (
+              {product?.public_code}) will be sent to a checker for approval.
             </p>
           </div>
         </div>
 
-        {/* Disclaimer Banner */}
-        <div className="bg-amber-50 border border-amber-200/60 rounded-2xl p-4 flex items-center gap-3 text-xs text-amber-800 font-medium">
+        {/* 2. DISCLAIMER BANNER */}
+        <div className="bg-amber-50/80 border border-amber-200/80 rounded-2xl p-4 flex items-center gap-3 text-xs text-amber-900 font-medium shadow-3xs">
           <AlertTriangle size={18} className="text-amber-600 shrink-0" />
           <span>
-            Submitting will use the next edit for this product. Remaining edits:{" "}
+            Submitting will consume an edit credit for this product. Remaining
+            edits this year:{" "}
             <strong>{product?.edits_remaining_this_year ?? 4} of 4</strong>.
           </span>
         </div>
 
-        {/* Scope Selector Card */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-3xs space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-            Apply This Change To
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              [
-                "all_members",
-                "All Members - Existing and New",
-                "Takes effect immediately, no new version created.",
-              ],
-              [
-                "new_members_only",
-                "New Members Only",
-                "Creates a new version; existing members keep current terms.",
-              ],
-            ].map(([value, label, desc]) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setScope(value)}
-                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer ${
-                  scope === value
-                    ? "border-[#074073] bg-[#074073]/5 text-[#074073]"
-                    : "border-slate-200 bg-white hover:bg-slate-50 text-slate-600"
-                }`}
-              >
-                <p className="font-bold text-xs">{label}</p>
-                <p className="text-[11px] text-slate-400 mt-1">{desc}</p>
-              </button>
-            ))}
-          </div>
-
-          {scope === "all_members" && (
-            <div className="flex gap-2 p-3 bg-amber-50 border border-amber-200/60 rounded-xl text-xs text-amber-800 font-medium">
-              <AlertTriangle size={16} className="shrink-0 text-amber-600" />
-              <span>
-                Approving updates the live product in place. Account snapshots
-                preserve old terms for historical reference.
-              </span>
+        <div className="space-y-5">
+          {/* CARD 1: BASIC IDENTITY */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+              <Tag size={14} className="text-[#074073]" />
+              <span>1. Identity & Structure</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Product Name & Code
+                </span>
+                <p className="font-bold text-slate-800 font-mono">
+                  {form.name || "—"} ({form.public_code || "N/A"})
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Deposit Type & Purpose
+                </span>
+                <p className="font-bold text-slate-800 capitalize">
+                  {form.deposit_type} • {form.product_purpose}
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Account Structure
+                </span>
+                <p className="font-bold text-slate-800 capitalize">
+                  {form.account_structure?.replace(/_/g, " ")}
+                </p>
+              </div>
+              {form.description && (
+                <div className="md:col-span-3 p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                  <span className="text-[10px] font-bold uppercase text-slate-400">
+                    Product Description
+                  </span>
+                  <p className="font-medium text-slate-700 leading-relaxed text-xs">
+                    {form.description}
+                  </p>
+                </div>
+              )}
             </div>
-          )}
-        </div>
+          </div>
 
-        {/* Changed Fields Grid */}
-        <div className="bg-white rounded-2xl border border-slate-200/80 p-6 shadow-3xs space-y-4">
-          <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800">
-            {changedFields.length} Field{changedFields.length === 1 ? "" : "s"}{" "}
-            Changed
-          </h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-xs">
-              <thead>
-                <tr className="border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                  <th className="py-2.5 px-3">Field</th>
-                  <th className="py-2.5 px-3">Current</th>
-                  <th className="py-2.5 px-3">Your Change</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 font-mono">
-                {changedFields.length > 0 ? (
-                  changedFields.map((item) => (
-                    <tr key={item.field}>
-                      <td className="py-3 px-3 font-sans font-semibold text-slate-700 capitalize">
-                        {item.field.replace(/_/g, " ")}
-                      </td>
-                      <td className="py-3 px-3 text-slate-400">
-                        {String(item.current ?? "N/A")}
-                      </td>
-                      <td className="py-3 px-3 font-bold text-emerald-600">
-                        {String(item.proposed ?? "N/A")}
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td
-                      colSpan={3}
-                      className="py-6 text-center text-slate-400 font-sans"
-                    >
-                      No fields changed.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
+          {/* CARD 2: SPECIAL PURPOSE & TARGET RULES */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+              <Target size={14} className="text-[#074073]" />
+              <span>2. Target & Sub-Account Rules</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Target Type
+                </span>
+                <p className="font-bold text-slate-800 capitalize">
+                  {form.target_type?.replace(/_/g, " ") || "None"}
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Target Amount / Period
+                </span>
+                <p className="font-bold text-slate-800 font-mono">
+                  {form.default_target_amount
+                    ? `KES ${Number(form.default_target_amount).toLocaleString()}`
+                    : "N/A"}
+                  {form.target_period_months
+                    ? ` (${form.target_period_months} Months)`
+                    : ""}
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Target Requirements
+                </span>
+                <p className="font-bold text-slate-800">
+                  {form.target_required ? "Strictly Required" : "Optional"}{" "}
+                  {form.allow_member_defined_target ? "• Member Defined" : ""}
+                </p>
+              </div>
+              {form.account_structure === "beneficiary_sub_accounts" && (
+                <>
+                  <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-slate-400">
+                      Beneficiary Label
+                    </span>
+                    <p className="font-bold text-slate-800">
+                      {form.beneficiary_label || "Beneficiary"}
+                    </p>
+                  </div>
+                  <div className="md:col-span-2 p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                    <span className="text-[10px] font-bold uppercase text-slate-400">
+                      Required Beneficiary Fields
+                    </span>
+                    <p className="font-bold text-slate-800 font-mono">
+                      {form.beneficiary_required_fields || "None"}
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* CARD 3: SAVINGS & PENALTY RULES */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+              <Wallet size={14} className="text-[#074073]" />
+              <span>3. Savings & Penalty Rules</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Minimum saving
+                </span>
+                <p className="font-bold text-slate-800 font-mono">
+                  KES {Number(form.minimum_contribution || 0).toLocaleString()}{" "}
+                  ({form.contribution_frequency})
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Maximum Saving
+                </span>
+                <p className="font-bold text-slate-800 font-mono">
+                  {form.maximum_contribution
+                    ? `KES ${Number(form.maximum_contribution).toLocaleString()}`
+                    : "Unlimited"}
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Deposit Deadline
+                </span>
+                <p className="font-bold text-slate-800">
+                  {form.deposit_deadline_day
+                    ? `Day ${form.deposit_deadline_day} of month`
+                    : "Flexible"}
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Automation Flags
+                </span>
+                <p className="font-bold text-slate-800">
+                  {form.auto_deduct_monthly_contribution
+                    ? "Auto-Deduct ON"
+                    : "Auto-Deduct Off"}{" "}
+                  •{" "}
+                  {form.enforce_monthly_deposit_rule
+                    ? "Strict Monthly Rule"
+                    : "Standard"}
+                </p>
+              </div>
+              <div className="md:col-span-2 p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Late Penalty Configuration
+                </span>
+                <p className="font-bold text-slate-800">
+                  {form.has_late_penalty
+                    ? `${form.late_penalty_type?.replace(/_/g, " ")} • KES ${form.late_penalty_amount || 0} (${form.penalty_accrual_cadence?.replace(/_/g, " ")})`
+                    : "No Late Penalties Applied"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* CARD 4: INTEREST & WITHDRAWAL POLICY */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+              <TrendingUp size={14} className="text-[#074073]" />
+              <span>4. Yield & Withdrawal Policy</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Interest Method
+                </span>
+                <p className="font-bold text-slate-800 capitalize">
+                  {form.interest_crediting_method?.replace(/_/g, " ")}
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Fixed Rate / Postings
+                </span>
+                <p className="font-bold text-slate-800 font-mono">
+                  {form.interest_crediting_method === "fixed_rate"
+                    ? `${form.fixed_annual_interest_rate}% p.a.`
+                    : "N/A"}{" "}
+                  ({form.interest_posting_frequency})
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Withdrawal Policy
+                </span>
+                <p className="font-bold text-slate-800">
+                  {form.is_withdrawable
+                    ? "Withdrawable"
+                    : "Locked (Non-Withdrawable)"}{" "}
+                  {form.withdrawal_fee
+                    ? `• Fee: KES ${form.withdrawal_fee}`
+                    : ""}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* CARD 5: ELIGIBILITY & DOCUMENTS */}
+          <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs space-y-4">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
+              <ShieldCheck size={14} className="text-[#074073]" />
+              <span>5. Eligibility & Documents Checklist</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Registration Eligibility
+                </span>
+                <p className="font-bold text-slate-800 capitalize">
+                  {(form.member_registration_eligibilities || []).join(", ") ||
+                    "Individual"}
+                </p>
+              </div>
+              <div className="p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Governance Flags
+                </span>
+                <p className="font-bold text-slate-800">
+                  {form.mandatory_for_all_members
+                    ? "Mandatory for All"
+                    : "Optional"}{" "}
+                  •{" "}
+                  {form.dividend_eligible
+                    ? "Dividend Eligible"
+                    : "No Dividends"}{" "}
+                  • Notice: {form.exit_notice_days || 0}d
+                </p>
+              </div>
+              <div className="md:col-span-2 p-3 bg-slate-50/70 rounded-xl border border-slate-100 space-y-1.5">
+                <span className="text-[10px] font-bold uppercase text-slate-400">
+                  Required Documents
+                </span>
+                <div className="flex flex-wrap gap-1.5 pt-0.5">
+                  {(form.required_documents || []).filter((d) => d.label.trim())
+                    .length > 0 ? (
+                    form.required_documents
+                      .filter((d) => d.label.trim())
+                      .map((doc, idx) => (
+                        <span
+                          key={idx}
+                          className="font-mono text-[11px] font-bold px-2.5 py-1 bg-white border border-slate-200 text-slate-700 rounded-lg shadow-3xs"
+                        >
+                          {doc.label}
+                        </span>
+                      ))
+                  ) : (
+                    <span className="text-slate-400 italic">
+                      No specific documents required
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4">
+        {/* 5. FOOTER ACTIONS */}
+        <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200/80">
           <button
             type="button"
             onClick={() => setReviewing(false)}
@@ -537,18 +787,17 @@ export const EditFinancialProduct = ({ onNavigateToApprovals }) => {
           </button>
           <button
             type="button"
-            disabled={saving || changedFields.length === 0}
+            disabled={editing || changedFields.length === 0}
             onClick={handleEditSubmit}
             className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-[#074073] text-white text-xs font-bold transition-all shadow-2xs cursor-pointer disabled:opacity-50"
           >
-            {saving ? "Submitting..." : "Confirm & Submit for Approval"}
+            {editing ? "Submitting..." : "Confirm & Submit for Approval"}
           </button>
         </div>
       </div>
     );
   }
 
-  // --- MAIN FORM SCREEN ---
   return (
     <div className="w-full space-y-6 select-none font-sans antialiased text-slate-800">
       {/* PAGE HEADER */}
@@ -1441,5 +1690,115 @@ export const EditFinancialProduct = ({ onNavigateToApprovals }) => {
         </button>
       </div>
     </div>
+  );
+};
+
+const FilterField = ({ label, icon: Icon, children }) => (
+  <div className="space-y-2 w-full">
+    <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest ml-1">
+      {label}
+    </label>
+    <div className="relative group">
+      {Icon && (
+        <div className="absolute inset-y-0 left-0 flex items-center pl-6 pointer-events-none z-10">
+          <Icon
+            size={18}
+            className="text-slate-300 group-focus-within:text-[#074073] transition-colors"
+          />
+          <div className="w-[1.5px] h-5 bg-slate-200 ml-4 group-focus-within:bg-[#074073]/20 transition-colors" />
+        </div>
+      )}
+      {children}
+    </div>
+  </div>
+);
+
+const FilterSelect = ({
+  label,
+  icon: Icon,
+  value,
+  onChange,
+  disabled,
+  children,
+}) => (
+  <FilterField label={label} icon={Icon}>
+    <div className="relative w-full">
+      <select
+        value={value}
+        onChange={onChange}
+        disabled={disabled}
+        className="w-full pl-[74px] pr-10 py-4 h-14 bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 rounded-2xl transition-all outline-none appearance-none focus:bg-white focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
+      >
+        {children}
+      </select>
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 z-10">
+        <ChevronRight size={16} className="rotate-90" />
+      </div>
+    </div>
+  </FilterField>
+);
+
+// --- REUSABLE FORMATTER FOR COMPARISON VALUES ---
+const renderFormattedValue = (value, isProposed = false) => {
+  if (value === null || value === undefined || value === "") {
+    return <span className="text-slate-400 italic font-mono text-xs">—</span>;
+  }
+
+  if (typeof value === "boolean") {
+    return (
+      <span
+        className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md border ${
+          value
+            ? "bg-emerald-50 text-emerald-700 border-emerald-200/60"
+            : "bg-slate-100 text-slate-600 border-slate-200/60"
+        }`}
+      >
+        {value ? "Enabled" : "Disabled"}
+      </span>
+    );
+  }
+
+  if (Array.isArray(value)) {
+    if (value.length === 0) {
+      return (
+        <span className="text-slate-400 italic text-xs">None Configured</span>
+      );
+    }
+    return (
+      <div className="flex flex-wrap gap-1.5 py-0.5">
+        {value.map((item, index) => (
+          <span
+            key={index}
+            className={`inline-flex items-center gap-1 font-mono text-[11px] font-semibold px-2.5 py-1 rounded-lg border ${
+              isProposed
+                ? "bg-emerald-100/60 text-emerald-900 border-emerald-300/60"
+                : "bg-slate-100 text-slate-700 border-slate-200/60"
+            }`}
+          >
+            {typeof item === "object"
+              ? item.label || JSON.stringify(item)
+              : String(item)}
+          </span>
+        ))}
+      </div>
+    );
+  }
+
+  if (typeof value === "object") {
+    return (
+      <pre className="p-2.5 bg-slate-900 text-slate-100 rounded-xl text-[10px] font-mono overflow-x-auto">
+        {JSON.stringify(value, null, 2)}
+      </pre>
+    );
+  }
+
+  return (
+    <span
+      className={`font-mono text-xs font-bold ${
+        isProposed ? "text-emerald-800" : "text-slate-800"
+      }`}
+    >
+      {String(value)}
+    </span>
   );
 };

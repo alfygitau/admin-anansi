@@ -6,6 +6,9 @@ import {
   ArrowLeft,
   Plus,
   Layers,
+  Pencil,
+  ShieldCheck,
+  Eye,
 } from "lucide-react";
 import { useQuery } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
@@ -205,7 +208,7 @@ export const FinancialProducts = ({ onBack, onAddProduct, onViewAccounts }) => {
                     <div className="flex flex-col space-y-0.5">
                       <div className="font-semibold text-slate-700 text-xs">
                         {product.is_withdrawable ? "Withdrawable" : "Locked"} •{" "}
-                        {product.exit_notice_days || 0}days notice
+                        {product.exit_notice_days || 0} days notice
                       </div>
                       <div className="font-medium text-slate-400 text-[11px] capitalize">
                         {product.account_structure?.replace(/_/g, " ") ||
@@ -230,18 +233,59 @@ export const FinancialProducts = ({ onBack, onAddProduct, onViewAccounts }) => {
 
                   {/* Col 6: Action Trigger */}
                   <td className="py-4 px-6 text-right pr-8">
-                    <button
-                      type="button"
-                      onClick={() =>
-                        navigate(
-                          `/admin/financial-products/${product?.id}/edit`,
-                        )
-                      }
-                      className="h-8 px-3 rounded-xl bg-slate-50 border border-slate-200 inline-flex items-center justify-center gap-1.5 text-slate-600 hover:bg-primary hover:text-white hover:border-primary transition-all shadow-2xs font-bold cursor-pointer"
-                    >
-                      <span className="text-[11px]">Manage Accounts</span>
-                      <ChevronRight size={14} strokeWidth={2.5} />
-                    </button>
+                    <div className="flex items-center justify-end gap-2">
+                      {/* 1. REVIEW ACTION (Triggered when product has pending changes/creations) */}
+                      {(product.status === "pending" ||
+                        product.status === "pending_approval" ||
+                        product.status === "pending_review" ||
+                        product.has_pending_changes) && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate(
+                              `/admin/financial-products/${product?.id}/review`,
+                            )
+                          }
+                          className="h-8 px-3 rounded-xl bg-amber-50 border border-amber-200/80 inline-flex items-center justify-center gap-1.5 text-amber-700 hover:bg-amber-100 hover:border-amber-300 transition-all shadow-2xs font-bold cursor-pointer"
+                          title="Review Pending Changes"
+                        >
+                          <ShieldCheck size={13} />
+                          <span className="text-[11px]">Review</span>
+                        </button>
+                      )}
+
+                      {/* 2. EDIT ACTION (Available for live/draft/editable products) */}
+                      {product.status !== "pending_approval" && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            navigate(
+                              `/admin/financial-products/${product?.id}/edit`,
+                            )
+                          }
+                          className="h-8 px-3 rounded-xl bg-slate-50 border border-slate-200 inline-flex items-center justify-center gap-1.5 text-slate-600 hover:bg-slate-100 hover:text-slate-900 transition-all shadow-2xs font-bold cursor-pointer"
+                          title="Edit Configuration"
+                        >
+                          <Pencil size={13} />
+                          <span className="text-[11px]">Edit</span>
+                        </button>
+                      )}
+
+                      {/* 3. VIEW ACTION (Inspect accounts and details) */}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          navigate(
+                            `/admin/financial-products/${product?.id}/accounts`,
+                          )
+                        }
+                        className="h-8 px-3 rounded-xl bg-slate-50 border border-slate-200 inline-flex items-center justify-center gap-1.5 text-slate-600 hover:bg-[#074073] hover:text-white hover:border-[#074073] transition-all shadow-2xs font-bold cursor-pointer"
+                        title="View Member Accounts"
+                      >
+                        <Eye size={13} />
+                        <span className="text-[11px]">View</span>
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))

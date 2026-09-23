@@ -153,7 +153,7 @@ const DepositProductRow = ({ product, onTap }) => {
             </span>
             <div className="font-semibold text-slate-700 text-xs truncate">
               {product.is_withdrawable ? "Withdrawable" : "Locked"} •{" "}
-              {product.exit_notice_days || 0}d notice
+              {product.exit_notice_days || 0} days notice
             </div>
           </div>
           <div>

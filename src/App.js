@@ -73,6 +73,8 @@ import { FinancialProducts } from "./pages/settings/financial-products/Financial
 import { CreateFinancialProduct } from "./pages/settings/financial-products/AddFinancialProduct";
 import { EditFinancialProduct } from "./pages/settings/financial-products/EditFinancialProduct";
 import { FinancialProductDetails } from "./pages/settings/financial-products/FinancialProduct";
+import { ReviewProductSubmission } from "./pages/settings/financial-products/ApproveProduct";
+import { ProductApprovals } from "./pages/settings/financial-products/ProductApprovals";
 
 function App() {
   return (
@@ -163,6 +165,14 @@ function App() {
           <Route
             element={<EditFinancialProduct />}
             path="financial-products/:id/edit"
+          />
+          <Route
+            element={<ReviewProductSubmission />}
+            path="financial-products/:id/review"
+          />
+          <Route
+            element={<ProductApprovals />}
+            path="financial-products/approvals"
           />
           <Route
             element={<FinancialProducts />}

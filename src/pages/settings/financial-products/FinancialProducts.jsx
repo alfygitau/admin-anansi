@@ -78,6 +78,15 @@ export const FinancialProducts = ({ onBack, onAddProduct, onViewAccounts }) => {
         <div className="flex items-center gap-3">
           <button
             type="button"
+            onClick={() => navigate("/admin/financial-products/approvals")}
+            className="flex items-center justify-center gap-2 h-10 px-4 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-3xs"
+          >
+            <ShieldCheck size={15} className="text-[#074073]" />
+            <span>Approvals Queue</span>
+          </button>
+
+          <button
+            type="button"
             onClick={() => navigate("/admin/financial-products/create")}
             className="flex items-center justify-center gap-2 h-10 px-4 bg-slate-900 hover:bg-[#074073] text-white rounded-xl text-xs font-bold transition-all cursor-pointer shadow-2xs"
           >
@@ -275,9 +284,7 @@ export const FinancialProducts = ({ onBack, onAddProduct, onViewAccounts }) => {
                       <button
                         type="button"
                         onClick={() =>
-                          navigate(
-                            `/admin/financial-products/${product?.id}`,
-                          )
+                          navigate(`/admin/financial-products/${product?.id}`)
                         }
                         className="h-8 px-3 rounded-xl bg-slate-50 border border-slate-200 inline-flex items-center justify-center gap-1.5 text-slate-600 hover:bg-[#074073] hover:text-white hover:border-[#074073] transition-all shadow-2xs font-bold cursor-pointer"
                         title="View Member Accounts"

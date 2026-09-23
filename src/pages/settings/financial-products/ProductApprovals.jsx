@@ -91,7 +91,7 @@ export const ProductApprovals = ({ onBack, onReviewApproval }) => {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={onBack}
+            onClick={() => navigate(-1)}
             className="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 transition-all cursor-pointer shrink-0 shadow-3xs"
             title="Go Back"
           >
@@ -102,7 +102,7 @@ export const ProductApprovals = ({ onBack, onReviewApproval }) => {
               <span>Settings</span>
             </div>
             <h2 className="text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-              Product Change Approvals
+              Financial Products Approvals
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
               Review and authorize proposed product creations, parameter
@@ -192,7 +192,7 @@ export const ProductApprovals = ({ onBack, onReviewApproval }) => {
 
           <tbody className="divide-y divide-slate-100 text-xs tracking-tight">
             {isFetching ? (
-              Array.from({ length: 5 }).map((_, idx) => (
+              Array.from({ length: 8 }).map((_, idx) => (
                 <tr key={idx} className="animate-pulse">
                   <td className="py-4 px-6">
                     <div className="flex flex-col space-y-1.5">

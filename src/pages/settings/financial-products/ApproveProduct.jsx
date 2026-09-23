@@ -145,17 +145,6 @@ export const ReviewProductSubmission = () => {
     approvalData?.proposed_payload?.name ||
     "Financial Product";
 
-  if (isFetching) {
-    return (
-      <div className="w-full py-20 flex flex-col items-center justify-center space-y-3">
-        <div className="size-10 rounded-2xl border-2 border-slate-200 border-t-[#074073] animate-spin" />
-        <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">
-          Loading Approval Details...
-        </p>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="w-full space-y-6 select-none font-sans antialiased text-slate-800">
@@ -188,105 +177,126 @@ export const ReviewProductSubmission = () => {
         </div>
 
         {/* 2. EXECUTIVE METADATA & CONTEXT CARDS */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Card 1: Submitter Info */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs flex items-center gap-3 hover:border-slate-300 transition-all">
-            <div className="size-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0">
-              <User size={18} />
-            </div>
-            <div className="min-w-0 space-y-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-                Requested By
-              </span>
-              <p className="text-xs font-extrabold text-slate-900 truncate">
-                {submitterName}
-              </p>
-              <p className="text-[10px] text-slate-400 font-medium truncate">
-                {submitter.job_title || submitter.department || "Administrator"}
-              </p>
-            </div>
+        {isFetching ? (
+          /* SKELETON LOADER STATE */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 animate-pulse">
+            {Array.from({ length: 4 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs flex items-center gap-3"
+              >
+                <div className="size-10 rounded-xl bg-slate-200 shrink-0" />
+                <div className="min-w-0 space-y-1.5 w-full">
+                  <div className="h-2.5 w-16 bg-slate-200 rounded" />
+                  <div className="h-3.5 w-28 bg-slate-200 rounded" />
+                  <div className="h-2.5 w-20 bg-slate-200 rounded" />
+                </div>
+              </div>
+            ))}
           </div>
-
-          {/* Card 2: Submission Date */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs flex items-center gap-3 hover:border-slate-300 transition-all">
-            <div className="size-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-bold shrink-0">
-              <Calendar size={18} />
-            </div>
-            <div className="min-w-0 space-y-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-                Submitted Date
-              </span>
-              <p className="text-xs font-extrabold text-slate-900 font-mono">
-                {approvalData?.submitted_at
-                  ? new Date(approvalData.submitted_at).toLocaleDateString(
-                      "en-KE",
-                      {
-                        dateStyle: "medium",
-                      },
-                    )
-                  : "—"}
-              </p>
-              <p className="text-[10px] text-slate-400 font-medium font-mono">
-                {approvalData?.submitted_at
-                  ? new Date(approvalData.submitted_at).toLocaleTimeString(
-                      "en-KE",
-                      {
-                        timeStyle: "short",
-                      },
-                    )
-                  : ""}
-              </p>
-            </div>
-          </div>
-
-          {/* Card 3: Scope */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs flex items-center gap-3 hover:border-slate-300 transition-all">
-            <div className="size-10 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 font-bold shrink-0">
-              <Layers size={18} />
-            </div>
-            <div className="min-w-0 space-y-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-                Application Scope
-              </span>
-              <p className="text-xs font-extrabold text-slate-900 capitalize">
-                {approvalData?.scope === "all_members"
-                  ? "All Members (Immediate)"
-                  : "New Members Only"}
-              </p>
-              <p className="text-[10px] text-slate-400 font-medium">
-                Action:{" "}
-                <span className="uppercase font-bold text-slate-600">
-                  {approvalData?.action || "Update"}
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {/* Card 1: Submitter Info */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs flex items-center gap-3 hover:border-slate-300 transition-all">
+              <div className="size-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 font-bold shrink-0">
+                <User size={18} />
+              </div>
+              <div className="min-w-0 space-y-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
+                  Requested By
                 </span>
-              </p>
+                <p className="text-xs font-extrabold text-slate-900 truncate">
+                  {submitterName}
+                </p>
+                <p className="text-[10px] text-slate-400 font-medium truncate">
+                  {submitter.job_title ||
+                    submitter.department ||
+                    "Administrator"}
+                </p>
+              </div>
             </div>
-          </div>
 
-          {/* Card 4: Audit & Timestamp */}
-          <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs flex items-center gap-3 hover:border-slate-300 transition-all">
-            <div className="size-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 font-bold shrink-0">
-              <History size={18} />
+            {/* Card 2: Submission Date */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs flex items-center gap-3 hover:border-slate-300 transition-all">
+              <div className="size-10 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 font-bold shrink-0">
+                <Calendar size={18} />
+              </div>
+              <div className="min-w-0 space-y-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
+                  Submitted Date
+                </span>
+                <p className="text-xs font-extrabold text-slate-900 font-mono">
+                  {approvalData?.submitted_at
+                    ? new Date(approvalData.submitted_at).toLocaleDateString(
+                        "en-KE",
+                        {
+                          dateStyle: "medium",
+                        },
+                      )
+                    : "—"}
+                </p>
+                <p className="text-[10px] text-slate-400 font-medium font-mono">
+                  {approvalData?.submitted_at
+                    ? new Date(approvalData.submitted_at).toLocaleTimeString(
+                        "en-KE",
+                        {
+                          timeStyle: "short",
+                        },
+                      )
+                    : ""}
+                </p>
+              </div>
             </div>
-            <div className="min-w-0 space-y-0.5">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
-                Last System Sync
-              </span>
-              <p className="text-xs font-extrabold text-slate-900 font-mono">
-                {approvalData?.updatedAt
-                  ? new Date(approvalData.updatedAt).toLocaleDateString(
-                      "en-KE",
-                      {
-                        dateStyle: "medium",
-                      },
-                    )
-                  : "—"}
-              </p>
-              <p className="text-[10px] text-slate-400 font-medium">
-                Version {product?.version_number || 1}
-              </p>
+
+            {/* Card 3: Scope */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs flex items-center gap-3 hover:border-slate-300 transition-all">
+              <div className="size-10 rounded-xl bg-purple-50 border border-purple-100 flex items-center justify-center text-purple-600 font-bold shrink-0">
+                <Layers size={18} />
+              </div>
+              <div className="min-w-0 space-y-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
+                  Application Scope
+                </span>
+                <p className="text-xs font-extrabold text-slate-900 capitalize">
+                  {approvalData?.scope === "all_members"
+                    ? "All Members (Immediate)"
+                    : "New Members Only"}
+                </p>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  Action:{" "}
+                  <span className="uppercase font-bold text-slate-600">
+                    {approvalData?.action || "Update"}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            {/* Card 4: Audit & Timestamp */}
+            <div className="bg-white rounded-2xl border border-slate-200/80 p-4 shadow-3xs flex items-center gap-3 hover:border-slate-300 transition-all">
+              <div className="size-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center text-amber-600 font-bold shrink-0">
+                <History size={18} />
+              </div>
+              <div className="min-w-0 space-y-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 block">
+                  Last System Sync
+                </span>
+                <p className="text-xs font-extrabold text-slate-900 font-mono">
+                  {approvalData?.updatedAt
+                    ? new Date(approvalData.updatedAt).toLocaleDateString(
+                        "en-KE",
+                        {
+                          dateStyle: "medium",
+                        },
+                      )
+                    : "—"}
+                </p>
+                <p className="text-[10px] text-slate-400 font-medium">
+                  Version {product?.version_number || 1}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* 3. SCOPE IMPACT DISCLAIMER BANNER */}
         {approvalData?.scope === "all_members" ? (
@@ -356,7 +366,30 @@ export const ReviewProductSubmission = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
-                {changedFields.length > 0 ? (
+                {isFetching ? (
+                  /* SKELETON LOADER ROWS */
+                  Array.from({ length: 4 }).map((_, index) => (
+                    <tr key={index} className="animate-pulse">
+                      {/* Col 1: Parameter Title & Slug Skeleton */}
+                      <td className="py-3.5 px-6">
+                        <div className="flex flex-col space-y-1.5">
+                          <div className="h-3.5 w-32 bg-slate-200 rounded" />
+                          <div className="h-2.5 w-24 bg-slate-200 rounded" />
+                        </div>
+                      </td>
+
+                      {/* Col 2: Current Value Box Skeleton */}
+                      <td className="py-3.5 px-6">
+                        <div className="h-10 w-full max-w-xs bg-slate-200 rounded-xl" />
+                      </td>
+
+                      {/* Col 3: Proposed Value Box Skeleton */}
+                      <td className="py-3.5 px-6">
+                        <div className="h-10 w-full max-w-xs bg-slate-200 rounded-xl" />
+                      </td>
+                    </tr>
+                  ))
+                ) : changedFields.length > 0 ? (
                   changedFields.map((item, index) => (
                     <tr
                       key={index}

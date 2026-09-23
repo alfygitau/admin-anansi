@@ -72,6 +72,7 @@ import { AllSettings } from "./pages/settings/all-settings/AllSettings";
 import { FinancialProducts } from "./pages/settings/financial-products/FinancialProducts";
 import { CreateFinancialProduct } from "./pages/settings/financial-products/AddFinancialProduct";
 import { EditFinancialProduct } from "./pages/settings/financial-products/EditFinancialProduct";
+import { FinancialProductDetails } from "./pages/settings/financial-products/FinancialProduct";
 
 function App() {
   return (
@@ -154,6 +155,10 @@ function App() {
           <Route
             element={<CreateFinancialProduct />}
             path="financial-products/create"
+          />
+          <Route
+            element={<FinancialProductDetails />}
+            path="financial-products/:id"
           />
           <Route
             element={<EditFinancialProduct />}

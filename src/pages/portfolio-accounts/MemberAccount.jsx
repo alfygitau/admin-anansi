@@ -406,7 +406,7 @@ const MemberAccount = () => {
               </div>
               <input
                 type="text"
-                placeholder="Search by Batch ID, Description, or Uploader..."
+                placeholder="Search by reference..."
                 className="w-full pl-[58px] pr-4 h-12 bg-white border border-slate-200/80 rounded-2xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 outline-none focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all shadow-3xs"
               />
             </div>

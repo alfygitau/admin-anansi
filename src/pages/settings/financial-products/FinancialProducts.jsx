@@ -276,7 +276,7 @@ export const FinancialProducts = ({ onBack, onAddProduct, onViewAccounts }) => {
                         type="button"
                         onClick={() =>
                           navigate(
-                            `/admin/financial-products/${product?.id}/accounts`,
+                            `/admin/financial-products/${product?.id}`,
                           )
                         }
                         className="h-8 px-3 rounded-xl bg-slate-50 border border-slate-200 inline-flex items-center justify-center gap-1.5 text-slate-600 hover:bg-[#074073] hover:text-white hover:border-[#074073] transition-all shadow-2xs font-bold cursor-pointer"

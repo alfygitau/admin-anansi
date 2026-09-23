@@ -198,9 +198,6 @@ export const AllSettings = () => {
             <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">
               Member Products
             </h3>
-            <span className="text-xs text-slate-400 font-mono">
-              {filteredProducts.length} Products
-            </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -258,9 +255,6 @@ export const AllSettings = () => {
             <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">
               System Controls
             </h3>
-            <span className="text-xs text-slate-400 font-mono">
-              {filteredSystemSections.length} Categories
-            </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

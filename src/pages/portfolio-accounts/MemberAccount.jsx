@@ -25,9 +25,12 @@ import {
   X,
   PlusCircle,
   ChevronDown,
+  Download,
+  Filter,
 } from "lucide-react";
 import { useFormatAmount } from "../../hooks/useFormatAmount";
 import Pagination from "../../components/pagination/Pagination";
+import { useFormattedDateTime } from "../../hooks/useFormatDateTime";
 
 const MemberAccount = () => {
   const { showToast } = useToast();
@@ -39,6 +42,7 @@ const MemberAccount = () => {
   const formatAmount = useFormatAmount();
   const navigate = useNavigate();
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
+  const formatDate = useFormattedDateTime();
   const [filters, setFilters] = useState({
     q: "",
     status: "",
@@ -147,7 +151,7 @@ const MemberAccount = () => {
   return (
     <>
       <div className="w-full space-y-6 font-sans antialiased text-slate-800">
-        <div className="w-full flex sm:flex-col justify-between gap-4 sm:items-center pb-6 select-none">
+        <div className="w-full flex sm:flex-col justify-between gap-4 sm:items-center select-none">
           {/* Left Column: Navigation & Page Title */}
           <div className="flex items-center gap-3">
             <button
@@ -217,6 +221,38 @@ const MemberAccount = () => {
             )}
           </div>
         </div>
+
+        <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-xl bg-[#074073]/5 border border-[#074073]/10 flex items-center justify-center font-bold text-[#074073] shrink-0">
+              <User size={18} />
+            </div>
+            <div className="flex flex-col space-y-0.5">
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[9px] font-bold px-2 py-0.5 bg-slate-100 text-slate-600 rounded-md border border-slate-200/60">
+                  {summary?.memberId || "N/A"}
+                </span>
+                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                  Member Profile
+                </span>
+              </div>
+              <h3 className="text-base font-bold text-slate-800 tracking-tight">
+                {summary?.memberName || "Unknown Member"}
+              </h3>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs font-medium text-slate-500 bg-slate-50/80 px-3.5 py-2 rounded-xl border border-slate-200/60 self-start sm:self-auto">
+            <Calendar size={14} className="text-slate-400" />
+            <span>Created:</span>
+            <span className="font-bold text-slate-700 font-mono">
+              {formatDate
+                ? formatDate(summary?.memberCreatedAt)
+                : summary?.memberCreatedAt}
+            </span>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full items-stretch select-none">
           {/* CARD 1: ACCOUNT DETAILS */}
           <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-6 flex flex-col justify-between group transition-all hover:border-slate-300">
@@ -345,6 +381,52 @@ const MemberAccount = () => {
                   {summary?.status || "N/A"}
                 </span>
               </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="space-y-4 pt-2">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="text-base font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                <span>Transaction History</span>
+              </h3>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Audit ledger entries, principal movements, and processing fees.
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+            {/* Search Input */}
+            <div className="md:col-span-2 relative">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none z-10">
+                <Search size={16} className="text-[#074073]" />
+                <div className="w-[1px] h-4 bg-slate-200 ml-3" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search by Batch ID, Description, or Uploader..."
+                className="w-full pl-[58px] pr-4 h-12 bg-white border border-slate-200/80 rounded-2xl text-xs font-semibold text-slate-800 placeholder:text-slate-400 outline-none focus:border-[#074073] focus:ring-4 focus:ring-[#074073]/5 transition-all shadow-3xs"
+              />
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                className="flex items-center gap-1.5 h-12 px-5 border border-slate-200 bg-white text-slate-700 rounded-2xl text-xs font-bold hover:bg-slate-50 transition-all shadow-3xs cursor-pointer active:scale-98"
+              >
+                <Filter size={14} className="text-[#074073]" />
+                <span>Filter</span>
+              </button>
+              <button
+                type="button"
+                className="flex items-center gap-1.5 h-12 px-5 border border-slate-200 bg-white text-slate-700 rounded-2xl text-xs font-bold hover:bg-slate-50 transition-all shadow-3xs cursor-pointer active:scale-98"
+              >
+                <Download size={14} className="text-[#074073]" />
+                <span>Export</span>
+              </button>
             </div>
           </div>
         </div>

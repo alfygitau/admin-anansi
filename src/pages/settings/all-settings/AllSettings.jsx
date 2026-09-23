@@ -157,7 +157,7 @@ export const AllSettings = () => {
   };
 
   return (
-    <div className="w-full space-y-8 select-none">
+    <div className="w-full space-y-6 select-none">
       {/* 1. PAGE HEADER */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
         <div>
@@ -186,7 +186,7 @@ export const AllSettings = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search for loans, savings, fees, or permissions..."
-            className="w-full pl-9 pr-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all shadow-3xs"
+            className="w-full pl-9 pr-4 py-4 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all shadow-3xs"
           />
         </div>
       </div>

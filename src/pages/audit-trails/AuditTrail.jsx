@@ -139,10 +139,10 @@ export default function AuditTrail() {
             </button>
             <div>
               <span className="text-[10px] font-bold tracking-wider uppercase text-slate-400">
-                Security Compliance Desk
+                Security Compliance
               </span>
               <h1 className="text-xl font-black tracking-tight text-primary mt-0.5">
-                System Audit Logs
+                Audit Logs
               </h1>
             </div>
           </div>

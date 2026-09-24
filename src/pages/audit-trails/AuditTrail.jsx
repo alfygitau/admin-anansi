@@ -67,9 +67,10 @@ export default function AuditTrail() {
         filters?.fromDate,
         filters?.toDate,
       );
-      return response.data?.data;
+      return response.data;
     },
     onSuccess: (data) => {
+      console.log(data);
       setAuditLogs(data?.rows);
       setFilters((prev) => ({
         ...prev,
@@ -79,6 +80,7 @@ export default function AuditTrail() {
       setTotalItems(data.total);
     },
     onError: (error) => {
+      console.log(error);
       Sentry.captureException(
         new Error(error?.response?.data?.message || error.message),
         {
@@ -187,15 +189,16 @@ export default function AuditTrail() {
         {/* 3. PREMIUM AUDIT WORKSPACE TRACE DATA TABLE */}
         <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] overflow-hidden w-full">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse table-auto">
+            <table className="w-full text-left border-collapse font-sans table-auto">
               <thead>
                 <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none">
                   <th className="py-4.5 px-6">User / Executing Actor</th>
+                  <th className="py-4.5 px-6">Actor Type</th>
                   <th className="py-4.5 px-6">Category</th>
-                  <th className="py-4.5 px-6 max-w-sm">
+                  <th className="py-4.5 px-6 max-w-xs">
                     Detailed Action Description
                   </th>
-                  <th className="py-4.5 px-6">System Security Key</th>
+                  <th className="py-4.5 px-6">IP Address</th>
                   <th className="py-4.5 px-6 text-right pr-8">Timestamp</th>
                 </tr>
               </thead>
@@ -209,46 +212,41 @@ export default function AuditTrail() {
                         key={`audit-skeleton-${index}`}
                         className="animate-pulse border-b border-slate-100 last:border-none"
                       >
-                        {/* Column 1: Staff Member Identity Skeleton */}
+                        {/* Column 1: Actor Identity Skeleton */}
                         <td className="py-4 px-6">
-                          <div className="flex items-center gap-3">
-                            {/* Avatar Icon Box Mock */}
-                            <div className="size-8 rounded-xl bg-slate-100 shrink-0" />
-                            <div className="flex flex-col space-y-2">
-                              {/* Username Line */}
-                              <div className="h-3.5 w-24 bg-slate-200 rounded" />
-                              {/* Optional Supervisor Authorization Subline */}
-                              <div className="h-3 w-32 bg-slate-100 rounded" />
-                            </div>
+                          <div className="flex flex-col space-y-1.5">
+                            <div className="h-3.5 w-24 bg-slate-200 rounded" />
+                            <div className="h-3 w-16 bg-slate-100 rounded" />
                           </div>
                         </td>
 
-                        {/* Column 2: Category Badge Skeleton */}
+                        {/* Column 2: Actor Type Skeleton */}
                         <td className="py-4 px-6 align-middle">
-                          <div className="h-6 w-28 bg-slate-100 rounded-lg" />
+                          <div className="h-5 w-16 bg-slate-200/60 rounded-md" />
                         </td>
 
-                        {/* Column 3: Activity Description Narrative Skeleton */}
-                        <td className="py-4 px-6 align-middle max-w-xs md:max-w-md">
-                          <div className="flex flex-col space-y-2">
-                            {/* Main Description Line */}
-                            <div className="h-3.5 w-5/6 bg-slate-200 rounded" />
-                            {/* Internal Log Reference Hash Line */}
-                            <div className="h-3 w-1/2 bg-slate-100 rounded" />
+                        {/* Column 3: Category Badge Skeleton */}
+                        <td className="py-4 px-6 align-middle">
+                          <div className="h-6 w-24 bg-slate-100 rounded-lg" />
+                        </td>
+
+                        {/* Column 4: Description Skeleton */}
+                        <td className="py-4 px-6 align-middle max-w-xs">
+                          <div className="flex flex-col space-y-1.5">
+                            <div className="h-3.5 w-48 bg-slate-200 rounded" />
+                            <div className="h-3 w-28 bg-slate-100 rounded" />
                           </div>
                         </td>
 
-                        {/* Column 4: System Action Code Tag Skeleton */}
+                        {/* Column 5: IP Address Skeleton */}
                         <td className="py-4 px-6 align-middle">
-                          <div className="h-5 w-36 bg-slate-200/60 rounded-md" />
+                          <div className="h-5 w-24 bg-slate-200/60 rounded-md" />
                         </td>
 
-                        {/* Column 5: Date and Time Right-Aligned Skeleton */}
+                        {/* Column 6: Timestamp Skeleton */}
                         <td className="py-4 px-6 text-right pr-8 align-middle">
-                          <div className="flex flex-col items-end space-y-2">
-                            {/* Date Stamp Block */}
+                          <div className="flex flex-col items-end space-y-1.5">
                             <div className="h-3.5 w-20 bg-slate-200 rounded" />
-                            {/* Time Stamp Block */}
                             <div className="h-3 w-14 bg-slate-100 rounded" />
                           </div>
                         </td>
@@ -260,72 +258,77 @@ export default function AuditTrail() {
                       key={log.id}
                       className="group transition-colors hover:bg-slate-50/60"
                     >
-                      {/* Column 1: Actor Identity Track */}
+                      {/* Column 1: User / Executing Actor Details */}
                       <td className="py-4 px-6">
-                        <div className="flex items-center gap-3">
-                          <div className="size-8 rounded-xl bg-slate-50 border border-slate-200/40 flex items-center justify-center text-slate-400 shrink-0 group-hover:bg-blue-50 group-hover:text-[#074073] transition-colors">
-                            <User size={13} />
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="font-bold text-primary text-sm tracking-tight transition-colors">
-                              {log.username}
+                        <div className="flex flex-col space-y-0.5">
+                          <div className="flex items-center gap-2">
+                            <span className="font-extrabold text-slate-900 text-xs">
+                              {log.userName || log.user}
                             </span>
-                            {log.adminUsername && (
-                              <span className="text-[10px] text-amber-700 font-semibold bg-amber-50 px-1 py-0.5 rounded border border-amber-100/50 w-fit mt-0.5">
-                                Elevated Sign: {log.adminUsername}
+                            {log.role && (
+                              <span className="text-[9px] font-bold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200/60">
+                                {log.role}
                               </span>
                             )}
                           </div>
+                          <span className="font-mono text-[10px] text-slate-400">
+                            {log.displayUserId || log.userId}
+                          </span>
                         </div>
                       </td>
 
-                      {/* Column 2: Operation Category Badge Grid */}
+                      {/* Column 2: Actor Type */}
+                      <td className="py-4 px-6 align-middle select-none">
+                        <span
+                          className={`font-mono text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase ${
+                            log.actorType === "ADMIN"
+                              ? "bg-purple-50 text-purple-700 border-purple-200/60"
+                              : "bg-slate-100 text-slate-700 border-slate-200"
+                          }`}
+                        >
+                          {log.actorType || "SYSTEM"}
+                        </span>
+                      </td>
+
+                      {/* Column 3: Category Badge */}
                       <td className="py-4 px-6 align-middle select-none">
                         <span className="font-semibold text-slate-700 tracking-tight text-[11px] bg-slate-50 border border-slate-200/60 px-2 py-1 rounded-lg">
                           {log.category}
                         </span>
                       </td>
 
-                      {/* Column 3: Plain Unwrapped Action Description Narrative text */}
+                      {/* Column 4: Action Description Narrative */}
                       <td className="py-4 px-6 align-middle max-w-xs md:max-w-md">
                         <div className="flex flex-col space-y-0.5">
                           <span className="font-medium text-slate-700 text-xs leading-relaxed">
-                            {log.description}
+                            {log.description || log.actionLabel}
                           </span>
                           <span className="text-[9px] font-mono text-slate-400 select-none">
-                            Trace Transaction ID: {log.id}
+                            ID: {log.id}
                           </span>
                         </div>
                       </td>
 
-                      {/* Column 4: Immutable System Code Tag Component */}
-                      <td className="py-4 px-6 align-middle select-none">
-                        <span className="font-mono text-[10px] font-bold text-[#074073] bg-blue-50/70 border border-blue-100/60 px-2 py-0.5 rounded-md">
-                          {log.actionCode}
+                      {/* Column 5: IP Address Tag */}
+                      <td className="py-4 px-6 align-middle font-mono select-none">
+                        <span className="text-xs font-bold text-slate-700 bg-slate-100/80 border border-slate-200 px-2 py-0.5 rounded-md">
+                          {log.ipAddress || "N/A"}
                         </span>
                       </td>
 
-                      {/* Column 5: Calendar Clock Dual Metric Logs Output row */}
+                      {/* Column 6: Timestamp */}
                       <td className="py-4 px-6 text-right pr-8 align-middle select-none">
                         <div className="flex flex-col items-end space-y-0.5 font-mono font-medium text-slate-500">
-                          <div className="flex items-center gap-1.5 justify-end">
-                            <Calendar
-                              size={12}
-                              className="text-slate-400 shrink-0"
-                            />
-                            <span>
-                              {new Date(log.date).toLocaleDateString("en-KE", {
-                                dateStyle: "medium",
-                              })}
-                            </span>
-                          </div>
-                          <div className="flex items-center gap-1.5 justify-end text-slate-400 text-[11px]">
-                            <Clock
-                              size={12}
-                              className="text-slate-300 shrink-0"
-                            />
-                            <span>{log.time}</span>
-                          </div>
+                          <span className="text-xs font-bold text-slate-700">
+                            {log.date
+                              ? new Date(log.date).toLocaleDateString("en-KE", {
+                                  dateStyle: "medium",
+                                })
+                              : "—"}
+                          </span>
+                          <span className="text-[10px] text-slate-400">
+                            {log.time}
+                          </span>
                         </div>
                       </td>
                     </tr>
@@ -333,14 +336,16 @@ export default function AuditTrail() {
                 ) : (
                   <tr>
                     <td
-                      colSpan={5}
-                      className="py-60 text-center text-slate-400 font-medium select-none"
+                      colSpan={6}
+                      className="py-20 text-center text-slate-400 font-medium select-none"
                     >
-                      <div className="flex flex-col items-center justify-center space-y-2">
-                        <FileText size={24} className="text-slate-300" />
-                        <p className="text-xs">
-                          No historical audit files match your active filter
-                          combinations.
+                      <div className="flex flex-col items-center justify-center space-y-1">
+                        <p className="text-xs font-bold text-slate-700">
+                          No audit logs found
+                        </p>
+                        <p className="text-xs text-slate-400">
+                          There are currently no log entries matching your
+                          active filter combinations.
                         </p>
                       </div>
                     </td>

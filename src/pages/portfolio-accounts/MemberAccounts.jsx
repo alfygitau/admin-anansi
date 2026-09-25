@@ -81,18 +81,12 @@ export default function MemberAccounts() {
 
   const getProductPillColor = (type) => {
     switch (type) {
-      case "fixed_term_deposit":
-        return "bg-purple-50 text-purple-700 border-purple-200/50";
-      case "member_deposits":
-        return "bg-emerald-50 text-emerald-700 border-emerald-200/50";
-      case "share_capital":
+      case "shares":
         return "bg-blue-50 text-blue-700 border-blue-200/50";
-      case "holiday_savings":
+      case "savings":
         return "bg-orange-50 text-orange-700 border-orange-200/50";
-      case "education_savings":
-        return "bg-indigo-50 text-indigo-700 border-indigo-200/50";
       default:
-        return "bg-pink-50 text-pink-700 border-pink-200/50";
+        return "bg-blue-50 text-blue-700 border-blue-200/50";
     }
   };
 

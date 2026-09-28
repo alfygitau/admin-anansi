@@ -66,7 +66,6 @@ import CorporateAccountDetails from "./pages/corporate-accounts/CorporateAccount
 import Validate from "./pages/validation/Validate";
 import LoanReviews from "./pages/loans/loan-reviews/LoanReviews";
 import LoanApplicationApprovals from "./pages/loan-applications/application-approvals/LoanApplicationApprovals";
-import Settings from "./pages/settings/Settings";
 import MemberAccount from "./pages/portfolio-accounts/MemberAccount";
 import { AllSettings } from "./pages/settings/all-settings/AllSettings";
 import { FinancialProducts } from "./pages/settings/financial-products/FinancialProducts";
@@ -75,6 +74,7 @@ import { EditFinancialProduct } from "./pages/settings/financial-products/EditFi
 import { FinancialProductDetails } from "./pages/settings/financial-products/FinancialProduct";
 import { ReviewProductSubmission } from "./pages/settings/financial-products/ApproveProduct";
 import { ProductApprovals } from "./pages/settings/financial-products/ProductApprovals";
+import Guarantor from "./pages/guarantors/Guarantor";
 
 function App() {
   return (
@@ -130,6 +130,7 @@ function App() {
             element={<MyLoanTransactions />}
           />
           <Route path="guarantors" element={<Guarantors />} />
+          <Route path="guarantors/:id" element={<Guarantor />} />
           <Route
             path="all-loans/:id/send-notification"
             element={<NotifyBorrower />}

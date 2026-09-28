@@ -2,21 +2,26 @@ import React, { useState } from "react";
 import {
   Search,
   User,
-  Users,
   ShieldCheck,
-  AlertTriangle,
   Activity,
+  Eye,
+  MoreVertical,
+  ShieldAlert,
+  Phone,
+  Mail,
+  Wallet,
+  Percent,
 } from "lucide-react";
 import { useToast } from "../../contexts/ToastProvider";
 import { useQuery } from "react-query";
 import { getGuarantors } from "../../sdk/guarantors/guarantors";
 import Pagination from "../../components/pagination/Pagination";
 import * as Sentry from "@sentry/react";
+import { useFormatAmount } from "../../hooks/useFormatAmount";
+import { useNavigate } from "react-router-dom";
 
 export default function Guarantors() {
   const [guarantors, setGuarantors] = useState([]);
-  const { toast } = useToast();
-  const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
@@ -29,14 +34,9 @@ export default function Guarantors() {
   });
   const { showToast } = useToast();
   const [totalItems, setTotalItems] = useState(0);
-
-  const metrics = {
-    totalGuarantors: 12,
-    totalCommitted: 2262330.22,
-    totalExposure: 1610330.22,
-    totalActiveLoans: 49,
-    totalPendingLoans: 54,
-  };
+  const formatAmount = useFormatAmount();
+  const [metrics, setMetrics] = useState({});
+  const navigate = useNavigate()
 
   const { isFetching } = useQuery({
     queryKey: [
@@ -65,6 +65,7 @@ export default function Guarantors() {
     },
     onSuccess: (data) => {
       setGuarantors(data?.guarantors);
+      setMetrics(data?.summary);
       setFilters((prev) => ({
         ...prev,
         page: data?.page,
@@ -100,6 +101,11 @@ export default function Guarantors() {
       ...prev,
       limit: limit,
     }));
+  };
+
+  const handleMoreActions = () => {};
+  const handleViewGuarantor = (id) => {
+    navigate(`/admin/guarantors/${id}`);
   };
 
   return (
@@ -142,83 +148,88 @@ export default function Guarantors() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 select-none">
-          {/* Metric 1: Total Guarantors */}
+          {/* Metric 1: Total Application Amount */}
           <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-center gap-4">
             <div className="p-3 bg-blue-50 text-blue-600 rounded-xl border border-blue-100/40 shrink-0">
-              <Users size={18} />
+              <Wallet size={18} />
             </div>
             <div className="space-y-0.5 min-w-0">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
-                Active Guarantors
+                Total Requested Amount
               </p>
               <p className="text-2xl font-black text-primary tracking-tight">
-                {metrics.totalGuarantors}
+                {formatAmount(metrics?.total_application_amount)}
               </p>
               <p className="text-[11px] text-slate-400 font-medium truncate">
-                Unique underwriting identities
+                Target capital across applications
               </p>
             </div>
           </div>
 
-          {/* Metric 2: Total Amount Committed */}
+          {/* Metric 2: Approved Guaranteed Amount */}
           <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-center gap-4">
             <div className="p-3 bg-purple-50 text-purple-600 rounded-xl border border-purple-100/40 shrink-0">
               <ShieldCheck size={18} />
             </div>
             <div className="space-y-0.5 min-w-0">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
-                Total Capital Backed
+                Approved Guaranteed
               </p>
               <p className="text-2xl font-black text-primary tracking-tight">
-                KES{" "}
-                {metrics?.totalCommitted?.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
+                {formatAmount(metrics?.approved_guaranteed_amount)}
               </p>
               <p className="text-[11px] text-slate-400 font-medium truncate">
-                Aggregated lifetime value signed
+                Capital backed by approved guarantors
               </p>
             </div>
           </div>
 
-          {/* Metric 3: Active Exposure Risk */}
+          {/* Metric 3: Coverage Percentage */}
           <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-center gap-4">
-            <div className="p-3 bg-orange-50 text-orange-600 rounded-xl border border-orange-100/40 shrink-0">
-              <AlertTriangle size={18} />
+            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100/40 shrink-0">
+              <Percent size={18} />
             </div>
             <div className="space-y-0.5 min-w-0">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
-                Live Risk Exposure
+                Guarantee Coverage
               </p>
-              <p className="text-2xl font-black text-orange-600 tracking-tight">
-                KES{" "}
-                {metrics?.totalExposure?.toLocaleString(undefined, {
-                  maximumFractionDigits: 0,
-                })}
+              <p className="text-2xl font-black text-emerald-600 tracking-tight">
+                {metrics?.coverage_percent ?? 0}%
               </p>
               <p className="text-[11px] text-slate-400 font-medium truncate">
-                Unreleased liabilities active on loop
+                Coverage ratio against target
               </p>
             </div>
           </div>
 
-          {/* Metric 4: Total Structured Operations Loop */}
-          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-start gap-4">
-            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100/40 shrink-0">
+          {/* Metric 4: Application Status Pipeline */}
+          <div className="bg-white rounded-2xl border border-slate-200/60 shadow-3xs p-5 flex items-center gap-4">
+            <div className="p-3 bg-amber-50 text-amber-600 rounded-xl border border-amber-100/40 shrink-0">
               <Activity size={18} />
             </div>
             <div className="space-y-0.5 min-w-0">
               <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest truncate">
-                Underwriting Loops
+                Application Pipeline
               </p>
               <p className="text-2xl font-black text-primary tracking-tight">
-                {metrics.totalActiveLoans + metrics.totalPendingLoans}
+                {(metrics?.approved ?? 0) +
+                  (metrics?.pending ?? 0) +
+                  (metrics?.returned ?? 0) +
+                  (metrics?.draft ?? 0) +
+                  (metrics?.rejected ?? 0)}{" "}
+                <span className="text-xs font-semibold text-slate-400">
+                  Total
+                </span>
               </p>
               <p className="text-[11px] text-slate-400 font-medium flex items-center gap-1.5 truncate">
                 <span className="text-emerald-600 font-bold">
-                  {metrics.totalActiveLoans} Live
+                  {metrics?.approved ?? 0} Approved
                 </span>{" "}
-                • <span>{metrics.totalPendingLoans} Pipeline</span>
+                •{" "}
+                <span className="text-amber-600 font-bold">
+                  {metrics?.pending ?? 0} Pending
+                </span>{" "}
+                • <span>{metrics?.returned ?? 0} Returned</span>
               </p>
             </div>
           </div>
@@ -242,154 +253,230 @@ export default function Guarantors() {
           <table className="w-full text-left border-collapse table-auto">
             <thead>
               <tr className="bg-slate-50/70 border-b border-slate-200/60 text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                <th className="py-4.5 px-6">Guarantor Details</th>
-                <th className="py-4.5 px-6">Contact Info</th>
-                <th className="py-4.5 px-6 text-right">Total Committed</th>
-                <th className="py-4.5 px-6 text-right">Available to Commit</th>
-                <th className="py-4.5 px-6 text-center">Loan Activity</th>
-                <th className="py-4.5 px-6 text-center">Release Status</th>
+                <th className="py-4.5 px-6">Guarantor Profile</th>
+                <th className="py-4.5 px-6">Backing & Capacity</th>
+                <th className="py-4.5 px-6">Committed & Encumbered</th>
+                <th className="py-4.5 px-6">Release Breakdown</th>
+                <th className="py-4.5 px-6">Guarantees & Activity</th>
+                <th className="py-4.5 px-6 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs">
               {isFetching ? (
-                Array(10)
+                Array(5)
                   .fill(0)
                   .map((_, index) => (
                     <tr
                       key={`guarantor-skeleton-${index}`}
                       className="animate-pulse border-b border-slate-100 last:border-none"
                     >
-                      {/* Col 1: Name and ID Profile Skeleton */}
+                      {/* Profile Skeleton */}
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
-                          {/* Avatar Profile Mock */}
-                          <div className="h-8 w-8 rounded-full bg-slate-200 shrink-0" />
+                          <div className="h-9 w-9 rounded-full bg-slate-200 shrink-0" />
                           <div className="space-y-1.5 flex-1">
-                            <div className="h-4 w-32 bg-slate-200 rounded" />
-                            <div className="h-3 w-16 bg-slate-100 rounded" />
+                            <div className="h-4 w-36 bg-slate-200 rounded" />
+                            <div className="h-3 w-48 bg-slate-100 rounded" />
                           </div>
                         </div>
                       </td>
-
-                      {/* Col 2: New Contact Column Skeleton */}
-                      <td className="py-4 px-6">
-                        <div className="flex flex-col space-y-1.5">
-                          <div className="h-4 w-24 bg-slate-200 rounded" />
-                          <div className="h-3 w-32 bg-slate-100 rounded" />
-                        </div>
+                      {/* Backing Skeleton */}
+                      <td className="py-4 px-6 space-y-1">
+                        <div className="h-4 w-24 bg-slate-200 rounded" />
+                        <div className="h-3 w-20 bg-slate-100 rounded" />
                       </td>
-
-                      {/* Col 3: Financial Amount Guaranteed Skeleton */}
+                      {/* Committed Skeleton */}
+                      <td className="py-4 px-6 space-y-1">
+                        <div className="h-4 w-24 bg-slate-200 rounded" />
+                        <div className="h-3 w-20 bg-slate-100 rounded" />
+                      </td>
+                      {/* Release Skeleton */}
+                      <td className="py-4 px-6 space-y-1">
+                        <div className="h-4 w-24 bg-slate-200 rounded" />
+                        <div className="h-3 w-20 bg-slate-100 rounded" />
+                      </td>
+                      {/* Activity Skeleton */}
+                      <td className="py-4 px-6 space-y-1">
+                        <div className="h-4 w-24 bg-slate-200 rounded" />
+                        <div className="h-3 w-28 bg-slate-100 rounded" />
+                      </td>
+                      {/* Actions Skeleton */}
                       <td className="py-4 px-6 text-right">
-                        <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
-                      </td>
-
-                      {/* Col 4: Financial Available Backing Skeleton */}
-                      <td className="py-4 px-6 text-right">
-                        <div className="h-4 w-20 bg-slate-200 rounded ml-auto" />
-                      </td>
-
-                      {/* Col 5: Activity & Status Flags Skeleton */}
-                      <td className="py-4 px-6">
-                        <div className="flex items-center justify-center gap-3">
-                          <div className="h-3.5 w-12 bg-slate-100 rounded" />
-                          <div className="h-3.5 w-12 bg-slate-100 rounded" />
-                        </div>
-                      </td>
-
-                      {/* Col 6: Progress Matrix Bar Skeleton */}
-                      <td className="py-4 px-6">
-                        <div className="flex items-center justify-center gap-2">
-                          {/* Progress bar line asset */}
-                          <div className="w-16 h-1.5 bg-slate-100 rounded-full" />
-                          {/* Progress numeric metric percentage label */}
-                          <div className="h-4 w-8 bg-slate-200 rounded" />
-                        </div>
+                        <div className="h-8 w-14 bg-slate-200 rounded-lg ml-auto" />
                       </td>
                     </tr>
                   ))
               ) : guarantors?.length > 0 ? (
                 guarantors?.map((g) => (
                   <tr
-                    key={g.guarantorId}
+                    key={g.customer_id}
                     className="group hover:bg-slate-50/60 transition-colors"
                   >
-                    {/* Name and ID Column */}
+                    {/* Guarantor Profile & Contact Details */}
                     <td className="py-4 px-6">
                       <div className="flex items-center gap-3">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                          <User size={14} />
+                        <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                          <User size={16} />
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold text-slate-800 text-sm">
+                              {g?.name}
+                            </p>
+                            {g?.portfolio_health === "at_risk" && (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/60">
+                                <ShieldAlert size={10} />
+                                {g?.portfolio_health_label || "At Risk"}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-slate-400 font-medium">
+                            Member No:{" "}
+                            <span className="text-slate-600 font-semibold">
+                              {g?.member_no}
+                            </span>
+                          </p>
+                          <div className="flex items-center gap-3 text-[11px] text-slate-500 pt-0.5">
+                            <span className="flex items-center gap-1">
+                              <Phone size={11} className="text-slate-400" />
+                              {g?.mobile || "N/A"}
+                            </span>
+                          </div>
+                          <span className="flex items-center gap-1">
+                            <Mail size={11} className="text-slate-400" />
+                            {g?.email || "N/A"}
+                          </span>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Backing & Capacity */}
+                    <td className="py-4 px-6">
+                      <div className="space-y-1">
+                        <div>
+                          <span className="text-[10px] text-slate-400 block uppercase font-medium">
+                            Total Backing
+                          </span>
+                          <p className="font-bold text-slate-800">
+                            {formatAmount(g?.total_backing)}
+                          </p>
                         </div>
                         <div>
-                          <p className="font-bold text-primary">
-                            {g?.guarantor?.name}
-                          </p>
-                          <p className="text-[10px] text-slate-400 font-medium">
-                            ID: {g?.guarantor?.customer_id}
+                          <span className="text-[10px] text-slate-400 block uppercase font-medium">
+                            Free Capacity
+                          </span>
+                          <p className="font-semibold text-emerald-600">
+                            {formatAmount(
+                              g?.free_capacity ?? g?.available_to_commit,
+                            )}
                           </p>
                         </div>
                       </div>
                     </td>
 
-                    {/* New Contact Column */}
+                    {/* Committed & Encumbered */}
                     <td className="py-4 px-6">
-                      <div className="flex flex-col gap-0.5">
-                        <p className="font-semibold text-slate-700">
-                          {g?.guarantor?.mobile || "N/A"}
-                        </p>
-                        <p className="text-[10px] text-slate-400">
-                          {g.guarantor?.email || "No email"}
-                        </p>
-                      </div>
-                    </td>
-
-                    {/* Financial Columns */}
-                    <td className="py-4 px-6 text-right font-semibold text-primary">
-                      KES{" "}
-                      {g?.amount_guaranteed?.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                      })}
-                    </td>
-                    <td className="py-4 px-6 text-right font-semibold text-success">
-                      KES{" "}
-                      {g.guarantor?.available_backing.toLocaleString(
-                        undefined,
-                        {
-                          minimumFractionDigits: 2,
-                        },
-                      )}
-                    </td>
-
-                    {/* Activity & Status */}
-                    <td className="py-4 px-6 text-center">
-                      <div className="flex justify-center gap-4 text-[10px]">
-                        <span className="text-emerald-600 font-bold">
-                          {g.activeLoans ?? 1} Active
-                        </span>
-                        <span className="text-slate-400">
-                          {g.pendingLoans ?? 1} Pending
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-6 text-center">
-                      <div className="flex items-center justify-center gap-2">
-                        <div className="w-16 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-primary"
-                            style={{ width: `${g.releasedPct ?? 0}%` }}
-                          />
+                      <div className="space-y-1">
+                        <div>
+                          <span className="text-[10px] text-slate-400 block uppercase font-medium">
+                            Total Committed
+                          </span>
+                          <p className="font-bold text-primary">
+                            {formatAmount(g?.total_committed)}
+                          </p>
                         </div>
-                        <span className="font-bold text-slate-700">
-                          {g.releasedPct ?? 0}%
-                        </span>
+                        <div>
+                          <span className="text-[10px] text-slate-400 block uppercase font-medium">
+                            Total Encumbered
+                          </span>
+                          <p className="font-semibold text-slate-600">
+                            {formatAmount(g?.total_encumbered)}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Release Breakdown (Values) */}
+                    <td className="py-4 px-6">
+                      <div className="space-y-1">
+                        <div>
+                          <span className="text-[10px] text-slate-400 block uppercase font-medium">
+                            Released Amount
+                          </span>
+                          <p className="font-bold text-slate-800">
+                            {formatAmount(g?.release_status?.released_amount)}
+                          </p>
+                        </div>
+                        <div>
+                          <span className="text-[10px] text-slate-400 block uppercase font-medium">
+                            Remaining Encumbered
+                          </span>
+                          <p className="font-semibold text-amber-600">
+                            {formatAmount(
+                              g?.release_status?.remaining_encumbered_amount,
+                            )}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+
+                    {/* Guarantees & Loan Activity */}
+                    <td className="py-4 px-6">
+                      <div className="flex flex-col items-start space-y-1">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                            {g?.active_guarantees ??
+                              g?.loan_activity?.active ??
+                              0}{" "}
+                            Active
+                          </span>
+                          <span className="px-2 py-0.5 rounded-md text-[11px] font-bold bg-slate-100 text-slate-600 border border-slate-200/60">
+                            {g?.pending_guarantees ??
+                              g?.loan_activity?.pending ??
+                              0}{" "}
+                            Pending
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-slate-400 font-medium">
+                          Requests:{" "}
+                          <span className="text-emerald-600 font-bold">
+                            {g?.loan_activity?.approved_requests ?? 0} Approved
+                          </span>
+                          {" • "}
+                          <span className="text-rose-600 font-bold">
+                            {g?.loan_activity?.rejected_requests ?? 0} Rejected
+                          </span>
+                        </p>
+                      </div>
+                    </td>
+
+                    {/* Actions */}
+                    <td className="py-4 px-6 text-right">
+                      <div className="flex items-center justify-end gap-1">
+                        <button
+                          type="button"
+                          onClick={() => handleViewGuarantor?.(g)}
+                          className="p-2 rounded-lg text-slate-400 hover:text-primary hover:bg-slate-100 transition-colors"
+                          title="View Full Details"
+                        >
+                          <Eye size={16} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleMoreActions?.(g)}
+                          className="p-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                          title="More Options"
+                        >
+                          <MoreVertical size={16} />
+                        </button>
                       </div>
                     </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={6} className="py-8 px-6">
-                    <div className="w-full bg-white rounded-[24px] p-24 text-center select-none">
+                  <td colSpan={6} className="py-12 px-6">
+                    <div className="w-full bg-white rounded-[24px] p-12 text-center select-none">
                       <div className="size-11 bg-slate-50 border border-slate-100 rounded-xl flex items-center justify-center text-slate-400 mx-auto mb-3.5 shadow-3xs">
                         <User size={20} className="opacity-75" />
                       </div>

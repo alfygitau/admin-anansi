@@ -473,7 +473,7 @@ export default function Loan() {
               <MetricItem
                 icon={<Percent />}
                 label="Interest Rate"
-                value={`${parseFloat(loan?.loan_interest_per)?.toFixed(2)}% / ${loan?.interest_key}`}
+                value={`${parseFloat(loan?.loan_interest_per)?.toFixed(2)}% ${loan?.interest_key}`}
               />
               <MetricItem
                 icon={<Settings />}

@@ -621,7 +621,7 @@ export default function Loan() {
                 </h3>
               </div>
 
-              <div className="p-4 max-h-[300px] overflow-y-auto space-y-2.5 pr-2">
+              <div className="p-4 overflow-y-auto space-y-2.5 pr-2">
                 {loan?.repayments && loan.repayments.length > 0 ? (
                   loan.repayments.map((r, i) => (
                     <div
@@ -733,7 +733,7 @@ export default function Loan() {
 
 const LoanCard = ({ title, icon, children }) => (
   <div className="bg-white border border-slate-200/60 shadow-sm rounded-[24px] overflow-hidden w-full h-full">
-    <div className="px-5 py-4 bg-slate-50/60 border-b border-slate-100 flex items-center gap-2.5 select-none">
+    <div className="px-5 py-3 bg-slate-50/60 border-b border-slate-100 flex items-center gap-2 select-none">
       <div className="size-7 rounded-lg bg-white border border-slate-200/60 flex items-center justify-center text-slate-400 shadow-2xs">
         {icon}
       </div>
@@ -741,7 +741,7 @@ const LoanCard = ({ title, icon, children }) => (
         {title}
       </h3>
     </div>
-    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-7">
+    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-5">
       {children}
     </div>
   </div>
@@ -756,12 +756,12 @@ const MetricItem = ({ icon, label, value, isCapitalized = false }) => (
 
     {/* SHARPER TYPOGRAPHY HIERARCHY */}
     <div className="min-w-0 flex flex-col space-y-1">
-      <span className="text-[9px] font-black uppercase tracking-widest text-slate-400 leading-normal">
+      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 leading-normal">
         {label}
       </span>
       {/* FIXED: Swapped to text-primary and font-bold for a rich, crisp appearance */}
       <span
-        className={`text-xs font-bold text-primary tracking-tight leading-normal truncate ${
+        className={`text-[13px] font-bold text-primary tracking-tight leading-normal truncate ${
           isCapitalized ? "capitalize" : ""
         }`}
       >

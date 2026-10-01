@@ -75,6 +75,7 @@ import { FinancialProductDetails } from "./pages/settings/financial-products/Fin
 import { ReviewProductSubmission } from "./pages/settings/financial-products/ApproveProduct";
 import { ProductApprovals } from "./pages/settings/financial-products/ProductApprovals";
 import Guarantor from "./pages/guarantors/Guarantor";
+import AddManualPayment from "./pages/manual-payments/AddManualPayment";
 
 function App() {
   return (
@@ -194,6 +195,7 @@ function App() {
           <Route path="add-group-account" element={<AddGroupAccount />} />
           <Route path="all-members/:id" element={<MemberDetails />} />
           <Route path="all-members/add-member" element={<AddMember />} />
+          <Route path="add-manual-payment" element={<AddManualPayment />} />
           <Route
             path="all-members/account/:id/:accountNumber"
             element={<AccountDetails />}

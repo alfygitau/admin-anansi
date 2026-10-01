@@ -263,7 +263,7 @@ export default function Guarantors() {
             </thead>
             <tbody className="divide-y divide-slate-100 text-xs">
               {isFetching ? (
-                Array(5)
+                Array(8)
                   .fill(0)
                   .map((_, index) => (
                     <tr

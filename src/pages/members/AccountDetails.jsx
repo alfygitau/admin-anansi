@@ -241,18 +241,17 @@ export default function AccountDetails() {
                       <button
                         onClick={() => {
                           setIsActionMenuOpen(false);
-                          alert("Generating statements...");
                         }}
                         className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-slate-50 text-left transition-colors cursor-pointer"
                       >
                         <FileText size={14} className="text-slate-400" />
-                        <span>Account Statements</span>
+                        <span>Generate Statement</span>
                       </button>
 
                       <button
                         onClick={() => {
                           setIsActionMenuOpen(false);
-                          alert("Opening manual payment drawer...");
+                          navigate("/admin/add-manual-payment");
                         }}
                         className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-xs font-bold text-slate-700 hover:bg-emerald-50/40 text-left transition-colors cursor-pointer"
                       >

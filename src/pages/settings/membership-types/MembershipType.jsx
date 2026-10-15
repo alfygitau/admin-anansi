@@ -19,13 +19,11 @@ import {
   Award,
   Wallet,
   ShieldAlert,
-  ChevronRight,
   UserCheck,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "react-query";
 import { useToast } from "../../../contexts/ToastProvider";
-import * as Sentry from "@sentry/react";
 import { getMembershipType } from "../../../sdk/membership/membership";
 
 export const MembershipTypeDetails = () => {
@@ -54,6 +52,7 @@ export const MembershipTypeDetails = () => {
   });
 
   if (!membershipType && !isFetching) return null;
+
   const currentVersion =
     membershipType?.versions?.find(
       (v) => v.id === membershipType?.current_version_id,
@@ -73,7 +72,7 @@ export const MembershipTypeDetails = () => {
       ) : (
         <div className="w-full space-y-6 select-none font-sans antialiased text-slate-800">
           {/* 1. PAGE HEADER */}
-          <div className="flex flex-row sm:flex-col sm:items-center justify-between gap-4 pb-6 border-b border-slate-200/80">
+          <div className="flex flex-col sm:flex-row md:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200/80">
             <div className="flex items-center gap-3">
               <button
                 type="button"
@@ -144,78 +143,9 @@ export const MembershipTypeDetails = () => {
             </div>
           </div>
 
-          {/* 2. SUMMARY METRICS HIGHLIGHT GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs flex items-center justify-between">
-              <div>
-                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-                  Reporting Category
-                </p>
-                <p className="text-base font-bold text-slate-900 capitalize mt-1">
-                  {currentVersion?.reporting_configuration
-                    ?.regulatory_classification || "General"}
-                </p>
-              </div>
-              <div className="p-3 bg-blue-50 text-blue-600 rounded-xl border border-blue-100">
-                <Building2 size={20} />
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs flex items-center justify-between">
-              <div>
-                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-                  Account Managers
-                </p>
-                <p className="text-base font-bold text-slate-900 mt-1">
-                  {currentVersion?.representation_policy?.minimum_signatories ??
-                    1}{" "}
-                  {currentVersion?.representation_policy
-                    ?.minimum_signatories === 1
-                    ? "Person"
-                    : "People"}
-                </p>
-              </div>
-              <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl border border-indigo-100">
-                <Users size={20} />
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs flex items-center justify-between">
-              <div>
-                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-                  Approval Process
-                </p>
-                <p className="text-base font-bold text-slate-900 capitalize mt-1">
-                  {currentVersion?.entry_requirements?.approval_mode?.replace(
-                    /_/g,
-                    " ",
-                  ) || "Automatic"}
-                </p>
-              </div>
-              <div className="p-3 bg-amber-50 text-amber-600 rounded-xl border border-amber-100">
-                <UserCheck size={20} />
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs flex items-center justify-between">
-              <div>
-                <p className="text-[10px] uppercase font-bold tracking-widest text-slate-400">
-                  Savings Schedule
-                </p>
-                <p className="text-base font-bold text-slate-900 capitalize mt-1">
-                  {currentVersion?.contribution_obligations
-                    ?.contribution_frequency || "Flexible"}
-                </p>
-              </div>
-              <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl border border-emerald-100">
-                <Wallet size={20} />
-              </div>
-            </div>
-          </div>
-
-          {/* 3. DETAILED CONFIGURATION CARDS */}
+          {/* 2. DETAILED CONFIGURATION CARDS */}
           <div className="space-y-6">
-            {/* CARD 1: MEMBERSHIP IDENTITY */}
+            {/* CARD 1: MEMBERSHIP IDENTITY & CLASSIFICATION */}
             <SectionCard title="Tier Details & Setup" icon={Tag}>
               <DetailItem
                 label="Tier Name"
@@ -236,21 +166,29 @@ export const MembershipTypeDetails = () => {
               />
               <DetailItem
                 label="Who Can Join"
-                value={currentVersion?.allowed_member_structures?.join(", ")}
+                value={
+                  currentVersion?.allowed_member_structures?.length
+                    ? currentVersion.allowed_member_structures.join(", ")
+                    : "All Structures"
+                }
                 icon={Building2}
               />
               <DetailItem
                 label="Sign-up Methods"
-                value={currentVersion?.allowed_onboarding_channels?.join(", ")}
+                value={
+                  currentVersion?.allowed_onboarding_channels?.length
+                    ? currentVersion.allowed_onboarding_channels.join(", ")
+                    : "All Channels"
+                }
                 icon={Layers}
               />
               <DetailItem
-                label="Reporting Group"
+                label="Reporting Category"
                 value={
                   currentVersion?.reporting_configuration
-                    ?.regulatory_classification
+                    ?.regulatory_classification || "General"
                 }
-                icon={ShieldCheck}
+                icon={Building2}
               />
               <DetailItem
                 label="Current Status"
@@ -355,14 +293,18 @@ export const MembershipTypeDetails = () => {
             <SectionCard title="Joining Rules & Management" icon={Users}>
               <DetailItem
                 label="Approval Process"
-                value={currentVersion?.entry_requirements?.approval_mode?.replace(
-                  /_/g,
-                  " ",
-                )}
+                value={
+                  currentVersion?.entry_requirements?.approval_mode
+                    ? currentVersion.entry_requirements.approval_mode.replace(
+                        /_/g,
+                        " ",
+                      )
+                    : "Automatic"
+                }
                 icon={UserCheck}
               />
               <DetailItem
-                label="Account Managers"
+                label="Account Managers Required"
                 icon={Users}
                 badge={
                   <BooleanBadge
@@ -376,11 +318,16 @@ export const MembershipTypeDetails = () => {
                 }
               />
               <DetailItem
-                label="Required Signatures"
+                label="Authorized Signatories"
                 value={`${
                   currentVersion?.representation_policy?.minimum_signatories ??
                   1
-                } Person(s)`}
+                } ${
+                  (currentVersion?.representation_policy?.minimum_signatories ??
+                    1) === 1
+                    ? "Person"
+                    : "People"
+                }`}
                 icon={FileText}
               />
               <DetailItem
@@ -393,7 +340,7 @@ export const MembershipTypeDetails = () => {
               />
             </SectionCard>
 
-            {/* CARD 4: FEE STRUCTURE & SAVINGS FREQUENCY */}
+            {/* CARD 4: FEE STRUCTURE & SAVINGS SCHEDULE */}
             <SectionCard title="Fees & Savings Schedule" icon={Wallet}>
               <DetailItem
                 label="Joining Fee"
@@ -416,7 +363,7 @@ export const MembershipTypeDetails = () => {
                 label="Savings Schedule"
                 value={
                   currentVersion?.contribution_obligations
-                    ?.contribution_frequency
+                    ?.contribution_frequency || "Flexible"
                 }
                 icon={Calendar}
               />
@@ -545,7 +492,7 @@ export const MembershipTypeDetails = () => {
                     Reviewer Notes
                   </span>
                   <p className="text-xs text-emerald-900 font-medium">
-                    "{currentVersion.review_feedback}"
+                    &ldquo;{currentVersion.review_feedback}&rdquo;
                   </p>
                 </div>
               )}
@@ -575,7 +522,7 @@ const DetailItem = ({
         badge
       ) : (
         <span
-          className={`text-sm font-bold text-slate-800 ${
+          className={`text-sm font-bold text-slate-800 capitalize ${
             mono ? "font-mono" : ""
           }`}
         >
@@ -650,23 +597,7 @@ const MembershipTypeSkeleton = () => {
         </div>
       </div>
 
-      {/* 2. Top Summary Metric Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div
-            key={i}
-            className="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-3xs flex items-center justify-between"
-          >
-            <div className="space-y-2">
-              <div className="h-3 w-24 bg-slate-200 rounded" />
-              <div className="h-6 w-28 bg-slate-200 rounded-md" />
-            </div>
-            <div className="size-11 rounded-xl bg-slate-200 shrink-0" />
-          </div>
-        ))}
-      </div>
-
-      {/* 3. Section Cards Skeleton */}
+      {/* 2. Section Cards Skeleton */}
       <div className="space-y-6">
         {Array.from({ length: 5 }).map((_, cardIdx) => (
           <div

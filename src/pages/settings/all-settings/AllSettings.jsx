@@ -1,21 +1,13 @@
 import React, { useState } from "react";
 import {
   Landmark,
-  Percent,
-  ShieldCheck,
   Users,
   Search,
   ArrowRight,
   CreditCard,
-  Building2,
-  Bell,
-  Lock,
-  Layers,
   SlidersHorizontal,
-  ChevronRight,
-  Sparkles,
-  HeartHandshake,
   Folder,
+  HeartHandshake,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -75,36 +67,37 @@ export const AllSettings = () => {
     },
   ];
 
-  const systemSections = [
+  // Replaced system controls with Membership & Referral configurations
+  const membershipSections = [
     {
-      id: "org-details",
-      category: "general",
-      title: "Organization Profile",
+      id: "membership-types",
+      category: "membership",
+      title: "Membership Types",
       description:
-        "Update your official organization details, branch locations, operating hours, and defaults.",
-      icon: Building2,
-      badge: "Profile",
-      actionText: "Edit Profile",
+        "Create, classify, and configure distinct membership categories, eligibility requirements, and voting rights.",
+      icon: Users,
+      badge: "Tiers & Classes",
+      actionText: "Manage Membership Types",
     },
     {
-      id: "notifications",
-      category: "general",
-      title: "Messages & Alerts",
+      id: "membership-fees",
+      category: "membership",
+      title: "Membership Fees & Dues",
       description:
-        "Personalize automatic SMS and email updates sent out to your members and team.",
-      icon: Bell,
-      badge: "Automations",
-      actionText: "Customize Alerts",
+        "Create new fee structures, update active registration or subscription amounts, and disable obsolete fees.",
+      icon: CreditCard,
+      badge: "Fee Structure",
+      actionText: "Configure Fees",
     },
     {
-      id: "audit-logs",
-      category: "security",
-      title: "Activity & Audit Logs",
+      id: "referral-program",
+      category: "growth",
+      title: "Referral & Incentive Program",
       description:
-        "Keep track of account changes, see who signed in, and review activity history for peace of mind.",
-      icon: Lock,
-      badge: "History",
-      actionText: "View Activity Log",
+        "Enable or deactivate member referrals, update payout rewards, and define qualifying bonus conditions.",
+      icon: HeartHandshake,
+      badge: "Growth Engine",
+      actionText: "Manage Referral Program",
     },
   ];
 
@@ -113,18 +106,30 @@ export const AllSettings = () => {
     item.description.toLowerCase().includes(searchQuery.toLowerCase());
 
   const filteredProducts = productSections.filter(matchesSearch);
-  const filteredSystemSections = systemSections.filter(matchesSearch);
+  const filteredMembershipSections = membershipSections.filter(matchesSearch);
 
   const hasAnyResults =
-    filteredProducts.length > 0 || filteredSystemSections.length > 0;
+    filteredProducts.length > 0 || filteredMembershipSections.length > 0;
 
   const onNavigate = (id) => {
-    if (id === "financial-products") {
-      navigate("/admin/all-financial-products");
-    } else if (id === "loan-products") {
-      navigate("/admin/loan-products");
-    } else {
-      window.alert("coming soon");
+    switch (id) {
+      case "loan-products":
+        navigate("/admin/loan-products");
+        break;
+      case "financial-products":
+        navigate("/admin/all-financial-products");
+        break;
+      case "membership-types":
+        navigate("/admin/membership-types");
+        break;
+      case "membership-fees":
+        navigate("/admin/update-membership-fees");
+        break;
+      case "referral-program":
+        navigate("/admin/referral-program");
+        break;
+      default:
+        window.alert("coming soon");
     }
   };
 
@@ -140,8 +145,8 @@ export const AllSettings = () => {
             Settings
           </h1>
           <p className="text-xs font-medium text-slate-500 mt-0.5">
-            Welcome! Here you can customize your financial products, manage
-            rules, and keep your organization running smoothly.
+            Customize financial products, manage membership tiers and fees, and
+            configure growth programs.
           </p>
         </div>
       </div>
@@ -157,11 +162,68 @@ export const AllSettings = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search for loans, savings, fees, or permissions..."
+            placeholder="Search loans, savings, fees, or referrals..."
             className="w-full pl-9 pr-4 py-4 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-700 placeholder:text-slate-400 focus:outline-none focus:border-slate-400 focus:ring-1 focus:ring-slate-400 transition-all shadow-3xs"
           />
         </div>
       </div>
+
+      {/* 4. MEMBERSHIP & PROGRAM CONTROLS */}
+      {filteredMembershipSections.length > 0 && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">
+              Membership & Growth
+            </h3>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredMembershipSections.map((section) => {
+              const Icon = section.icon;
+              return (
+                <div
+                  key={section.id}
+                  className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-3xs flex flex-col justify-between group transition-all hover:border-slate-300 hover:shadow-sm"
+                >
+                  <div className="space-y-3.5">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 group-hover:bg-[#074073]/5 group-hover:text-[#074073] group-hover:border-[#074073]/15 transition-all shrink-0">
+                        <Icon size={18} />
+                      </div>
+                      <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200/60">
+                        {section.badge}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800 tracking-tight group-hover:text-[#074073] transition-colors">
+                        {section.title}
+                      </h4>
+                      <p className="text-xs text-slate-500 font-medium leading-relaxed mt-1 line-clamp-2">
+                        {section.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
+                    <button
+                      type="button"
+                      onClick={() => onNavigate(section.id)}
+                      className="w-full flex items-center justify-between text-xs font-bold text-slate-700 hover:text-[#074073] transition-colors cursor-pointer group/btn"
+                    >
+                      <span>{section.actionText}</span>
+                      <ArrowRight
+                        size={14}
+                        className="text-slate-400 group-hover/btn:translate-x-1 group-hover/btn:text-[#074073] transition-all"
+                      />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* 3. MEMBER FINANCIAL PRODUCTS SECTION */}
       {filteredProducts.length > 0 && (
@@ -203,67 +265,10 @@ export const AllSettings = () => {
                   <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
                     <button
                       type="button"
-                      onClick={() => onNavigate && onNavigate(product.id)}
+                      onClick={() => onNavigate(product.id)}
                       className="w-full flex items-center justify-between text-xs font-bold text-slate-700 hover:text-[#074073] transition-colors cursor-pointer group/btn"
                     >
                       <span>{product.actionText}</span>
-                      <ArrowRight
-                        size={14}
-                        className="text-slate-400 group-hover/btn:translate-x-1 group-hover/btn:text-[#074073] transition-all"
-                      />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {/* 4. DAILY OPERATIONS & SYSTEM CONTROLS */}
-      {filteredSystemSections.length > 0 && (
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400">
-              System Controls
-            </h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredSystemSections.map((section) => {
-              const Icon = section.icon;
-              return (
-                <div
-                  key={section.id}
-                  className="bg-white rounded-2xl border border-slate-200/60 p-5 shadow-3xs flex flex-col justify-between group transition-all hover:border-slate-300 hover:shadow-sm"
-                >
-                  <div className="space-y-3.5">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-500 group-hover:bg-[#074073]/5 group-hover:text-[#074073] group-hover:border-[#074073]/15 transition-all shrink-0">
-                        <Icon size={18} />
-                      </div>
-                      <span className="text-[9px] font-bold uppercase tracking-widest px-2 py-0.5 bg-slate-100 text-slate-500 rounded border border-slate-200/60">
-                        {section.badge}
-                      </span>
-                    </div>
-
-                    <div>
-                      <h4 className="text-sm font-bold text-slate-800 tracking-tight group-hover:text-[#074073] transition-colors">
-                        {section.title}
-                      </h4>
-                      <p className="text-xs text-slate-500 font-medium leading-relaxed mt-1 line-clamp-2">
-                        {section.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between">
-                    <button
-                      type="button"
-                      onClick={() => onNavigate && onNavigate(section.id)}
-                      className="w-full flex items-center justify-between text-xs font-bold text-slate-700 hover:text-[#074073] transition-colors cursor-pointer group/btn"
-                    >
-                      <span>{section.actionText}</span>
                       <ArrowRight
                         size={14}
                         className="text-slate-400 group-hover/btn:translate-x-1 group-hover/btn:text-[#074073] transition-all"
@@ -287,7 +292,8 @@ export const AllSettings = () => {
             We couldn't find anything matching that search
           </p>
           <p className="text-xs text-slate-400">
-            Try searching for terms like "Loans", "Savings", "Fees", or "Team".
+            Try searching for terms like "Loans", "Savings", "Types", "Fees", or
+            "Referral".
           </p>
           <button
             type="button"

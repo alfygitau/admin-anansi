@@ -11,9 +11,17 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family:
+    source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
 .custom-form-input {
@@ -28,7 +36,7 @@ code {
   transition: all 150ms ease;
   font-size: 0.875rem;
   font-weight: 500;
-  font-family: 'Google Sans', sans-serif;
+  font-family: "Google Sans", sans-serif;
 }
 .custom-form-input:focus {
   border-color: rgb(var(--color-secondary-rgb));

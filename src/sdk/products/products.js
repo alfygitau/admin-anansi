@@ -14,13 +14,17 @@ export const getProducts = async () => {
     const response = await myClient.get("/api/v1/product");
     return unwrapRows(response?.data);
   } catch (error) {
-    console.log(error);
+    throw error?.response?.data || error;
   }
 };
 
 export const createProduct = async (payload) => {
-  const response = await myClient.post("/api/v1/product", payload);
-  return response?.data;
+  try {
+    const response = await myClient.post("/api/v1/product", payload);
+    return response?.data;
+  } catch (error) {
+    throw error?.response?.data || error;
+  }
 };
 
 export const getDepositProducts = async (status = "live") => {

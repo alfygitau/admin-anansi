@@ -76,6 +76,11 @@ import { ReviewProductSubmission } from "./pages/settings/financial-products/App
 import { ProductApprovals } from "./pages/settings/financial-products/ProductApprovals";
 import Guarantor from "./pages/guarantors/Guarantor";
 import AddManualPayment from "./pages/manual-payments/AddManualPayment";
+import { Referral } from "./pages/settings/referral/Referral";
+import { MembershipTypes } from "./pages/settings/membership-types/MembershipTypes";
+import { MembershipTypeDetails } from "./pages/settings/membership-types/MembershipType";
+import { CreateMembershipType } from "./pages/settings/membership-types/AddMembershipType";
+import { MembershipFees } from "./pages/settings/membership-types/MembershipFees";
 
 function App() {
   return (
@@ -179,6 +184,21 @@ function App() {
           <Route
             element={<FinancialProducts />}
             path="all-financial-products"
+          />
+
+          <Route element={<FinancialProducts />} path="membership-fees" />
+
+          <Route element={<Referral />} path="referral-program" />
+          <Route element={<MembershipFees />} path="update-membership-fees" />
+
+          <Route element={<MembershipTypes />} path="membership-types" />
+          <Route
+            element={<CreateMembershipType />}
+            path="membership-types/add-membership-type"
+          />
+          <Route
+            element={<MembershipTypeDetails />}
+            path="membership-types/:id"
           />
 
           <Route
